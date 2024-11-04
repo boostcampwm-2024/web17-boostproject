@@ -1,0 +1,23 @@
+{
+  "name": "juchumjuchum",
+  "version": "0.0.1",
+  "description": "주춤할 때 곁에서 속삭여주는 똑똑한 투자 도우미, 주춤주춤",
+  "private": true,
+  "scripts": {
+    "client": "yarn workspace frontend",
+    "server": "yarn workspace backend"
+  },
+  "workspaces": {
+    "packages": [
+      "packages/**"
+    ]
+  },
+  "repository": "https://github.com/xjfcnfw3/setting_test_repo.git",
+  "devDependencies": {
+    "eslint": "^8.57.1",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0"
+  }
+}
