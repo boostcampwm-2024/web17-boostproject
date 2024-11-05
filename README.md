@@ -31,6 +31,7 @@
 
 ## 🎨 기획/디자인 링크
 
+[와이어프레임 & 디자인](https://www.figma.com/design/g24Tzu1RQUtANxwSYyP8HA/%ED%94%84%EB%A1%9C%ED%86%A0%ED%83%80%EC%9E%85?node-id=11-2&node-type=canvas&t=ljPfdEB64qH127wm-0)
 
 ##  회의록
 
