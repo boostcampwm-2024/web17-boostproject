@@ -1066,6 +1066,15 @@
     iterare "1.2.1"
     tslib "2.7.0"
 
+"@nestjs/config@^3.3.0":
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/@nestjs/config/-/config-3.3.0.tgz#ddc520ba26a8453ee5e690e18fb7b35e9bac7974"
+  integrity sha512-pdGTp8m9d0ZCrjTpjkUbZx6gyf2IKf+7zlkrPNMsJzYZ4bFRRTpXrnj+556/5uiI6AfL5mMrJc2u7dB6bvM+VA==
+  dependencies:
+    dotenv "16.4.5"
+    dotenv-expand "10.0.0"
+    lodash "4.17.21"
+
 "@nestjs/core@^10.0.0":
   version "10.4.6"
   resolved "https://registry.yarnpkg.com/@nestjs/core/-/core-10.4.6.tgz#797b381f12bd62d2e425897058fa219da4c3689d"
@@ -2377,7 +2386,7 @@ comment-json@4.2.5:
     has-own-prop "^2.0.0"
     repeat-string "^1.6.1"
 
-commitizen@^4.0.3, commitizen@^4.3.1:
+commitizen@^4.0.3, commitizen@^4.3.0, commitizen@^4.3.1:
   version "4.3.1"
   resolved "https://registry.yarnpkg.com/commitizen/-/commitizen-4.3.1.tgz#f0e0e4b7ae3fafc92e444bbb78f2ded5a1d4311a"
   integrity sha512-gwAPAVTy/j5YcOOebcCRIijn+mSjWJC+IYKivTu6aG8Ei/scoXgfsMRnuAk6b0GRste2J4NGxVdMN3ZpfNaVaw==
@@ -2594,6 +2603,15 @@ cz-customizable@^7.2.1:
     temp "^0.9.0"
     word-wrap "^1.2.3"
 
+cz-emoji-conventional@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/cz-emoji-conventional/-/cz-emoji-conventional-1.1.0.tgz#c42c34828619a5c2c7337afd4798c7da4366c753"
+  integrity sha512-W0EHK/Ek9ZHwJ+UaClF/xBHp6lkLuJgkiREiCVnwGuIz8Jhp/khoQzLcRI9AAF6vfT2slfz7E+RgGelmsVfzoQ==
+  dependencies:
+    chalk "4.1.2"
+    commitizen "^4.3.0"
+    word-wrap "^1.2.3"
+
 dargs@^8.0.0:
   version "8.1.0"
   resolved "https://registry.yarnpkg.com/dargs/-/dargs-8.1.0.tgz#a34859ea509cbce45485e5aa356fef70bfcc7272"
@@ -2720,6 +2738,16 @@ dot-prop@^5.1.0:
   integrity sha512-QM8q3zDe58hqUqjraQOmzZ1LIH9SWQJTlEKCH4kJ2oQvLZk7RbQXvtDM2XEq3fwkV9CCvvH4LA0AV+ogFsBM2Q==
   dependencies:
     is-obj "^2.0.0"
+
+dotenv-expand@10.0.0:
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/dotenv-expand/-/dotenv-expand-10.0.0.tgz#12605d00fb0af6d0a592e6558585784032e4ef37"
+  integrity sha512-GopVGCpVS1UKH75VKHGuQFqS1Gusej0z4FyQkPdwjil2gNIv+LNsqBlboOzpJFZKVT95GkCyWJbBSdFEFUWI2A==
+
+dotenv@16.4.5, dotenv@^16.4.5:
+  version "16.4.5"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.4.5.tgz#cdd3b3b604cb327e286b4762e13502f717cb099f"
+  integrity sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==
 
 eastasianwidth@^0.2.0:
   version "0.2.0"
