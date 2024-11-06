@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-function App() {
+const App = () => {
   const [count, setCount] = useState(0);
 
   return (
@@ -19,6 +19,6 @@ function App() {
       </p>
     </>
   );
-}
+};
 
 export default App;
