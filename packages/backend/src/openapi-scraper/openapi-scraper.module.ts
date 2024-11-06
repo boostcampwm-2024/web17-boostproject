@@ -1,9 +1,15 @@
-import { Module } from '@nestjs/common';
-import { OpenapiScraperController } from './openapi-scraper.controller';
-import { OpenapiScraper } from './openapi-scraper';
+import { Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+import { OpenapiScraperService } from "./openapi-scraper.service";
+import { EnvService } from "./env.service";
 
 @Module({
-  controllers: [OpenapiScraperController],
-  providers: [OpenapiScraper]
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+  ],
+  controllers: [],
+  providers: [OpenapiScraperService, EnvService],
 })
 export class OpenapiScraperModule {}
