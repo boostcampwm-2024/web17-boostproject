@@ -10,13 +10,11 @@ import { UserModule } from '@/user/user.module';
 import { AuthModule } from '@/auth/auth.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forRoot(typeormConfig),
-    WinstonModule.forRoot(logger),
+  imports: [OpenapiScraperModule,
     StockModule,
     UserModule,
-    OpenapiScraperModule,
-    StockPriceModule,
+    TypeOrmModule.forRoot(typeormConfig),
+    WinstonModule.forRoot(logger),
     AuthModule,
   ],
   controllers: [],
