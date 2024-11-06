@@ -14,9 +14,12 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "strictNullChecks": false,
+    "strictNullChecks": true,
     "noImplicitAny": true,
-    "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false
+    "strictBindCallApply": true,
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@/*": ["*"]
+    }
   }
 }
