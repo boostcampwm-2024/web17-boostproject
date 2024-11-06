@@ -30,7 +30,7 @@ module.exports = {
       },
     ],
     '@typescript-eslint/naming-convention': [
-      'warn',
+      'error',
       {
         selector: 'class',
         format: ['PascalCase'],
@@ -62,6 +62,10 @@ module.exports = {
           'unknown',
         ],
         warnOnUnassignedImports: true,
+        alphabetize: {
+          order: 'asc',
+          caseInsensitive: true,
+        },
       },
     ],
   },
