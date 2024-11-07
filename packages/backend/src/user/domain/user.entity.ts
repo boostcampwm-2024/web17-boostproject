@@ -2,11 +2,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Role } from '@/user/domain/role';
 
+@Index('type_oauth_id', ['type', 'oauthId'], { unique: true })
 @Entity({ name: 'users' })
 export class User {
   @PrimaryGeneratedColumn()
