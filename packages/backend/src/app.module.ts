@@ -10,7 +10,9 @@ import { OpenapiScraperModule } from '@/openapi-scraper/openapi-scraper.module';
 import { StockPriceModule } from '@/stock-price/stock-price.module';
 
 @Module({
-  imports: [OpenapiScraperModule, StockPriceModule,
+  imports: [
+    OpenapiScraperModule,
+    StockPriceModule,
     StockModule,
     UserModule,
     TypeOrmModule.forRoot(typeormConfig),
