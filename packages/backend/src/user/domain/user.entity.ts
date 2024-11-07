@@ -1,7 +1,14 @@
-import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { DateEmbedded } from '@/common/dateEmbedded.entity';
 import { OauthType } from '@/user/domain/ouathType';
 import { Role } from '@/user/domain/role';
+import { UserStock } from '@/stock/domain/userStock.entity';
 
 @Index('type_oauth_id', ['type', 'oauthId'], { unique: true })
 @Entity({ name: 'users' })
@@ -29,4 +36,7 @@ export class User {
 
   @Column(() => DateEmbedded, { prefix: '' })
   date?: DateEmbedded;
+
+  @OneToMany(() => UserStock, (userStock) => userStock.user)
+  userStocks?: UserStock[];
 }
