@@ -2,7 +2,7 @@ import { DataSource, EntityManager } from 'typeorm';
 import { OauthType } from '@/user/domain/ouathType';
 import { UserService } from '@/user/user.service';
 
-function createDataSourceMock(
+export function createDataSourceMock(
   managerMock: Partial<EntityManager>,
 ): Partial<DataSource> {
   return {
