@@ -5,7 +5,11 @@ import { OpenapiScraperModule } from './openapi-scraper/openapi-scraper.module';
 import { typeormConfig } from '@/configs/typeorm.config';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(typeormConfig)OpenapiScraperModule, StockPriceModule],
+  imports: [
+    TypeOrmModule.forRoot(typeormConfig),
+    OpenapiScraperModule,
+    StockPriceModule,
+  ],
   controllers: [],
   providers: [],
 })
