@@ -5,6 +5,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Role } from '@/user/domain/role';
 
 @Entity({ name: 'users' })
 export class User {
@@ -17,8 +18,8 @@ export class User {
   @Column({ length: 50 })
   email?: string;
 
-  @Column({ length: 5, default: 'user' })
-  role: string = 'user';
+  @Column({ length: 5, default: Role.USER })
+  role: Role = Role.USER;
 
   @Column({ length: 10 })
   type?: string;
