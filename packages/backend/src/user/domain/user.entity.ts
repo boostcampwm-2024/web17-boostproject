@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { OauthType } from '@/user/domain/ouathType';
 import { Role } from '@/user/domain/role';
 
 @Index('type_oauth_id', ['type', 'oauthId'], { unique: true })
@@ -23,8 +24,8 @@ export class User {
   @Column({ length: 5, default: Role.USER })
   role: Role = Role.USER;
 
-  @Column({ length: 10 })
-  type?: string;
+  @Column({ length: 10, default: OauthType.LOCAL })
+  type?: OauthType = OauthType.LOCAL;
 
   @Column({ name: 'oauth_id' })
   oauthId?: number;
