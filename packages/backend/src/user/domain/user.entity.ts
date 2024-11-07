@@ -1,11 +1,5 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  Index,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import { DateEmbedded } from '@/common/dateEmbedded.entity';
 import { OauthType } from '@/user/domain/ouathType';
 import { Role } from '@/user/domain/role';
 
@@ -25,7 +19,7 @@ export class User {
   role: Role = Role.USER;
 
   @Column({ length: 10, default: OauthType.LOCAL })
-  type?: OauthType = OauthType.LOCAL;
+  type: OauthType = OauthType.LOCAL;
 
   @Column({ name: 'oauth_id' })
   oauthId?: number;
@@ -33,9 +27,6 @@ export class User {
   @Column({ name: 'is_light', default: true })
   isLight: boolean = true;
 
-  @CreateDateColumn({ name: 'created_at' })
-  createdAt?: Date;
-
-  @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt?: Date;
+  @Column(() => DateEmbedded, { prefix: '' })
+  date?: DateEmbedded;
 }
