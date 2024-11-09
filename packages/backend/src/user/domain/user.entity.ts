@@ -6,9 +6,9 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { DateEmbedded } from '@/common/dateEmbedded.entity';
+import { UserStock } from '@/stock/domain/userStock.entity';
 import { OauthType } from '@/user/domain/ouathType';
 import { Role } from '@/user/domain/role';
-import { UserStock } from '@/stock/domain/userStock.entity';
 
 @Index('type_oauth_id', ['type', 'oauthId'], { unique: true })
 @Entity({ name: 'users' })
