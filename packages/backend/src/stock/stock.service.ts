@@ -46,13 +46,12 @@ export class StockService {
     if (!userStock) {
       throw new BadRequestException('user stock not found');
     }
-    if (userStock.user) {
-      if (userStock.user.id !== userId) {
-        throw new BadRequestException('you are not owner of user stock');
-      }
-      return;
+    if (!userStock.user) {
+      throw new Error('Invalid user stock row');
     }
-    throw new Error('Invalid user stock row');
+    if (userStock.user.id !== userId) {
+      throw new BadRequestException('you are not owner of user stock');
+    }
   }
 
   private async validateStockExists(stockId: string, manager: EntityManager) {
