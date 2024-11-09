@@ -19,14 +19,40 @@ export class StockService {
 
   // 유저 존재는 인증에서 확인가능해서 생략
   async createUserStock(userId: number, stockId: string) {
-    await this.datasource.transaction(async (manager) => {
+    return await this.datasource.transaction(async (manager) => {
       await this.validateStockExists(stockId, manager);
       await this.validateDuplicateUserStock(stockId, userId, manager);
-      await manager.insert(UserStock, {
+      return await manager.insert(UserStock, {
         user: { id: userId },
         stock: { id: stockId },
       });
     });
+  }
+
+  async deleteUserStock(userId: number, userStockId: number) {
+    await this.datasource.transaction(async (manager) => {
+      const userStock = await manager.findOne(UserStock, {
+        where: { id: userStockId },
+        relations: ['user'],
+      });
+      this.validateUserStock(userId, userStock);
+      await manager.delete(UserStock, {
+        id: userStockId,
+      });
+    });
+  }
+
+  validateUserStock(userId: number, userStock: UserStock | null) {
+    if (!userStock) {
+      throw new BadRequestException('user stock not found');
+    }
+    if (userStock.user) {
+      if (userStock.user.id !== userId) {
+        throw new BadRequestException('you are not owner of user stock');
+      }
+      return;
+    }
+    throw new Error('Invalid user stock row');
   }
 
   private async validateStockExists(stockId: string, manager: EntityManager) {
