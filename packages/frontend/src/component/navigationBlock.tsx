@@ -1,9 +1,14 @@
 import React from 'react';
+import { ChildSvgProps } from '@/assets/base.svg.tsx';
 import SearchSvg from '@/assets/search.svg.tsx';
 
 interface NavItemProps {
-  SvgComponent: React.FC;
+  SvgComponent: React.FC<ChildSvgProps>;
   label: string;
+  isOpen: boolean;
+}
+
+interface SearchBoxProps {
   isOpen: boolean;
 }
 
@@ -16,11 +21,15 @@ export const NavigationBlock: React.FC<NavItemProps> = ({
   isOpen,
 }) => {
   return (
-    <li className="w-full">
+    <li className="h-[3.5rem] w-full">
       <a className={boxClassName}>
-        <SvgComponent />
+        <SvgComponent
+          width={'2rem'}
+          height={'2rem'}
+          className={'min-w-[73px]'}
+        />
         <span
-          className={`${!isOpen ? 'opacity-0' : ''} box-border w-full whitespace-nowrap`}
+          className={`${!isOpen ? 'opacity-0' : ''} text-gray display-bold16 box-border w-full whitespace-nowrap`}
         >
           {label}
         </span>
@@ -29,13 +38,13 @@ export const NavigationBlock: React.FC<NavItemProps> = ({
   );
 };
 
-export const SearchBox: React.FC = () => {
+export const SearchBox: React.FC<SearchBoxProps> = ({ isOpen }) => {
   return (
-    <li className="h-[45px] w-full">
+    <li className="h-[3.5rem] w-full">
       <a className={boxClassName}>
-        <SearchSvg />
+        <SearchSvg width={'2rem'} height={'2rem'} className={'min-w-[73px]'} />
         <input
-          className="bg-light-orange h-full w-full rounded-r-xl outline-none"
+          className={`bg-light-orange ${!isOpen ? 'opacity-0' : 'opacity-100'} display-bold16 text-gray h-full w-full rounded-r-xl pl-2 opacity-0 outline-none`}
           type="search"
           placeholder="search..."
         />

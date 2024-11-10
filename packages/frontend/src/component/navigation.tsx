@@ -41,8 +41,8 @@ export const Navigation = () => {
         </header>
         <div className="mt-4 flex h-[calc(100%-125px)] flex-col justify-between">
           <div>
-            <ul className="flex flex-col gap-10">
-              <SearchBox />
+            <ul className="flex flex-col gap-5">
+              <SearchBox isOpen={isOpen} />
               <NavigationBlock
                 SvgComponent={HomeSvg}
                 label={'홈'}
