@@ -21,7 +21,7 @@ export const StockDetail = () => {
           <Plus /> 내 주식 추가
         </Button>
       </header>
-      <article className="grid grid-cols-[2fr_1fr_1fr] gap-5 [&_section]:gap-5">
+      <article className="grid grid-cols-[2.5fr_1fr_1fr] gap-5 [&_section]:gap-5">
         <section className="flex flex-col">
           <div className="h-[23rem] border">graph</div>
           <StockMetricsPanel />

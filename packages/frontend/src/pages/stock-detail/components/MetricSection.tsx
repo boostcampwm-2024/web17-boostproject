@@ -8,9 +8,9 @@ interface MetricSectionProps {
 
 export const MetricSection = ({ title, metricInfo }: MetricSectionProps) => {
   return (
-    <section className="flex flex-col gap-3">
+    <section className="flex flex-col">
       <Title>{title}</Title>
-      <section className="grid grid-cols-[repeat(4,100px)] items-center gap-3">
+      <section className="grid grid-cols-[repeat(4,100px)] items-center">
         {metricInfo.map((info) => (
           <MetricItem label={info.label} value={info.value} key={info.label} />
         ))}
