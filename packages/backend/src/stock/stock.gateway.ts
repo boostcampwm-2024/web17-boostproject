@@ -17,11 +17,16 @@ export class StockGateway {
   constructor() {}
 
   @SubscribeMessage('connectStock')
-  handleJoinStockRoom(
+  handleConnectStock(
     @MessageBody() stockId: string,
     @ConnectedSocket() client: Socket,
   ) {
     client.join(stockId);
+
+    client.emit('connectionSuccess', {
+      message: `Successfully connected to stock room: ${stockId}`,
+      stockId,
+    });
   }
 
   onUpdateStock(
