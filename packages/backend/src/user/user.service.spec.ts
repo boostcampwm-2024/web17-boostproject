@@ -17,7 +17,7 @@ describe('UserService 테스트', () => {
     email: 'test@naver.com',
     type: OauthType.GOOGLE,
     nickname: 'test',
-    oauthId: 1,
+    oauthId: '123123231242141',
   };
 
   test('유저를 생성한다', async () => {
