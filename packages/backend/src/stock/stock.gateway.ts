@@ -7,7 +7,9 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
-@WebSocketGateway()
+@WebSocketGateway({
+  path: '/stock',
+})
 export class StockGateway {
   @WebSocketServer()
   server: Server;
