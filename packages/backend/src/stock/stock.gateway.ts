@@ -22,7 +22,12 @@ export class StockGateway {
     client.join(stockId);
   }
 
-  onUpdateStock(stockId: string, price: number, change: number) {
-    this.server.to(stockId).emit('updateStock', price, change);
+  onUpdateStock(
+    stockId: string,
+    price: number,
+    change: number,
+    volume: number,
+  ) {
+    this.server.to(stockId).emit('updateStock', { price, change, volume });
   }
 }
