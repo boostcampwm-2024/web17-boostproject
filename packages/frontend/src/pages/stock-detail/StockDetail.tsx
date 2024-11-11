@@ -27,7 +27,7 @@ export const StockDetail = () => {
           <StockMetricsPanel />
         </section>
         <ChatPanel />
-        <section className="grid grid-rows-2">
+        <section className="grid grid-rows-[1fr_2fr]">
           <NotificationPanel />
           <AddAlarmForm />
         </section>
