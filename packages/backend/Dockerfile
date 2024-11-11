@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM node:20-alpine
 WORKDIR /packages
 COPY . .
 RUN yarn install --frozen-lockfile
