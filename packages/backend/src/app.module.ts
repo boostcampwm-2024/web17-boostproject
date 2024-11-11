@@ -7,6 +7,7 @@ import { logger } from '@/configs/logger.config';
 import { typeormConfig } from '@/configs/typeorm.config';
 import { StockModule } from '@/stock/stock.module';
 import { UserModule } from '@/user/user.module';
+import { AuthModule } from '@/auth/auth.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { UserModule } from '@/user/user.module';
     UserModule,
     OpenapiScraperModule,
     StockPriceModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
