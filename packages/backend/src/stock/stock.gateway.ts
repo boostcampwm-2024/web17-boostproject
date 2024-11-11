@@ -29,6 +29,18 @@ export class StockGateway {
     });
   }
 
+  handleDisconnectStock(
+    @MessageBody() stockId: string,
+    @ConnectedSocket() client: Socket,
+  ) {
+    client.leave(stockId);
+
+    client.emit('disconnectionSuccess', {
+      message: `Successfully disconnected to stock room: ${stockId}`,
+      stockId,
+    });
+  }
+
   onUpdateStock(
     stockId: string,
     price: number,
