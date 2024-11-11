@@ -8,16 +8,15 @@ export class GoogleAuthService {
 
   async attemptAuthentication(userInfo: OauthUserInfo) {
     const { email, givenName, familyName, oauthId, type } = userInfo;
-    console.log(email);
     const user = await this.userService.findUserByOauthIdAndType(oauthId, type);
     if (user) {
       return user;
     }
     if (!email) {
-      new UnauthorizedException('email is required');
+      throw new UnauthorizedException('email is required');
     }
     if (!givenName && !familyName) {
-      new UnauthorizedException('name is required');
+      throw new UnauthorizedException('name is required');
     }
     return await this.userService.register({
       type,
@@ -28,6 +27,6 @@ export class GoogleAuthService {
   }
 
   private createName(givenName?: string, familyName?: string) {
-    return `${givenName ? givenName : ''}${familyName ? ` ${familyName}` : ''}`;
+    return `${givenName ? `${givenName} ` : ''}${familyName ? familyName : ''}`.trim();
   }
 }
