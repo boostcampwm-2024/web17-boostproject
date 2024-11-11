@@ -1,16 +1,21 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { DataSource, EntityManager } from 'typeorm';
+import { Logger } from 'winston';
 import { Stock } from './domain/stock.entity';
 import { UserStock } from '@/stock/domain/userStock.entity';
 
 @Injectable()
 export class StockService {
-  constructor(private readonly datasource: DataSource) {}
+  constructor(
+    private readonly datasource: DataSource,
+    @Inject('winston') private readonly logger: Logger,
+  ) {}
 
   async increaseView(stockId: string) {
     await this.datasource.transaction(async (manager) => {
       const isExists = await manager.exists(Stock, { where: { id: stockId } });
       if (!isExists) {
+        this.logger.warn(`stock not found: ${stockId}`);
         throw new BadRequestException('stock not found');
       }
       return await manager.increment(Stock, { id: stockId }, 'views', 1);
