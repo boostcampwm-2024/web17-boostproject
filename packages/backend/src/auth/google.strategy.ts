@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common';
+import { Inject, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy, VerifyCallback } from 'passport-google-oauth20';
 import { Logger } from 'winston';
@@ -26,7 +26,22 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
     profile: Profile,
     done: VerifyCallback,
   ) {
-    this.logger.info(`accessToken: ${accessToken.slice(0, 10)}...`);
+    const { id, emails, name, provider } = profile;
+    if (!emails) {
+      done(new UnauthorizedException('email is required'), false);
+      return;
+    }
+    if (!name) {
+      done(new UnauthorizedException('name is required'), false);
+      return;
+    }
+    const userInfo = {
+      type: provider,
+      oauthId: id,
+      emails: emails[0].value,
+      nickname: `${name.givenName} ${name.familyName}`,
+    };
+    this.logger.info(`google user info: ${JSON.stringify(userInfo)}`);
     done(null, false);
   }
 }
