@@ -1666,6 +1666,13 @@
   resolved "https://registry.yarnpkg.com/@types/triple-beam/-/triple-beam-1.3.5.tgz#74fef9ffbaa198eb8b588be029f38b00299caa2c"
   integrity sha512-6WaYesThRMCl19iryMYP7/x2OVgCtbIVflDGFpWnb9irXI3UjYE4AzmYuiUKY1AJstGijoY+MgUszMgRxIYTYw==
 
+"@types/unzipper@^0.10.10":
+  version "0.10.10"
+  resolved "https://registry.yarnpkg.com/@types/unzipper/-/unzipper-0.10.10.tgz#4407f7f633db0c5cf20f05257352cb8197fb9e5a"
+  integrity sha512-jKJdNxhmCHTZsaKW5x0qjn6rB+gHk0w5VFbEKsw84i+RJqXZyfTmGnpjDcKqzMpjz7VVLsUBMtO5T3mVidpt0g==
+  dependencies:
+    "@types/node" "*"
+
 "@types/validator@^13.11.8":
   version "13.12.2"
   resolved "https://registry.yarnpkg.com/@types/validator/-/validator-13.12.2.tgz#760329e756e18a4aab82fc502b51ebdfebbe49f5"
