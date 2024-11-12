@@ -9,7 +9,7 @@ import { Button } from '@/components/ui';
 
 export const StockDetail = () => {
   return (
-    <div className="flex flex-col gap-7 px-60 py-14">
+    <div className="flex flex-col gap-7">
       <header className="flex gap-7">
         <h1 className="display-bold24">삼성전자</h1>
         <Button
