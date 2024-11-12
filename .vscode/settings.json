@@ -1,6 +1,0 @@
-{
-	"prettier.prettierPath": "./node_modules/prettier",
-	"prettier.configPath": "./.prettierrc",
-	"prettier.embeddedLanguageFormatting": "auto",
-	"editor.defaultFormatter": "esbenp.prettier-vscode"
-}

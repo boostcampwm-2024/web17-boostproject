@@ -1,7 +1,8 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
+//TODO : entity update require
 @Entity()
-export class KospiMaster {
+export class Master {
   @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id?: number;
 

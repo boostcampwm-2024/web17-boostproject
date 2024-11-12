@@ -5,17 +5,20 @@ import * as https from 'https';
 import * as readline from 'readline';
 import * as iconv from 'iconv-lite';
 import * as unzipper from 'unzipper';
-import { DownloadDto } from './dto/download.dto';
-import { KospiMaster } from './entities/stock.entity';
+import { MasterDownloadDto } from './dto/master-download.dto';
+import { Master } from './entities/stock.entity';
+import { config as dotenvConfig } from 'dotenv';
+
+dotenvConfig();
 
 @Injectable()
 export class KoreaStockInfoService {
   constructor() {
-    this.downloadKosdaqMaster({ baseDir: './' });
-    this.downloadKospiMaster({ baseDir: './' });
+    this.downloadMaster({ baseDir: './', target: 'kosdaq_code' });
+    this.downloadMaster({ baseDir: './', target: 'kosdaq_code' });
 
-    this.getKospiMasterData('./');
-    this.getKosdaqMasterData('./');
+    this.getKospiMasterData({ baseDir: './', target: 'kosdaq_code' });
+    this.getKosdaqMasterData({ baseDir: './', target: 'kosdaq_code' });
   }
 
   private async downloadFile(url: string, filePath: string): Promise<void> {
@@ -43,16 +46,22 @@ export class KoreaStockInfoService {
       .promise();
   }
 
-  public async downloadKosdaqMaster(downloadDto: DownloadDto): Promise<any> {
-    const { baseDir } = downloadDto;
-    const fileName = 'kosdaq_code.zip';
-    const filePath = path.join(baseDir, fileName);
-    const extractedFile = path.join(baseDir, 'kosdaq_code.mst');
+  private getValueFromMst(row: string, start: number, end: number) {
+    return row.slice(start, end).trim();
+  }
 
-    await this.downloadFile(
-      'https://new.real.download.dws.co.kr/common/master/kosdaq_code.mst.zip',
-      filePath,
-    );
+  public async downloadMaster(downloadDto: MasterDownloadDto): Promise<any> {
+    const { baseDir, target } = downloadDto;
+    const fileName = target + '.zip';
+    const targetFileName = target + '.mst';
+    const url =
+      process.env.MST_URL +
+      target +
+      '.mst.zip';
+    const filePath = path.join(baseDir, fileName);
+    const extractedFile = path.join(baseDir, targetFileName);
+
+    await this.downloadFile(url, filePath);
     await this.extractZip(filePath, baseDir);
 
     fs.unlink(filePath, (err) => {
@@ -62,39 +71,25 @@ export class KoreaStockInfoService {
     return extractedFile;
   }
 
-  public async downloadKospiMaster(downloadDto: DownloadDto): Promise<any> {
-    const { baseDir } = downloadDto;
-    const fileName = 'kospi_code.zip';
-    const filePath = path.join(baseDir, fileName);
-    const extractedFile = path.join(baseDir, 'kospi_code.mst');
-
-    await this.downloadFile(
-      'https://new.real.download.dws.co.kr/common/master/kospi_code.mst.zip',
-      filePath,
-    );
-    await this.extractZip(filePath, baseDir);
-    fs.unlink(filePath, (err) => {
-      if (err) throw err;
-    });
-
-    return extractedFile;
-  }
-
-  public async getKospiMasterData(baseDir: string): Promise<KospiMaster[]> {
-    const fileName = path.join(baseDir, 'kospi_code.mst');
-    const kospiMasters: KospiMaster[] = [];
+  public async getKospiMasterData(
+    downloadDto: MasterDownloadDto,
+  ): Promise<Master[]> {
+    const targetFileName = downloadDto.target + '.mst';
+    const fileName = path.join(downloadDto.baseDir, targetFileName);
+    const encoding = 'cp949';
+    const kospiMasters: Master[] = [];
 
     const rl = readline.createInterface({
-      input: fs.createReadStream(fileName).pipe(iconv.decodeStream('cp949')),
+      input: fs.createReadStream(fileName).pipe(iconv.decodeStream(encoding)),
       crlfDelay: Infinity,
     });
 
     for await (const row of rl) {
-      const shortCode = row.slice(0, 9).trim();
-      const standardCode = row.slice(9, 21).trim();
-      const koreanName = row.slice(21, row.length - 228).trim();
-      const groupCode = row.slice(-228, -226).trim();
-      const marketCapSize = row.slice(-226, -225).trim();
+      const shortCode = this.getValueFromMst(row, 0, 9);
+      const standardCode = this.getValueFromMst(row, 9, 21);
+      const koreanName = this.getValueFromMst(row, 21, row.length - 228);
+      const groupCode = this.getValueFromMst(row, row.length - 228, row.length - 226);
+      const marketCapSize = this.getValueFromMst(row, row.length - 226, row.length - 225);
 
       kospiMasters.push({
         shortCode,
@@ -109,21 +104,25 @@ export class KoreaStockInfoService {
     return kospiMasters;
   }
 
-  public async getKosdaqMasterData(baseDir: string): Promise<KospiMaster[]> {
-    const fileName = path.join(baseDir, 'kosdaq_code.mst');
-    const kosdaqMasters: KospiMaster[] = [];
+  public async getKosdaqMasterData(
+    downloadDto: MasterDownloadDto,
+  ): Promise<Master[]> {
+    const targetFileName = downloadDto.target + '.mst';
+    const fileName = path.join(downloadDto.baseDir, targetFileName);
+    const encoding = 'cp949';
+    const kosdaqMasters: Master[] = [];
 
     const rl = readline.createInterface({
-      input: fs.createReadStream(fileName).pipe(iconv.decodeStream('cp949')),
+      input: fs.createReadStream(fileName).pipe(iconv.decodeStream(encoding)),
       crlfDelay: Infinity,
     });
 
     for await (const row of rl) {
-      const shortCode = row.slice(0, 9).trim();
-      const standardCode = row.slice(9, 21).trim();
-      const koreanName = row.slice(21, row.length - 222).trim();
-      const groupCode = row.slice(-222, -220).trim();
-      const marketCapSize = row.slice(-220, -219).trim();
+      const shortCode = this.getValueFromMst(row, 0, 9);
+      const standardCode = this.getValueFromMst(row, 9, 21);
+      const koreanName = this.getValueFromMst(row, 21, row.length - 222);
+      const groupCode = this.getValueFromMst(row, row.length - 222, row.length - 220);
+      const marketCapSize = this.getValueFromMst(row, row.length - 220, row.length - 219);
 
       kosdaqMasters.push({
         shortCode,
