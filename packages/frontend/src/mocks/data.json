@@ -1,0 +1,13 @@
+{
+  "price": [
+    { "label": "현재가", "value": "00.000" },
+    { "label": "52주 최고가", "value": "00.000" },
+    { "label": "변동률", "value": "00.000" },
+    { "label": "52주 최저가", "value": "00.000" }
+  ],
+  "enterprise value": [
+    { "label": "시가총액", "value": "00.000" },
+    { "label": "EPS", "value": "00.000" },
+    { "label": "PER", "value": "00.000" }
+  ]
+}
