@@ -6,6 +6,5 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "outDir": "./dist"
   }
 }

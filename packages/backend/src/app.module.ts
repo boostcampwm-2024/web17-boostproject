@@ -11,7 +11,7 @@ import { StockPriceModule } from '@/stock-price/stock-price.module';
 
 @Module({
   imports: [
-    OpenapiScraperModule,
+    //OpenapiScraperModule,
     StockPriceModule,
     StockModule,
     UserModule,
