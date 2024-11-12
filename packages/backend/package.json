@@ -37,7 +37,6 @@
     "nest-winston": "^1.9.7",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
-    "dotenv": "^16.4.5",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
     "socket.io": "^4.8.1",
