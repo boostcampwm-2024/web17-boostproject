@@ -1,6 +1,16 @@
-import { Body, Controller, Delete, HttpCode, Post } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+} from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiParam } from '@nestjs/swagger';
+import { StockDetailResponse } from './dto/stockDetail.response';
 import { StockService } from './stock.service';
+import { StockDetailService } from './stockDetail.service';
 import { StockViewsResponse } from '@/stock/dto/stock.Response';
 import { StockViewRequest } from '@/stock/dto/stockView.request';
 import {
@@ -11,7 +21,10 @@ import { UserStockResponse } from '@/stock/dto/userStock.response';
 
 @Controller('stock')
 export class StockController {
-  constructor(private readonly stockService: StockService) {}
+  constructor(
+    private readonly stockService: StockService,
+    private readonly stockDetailService: StockDetailService,
+  ) {}
 
   @HttpCode(200)
   @Post('/view')
@@ -79,5 +92,27 @@ export class StockController {
       request.userStockId,
       '사용자 소유 주식을 삭제했습니다.',
     );
+  }
+
+  @ApiOperation({
+    summary: '주식 상세 정보 조회 API',
+    description: '시가 총액, EPS, PER, 52주 최고가, 52주 최저가를 조회합니다',
+  })
+  @ApiOkResponse({
+    description: '주식 상세 정보 조회 성공',
+    example: {
+      marketCap: 352510000000000,
+      eps: 4091,
+      per: 17.51,
+      high52w: 88000,
+      low52w: 53000,
+    },
+  })
+  @ApiParam({ name: 'stockId', required: true, description: '주식 ID' })
+  @Get(':stockId/detail')
+  async getStockDetail(
+    @Param('stockId') stockId: string,
+  ): Promise<StockDetailResponse> {
+    return await this.stockDetailService.getStockDetailByStockId(stockId);
   }
 }
