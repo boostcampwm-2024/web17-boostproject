@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common';
+import { Inject, UseFilters } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
@@ -9,6 +9,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Logger } from 'winston';
+import { WebSocketExceptionFilter } from '@/middlewares/filter/webSocketException.filter';
 
 interface chatMessage {
   room: string;
@@ -16,13 +17,14 @@ interface chatMessage {
 }
 
 @WebSocketGateway({ namespace: 'chat' })
+@UseFilters(WebSocketExceptionFilter)
 export class ChatGateway implements OnGatewayConnection {
   @WebSocketServer()
   server: Server;
   constructor(@Inject('winston') private readonly logger: Logger) {}
 
   @SubscribeMessage('chat')
-  handleConnectStock(
+  async handleConnectStock(
     @MessageBody() message: chatMessage,
     @ConnectedSocket() client: Socket,
   ) {
@@ -35,7 +37,7 @@ export class ChatGateway implements OnGatewayConnection {
     this.server.to(room).emit('chat', content);
   }
 
-  handleConnection(client: Socket) {
+  async handleConnection(client: Socket) {
     const room = client.handshake.query.stockId;
     if (room) {
       client.join(room);
