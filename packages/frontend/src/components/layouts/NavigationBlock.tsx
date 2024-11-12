@@ -1,12 +1,5 @@
 import React from 'react';
-import { ChildSvgProps } from '@/assets/base.svg.tsx';
-import SearchSvg from '@/assets/search.svg.tsx';
-
-interface NavItemProps {
-  SvgComponent: React.FC<ChildSvgProps>;
-  label: string;
-  isOpen: boolean;
-}
+import SearchSvg from '@/assets/search.svg';
 
 interface SearchBoxProps {
   isOpen: boolean;

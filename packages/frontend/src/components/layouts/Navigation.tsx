@@ -1,10 +1,13 @@
 import { useState } from 'react';
-import BellSvg from '@/assets/bell.svg.tsx';
-import { DarkLightSVG } from '@/assets/darkLight.svg.tsx';
-import GraphSvg from '@/assets/graph.svg.tsx';
-import HomeSvg from '@/assets/home.svg.tsx';
-import { UserSvg } from '@/assets/user.svg.tsx';
-import { NavigationBlock, SearchBox } from '@/component/navigationBlock.tsx';
+import BellSvg from '@/assets/bell.svg?react';
+import GraphSvg from '@/assets/graph.svg?react';
+import HomeSvg from '@/assets/home.svg?react';
+import modeSwitch from '@/assets/modeSwitch.svg?react';
+import UserSvg from '@/assets/user.svg?react';
+import {
+  NavigationBlock,
+  SearchBox,
+} from '@/components/layouts/NavigationBlock';
 
 export const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -63,7 +66,7 @@ export const Navigation = () => {
           <div>
             <ul className="flex flex-col gap-4">
               <NavigationBlock
-                SvgComponent={DarkLightSVG}
+                SvgComponent={modeSwitch}
                 label={'다크모드'}
                 isOpen={isOpen}
               />
