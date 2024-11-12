@@ -4,6 +4,7 @@ import {
   JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Stock } from './stock.entity';
 
@@ -34,4 +35,7 @@ export class StockDetail {
 
   @Column({ type: 'integer' })
   low52w: number;
+
+  @UpdateDateColumn({ type: 'timestamp', name: 'updated_at' })
+  updatedAt: Date;
 }
