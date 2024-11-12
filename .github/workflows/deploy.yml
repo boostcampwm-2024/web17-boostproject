@@ -67,4 +67,5 @@ jobs:
           script: |
             docker pull ${{ secrets.DOCKER_USERNAME }}/frontend:latest
             docker pull ${{ secrets.DOCKER_USERNAME }}/backend:latest
+            docker-compose down 
             docker-compose up -d
