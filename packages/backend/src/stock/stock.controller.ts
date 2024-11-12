@@ -100,13 +100,7 @@ export class StockController {
   })
   @ApiOkResponse({
     description: '주식 상세 정보 조회 성공',
-    example: {
-      marketCap: 352510000000000,
-      eps: 4091,
-      per: 17.51,
-      high52w: 88000,
-      low52w: 53000,
-    },
+    type: StockDetailResponse,
   })
   @ApiParam({ name: 'stockId', required: true, description: '주식 ID' })
   @Get(':stockId/detail')
