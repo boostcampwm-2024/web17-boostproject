@@ -12,7 +12,7 @@ export class UserService {
   constructor(private readonly dataSources: DataSource) {}
 
   async register({ nickname, email, type, oauthId }: RegisterRequest) {
-    const user = await this.dataSources.transaction(async (manager) => {
+    return await this.dataSources.transaction(async (manager) => {
       await this.validateUserExists(type, oauthId, manager);
       return await manager.save(User, {
         nickname,
@@ -21,10 +21,9 @@ export class UserService {
         oauthId,
       });
     });
-    return { nickname: user.nickname, email: user.email, type: user.type };
   }
 
-  async findUserByOauthIdAndType(oauthId: number, type: OauthType) {
+  async findUserByOauthIdAndType(oauthId: string, type: OauthType) {
     return await this.dataSources.manager.findOne(User, {
       where: { oauthId, type },
     });
@@ -32,7 +31,7 @@ export class UserService {
 
   private async validateUserExists(
     type: OauthType,
-    oauthId: number,
+    oauthId: string,
     manager: EntityManager,
   ) {
     if (await manager.exists(User, { where: { oauthId, type } })) {

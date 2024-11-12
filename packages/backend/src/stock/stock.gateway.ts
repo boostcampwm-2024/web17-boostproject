@@ -7,7 +7,9 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
-@WebSocketGateway()
+@WebSocketGateway({
+  path: '/stock',
+})
 export class StockGateway {
   @WebSocketServer()
   server: Server;
@@ -15,14 +17,36 @@ export class StockGateway {
   constructor() {}
 
   @SubscribeMessage('connectStock')
-  handleJoinStockRoom(
+  handleConnectStock(
     @MessageBody() stockId: string,
     @ConnectedSocket() client: Socket,
   ) {
     client.join(stockId);
+
+    client.emit('connectionSuccess', {
+      message: `Successfully connected to stock room: ${stockId}`,
+      stockId,
+    });
   }
 
-  onUpdateStock(stockId: string, price: number, change: number) {
-    this.server.to(stockId).emit('updateStock', price, change);
+  handleDisconnectStock(
+    @MessageBody() stockId: string,
+    @ConnectedSocket() client: Socket,
+  ) {
+    client.leave(stockId);
+
+    client.emit('disconnectionSuccess', {
+      message: `Successfully disconnected to stock room: ${stockId}`,
+      stockId,
+    });
+  }
+
+  onUpdateStock(
+    stockId: string,
+    price: number,
+    change: number,
+    volume: number,
+  ) {
+    this.server.to(stockId).emit('updateStock', { price, change, volume });
   }
 }

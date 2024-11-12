@@ -1,10 +1,20 @@
-import { Inject, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy, VerifyCallback } from 'passport-google-oauth20';
-import { Logger } from 'winston';
+import { GoogleAuthService } from '@/auth/googleAuth.service';
+import { OauthType } from '@/user/domain/ouathType';
 
+export interface OauthUserInfo {
+  type: OauthType;
+  oauthId: string;
+  email?: string;
+  givenName?: string;
+  familyName?: string;
+}
+
+@Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy) {
-  constructor(@Inject('winston') private readonly logger: Logger) {
+  constructor(private readonly googleAuthService: GoogleAuthService@Inject('winston') private readonly logger: Logger) {
     super({
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -27,21 +37,15 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
     done: VerifyCallback,
   ) {
     const { id, emails, name, provider } = profile;
-    if (!emails) {
-      done(new UnauthorizedException('email is required'), false);
-      return;
-    }
-    if (!name) {
-      done(new UnauthorizedException('name is required'), false);
-      return;
-    }
+
     const userInfo = {
-      type: provider,
+      type: provider.toUpperCase() as OauthType,
       oauthId: id,
-      emails: emails[0].value,
-      nickname: `${name.givenName} ${name.familyName}`,
+      email: emails?.[0].value,
+      givenName: name?.givenName,
+      familyName: name?.familyName,
     };
-    this.logger.info(`google user info: ${JSON.stringify(userInfo)}`);
+    const user = await this.googleAuthService.attemptAuthentication(userInfo);
     done(null, false);
   }
 }

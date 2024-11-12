@@ -1,6 +1,13 @@
 import { DataSource } from 'typeorm';
+import { Logger } from 'winston';
 import { StockService } from './stock.service';
 import { createDataSourceMock } from '@/user/user.service.spec';
+
+const logger: Logger = {
+  error: jest.fn(),
+  warn: jest.fn(),
+  info: jest.fn(),
+} as unknown as Logger;
 
 describe('StockService 테스트', () => {
   const stockId = 'A005930';
@@ -13,7 +20,7 @@ describe('StockService 테스트', () => {
       increment: jest.fn().mockResolvedValue({ id: stockId, views: 1 }),
     };
     const dataSource = createDataSourceMock(managerMock);
-    const stockService = new StockService(dataSource as DataSource);
+    const stockService = new StockService(dataSource as DataSource, logger);
 
     await stockService.increaseView(stockId);
 
@@ -25,7 +32,7 @@ describe('StockService 테스트', () => {
       exists: jest.fn().mockResolvedValue(false),
     };
     const dataSource = createDataSourceMock(managerMock);
-    const stockService = new StockService(dataSource as DataSource);
+    const stockService = new StockService(dataSource as DataSource, logger);
 
     await expect(async () => stockService.increaseView('1')).rejects.toThrow(
       'stock not found',
@@ -41,7 +48,7 @@ describe('StockService 테스트', () => {
       insert: jest.fn(),
     };
     const dataSource = createDataSourceMock(managerMock);
-    const stockService = new StockService(dataSource as DataSource);
+    const stockService = new StockService(dataSource as DataSource, logger);
 
     await stockService.createUserStock(userId, stockId);
 
@@ -54,7 +61,7 @@ describe('StockService 테스트', () => {
       exists: jest.fn().mockResolvedValue(false),
     };
     const dataSource = createDataSourceMock(managerMock);
-    const stockService = new StockService(dataSource as DataSource);
+    const stockService = new StockService(dataSource as DataSource, logger);
 
     await expect(() =>
       stockService.createUserStock(userId, 'A'),
@@ -66,7 +73,7 @@ describe('StockService 테스트', () => {
       exists: jest.fn().mockResolvedValueOnce(true).mockResolvedValueOnce(true),
     };
     const dataSource = createDataSourceMock(managerMock);
-    const stockService = new StockService(dataSource as DataSource);
+    const stockService = new StockService(dataSource as DataSource, logger);
 
     await expect(async () =>
       stockService.createUserStock(userId, stockId),
@@ -79,7 +86,7 @@ describe('StockService 테스트', () => {
       delete: jest.fn(),
     };
     const dataSource = createDataSourceMock(managerMock);
-    const stockService = new StockService(dataSource as DataSource);
+    const stockService = new StockService(dataSource as DataSource, logger);
 
     await stockService.deleteUserStock(userId, userStockId);
 
@@ -92,7 +99,7 @@ describe('StockService 테스트', () => {
       findOne: jest.fn().mockResolvedValue(null),
     };
     const dataSource = createDataSourceMock(managerMock);
-    const stockService = new StockService(dataSource as DataSource);
+    const stockService = new StockService(dataSource as DataSource, logger);
 
     await expect(() => stockService.deleteUserStock(userId, 2)).rejects.toThrow(
       'user stock not found',
@@ -105,7 +112,7 @@ describe('StockService 테스트', () => {
       findOne: jest.fn().mockResolvedValue({ user: { id: userId } }),
     };
     const dataSource = createDataSourceMock(managerMock);
-    const stockService = new StockService(dataSource as DataSource);
+    const stockService = new StockService(dataSource as DataSource, logger);
 
     await expect(() =>
       stockService.deleteUserStock(notOwnerUserId, userStockId),

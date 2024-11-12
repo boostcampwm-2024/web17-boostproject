@@ -28,8 +28,8 @@ export class User {
   @Column({ length: 10, default: OauthType.LOCAL })
   type: OauthType = OauthType.LOCAL;
 
-  @Column({ name: 'oauth_id' })
-  oauthId?: number;
+  @Column('decimal', { name: 'oauth_id' })
+  oauthId?: string;
 
   @Column({ name: 'is_light', default: true })
   isLight: boolean = true;
