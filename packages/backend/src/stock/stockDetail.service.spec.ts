@@ -2,7 +2,6 @@ import { NotFoundException } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { Logger } from 'winston';
 import { StockDetail } from './domain/stockDetail.entity';
-import { StockDetailResponse } from './dto/stockDetail.response';
 import { StockDetailService } from './stockDetail.service';
 import { createDataSourceMock } from '@/user/user.service.spec';
 
@@ -42,7 +41,13 @@ describe('StockDetailService 테스트', () => {
     expect(managerMock.findBy).toHaveBeenCalledWith(StockDetail, {
       stock: { id: stockId },
     });
-    expect(result).toBeInstanceOf(StockDetailResponse);
+    expect(result).toMatchObject({
+      marketCap: expect.any(Number),
+      eps: expect.any(Number),
+      per: expect.any(Number),
+      high52w: expect.any(Number),
+      low52w: expect.any(Number),
+    });
     expect(result.marketCap).toEqual(mockStockDetail.marketCap);
     expect(result.eps).toEqual(mockStockDetail.eps);
     expect(result.per).toEqual(mockStockDetail.per);
