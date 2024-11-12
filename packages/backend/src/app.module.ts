@@ -4,11 +4,12 @@ import { WinstonModule } from 'nest-winston';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from '@/auth/auth.module';
-import { logger } from '@/configs/logger.config';
+import { ChatModule } from '@/chat/chat.module';
 import {
   typeormDevelopConfig,
   typeormProductConfig,
 } from '@/configs/devTypeormConfig';
+import { logger } from '@/configs/logger.config';
 import { StockModule } from '@/stock/stock.module';
 import { UserModule } from '@/user/user.module';
 
@@ -23,6 +24,7 @@ import { UserModule } from '@/user/user.module';
     ),
     WinstonModule.forRoot(logger),
     AuthModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],
