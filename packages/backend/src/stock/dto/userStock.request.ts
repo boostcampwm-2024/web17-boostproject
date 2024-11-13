@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsInt, IsString } from 'class-validator';
 
-export class UserStockCreateRequest {
+export class UserStockRequest {
   @ApiProperty({
     example: 'A005930',
     description: '주식 종목 id',

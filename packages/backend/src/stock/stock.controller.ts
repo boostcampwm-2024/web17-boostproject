@@ -2,23 +2,29 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   HttpCode,
   Post,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { ApiCookieAuth, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
+import { Request } from 'express';
 import { StockService } from './stock.service';
+import SessionGuard from '@/auth/session/session.guard';
+import { GetUser } from '@/common/decorator/user.decorator';
+import { sessionConfig } from '@/configs/session.config';
 import { StockViewsResponse } from '@/stock/dto/stock.Response';
 import { StockViewRequest } from '@/stock/dto/stockView.request';
 import {
-  UserStockCreateRequest,
   UserStockDeleteRequest,
+  UserStockRequest,
 } from '@/stock/dto/userStock.request';
-import { UserStockResponse } from '@/stock/dto/userStock.response';
-import SessionGuard from '@/auth/session/session.guard';
+import {
+  UserStockOwnerResponse,
+  UserStockResponse,
+} from '@/stock/dto/userStock.response';
 import { User } from '@/user/domain/user.entity';
-import { GetUser } from '@/common/decorator/user.decorator';
-import { sessionConfig } from '@/configs/session.config';
 
 @Controller('stock')
 export class StockController {
@@ -57,7 +63,7 @@ export class StockController {
   })
   @UseGuards(SessionGuard)
   async createUserStock(
-    @Body() requestBody: UserStockCreateRequest,
+    @Body() requestBody: UserStockRequest,
     @GetUser() user: User,
   ): Promise<UserStockResponse> {
     const stock = await this.stockService.createUserStock(
@@ -94,5 +100,29 @@ export class StockController {
       request.userStockId,
       '사용자 소유 주식을 삭제했습니다.',
     );
+  }
+
+  @ApiOperation({
+    summary: '유저 소유 주식 확인 API',
+    description: '유저가 소유 주식을 확인한다.',
+  })
+  @ApiOkResponse({
+    description: '유저 소유 확인',
+    type: UserStockOwnerResponse,
+  })
+  @Get('user/ownership')
+  async checkOwnership(
+    @Body() body: UserStockRequest,
+    @Req() request: Request,
+  ) {
+    const user = request.user as User;
+    if (!user) {
+      return new UserStockOwnerResponse(false);
+    }
+    const result = await this.stockService.isUserStockOwner(
+      body.stockId,
+      user.id,
+    );
+    return new UserStockOwnerResponse(result);
   }
 }
