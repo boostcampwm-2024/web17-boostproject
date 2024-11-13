@@ -10,6 +10,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Logger } from 'winston';
 import { WebSocketExceptionFilter } from '@/middlewares/filter/webSocketException.filter';
+import { StockService } from '@/stock/stock.service';
 
 interface chatMessage {
   room: string;
@@ -21,7 +22,10 @@ interface chatMessage {
 export class ChatGateway implements OnGatewayConnection {
   @WebSocketServer()
   server: Server;
-  constructor(@Inject('winston') private readonly logger: Logger) {}
+  constructor(
+    @Inject('winston') private readonly logger: Logger,
+    private readonly stockService: StockService,
+  ) {}
 
   @SubscribeMessage('chat')
   async handleConnectStock(
@@ -39,6 +43,12 @@ export class ChatGateway implements OnGatewayConnection {
 
   async handleConnection(client: Socket) {
     const room = client.handshake.query.stockId;
+    if (!room || !(await this.stockService.checkStockExist(room as string))) {
+      client.emit('error', 'Invalid stockId');
+      this.logger.warn(`client connected with invalid stockId: ${room}`);
+      client.disconnect();
+      return;
+    }
     if (room) {
       client.join(room);
       this.logger.info(`client joined room ${room}`);

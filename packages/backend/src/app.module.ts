@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { WinstonModule } from 'nest-winston';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { AuthModule } from '@/auth/auth.module';
 import { ChatModule } from '@/chat/chat.module';
 import {
@@ -26,7 +24,7 @@ import { UserModule } from '@/user/user.module';
     AuthModule,
     ChatModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
