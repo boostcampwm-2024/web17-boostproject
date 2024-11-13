@@ -19,6 +19,6 @@ export class WebSocketExceptionFilter implements WsExceptionFilter {
       message: errorMessage,
       data,
     });
-    this.logger.error(`error occurred: ${errorMessage}`);
+    this.logger.warn(`error occurred: ${errorMessage}`);
   }
 }
