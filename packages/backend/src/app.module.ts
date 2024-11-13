@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { WinstonModule } from 'nest-winston';
 import { AuthModule } from '@/auth/auth.module';
+import { SessionModule } from '@/auth/session.module';
 import { ChatModule } from '@/chat/chat.module';
 import {
   typeormDevelopConfig,
@@ -23,6 +24,7 @@ import { UserModule } from '@/user/user.module';
     WinstonModule.forRoot(logger),
     AuthModule,
     ChatModule,
+    SessionModule,
   ],
   controllers: [],
   providers: [],
