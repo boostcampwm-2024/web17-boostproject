@@ -47,6 +47,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
       familyName: name?.familyName,
     };
     const user = await this.googleAuthService.attemptAuthentication(userInfo);
-    done(null, false);
+    done(null, user);
   }
 }
