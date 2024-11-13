@@ -14,6 +14,8 @@ import { UserModule } from '@/user/user.module';
 
 @Module({
   imports: [
+    //OpenapiScraperModule,
+    //StockPriceModule,
     StockModule,
     UserModule,
     TypeOrmModule.forRoot(
