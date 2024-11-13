@@ -9,13 +9,11 @@ import {
 } from '@/configs/devTypeormConfig';
 import { StockModule } from '@/stock/stock.module';
 import { UserModule } from '@/user/user.module';
-import { OpenapiScraperModule } from './scraper/openapi/openapi-scraper.module';
-import { KoreaStockInfoModule } from './scraper/korea-stock-info/korea-stock-info.module';
+import { ScraperModule } from './scraper/scraper.module';
 
 @Module({
   imports: [
-    //OpenapiScraperModule,
-    KoreaStockInfoModule,
+    ScraperModule,
     StockModule,
     UserModule,
     TypeOrmModule.forRoot(
@@ -25,6 +23,7 @@ import { KoreaStockInfoModule } from './scraper/korea-stock-info/korea-stock-inf
     ),
     WinstonModule.forRoot(logger),
     AuthModule,
+    ScraperModule,
   ],
   controllers: [],
   providers: [],

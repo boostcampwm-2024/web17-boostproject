@@ -22,6 +22,26 @@ export class KoreaStockInfoService {
     this.initKoreaStockInfo();
   }
 
+  private async existsStockInfo(stockId: string, manager: EntityManager) {
+    return await manager.exists(Stock, {
+      where: {
+        id: stockId,
+      },
+    });
+  }
+  private async saveStockData(stockData: Stock[]): Promise<void> {
+    const manager = this.datasource.manager;
+
+    for (const data of stockData) {
+      const exists = await this.existsStockInfo(data.id!, manager);
+      if (!exists) {
+        await manager.save(Stock, data);
+        this.logger.info(`Stock with id ${data.id} has been saved.`);
+      } else {
+        this.logger.info(`Stock with id ${data.id} already exists.`);
+      }
+    }
+  }
   public async initKoreaStockInfo(): Promise<void> {
     await this.downloadMaster({ baseDir: './', target: 'kosdaq_code' });
     const kosdaqData = await this.getKosdaqMasterData({
@@ -29,9 +49,7 @@ export class KoreaStockInfoService {
       target: 'kosdaq_code',
     });
 
-    for await (const data of kosdaqData) {
-      this.datasource.manager.create(Stock, data);
-    }
+    this.saveStockData(kosdaqData);
 
     await this.downloadMaster({ baseDir: './', target: 'kospi_code' });
     const kospiData = await this.getKospiMasterData({
@@ -41,6 +59,8 @@ export class KoreaStockInfoService {
     for await (const data of kospiData) {
       this.datasource.manager.create(Stock, data);
     }
+
+    this.saveStockData(kosdaqData);
   }
 
   private async downloadFile(url: string, filePath: string): Promise<void> {
