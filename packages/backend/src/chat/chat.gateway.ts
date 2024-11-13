@@ -15,10 +15,19 @@ import {
 } from '@/auth/session/webSocketSession.guard.';
 import { WebSocketExceptionFilter } from '@/middlewares/filter/webSocketException.filter';
 import { StockService } from '@/stock/stock.service';
+import { ChatService } from '@/chat/chat.service';
+import { Chat } from '@/chat/domain/chat.entity';
 
 interface chatMessage {
   room: string;
   content: string;
+}
+
+interface chatResponse {
+  likeCount: number;
+  message: string;
+  type: string;
+  createdAt: Date;
 }
 
 @WebSocketGateway({ namespace: 'chat' })
@@ -29,6 +38,7 @@ export class ChatGateway implements OnGatewayConnection {
   constructor(
     @Inject('winston') private readonly logger: Logger,
     private readonly stockService: StockService,
+    private readonly chatService: ChatService,
   ) {}
 
   @UseGuards(WebSocketSessionGuard)
@@ -38,13 +48,21 @@ export class ChatGateway implements OnGatewayConnection {
     @ConnectedSocket() client: SessionSocket,
   ) {
     const { room, content } = message;
-    this.logger.info(`message from ${client.session?.nickname}`);
     if (!client.rooms.has(room)) {
       client.emit('error', 'You are not in the room');
       this.logger.warn(`client is not in the room ${room}`);
       return;
     }
-    this.server.to(room).emit('chat', content);
+    if (!client.session || !client.session.id) {
+      client.emit('error', 'Invalid session');
+      this.logger.warn('client session is invalid');
+      return;
+    }
+    const savedChat = await this.chatService.saveChat(client.session.id, {
+      stockId: room,
+      message: content,
+    });
+    this.server.to(room).emit('chat', this.toResponse(savedChat));
   }
 
   async handleConnection(client: Socket) {
@@ -59,5 +77,14 @@ export class ChatGateway implements OnGatewayConnection {
       client.join(room);
       this.logger.info(`client joined room ${room}`);
     }
+  }
+
+  private toResponse(chat: Chat): chatResponse {
+    return {
+      likeCount: chat.likeCount,
+      message: chat.message,
+      type: chat.type,
+      createdAt: chat.date?.createdAt || new Date(),
+    };
   }
 }

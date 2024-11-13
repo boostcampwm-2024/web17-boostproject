@@ -18,11 +18,11 @@ export class Chat {
   @Column()
   message: string;
 
-  @Column()
-  type: ChatType;
+  @Column({ type: 'enum', enum: ChatType, default: ChatType.NORMAL })
+  type: ChatType = ChatType.NORMAL;
 
-  @Column({ name: 'like_count' })
-  likeCount: number;
+  @Column({ name: 'like_count', default: 0 })
+  likeCount: number = 0;
 
   @Column(() => DateEmbedded, { prefix: '' })
   date?: DateEmbedded;
