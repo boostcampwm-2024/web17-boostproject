@@ -1,4 +1,4 @@
-import { Inject, UseFilters } from '@nestjs/common';
+import { Inject, UseFilters, UseGuards } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
@@ -9,6 +9,10 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Logger } from 'winston';
+import {
+  SessionSocket,
+  WebSocketSessionGuard,
+} from '@/auth/session/webSocketSession.guard.';
 import { WebSocketExceptionFilter } from '@/middlewares/filter/webSocketException.filter';
 import { StockService } from '@/stock/stock.service';
 
@@ -27,12 +31,14 @@ export class ChatGateway implements OnGatewayConnection {
     private readonly stockService: StockService,
   ) {}
 
+  @UseGuards(WebSocketSessionGuard)
   @SubscribeMessage('chat')
   async handleConnectStock(
     @MessageBody() message: chatMessage,
-    @ConnectedSocket() client: Socket,
+    @ConnectedSocket() client: SessionSocket,
   ) {
     const { room, content } = message;
+    this.logger.info(`message from ${client.session?.nickname}`);
     if (!client.rooms.has(room)) {
       client.emit('error', 'You are not in the room');
       this.logger.warn(`client is not in the room ${room}`);
