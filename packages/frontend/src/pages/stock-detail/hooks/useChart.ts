@@ -8,6 +8,7 @@ import {
   createChartOptions,
   createVolumeOptions,
 } from '@/utils/createChartOptions';
+import { getHistogramColorData } from '@/utils/getHistogramColorData';
 
 interface UseChartProps {
   containerRef: RefObject<HTMLDivElement>;
@@ -35,7 +36,8 @@ export const useChart = ({ containerRef, theme }: UseChartProps) => {
         bottom: 0,
       },
     });
-    volumeSeries.setData(volumeData.data);
+    const histogramData = getHistogramColorData(volumeData.data);
+    volumeSeries.setData(histogramData);
 
     const candleSeries = chart.current.addCandlestickSeries(
       createCandlestickOptions(theme),
