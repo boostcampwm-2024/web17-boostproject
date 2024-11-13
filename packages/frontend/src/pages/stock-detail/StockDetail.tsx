@@ -1,3 +1,4 @@
+import { TradingChart } from './TradingChart';
 import {
   AddAlarmForm,
   ChatPanel,
@@ -23,7 +24,9 @@ export const StockDetail = () => {
       </header>
       <article className="grid grid-cols-[2.5fr_1fr_1fr] gap-5 [&_section]:gap-5">
         <section className="flex flex-col">
-          <div className="h-[23rem] border">graph</div>
+          <div className="relative h-[30rem]">
+            <TradingChart />
+          </div>
           <StockMetricsPanel />
         </section>
         <ChatPanel />
