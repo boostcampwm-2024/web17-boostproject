@@ -9,10 +9,10 @@ export function ApiGetStockData(summary: string, type: string) {
   return applyDecorators(
     ApiOperation({ summary }),
     ApiParam({
-      name: 'id',
-      type: Number,
+      name: 'stockId',
+      type: String,
       description: '주식 ID',
-      example: 1,
+      example: 'A005930',
     }),
     ApiQuery({
       name: 'lastStartTime',

@@ -1,6 +1,17 @@
-import { Body, Controller, Delete, HttpCode, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
+import { ApiGetStockData } from './decorator/stockData.decorator';
 import { StockService } from './stock.service';
+import { StockDataMinutelyService } from './stockData.service';
 import { StockViewsResponse } from '@/stock/dto/stock.Response';
 import { StockViewRequest } from '@/stock/dto/stockView.request';
 import {
@@ -11,7 +22,10 @@ import { UserStockResponse } from '@/stock/dto/userStock.response';
 
 @Controller('stock')
 export class StockController {
-  constructor(private readonly stockService: StockService) {}
+  constructor(
+    private readonly stockService: StockService,
+    private readonly stockDataMinutelyService: StockDataMinutelyService,
+  ) {}
 
   @HttpCode(200)
   @Post('/view')
@@ -78,6 +92,18 @@ export class StockController {
     return new UserStockResponse(
       request.userStockId,
       '사용자 소유 주식을 삭제했습니다.',
+    );
+  }
+
+  @Get(':stockId/minutely')
+  @ApiGetStockData('주식 분 단위 데이터 조회 API', '분')
+  async getStockDataMinutely(
+    @Param('stockId') stockId: string,
+    @Query() lastStartTime?: string,
+  ) {
+    return this.stockDataMinutelyService.getStockDataMinutely(
+      stockId,
+      lastStartTime,
     );
   }
 }
