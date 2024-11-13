@@ -9,11 +9,13 @@ import {
 } from '@/configs/devTypeormConfig';
 import { StockModule } from '@/stock/stock.module';
 import { UserModule } from '@/user/user.module';
+import { OpenapiScraperModule } from './scraper/openapi/openapi-scraper.module';
+import { KoreaStockInfoModule } from './scraper/korea-stock-info/korea-stock-info.module';
 
 @Module({
   imports: [
     //OpenapiScraperModule,
-    //StockPriceModule,
+    KoreaStockInfoModule,
     StockModule,
     UserModule,
     TypeOrmModule.forRoot(
@@ -28,3 +30,4 @@ import { UserModule } from '@/user/user.module';
   providers: [],
 })
 export class AppModule {}
+
