@@ -12,7 +12,6 @@ export class PriceDto {
 export class VolumeDto {
   startTime: Date;
   volume: number;
-  color: string;
 }
 
 export class StockDataResponse {
