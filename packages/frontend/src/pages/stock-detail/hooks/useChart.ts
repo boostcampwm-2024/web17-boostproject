@@ -29,6 +29,12 @@ export const useChart = ({ containerRef, theme }: UseChartProps) => {
     const volumeSeries = chart.current.addHistogramSeries(
       createVolumeOptions(theme),
     );
+    volumeSeries.priceScale().applyOptions({
+      scaleMargins: {
+        top: 0.9,
+        bottom: 0,
+      },
+    });
     volumeSeries.setData(volumeData.data);
 
     const candleSeries = chart.current.addCandlestickSeries(
