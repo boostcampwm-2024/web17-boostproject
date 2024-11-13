@@ -32,10 +32,9 @@ export const createChartOptions = (theme: ChartTheme) => {
   };
 };
 
-export const createVolumeOptions = (
-  theme: ChartTheme,
-): DeepPartial<HistogramStyleOptions & SeriesOptionsCommon> => ({
-  color: theme.volume.color,
+export const createVolumeOptions = (): DeepPartial<
+  HistogramStyleOptions & SeriesOptionsCommon
+> => ({
   priceLineWidth: 2,
   priceFormat: {
     type: 'volume',

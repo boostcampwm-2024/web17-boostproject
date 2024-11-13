@@ -13,7 +13,4 @@ export interface ChartTheme extends DeepPartial<ChartOptions> {
     wickUpColor: string;
     wickDownColor: string;
   };
-  volume: {
-    color: string;
-  };
 }
