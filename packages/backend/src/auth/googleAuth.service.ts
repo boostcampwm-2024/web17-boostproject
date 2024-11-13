@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { OauthUserInfo } from '@/auth/google.strategy';
+import { OauthUserInfo } from '@/auth/passport/google.strategy';
 import { UserService } from '@/user/user.service';
 
 @Injectable()
