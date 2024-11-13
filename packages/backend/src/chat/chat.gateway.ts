@@ -13,10 +13,10 @@ import {
   SessionSocket,
   WebSocketSessionGuard,
 } from '@/auth/session/webSocketSession.guard.';
-import { WebSocketExceptionFilter } from '@/middlewares/filter/webSocketException.filter';
-import { StockService } from '@/stock/stock.service';
 import { ChatService } from '@/chat/chat.service';
 import { Chat } from '@/chat/domain/chat.entity';
+import { WebSocketExceptionFilter } from '@/middlewares/filter/webSocketException.filter';
+import { StockService } from '@/stock/stock.service';
 
 interface chatMessage {
   room: string;
@@ -75,7 +75,9 @@ export class ChatGateway implements OnGatewayConnection {
     }
     if (room) {
       client.join(room);
+      const messages = await this.chatService.getChatList(room as string);
       this.logger.info(`client joined room ${room}`);
+      client.emit('chat', messages);
     }
   }
 
