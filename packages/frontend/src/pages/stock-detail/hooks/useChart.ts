@@ -28,11 +28,11 @@ export const useChart = ({ containerRef, theme }: UseChartProps) => {
     });
 
     const volumeSeries = chart.current.addHistogramSeries(
-      createVolumeOptions(theme),
+      createVolumeOptions(),
     );
     volumeSeries.priceScale().applyOptions({
       scaleMargins: {
-        top: 0.9,
+        top: 0.93,
         bottom: 0,
       },
     });
