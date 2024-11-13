@@ -33,6 +33,20 @@ export class StockService {
     });
   }
 
+  async isUserStockOwner(stockId: string, userId?: number) {
+    return await this.datasource.transaction(async (manager) => {
+      if (!userId) {
+        return false;
+      }
+      return await manager.exists(UserStock, {
+        where: {
+          user: { id: userId },
+          stock: { id: stockId },
+        },
+      });
+    });
+  }
+
   async checkStockExist(stockId: string) {
     return await this.datasource.manager.exists(Stock, {
       where: { id: stockId },
