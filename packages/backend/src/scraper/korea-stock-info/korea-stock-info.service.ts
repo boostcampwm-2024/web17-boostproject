@@ -29,42 +29,31 @@ export class KoreaStockInfoService {
       },
     });
   }
-  private async saveStockData(stockData: Stock[]): Promise<void> {
+  
+  private async insertStockData(stock: Stock): Promise<void> {
     const manager = this.datasource.manager;
-
-    for (const data of stockData) {
-      const exists = await this.existsStockInfo(data.id!, manager);
-      if (!exists) {
-        await manager.save(Stock, data);
-        this.logger.info(`Stock with id ${data.id} has been saved.`);
-      } else {
-        this.logger.info(`Stock with id ${data.id} already exists.`);
-      }
+    const exists = await this.existsStockInfo(stock.id!, manager);
+    if (!exists) {
+      await manager.save(Stock, stock);
     }
   }
+
   public async initKoreaStockInfo(): Promise<void> {
     await this.downloadMaster({ baseDir: './', target: 'kosdaq_code' });
-    const kosdaqData = await this.getKosdaqMasterData({
+    await this.getKosdaqMasterData({
       baseDir: './',
       target: 'kosdaq_code',
     });
 
-    this.saveStockData(kosdaqData);
-
     await this.downloadMaster({ baseDir: './', target: 'kospi_code' });
-    const kospiData = await this.getKospiMasterData({
+    await this.getKospiMasterData({
       baseDir: './',
       target: 'kospi_code',
     });
-    for await (const data of kospiData) {
-      this.datasource.manager.create(Stock, data);
-    }
-
-    this.saveStockData(kosdaqData);
   }
 
   private async downloadFile(url: string, filePath: string): Promise<void> {
-    console.log(`Starting download from ${url}`);
+    this.logger.info(`Starting download from ${url}`);
     const file = fs.createWriteStream(filePath);
 
     return new Promise((resolve, reject) => {
@@ -81,7 +70,7 @@ export class KoreaStockInfoService {
 
           file.on('finish', () => {
             file.close(() => {
-              console.log('Download completed.');
+              this.logger.info('Download completed.');
               resolve();
             });
           });
@@ -89,7 +78,7 @@ export class KoreaStockInfoService {
         .on('error', (err) => {
           fs.unlink(filePath, (unlinkError) => {
             if (unlinkError) {
-              console.error(`Error deleting file: ${unlinkError.message}`);
+              this.logger.error(`Error deleting file: ${unlinkError.message}`);
             }
             reject(err);
           });
@@ -113,6 +102,7 @@ export class KoreaStockInfoService {
     const downloadZipFile = target + '.mst.zip';
     const outputFile = target + '.mst';
     const url = process.env.MST_URL + target + '.mst.zip';
+    this.logger.info(`Downloading file from ${url} to ${downloadZipFile}`);
     const downloadZipFilePath = path.join(baseDir, downloadZipFile);
     const extractedFile = path.join(baseDir, outputFile);
 
@@ -123,7 +113,7 @@ export class KoreaStockInfoService {
         if (err) throw err;
       });
     } catch (error) {
-      console.error('Error during download or extraction:', error);
+      this.logger.error('Error during download or extraction:', error);
     }
 
     return extractedFile;
@@ -131,11 +121,10 @@ export class KoreaStockInfoService {
 
   public async getKospiMasterData(
     downloadDto: MasterDownloadDto,
-  ): Promise<Stock[]> {
+  ): Promise<void> {
     const targetFileName = downloadDto.target + '.mst';
     const fileName = path.join(downloadDto.baseDir, targetFileName);
     const encoding = 'cp949';
-    const kospiMasters: Stock[] = [];
 
     const rl = readline.createInterface({
       input: fs.createReadStream(fileName).pipe(iconv.decodeStream(encoding)),
@@ -151,31 +140,31 @@ export class KoreaStockInfoService {
         row.length - 226,
       );
 
-      kospiMasters.push({
+      const kospiMaster: Stock = {
         id: shortCode,
         name: koreanName,
         views: 0,
         isTrading: true,
         groupCode,
-      });
+      };
+
+      await this.insertStockData(kospiMaster);
     }
 
     fs.unlink(targetFileName, (unlinkError) => {
       if (unlinkError) {
-        console.error(`Error deleting file: ${unlinkError.message}`);
+        this.logger.error(`Error deleting file: ${unlinkError.message}`);
       }
     });
-    console.log('Done');
-    return kospiMasters;
+    this.logger.info('Kospi master data processing done.');
   }
 
   public async getKosdaqMasterData(
     downloadDto: MasterDownloadDto,
-  ): Promise<Stock[]> {
+  ): Promise<void> {
     const targetFileName = downloadDto.target + '.mst';
     const fileName = path.join(downloadDto.baseDir, targetFileName);
     const encoding = 'cp949';
-    const kosdaqMasters: Stock[] = [];
 
     const rl = readline.createInterface({
       input: fs.createReadStream(fileName).pipe(iconv.decodeStream(encoding)),
@@ -191,20 +180,21 @@ export class KoreaStockInfoService {
         row.length - 220,
       );
 
-      kosdaqMasters.push({
+      const kosdaqMaster: Stock = {
         id: shortCode,
         name: koreanName,
         views: 0,
         isTrading: true,
         groupCode,
-      });
+      };
+
+      await this.insertStockData(kosdaqMaster);
     }
     fs.unlink(targetFileName, (unlinkError) => {
       if (unlinkError) {
-        console.error(`Error deleting file: ${unlinkError.message}`);
+        this.logger.error(`Error deleting file: ${unlinkError.message}`);
       }
     });
-    console.log('Done');
-    return kosdaqMasters;
+    this.logger.info('Kosdaq master data processing done.');
   }
 }
