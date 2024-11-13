@@ -1,19 +1,20 @@
+import resolveConfig from 'tailwindcss/resolveConfig';
 import { ChartTheme } from '.';
+import tailwindConfig from '@/../tailwind.config.js';
+
+const colorConfig = resolveConfig(tailwindConfig).theme.colors;
 
 export const lightTheme: ChartTheme = {
-  background: '#ffffff',
+  background: colorConfig.white,
   textColor: '#000000e6',
   gridLines: '#e0e3eb',
   borderColor: '#d6dcde',
   candlestick: {
-    upColor: '#ff4d4d',
-    downColor: '#1a75ff',
-    borderUpColor: '#ff4d4d',
-    borderDownColor: '#1a75ff',
+    upColor: colorConfig.red,
+    downColor: colorConfig.blue,
+    borderUpColor: colorConfig.red,
+    borderDownColor: colorConfig.blue,
     wickUpColor: '#737375',
     wickDownColor: '#737375',
-  },
-  volume: {
-    color: '#adaeb2',
   },
 };
