@@ -1,4 +1,10 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { ChatType } from '@/chat/domain/chatType.enum';
 import { DateEmbedded } from '@/common/dateEmbedded.entity';
 import { Stock } from '@/stock/domain/stock.entity';
@@ -10,9 +16,11 @@ export class Chat {
   id: number;
 
   @ManyToOne(() => User, (user) => user.id)
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
   @ManyToOne(() => Stock, (stock) => stock.id)
+  @JoinColumn({ name: 'stock_id' })
   stock: Stock;
 
   @Column()
