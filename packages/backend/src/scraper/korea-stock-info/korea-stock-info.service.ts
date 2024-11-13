@@ -10,6 +10,7 @@ import { config as dotenvConfig } from 'dotenv';
 import { Stock } from '@/stock/domain/stock.entity';
 import { DataSource, EntityManager } from 'typeorm';
 import { Logger } from 'winston';
+import { Cron } from '@nestjs/schedule';
 
 dotenvConfig();
 
@@ -19,7 +20,6 @@ export class KoreaStockInfoService {
     private readonly datasource: DataSource,
     @Inject('winston') private readonly logger: Logger,
   ) {
-    this.initKoreaStockInfo();
   }
 
   private async existsStockInfo(stockId: string, manager: EntityManager) {
@@ -29,7 +29,7 @@ export class KoreaStockInfoService {
       },
     });
   }
-  
+
   private async insertStockData(stock: Stock): Promise<void> {
     const manager = this.datasource.manager;
     const exists = await this.existsStockInfo(stock.id!, manager);
@@ -38,6 +38,7 @@ export class KoreaStockInfoService {
     }
   }
 
+  @Cron('0 0 * * 1-5')
   public async initKoreaStockInfo(): Promise<void> {
     await this.downloadMaster({ baseDir: './', target: 'kosdaq_code' });
     await this.getKosdaqMasterData({

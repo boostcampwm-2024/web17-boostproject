@@ -10,9 +10,11 @@ import {
 import { StockModule } from '@/stock/stock.module';
 import { UserModule } from '@/user/user.module';
 import { ScraperModule } from './scraper/scraper.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ScraperModule,
     StockModule,
     UserModule,
