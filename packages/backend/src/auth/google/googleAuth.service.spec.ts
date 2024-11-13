@@ -1,5 +1,5 @@
-import { GoogleAuthService } from '@/auth/googleAuth.service';
-import { OauthUserInfo } from '@/auth/passport/google.strategy';
+import { GoogleAuthService } from '@/auth/google/googleAuth.service';
+import { OauthUserInfo } from '@/auth/google/strategy/google.strategy';
 import { OauthType } from '@/user/domain/ouathType';
 import { Role } from '@/user/domain/role';
 import { User } from '@/user/domain/user.entity';
