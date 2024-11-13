@@ -25,17 +25,17 @@ export class StockMinutely {
   @Column({ type: 'decimal', precision: 15, scale: 2 })
   open: number;
 
-  @Column()
+  @Column({ type: 'bigint' })
   volume: number;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'timestamp', name: 'start_time' })
   startTime: Date;
 
   @OneToOne(() => Stock)
   @JoinColumn({ name: 'stock_id' })
   stock: Stock;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 }
 
@@ -56,17 +56,17 @@ export class StockDaily {
   @Column({ type: 'decimal', precision: 15, scale: 2 })
   open: number;
 
-  @Column()
+  @Column({ type: 'bigint' })
   volume: number;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'timestamp', name: 'start_time' })
   startTime: Date;
 
   @OneToOne(() => Stock)
   @JoinColumn({ name: 'stock_id' })
   stock: Stock;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 }
 @Entity('stock_weekly')
@@ -86,17 +86,17 @@ export class StockWeekly {
   @Column({ type: 'decimal', precision: 15, scale: 2 })
   open: number;
 
-  @Column()
+  @Column({ type: 'bigint' })
   volume: number;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'timestamp', name: 'start_time' })
   startTime: Date;
 
   @OneToOne(() => Stock)
   @JoinColumn({ name: 'stock_id' })
   stock: Stock;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 }
 @Entity('stock_monthly')
@@ -116,17 +116,17 @@ export class StockMonthly {
   @Column({ type: 'decimal', precision: 15, scale: 2 })
   open: number;
 
-  @Column()
+  @Column({ type: 'bigint' })
   volume: number;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'timestamp', name: 'start_time' })
   startTime: Date;
 
   @OneToOne(() => Stock)
   @JoinColumn({ name: 'stock_id' })
   stock: Stock;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 }
 @Entity('stock_yearly')
@@ -146,16 +146,16 @@ export class StockYearly {
   @Column({ type: 'decimal', precision: 15, scale: 2 })
   open: number;
 
-  @Column()
+  @Column({ type: 'bigint' })
   volume: number;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'timestamp', name: 'start_time' })
   startTime: Date;
 
   @OneToOne(() => Stock)
   @JoinColumn({ name: 'stock_id' })
   stock: Stock;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 }
