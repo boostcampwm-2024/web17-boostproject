@@ -3,6 +3,8 @@ name: storybook deploy
 on:
   push:
     branches: ['dev-fe']
+  pull_request:
+    branches: ['dev-fe']
 
   workflow_dispatch:
 
