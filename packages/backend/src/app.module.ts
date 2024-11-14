@@ -11,9 +11,11 @@ import { StockModule } from '@/stock/stock.module';
 import { UserModule } from '@/user/user.module';
 import { ScraperModule } from './scraper/scraper.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ cache: true, isGlobal: true }),
     ScheduleModule.forRoot(),
     ScraperModule,
     StockModule,
@@ -31,4 +33,3 @@ import { ScheduleModule } from '@nestjs/schedule';
   providers: [],
 })
 export class AppModule {}
-

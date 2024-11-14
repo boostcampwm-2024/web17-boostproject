@@ -19,8 +19,7 @@ export class KoreaStockInfoService {
   constructor(
     private readonly datasource: DataSource,
     @Inject('winston') private readonly logger: Logger,
-  ) {
-  }
+  ) {}
 
   private async existsStockInfo(stockId: string, manager: EntityManager) {
     return await manager.exists(Stock, {
