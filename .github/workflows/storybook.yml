@@ -44,13 +44,14 @@ jobs:
 
       - name: Build app
         run: |
-          yarn run build
-          cp ./build/index.html ./build/404.html
+          yarn client build
+          cp ./packages/frontend/build/index.html ./packages/frontend/build/404.html
 
       - name: Build storybook
         run: |
-          yarn run build-storybook
-          mv ./storybook-static ./build/storybook
+          yarn client build-storybook
+          mv ./packages/frontend/storybook-static ./packages/frontend/build/storybook
+
       - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v3
         with:
