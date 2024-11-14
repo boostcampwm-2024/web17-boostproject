@@ -34,7 +34,7 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Install dependencies
-        run: yarn ci
+        run: yarn install
         if: steps.cache.outputs.cache-hit != 'true'
 
       - name: Set PUBLIC_URL
