@@ -5,6 +5,7 @@ import {
   Body,
   HttpCode,
   HttpStatus,
+  Get,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { UserService } from './user.service';
@@ -41,5 +42,23 @@ export class UserController {
     @Body('isLight') isLight?: boolean,
   ) {
     return this.userService.updateUserTheme(id, isLight);
+  }
+
+  @Get(':id/theme')
+  @ApiOperation({
+    summary: 'Get user theme mode',
+    description:
+      'Retrieve the current theme mode (light or dark) for a specific user',
+  })
+  @ApiParam({ name: 'id', type: Number, description: 'User ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'User theme retrieved successfully',
+    schema: { type: 'boolean' },
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  async getTheme(@Param('id') id: number) {
+    const isLight = await this.userService.getUserTheme(id);
+    return { isLight };
   }
 }

@@ -59,4 +59,17 @@ export class UserService {
       return await manager.save(user);
     });
   }
+
+  async getUserTheme(userId: number): Promise<boolean> {
+    const user = await this.dataSource.manager.findOne(User, {
+      where: { id: userId },
+      select: ['isLight'],
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user.isLight;
+  }
 }
