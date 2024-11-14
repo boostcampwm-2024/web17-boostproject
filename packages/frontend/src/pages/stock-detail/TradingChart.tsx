@@ -1,13 +1,13 @@
 import { useRef } from 'react';
 import { useChart } from './hooks/useChart';
 import { useChartResize } from './hooks/useChartResize';
-import { ChartTheme, darkTheme } from '@/styles/theme';
+import { ChartTheme, lightTheme } from '@/styles/theme';
 
 interface TradingChartProps {
   theme?: ChartTheme;
 }
 
-export const TradingChart = ({ theme = darkTheme }: TradingChartProps) => {
+export const TradingChart = ({ theme = lightTheme }: TradingChartProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const chart = useChart({ containerRef, theme });
 

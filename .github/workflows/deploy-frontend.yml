@@ -1,0 +1,65 @@
+name: Deploy Frontend in Monorepo
+
+on:
+  push:
+    branches:
+      - dev-fe
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    services:
+      docker:
+        image: docker:20.10.7
+        options: --privileged
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Cache Yarn dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            **/node_modules
+            ~/.yarn-cache
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build frontend
+        run: |
+          yarn workspace frontend build
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push backend Docker image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/backend:latest -f packages/backend/Dockerfile .
+          docker push ${{ secrets.DOCKER_USERNAME }}/backend:latest
+
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY}}
+          port: ${{ secrets.SERVER_PORT }}
+          script: |
+            docker pull ${{ secrets.DOCKER_USERNAME }}/frontend:latest
+            docker-compose down 
+            docker-compose up -d
