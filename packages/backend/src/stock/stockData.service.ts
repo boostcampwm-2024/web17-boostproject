@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
-import { DataSource } from 'typeorm';
+import { DataSource, EntityManager } from 'typeorm';
 import { Stock } from './domain/stock.entity';
 import {
   StockMinutely,
@@ -40,7 +40,7 @@ export class StockDataService {
     lastStartTime?: string,
   ): Promise<StockDataResponse> {
     return await this.dataSource.manager.transaction(async (manager) => {
-      if (!(await manager.exists(Stock, { where: { id: stock_id } })))
+      if (!(await this.isStockExist(stock_id, manager)))
         throw new NotFoundException('stock not found');
 
       const queryBuilder = manager
@@ -63,6 +63,10 @@ export class StockDataService {
 
       return this.createStockDataResponse(priceDtoList, volumeDtoList, hasMore);
     });
+  }
+
+  async isStockExist(stockId: string, manager: EntityManager) {
+    return await manager.exists(Stock, { where: { id: stockId } });
   }
 
   mapResultListToPriceDtoList(resultList: StockData[]): PriceDto[] {
