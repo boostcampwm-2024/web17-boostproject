@@ -1,5 +1,5 @@
 import resolveConfig from 'tailwindcss/resolveConfig';
-import tailwindConfig from '@/../tailwind.config.js';
+import tailwindConfig from '@/../tailwind.config';
 
 // TODO: api 나오면 객체/위치 수정
 interface VolumeData {

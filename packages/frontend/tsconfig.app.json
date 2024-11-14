@@ -25,5 +25,5 @@
 
     "composite": true
   },
-  "include": ["src", "src/**/*.json"]
+  "include": ["src", "src/**/*.json", "tailwind.config.ts"]
 }
