@@ -3,8 +3,8 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  OneToOne,
   JoinColumn,
+  ManyToOne,
 } from 'typeorm';
 import { Stock } from './stock.entity';
 
@@ -30,7 +30,7 @@ abstract class StockData {
   @Column({ type: 'timestamp', name: 'start_time' })
   startTime: Date;
 
-  @OneToOne(() => Stock)
+  @ManyToOne(() => Stock)
   @JoinColumn({ name: 'stock_id' })
   stock: Stock;
 
