@@ -8,6 +8,7 @@ import {
   Get,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { UpdateUserThemeResponse } from './dto/userTheme.response';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -40,8 +41,15 @@ export class UserController {
   async updateTheme(
     @Param('id') id: number,
     @Body('isLight') isLight?: boolean,
-  ) {
-    return this.userService.updateUserTheme(id, isLight);
+  ): Promise<UpdateUserThemeResponse> {
+    const updatedUser = await this.userService.updateUserTheme(id, isLight);
+
+    return {
+      id: updatedUser.id!,
+      isLight: updatedUser.isLight!,
+      nickname: updatedUser.nickname!,
+      updatedAt: updatedUser.date!.updatedAt!,
+    };
   }
 
   @Get(':id/theme')
