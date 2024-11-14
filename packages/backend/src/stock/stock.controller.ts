@@ -11,7 +11,13 @@ import {
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { ApiGetStockData } from './decorator/stockData.decorator';
 import { StockService } from './stock.service';
-import { StockDataMinutelyService } from './stockData.service';
+import {
+  StockDataDailyService,
+  StockDataMinutelyService,
+  StockDataMonthlyService,
+  StockDataWeeklyService,
+  StockDataYearlyService,
+} from './stockData.service';
 import { StockViewsResponse } from '@/stock/dto/stock.Response';
 import { StockViewRequest } from '@/stock/dto/stockView.request';
 import {
@@ -25,6 +31,10 @@ export class StockController {
   constructor(
     private readonly stockService: StockService,
     private readonly stockDataMinutelyService: StockDataMinutelyService,
+    private readonly stockDataDailyService: StockDataDailyService,
+    private readonly stockDataWeeklyService: StockDataWeeklyService,
+    private readonly stockDataMonthlyService: StockDataMonthlyService,
+    private readonly stockDataYearlyService: StockDataYearlyService,
   ) {}
 
   @HttpCode(200)
@@ -102,6 +112,51 @@ export class StockController {
     @Query() lastStartTime?: string,
   ) {
     return this.stockDataMinutelyService.getStockDataMinutely(
+      stockId,
+      lastStartTime,
+    );
+  }
+
+  @Get(':stockId/daily')
+  @ApiGetStockData('주식 일 단위 데이터 조회 API', '일')
+  async getStockDataDaily(
+    @Param('stockId') stockId: string,
+    @Query() lastStartTime?: string,
+  ) {
+    return this.stockDataDailyService.getStockDataDaily(stockId, lastStartTime);
+  }
+
+  @Get(':stockId/weekly')
+  @ApiGetStockData('주식 주 단위 데이터 조회 API', '주')
+  async getStockDataWeekly(
+    @Param('stockId') stockId: string,
+    @Query() lastStartTime?: string,
+  ) {
+    return this.stockDataWeeklyService.getStockDataWeekly(
+      stockId,
+      lastStartTime,
+    );
+  }
+
+  @Get(':stockId/mothly')
+  @ApiGetStockData('주식 월 단위 데이터 조회 API', '월')
+  async getStockDataMonthly(
+    @Param('stockId') stockId: string,
+    @Query() lastStartTime?: string,
+  ) {
+    return this.stockDataMonthlyService.getStockDataMonthly(
+      stockId,
+      lastStartTime,
+    );
+  }
+
+  @Get(':stockId/yearly')
+  @ApiGetStockData('주식 연 단위 데이터 조회 API', '연')
+  async getStockDataYearly(
+    @Param('stockId') stockId: string,
+    @Query() lastStartTime?: string,
+  ) {
+    return this.stockDataYearlyService.getStockDataYearly(
       stockId,
       lastStartTime,
     );
