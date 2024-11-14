@@ -8,7 +8,7 @@ import {
 import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({
-  path: '/realtimeStock',
+  namespace: '/stock/realtime',
 })
 export class StockGateway {
   @WebSocketServer()

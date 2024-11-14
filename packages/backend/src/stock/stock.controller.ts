@@ -109,7 +109,7 @@ export class StockController {
   @ApiGetStockData('주식 분 단위 데이터 조회 API', '분')
   async getStockDataMinutely(
     @Param('stockId') stockId: string,
-    @Query() lastStartTime?: string,
+    @Query('lastStartTime') lastStartTime?: string,
   ) {
     return this.stockDataMinutelyService.getStockDataMinutely(
       stockId,
@@ -121,7 +121,7 @@ export class StockController {
   @ApiGetStockData('주식 일 단위 데이터 조회 API', '일')
   async getStockDataDaily(
     @Param('stockId') stockId: string,
-    @Query() lastStartTime?: string,
+    @Query('lastStartTime') lastStartTime?: string,
   ) {
     return this.stockDataDailyService.getStockDataDaily(stockId, lastStartTime);
   }
@@ -130,7 +130,7 @@ export class StockController {
   @ApiGetStockData('주식 주 단위 데이터 조회 API', '주')
   async getStockDataWeekly(
     @Param('stockId') stockId: string,
-    @Query() lastStartTime?: string,
+    @Query('lastStartTime') lastStartTime?: string,
   ) {
     return this.stockDataWeeklyService.getStockDataWeekly(
       stockId,
@@ -142,7 +142,7 @@ export class StockController {
   @ApiGetStockData('주식 월 단위 데이터 조회 API', '월')
   async getStockDataMonthly(
     @Param('stockId') stockId: string,
-    @Query() lastStartTime?: string,
+    @Query('lastStartTime') lastStartTime?: string,
   ) {
     return this.stockDataMonthlyService.getStockDataMonthly(
       stockId,
@@ -154,7 +154,7 @@ export class StockController {
   @ApiGetStockData('주식 연 단위 데이터 조회 API', '연')
   async getStockDataYearly(
     @Param('stockId') stockId: string,
-    @Query() lastStartTime?: string,
+    @Query('lastStartTime') lastStartTime?: string,
   ) {
     return this.stockDataYearlyService.getStockDataYearly(
       stockId,

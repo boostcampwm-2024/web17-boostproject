@@ -42,7 +42,6 @@ export class StockDataService {
     return await this.dataSource.manager.transaction(async (manager) => {
       const queryBuilder = manager
         .createQueryBuilder(entity, 'entity')
-        .leftJoinAndSelect('entity.stock', 'stock')
         .where('entity.stock_id = :stockId', { stockId: stock_id })
         .orderBy('entity.startTime', 'DESC')
         .take(this.PAGE_SIZE + 1);
