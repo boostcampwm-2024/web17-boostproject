@@ -1,13 +1,20 @@
+import { Tooltip } from '@/components/ui';
+
 export interface MetricItemProps {
-  label: string;
-  value: string;
+  name: string;
+  message: string;
 }
 
-export const MetricItem = ({ label, value }: MetricItemProps) => {
+export const MetricItem = ({ name, message }: MetricItemProps) => {
   return (
     <>
-      <span className="display-medium14 text-gray font-bold">{label}</span>
-      <span className="display-medium14 text-dark-gray">{value}</span>
+      <div className="group relative">
+        <Tooltip className="absolute bottom-full mb-6">{message}</Tooltip>
+        <span className="display-medium14 text-gray cursor-pointer font-bold">
+          {name}
+        </span>
+      </div>
+      <span className="display-medium14 text-dark-gray">00.000</span>
     </>
   );
 };

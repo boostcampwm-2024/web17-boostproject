@@ -5,5 +5,7 @@ interface TitleProps {
 }
 
 export const Title = ({ children }: TitleProps) => {
-  return <h3 className="display-bold16 font-bold">{children}</h3>;
+  return (
+    <h3 className="display-bold16 cursor-pointer font-bold">{children}</h3>
+  );
 };
