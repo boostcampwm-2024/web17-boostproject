@@ -8,6 +8,7 @@ import {
   StockWeekly,
   StockYearly,
 } from './domain/stockData.entity';
+import { StockDetail } from './domain/stockDetail.entity';
 import { StockLiveData } from './domain/stockLiveData.entity';
 import { StockController } from './stock.controller';
 import { StockGateway } from './stock.gateway';
@@ -20,6 +21,7 @@ import {
   StockDataWeeklyService,
   StockDataYearlyService,
 } from './stockData.service';
+import { StockDetailService } from './stockDetail.service';
 import { StockLiveDataSubscriber } from './stockLiveData.subscriber';
 
 @Module({
@@ -32,6 +34,7 @@ import { StockLiveDataSubscriber } from './stockLiveData.subscriber';
       StockMonthly,
       StockYearly,
       StockLiveData,
+      StockDetail,
     ]),
   ],
   controllers: [StockController],
@@ -45,6 +48,7 @@ import { StockLiveDataSubscriber } from './stockLiveData.subscriber';
     StockDataWeeklyService,
     StockDataYearlyService,
     StockDataMonthlyService,
+    StockDetailService,
   ],
 })
 export class StockModule {}

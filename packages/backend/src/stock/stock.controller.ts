@@ -8,8 +8,9 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation, ApiParam } from '@nestjs/swagger';
 import { ApiGetStockData } from './decorator/stockData.decorator';
+import { StockDetailResponse } from './dto/stockDetail.response';
 import { StockService } from './stock.service';
 import {
   StockDataDailyService,
@@ -18,6 +19,7 @@ import {
   StockDataWeeklyService,
   StockDataYearlyService,
 } from './stockData.service';
+import { StockDetailService } from './stockDetail.service';
 import { StockViewsResponse } from '@/stock/dto/stock.Response';
 import { StockViewRequest } from '@/stock/dto/stockView.request';
 import {
@@ -35,6 +37,7 @@ export class StockController {
     private readonly stockDataWeeklyService: StockDataWeeklyService,
     private readonly stockDataMonthlyService: StockDataMonthlyService,
     private readonly stockDataYearlyService: StockDataYearlyService,
+    private readonly stockDetailService: StockDetailService,
   ) {}
 
   @HttpCode(200)
@@ -160,5 +163,21 @@ export class StockController {
       stockId,
       lastStartTime,
     );
+  }
+
+  @ApiOperation({
+    summary: '주식 상세 정보 조회 API',
+    description: '시가 총액, EPS, PER, 52주 최고가, 52주 최저가를 조회합니다',
+  })
+  @ApiOkResponse({
+    description: '주식 상세 정보 조회 성공',
+    type: StockDetailResponse,
+  })
+  @ApiParam({ name: 'stockId', required: true, description: '주식 ID' })
+  @Get(':stockId/detail')
+  async getStockDetail(
+    @Param('stockId') stockId: string,
+  ): Promise<StockDetailResponse> {
+    return await this.stockDetailService.getStockDetailByStockId(stockId);
   }
 }
