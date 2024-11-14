@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { DataSource } from 'typeorm';
 import { Stock } from './domain/stock.entity';
@@ -40,6 +40,9 @@ export class StockDataService {
     lastStartTime?: string,
   ): Promise<StockDataResponse> {
     return await this.dataSource.manager.transaction(async (manager) => {
+      if (!(await manager.exists(Stock, { where: { id: stock_id } })))
+        throw new NotFoundException('stock not found');
+
       const queryBuilder = manager
         .createQueryBuilder(entity, 'entity')
         .where('entity.stock_id = :stockId', { stockId: stock_id })

@@ -60,7 +60,7 @@ describe('StockDataService', () => {
   beforeEach(() => {
     managerMock = {
       createQueryBuilder: jest.fn(),
-      // 필요한 다른 메서드들도 여기에 추가할 수 있습니다.
+      exists: jest.fn().mockResolvedValue(true),
     };
     dataSource = createDataSourceMock(managerMock);
     stockDataService = new StockDataService(dataSource as DataSource);
@@ -68,6 +68,14 @@ describe('StockDataService', () => {
 
   describe('getPaginated', () => {
     const PAGE_SIZE = 100;
+
+    it('주식이 존재하지 않을 경우 NotFoundException을 던집니다.', async () => {
+      managerMock.exists.mockResolvedValue(false);
+
+      await expect(
+        stockDataService.getPaginated(StockMinutely, stockId),
+      ).rejects.toThrow('stock not found');
+    });
 
     it('주식 데이터를 페이지네이션하여 가져옵니다. hasMore=true', async () => {
       const mockData: any[] = Array.from({ length: PAGE_SIZE + 1 }, (_, i) => ({
@@ -97,10 +105,6 @@ describe('StockDataService', () => {
       expect(managerMock.createQueryBuilder).toHaveBeenCalledWith(
         StockMinutely,
         'entity',
-      );
-      expect(queryBuilderMock.leftJoinAndSelect).toHaveBeenCalledWith(
-        'entity.stock',
-        'stock',
       );
       expect(queryBuilderMock.where).toHaveBeenCalledWith(
         'entity.stock_id = :stockId',
