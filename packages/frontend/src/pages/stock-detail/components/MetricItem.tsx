@@ -1,4 +1,4 @@
-import { Tooltip } from '@/components/ui';
+import { Tooltip } from '@/components/ui/tooltip';
 
 export interface MetricItemProps {
   name: string;

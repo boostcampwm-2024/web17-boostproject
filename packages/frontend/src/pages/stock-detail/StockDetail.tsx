@@ -6,7 +6,7 @@ import {
   StockMetricsPanel,
 } from '.';
 import Plus from '@/assets/plus.svg?react';
-import { Button } from '@/components/ui';
+import { Button } from '@/components/ui/button';
 
 export const StockDetail = () => {
   return (
@@ -14,8 +14,6 @@ export const StockDetail = () => {
       <header className="flex gap-7">
         <h1 className="display-bold24">삼성전자</h1>
         <Button
-          backgroundColor="white"
-          textColor="orange"
           type="button"
           className="flex items-center justify-center gap-1"
         >

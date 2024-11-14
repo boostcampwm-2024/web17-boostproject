@@ -9,11 +9,11 @@ export const ButtonVariants = cva(
       backgroundColor: {
         default: 'bg-white',
         gray: 'bg-gray',
-        white: 'bg-white',
+        orange: 'bg-orange',
       },
       textColor: {
-        default: 'text-white',
-        orange: 'text-orange',
+        default: 'text-orange',
+        white: 'text-white',
       },
       size: {
         default: 'w-24',
@@ -28,7 +28,7 @@ export const ButtonVariants = cva(
   },
 );
 
-interface ButtonProps
+export interface ButtonProps
   extends ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof ButtonVariants> {
   children: ReactNode;
