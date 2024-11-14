@@ -1,5 +1,5 @@
 import { MetricSection, Title } from './components';
-import { Tooltip } from '@/components/ui';
+import { Tooltip } from '@/components/ui/tooltip';
 import { METRIC_DETAILS } from '@/constants/METRIC_DETAILS';
 
 export const StockMetricsPanel = () => {

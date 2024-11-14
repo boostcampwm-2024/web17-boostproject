@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react';
 import { cn } from '@/utils/cn';
 
-interface TooltipProps {
+export interface TooltipProps {
   className?: string;
   children?: ReactNode;
 }
