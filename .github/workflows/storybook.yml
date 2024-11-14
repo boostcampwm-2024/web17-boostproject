@@ -44,18 +44,12 @@ jobs:
           PUBLIC_URL=$(echo $GITHUB_REPOSITORY | sed -r 's/^.+\/(.+)$/\/\1\//')
           echo PUBLIC_URL=$PUBLIC_URL > .env
 
-      - name: Build app
-        run: |
-          yarn client build
-          cp ./packages/frontend/dist/index.html ./packages/frontend/dist/404.html
-
       - name: Build storybook
         run: |
           yarn client build-storybook
-          mv ./packages/frontend/storybook-static ./packages/frontend/dist/storybook
 
       - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./packages/frontend/dist
+          publish_dir: ./packages/frontend/storybook-static
