@@ -1,9 +1,4 @@
-import {
-  PrimaryGeneratedColumn,
-  Column,
-  OneToOne,
-  JoinColumn,
-} from 'typeorm';
+import { PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm';
 import { Stock } from './stock.entity';
 
 export class StockPeriod {
@@ -24,6 +19,9 @@ export class StockPeriod {
 
   @Column()
   volume: number;
+
+  @Column({ type: 'timestamp' })
+  start_time: Date;
 
   @Column({ type: 'timestamp' })
   created_at: Date;

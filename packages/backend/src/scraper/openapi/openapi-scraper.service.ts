@@ -5,6 +5,25 @@ import { DataSource, EntityManager } from 'typeorm';
 import { Logger } from 'winston';
 import { Cron } from '@nestjs/schedule';
 import { Stock } from '@/stock/domain/stock.entity';
+import { StockPeriod } from '@/stock/domain/stockPeriod';
+import { StockDaily } from '@/stock/domain/stockDaily.entity';
+import { exists } from 'fs';
+
+type ChartData = {
+  stck_bsop_date: string;
+  stck_clpr: string;
+  stck_oprc: string;
+  stck_hgpr: string;
+  stck_lwpr: string;
+  acml_vol: string;
+  acml_tr_pbmn: string;
+  flng_cls_code: string;
+  prtt_rate: string;
+  mod_yn: string;
+  prdy_vrss_sign: string;
+  prdy_vrss: string;
+  revl_issu_reas: string;
+};
 
 @Injectable()
 export class OpenapiScraperService {
@@ -31,16 +50,31 @@ export class OpenapiScraperService {
         STOCK_API_PASSWORD: api_passwords[i],
       });
     }
-    this.initAccessToken();
-    this.initWebSocketKey();
+
+    //if (process.env.NODE_ENV === 'production') {
+    //  this.initAccessToken();
+    //  this.initWebSocketKey();
+    //  this.getItemChartPriceCheck();
+    //}
+    this.initAuthenValue();
+  }
+
+  private async initAuthenValue() {
+    await this.initAccessToken();
+    await this.initWebSocketKey();
     this.getItemChartPriceCheck();
   }
 
   @Cron('30 0 * * 1-5')
   private async initAccessToken() {
-    this.config.forEach(async (val) => {
-      val.STOCK_API_TOKEN = await this.getToken(val)!;
-    });
+    const updatedConfig = await Promise.all(
+      this.config.map(async (val) => {
+        val.STOCK_API_TOKEN = await this.getToken(val)!;
+        return val;
+      }),
+    );
+    this.config = updatedConfig;
+    console.log(updatedConfig);
   }
 
   @Cron('30 0 * * 1-5')
@@ -61,7 +95,7 @@ export class OpenapiScraperService {
       const chunk = stocks.slice(i * chunkSize, (i + 1) * chunkSize);
       const config = this.config[i];
 
-      for (const stock of chunk) {
+      for await (const stock of chunk) {
         let endDate = this.getTodayDate();
         let startDate = this.getPreviousDate(endDate, 3);
         let hasData = true;
@@ -76,9 +110,7 @@ export class OpenapiScraperService {
           const data = await this.getItemChartPrice(config, query);
 
           if (data && data.output2 && data.output2.length > 0) {
-            // Save data to database
-            await this.saveChartData(entityManager, stock.id!, data.output2);
-            // Update dates to fetch previous data in 3-month intervals
+            await this.saveChartData(StockDaily, stock.id!, data.output2);
             endDate = this.getPreviousDate(startDate, 3);
             startDate = this.getPreviousDate(endDate, 3);
           } else {
@@ -88,8 +120,6 @@ export class OpenapiScraperService {
       }
     }
   }
-
-  // TODO : 오늘 데이터 가져오기
 
   private async postOpenApi(url: string, body: {}): Promise<any> {
     try {
@@ -145,11 +175,46 @@ export class OpenapiScraperService {
     return currentDate.toISOString().split('T')[0].replace(/-/g, '');
   }
 
-  private async saveChartData(
-    entityManager: EntityManager,
-    stockId: string,
-    data: any,
+  private async existsChartData(
+    stock: StockPeriod,
+    manager: EntityManager,
+    entity: typeof StockPeriod,
   ) {
+    return await manager.findOne(entity, {
+      where: {
+        stock: { id: stock.stock.id },
+        start_time: stock.start_time,
+      },
+    });
+  }
+
+  private async insertChartData(
+    stock: StockPeriod,
+    entity: typeof StockPeriod,
+  ) {
+    const manager = this.datasourse.manager;
+    if (!(await this.existsChartData(stock, manager, entity))) {
+      await manager.save(entity, stock);
+    }
+  }
+
+  private async saveChartData(
+    entity: typeof StockPeriod,
+    stockId: string,
+    data: ChartData[],
+  ) {
+    for (const item of data) {
+      const stockPeriod = new StockPeriod();
+      stockPeriod.stock = { id: stockId } as Stock;
+      stockPeriod.start_time = new Date(item.stck_bsop_date);
+      stockPeriod.close = parseInt(item.stck_clpr);
+      stockPeriod.open = parseInt(item.stck_oprc);
+      stockPeriod.high = parseInt(item.stck_hgpr);
+      stockPeriod.low = parseInt(item.stck_lwpr);
+      stockPeriod.volume = parseInt(item.acml_vol, 10);
+      stockPeriod.created_at = new Date();
+      await this.insertChartData(stockPeriod, entity);
+    }
   }
 
   private async getItemChartPrice(
@@ -157,6 +222,7 @@ export class OpenapiScraperService {
     query: any,
   ): Promise<any> {
     try {
+      console.log;
       const response = await axios.get(
         config.STOCK_URL +
           '/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice',
@@ -184,16 +250,15 @@ export class OpenapiScraperService {
     marketCode: 'J' | 'W' = 'J',
   ): any {
     return {
-      FID_COND_MRKT_DIV_CODE: marketCode,
-      FID_INPUT_ISCD: stockId,
-      FID_INPUT_DATE_1: startDate,
-      FID_INPUT_DATE_2: endDate,
-      FID_PERIOD_DIV_CODE: period,
-      FID_ORG_ADJ_PRC: 0,
+      fid_cond_mrkt_div_code: marketCode,
+      fid_input_iscd: stockId,
+      fid_input_date_1: startDate,
+      fid_input_date_2: endDate,
+      fid_period_div_code: period,
+      fid_org_adj_prc: 0,
     };
   }
 
-  //TODO : 분봉 데이터 구현하기.
   private async getTimeItemChartPriceForEach() {}
 
   private async getTimeItemChartPrice(
