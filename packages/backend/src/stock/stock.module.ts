@@ -4,12 +4,18 @@ import { Stock } from './domain/stock.entity';
 import { StockController } from './stock.controller';
 import { StockGateway } from './stock.gateway';
 import { StockService } from './stock.service';
+import { StockDetailService } from './stockDetail.service';
 import { StockLiveDataSubscriber } from './stockLiveData.subscriber';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Stock])],
   controllers: [StockController],
-  providers: [StockService, StockGateway, StockLiveDataSubscriber],
+  providers: [
+    StockService,
+    StockGateway,
+    StockLiveDataSubscriber,
+    StockDetailService,
+  ],
   exports: [StockService],
 })
 export class StockModule {}

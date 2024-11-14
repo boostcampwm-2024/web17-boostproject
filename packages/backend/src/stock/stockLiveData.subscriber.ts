@@ -29,8 +29,8 @@ export class StockLiveDataSubscriber
       if (updatedStockLiveData?.stock?.id) {
         const { id: stockId } = updatedStockLiveData.stock;
         const {
-          current_price: price,
-          change_rate: change,
+          currentPrice: price,
+          changeRate: change,
           volume: volume,
         } = updatedStockLiveData;
         this.stockGateway.onUpdateStock(stockId, price, change, volume);
