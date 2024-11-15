@@ -1,7 +1,9 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { plainToInstance } from 'class-transformer';
 import { DataSource, EntityManager } from 'typeorm';
 import { Logger } from 'winston';
 import { Stock } from './domain/stock.entity';
+import { StocksResponse } from './dto/stock.Response';
 import { UserStock } from '@/stock/domain/userStock.entity';
 
 @Injectable()
@@ -117,9 +119,11 @@ export class StockService {
   }
 
   async getTopStocksByViews(limit: number) {
-    return this.StocksQuery()
+    const rawData = await this.StocksQuery()
       .orderBy('stock.views', 'DESC')
       .limit(limit)
       .getRawMany();
+
+    return plainToInstance(StocksResponse, rawData);
   }
 }

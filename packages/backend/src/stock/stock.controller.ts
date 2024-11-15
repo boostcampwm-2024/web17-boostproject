@@ -9,7 +9,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiParam } from '@nestjs/swagger';
-import { LimitQuery } from './decorator/stock.decorator';
+import { ApiGetStocks, LimitQuery } from './decorator/stock.decorator';
 import { ApiGetStockData } from './decorator/stockData.decorator';
 import { StockDetailResponse } from './dto/stockDetail.response';
 import { StockService } from './stock.service';
@@ -183,7 +183,8 @@ export class StockController {
   }
 
   @Get('topViews')
+  @ApiGetStocks('조회수 기반 주식 리스트 조회 API')
   async getTopStocksByViews(@LimitQuery(5) limit: number) {
-    return this.stockService.getTopStocksByViews(limit);
+    return await this.stockService.getTopStocksByViews(limit);
   }
 }

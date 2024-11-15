@@ -19,11 +19,10 @@ export class StockDetail {
 
   @Column({
     name: 'market_cap',
-    type: 'decimal',
-    precision: 20,
-    scale: 2,
+    type: 'bigint',
+    unsigned: true,
   })
-  marketCap: number;
+  marketCap: string;
 
   @Column({ type: 'integer' })
   eps: number;
