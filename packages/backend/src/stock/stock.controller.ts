@@ -19,9 +19,6 @@ import {
   StockDataWeeklyService,
   StockDataYearlyService,
 } from './stockData.service';
-import { ApiOkResponse, ApiOperation, ApiParam } from '@nestjs/swagger';
-import { StockDetailResponse } from './dto/stockDetail.response';
-import { StockService } from './stock.service';
 import { StockDetailService } from './stockDetail.service';
 import { StockViewsResponse } from '@/stock/dto/stock.Response';
 import { StockViewRequest } from '@/stock/dto/stockView.request';
@@ -167,7 +164,6 @@ export class StockController {
       lastStartTime,
     );
   }
-
 
   @ApiOperation({
     summary: '주식 상세 정보 조회 API',
