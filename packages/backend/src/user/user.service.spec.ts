@@ -6,6 +6,7 @@ export function createDataSourceMock(
   managerMock: Partial<EntityManager>,
 ): Partial<DataSource> {
   return {
+    getRepository: managerMock.getRepository,
     transaction: jest.fn().mockImplementation(async (work) => {
       return work(managerMock);
     }),

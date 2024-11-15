@@ -54,6 +54,7 @@ export class StocksResponse {
     description: '주식 거래량',
     example: 500000,
   })
+  @Transform(({ value }) => parseInt(value))
   volume: number;
   @ApiProperty({
     description: '주식 시가 총액',
