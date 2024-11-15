@@ -18,6 +18,7 @@ export class StockDetail {
   stock: Stock;
 
   @Column({
+    name: 'market_cap',
     type: 'decimal',
     precision: 20,
     scale: 2,
