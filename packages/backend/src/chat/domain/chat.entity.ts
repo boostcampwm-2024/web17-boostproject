@@ -33,5 +33,5 @@ export class Chat {
   likeCount: number = 0;
 
   @Column(() => DateEmbedded, { prefix: '' })
-  date?: DateEmbedded;
+  date: DateEmbedded;
 }
