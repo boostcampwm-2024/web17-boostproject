@@ -67,18 +67,23 @@ export class ChatGateway implements OnGatewayConnection {
 
   async handleConnection(client: Socket) {
     const room = client.handshake.query.stockId;
-    if (!room || !(await this.stockService.checkStockExist(room as string))) {
+    if (
+      !this.isString(room) ||
+      !(await this.stockService.checkStockExist(room))
+    ) {
       client.emit('error', 'Invalid stockId');
       this.logger.warn(`client connected with invalid stockId: ${room}`);
       client.disconnect();
       return;
     }
-    if (room) {
-      client.join(room);
-      const messages = await this.chatService.getChatList(room as string);
-      this.logger.info(`client joined room ${room}`);
-      client.emit('chat', messages);
-    }
+    client.join(room);
+    const messages = await this.chatService.scrollFirstChat(room);
+    this.logger.info(`client joined room ${room}`);
+    client.emit('chat', messages);
+  }
+
+  private isString(value: string | string[] | undefined): value is string {
+    return typeof value === 'string';
   }
 
   private toResponse(chat: Chat): chatResponse {
