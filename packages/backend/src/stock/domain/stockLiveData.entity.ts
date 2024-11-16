@@ -4,6 +4,7 @@ import {
   Column,
   OneToOne,
   JoinColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Stock } from './stock.entity';
 
@@ -13,10 +14,10 @@ export class StockLiveData {
   id: number;
 
   @Column({ type: 'decimal', precision: 15, scale: 2 })
-  current_price: number;
+  currentPrice: number;
 
   @Column({ type: 'decimal', precision: 5, scale: 2 })
-  change_rate: number;
+  changeRate: number;
 
   @Column()
   volume: number;
@@ -31,10 +32,11 @@ export class StockLiveData {
   open: number;
 
   @Column({ type: 'decimal', precision: 15, scale: 2 })
-  previous_close: number;
+  previousClose: number;
 
+  @UpdateDateColumn()
   @Column({ type: 'timestamp' })
-  updated_at: Date;
+  updatedAt: Date;
 
   @OneToOne(() => Stock)
   @JoinColumn({ name: 'stock_id' })

@@ -1,6 +1,6 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { GoogleAuthGuard } from '@/auth/google/guard/google.guard';
 
 @ApiTags('Auth')
@@ -20,10 +20,8 @@ export class GoogleAuthController {
 
   @Get('/redirect')
   @UseGuards(GoogleAuthGuard)
-  async handleRedirect() {
-    return {
-      message: 'success google login',
-    };
+  async handleRedirect(@Res() response: Response) {
+    response.redirect('/');
   }
 
   @ApiOperation({

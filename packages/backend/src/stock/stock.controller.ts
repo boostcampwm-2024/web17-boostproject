@@ -4,13 +4,30 @@ import {
   Delete,
   Get,
   HttpCode,
+  Param,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { ApiCookieAuth, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
+import {
+  ApiCookieAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+} from '@nestjs/swagger';
 import { Request } from 'express';
+import { ApiGetStockData } from './decorator/stockData.decorator';
+import { StockDetailResponse } from './dto/stockDetail.response';
 import { StockService } from './stock.service';
+import {
+  StockDataDailyService,
+  StockDataMinutelyService,
+  StockDataMonthlyService,
+  StockDataWeeklyService,
+  StockDataYearlyService,
+} from './stockData.service';
+import { StockDetailService } from './stockDetail.service';
 import SessionGuard from '@/auth/session/session.guard';
 import { GetUser } from '@/common/decorator/user.decorator';
 import { sessionConfig } from '@/configs/session.config';
@@ -28,7 +45,15 @@ import { User } from '@/user/domain/user.entity';
 
 @Controller('stock')
 export class StockController {
-  constructor(private readonly stockService: StockService) {}
+  constructor(
+    private readonly stockService: StockService,
+    private readonly stockDataMinutelyService: StockDataMinutelyService,
+    private readonly stockDataDailyService: StockDataDailyService,
+    private readonly stockDataWeeklyService: StockDataWeeklyService,
+    private readonly stockDataMonthlyService: StockDataMonthlyService,
+    private readonly stockDataYearlyService: StockDataYearlyService,
+    private readonly stockDetailService: StockDetailService,
+  ) {}
 
   @HttpCode(200)
   @Post('/view')
@@ -44,7 +69,6 @@ export class StockController {
     @Body() request: StockViewRequest,
   ): Promise<StockViewsResponse> {
     await this.stockService.increaseView(request.stockId);
-
     return new StockViewsResponse(
       request.stockId,
       '주식 조회수가 증가했습니다.',
@@ -124,5 +148,78 @@ export class StockController {
       user.id,
     );
     return new UserStockOwnerResponse(result);
+  }
+
+  @Get(':stockId/minutely')
+  @ApiGetStockData('주식 분 단위 데이터 조회 API', '분')
+  async getStockDataMinutely(
+    @Param('stockId') stockId: string,
+    @Query('lastStartTime') lastStartTime?: string,
+  ) {
+    return this.stockDataMinutelyService.getStockDataMinutely(
+      stockId,
+      lastStartTime,
+    );
+  }
+
+  @Get(':stockId/daily')
+  @ApiGetStockData('주식 일 단위 데이터 조회 API', '일')
+  async getStockDataDaily(
+    @Param('stockId') stockId: string,
+    @Query('lastStartTime') lastStartTime?: string,
+  ) {
+    return this.stockDataDailyService.getStockDataDaily(stockId, lastStartTime);
+  }
+
+  @Get(':stockId/weekly')
+  @ApiGetStockData('주식 주 단위 데이터 조회 API', '주')
+  async getStockDataWeekly(
+    @Param('stockId') stockId: string,
+    @Query('lastStartTime') lastStartTime?: string,
+  ) {
+    return this.stockDataWeeklyService.getStockDataWeekly(
+      stockId,
+      lastStartTime,
+    );
+  }
+
+  @Get(':stockId/mothly')
+  @ApiGetStockData('주식 월 단위 데이터 조회 API', '월')
+  async getStockDataMonthly(
+    @Param('stockId') stockId: string,
+    @Query('lastStartTime') lastStartTime?: string,
+  ) {
+    return this.stockDataMonthlyService.getStockDataMonthly(
+      stockId,
+      lastStartTime,
+    );
+  }
+
+  @Get(':stockId/yearly')
+  @ApiGetStockData('주식 연 단위 데이터 조회 API', '연')
+  async getStockDataYearly(
+    @Param('stockId') stockId: string,
+    @Query('lastStartTime') lastStartTime?: string,
+  ) {
+    return this.stockDataYearlyService.getStockDataYearly(
+      stockId,
+      lastStartTime,
+    );
+  }
+
+  @ApiOperation({
+    summary: '주식 상세 정보 조회 API',
+    description: '시가 총액, EPS, PER, 52주 최고가, 52주 최저가를 조회합니다',
+  })
+  @ApiOkResponse({
+    description: '주식 상세 정보 조회 성공',
+    type: StockDetailResponse,
+  })
+  @ApiParam({ name: 'stockId', required: true, description: '주식 ID' })
+  @Get(':stockId/detail')
+  async getStockDetail(
+    @Param('stockId') stockId: string,
+  ): Promise<StockDetailResponse> {
+    return await this.stockDetailService.getStockDetailByStockId(stockId);
   }
 }

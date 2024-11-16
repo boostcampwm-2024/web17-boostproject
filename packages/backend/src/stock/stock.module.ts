@@ -1,15 +1,55 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Stock } from './domain/stock.entity';
+import {
+  StockDaily,
+  StockMinutely,
+  StockMonthly,
+  StockWeekly,
+  StockYearly,
+} from './domain/stockData.entity';
+import { StockDetail } from './domain/stockDetail.entity';
+import { StockLiveData } from './domain/stockLiveData.entity';
 import { StockController } from './stock.controller';
 import { StockGateway } from './stock.gateway';
 import { StockService } from './stock.service';
+import {
+  StockDataDailyService,
+  StockDataMinutelyService,
+  StockDataMonthlyService,
+  StockDataService,
+  StockDataWeeklyService,
+  StockDataYearlyService,
+} from './stockData.service';
+import { StockDetailService } from './stockDetail.service';
 import { StockLiveDataSubscriber } from './stockLiveData.subscriber';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Stock])],
+  imports: [
+    TypeOrmModule.forFeature([
+      Stock,
+      StockMinutely,
+      StockDaily,
+      StockWeekly,
+      StockMonthly,
+      StockYearly,
+      StockLiveData,
+      StockDetail,
+    ]),
+  ],
   controllers: [StockController],
-  providers: [StockService, StockGateway, StockLiveDataSubscriber],
+  providers: [
+    StockService,
+    StockGateway,
+    StockLiveDataSubscriber,
+    StockDataService,
+    StockDataDailyService,
+    StockDataMinutelyService,
+    StockDataWeeklyService,
+    StockDataYearlyService,
+    StockDataMonthlyService,
+    StockDetailService,
+  ],
   exports: [StockService],
 })
 export class StockModule {}
