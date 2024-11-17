@@ -135,4 +135,13 @@ export class StockService {
 
     return plainToInstance(StocksResponse, rawData);
   }
+
+  async getTopStocksByLosers(limit: number) {
+    const rawData = await this.StocksQuery()
+      .orderBy('stockLiveData.changeRate', 'ASC')
+      .limit(limit)
+      .getRawMany();
+
+    return plainToInstance(StocksResponse, rawData);
+  }
 }
