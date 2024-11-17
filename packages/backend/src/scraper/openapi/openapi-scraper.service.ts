@@ -173,7 +173,7 @@ export class OpenapiScraperService {
       stockPeriod.open = parseInt(item.stck_oprc);
       stockPeriod.high = parseInt(item.stck_hgpr);
       stockPeriod.low = parseInt(item.stck_lwpr);
-      stockPeriod.volume = parseInt(item.acml_vol, 10);
+      stockPeriod.volume = BigInt(item.acml_vol);
       stockPeriod.created_at = new Date();
       await this.insertChartData(stockPeriod, entity);
     }
