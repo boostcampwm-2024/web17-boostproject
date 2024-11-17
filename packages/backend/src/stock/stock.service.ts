@@ -24,7 +24,6 @@ export class StockService {
     });
   }
 
-  // 유저 존재는 인증에서 확인가능해서 생략
   async createUserStock(userId: number, stockId: string) {
     return await this.datasource.transaction(async (manager) => {
       await this.validateStockExists(stockId, manager);
@@ -33,6 +32,12 @@ export class StockService {
         user: { id: userId },
         stock: { id: stockId },
       });
+    });
+  }
+
+  async checkStockExist(stockId: string) {
+    return await this.datasource.manager.exists(Stock, {
+      where: { id: stockId },
     });
   }
 

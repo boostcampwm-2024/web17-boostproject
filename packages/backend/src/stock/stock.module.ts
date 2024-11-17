@@ -50,5 +50,6 @@ import { StockLiveDataSubscriber } from './stockLiveData.subscriber';
     StockDataMonthlyService,
     StockDetailService,
   ],
+  exports: [StockService],
 })
 export class StockModule {}
