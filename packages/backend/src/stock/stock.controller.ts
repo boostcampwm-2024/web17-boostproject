@@ -1,6 +1,25 @@
-import { Body, Controller, Delete, HttpCode, Post } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiParam } from '@nestjs/swagger';
+import { ApiGetStockData } from './decorator/stockData.decorator';
+import { StockDetailResponse } from './dto/stockDetail.response';
 import { StockService } from './stock.service';
+import {
+  StockDataDailyService,
+  StockDataMinutelyService,
+  StockDataMonthlyService,
+  StockDataWeeklyService,
+  StockDataYearlyService,
+} from './stockData.service';
+import { StockDetailService } from './stockDetail.service';
 import { StockViewsResponse } from '@/stock/dto/stock.Response';
 import { StockViewRequest } from '@/stock/dto/stockView.request';
 import {
@@ -11,7 +30,15 @@ import { UserStockResponse } from '@/stock/dto/userStock.response';
 
 @Controller('stock')
 export class StockController {
-  constructor(private readonly stockService: StockService) {}
+  constructor(
+    private readonly stockService: StockService,
+    private readonly stockDataMinutelyService: StockDataMinutelyService,
+    private readonly stockDataDailyService: StockDataDailyService,
+    private readonly stockDataWeeklyService: StockDataWeeklyService,
+    private readonly stockDataMonthlyService: StockDataMonthlyService,
+    private readonly stockDataYearlyService: StockDataYearlyService,
+    private readonly stockDetailService: StockDetailService,
+  ) {}
 
   @HttpCode(200)
   @Post('/view')
@@ -79,5 +106,78 @@ export class StockController {
       request.userStockId,
       '사용자 소유 주식을 삭제했습니다.',
     );
+  }
+
+  @Get(':stockId/minutely')
+  @ApiGetStockData('주식 분 단위 데이터 조회 API', '분')
+  async getStockDataMinutely(
+    @Param('stockId') stockId: string,
+    @Query('lastStartTime') lastStartTime?: string,
+  ) {
+    return this.stockDataMinutelyService.getStockDataMinutely(
+      stockId,
+      lastStartTime,
+    );
+  }
+
+  @Get(':stockId/daily')
+  @ApiGetStockData('주식 일 단위 데이터 조회 API', '일')
+  async getStockDataDaily(
+    @Param('stockId') stockId: string,
+    @Query('lastStartTime') lastStartTime?: string,
+  ) {
+    return this.stockDataDailyService.getStockDataDaily(stockId, lastStartTime);
+  }
+
+  @Get(':stockId/weekly')
+  @ApiGetStockData('주식 주 단위 데이터 조회 API', '주')
+  async getStockDataWeekly(
+    @Param('stockId') stockId: string,
+    @Query('lastStartTime') lastStartTime?: string,
+  ) {
+    return this.stockDataWeeklyService.getStockDataWeekly(
+      stockId,
+      lastStartTime,
+    );
+  }
+
+  @Get(':stockId/mothly')
+  @ApiGetStockData('주식 월 단위 데이터 조회 API', '월')
+  async getStockDataMonthly(
+    @Param('stockId') stockId: string,
+    @Query('lastStartTime') lastStartTime?: string,
+  ) {
+    return this.stockDataMonthlyService.getStockDataMonthly(
+      stockId,
+      lastStartTime,
+    );
+  }
+
+  @Get(':stockId/yearly')
+  @ApiGetStockData('주식 연 단위 데이터 조회 API', '연')
+  async getStockDataYearly(
+    @Param('stockId') stockId: string,
+    @Query('lastStartTime') lastStartTime?: string,
+  ) {
+    return this.stockDataYearlyService.getStockDataYearly(
+      stockId,
+      lastStartTime,
+    );
+  }
+
+  @ApiOperation({
+    summary: '주식 상세 정보 조회 API',
+    description: '시가 총액, EPS, PER, 52주 최고가, 52주 최저가를 조회합니다',
+  })
+  @ApiOkResponse({
+    description: '주식 상세 정보 조회 성공',
+    type: StockDetailResponse,
+  })
+  @ApiParam({ name: 'stockId', required: true, description: '주식 ID' })
+  @Get(':stockId/detail')
+  async getStockDetail(
+    @Param('stockId') stockId: string,
+  ): Promise<StockDetailResponse> {
+    return await this.stockDetailService.getStockDetailByStockId(stockId);
   }
 }
