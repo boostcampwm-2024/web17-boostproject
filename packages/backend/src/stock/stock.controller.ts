@@ -191,6 +191,6 @@ export class StockController {
   @Get('topGainers')
   @ApiGetStocks('가격 상승률 기반 주식 리스트 조회 API')
   async getTopStocksByGainers(@LimitQuery(20) limit: number) {
-    return await this.stockService.getTopStocksByViews(limit);
+    return await this.stockService.getTopStocksByGainers(limit);
   }
 }
