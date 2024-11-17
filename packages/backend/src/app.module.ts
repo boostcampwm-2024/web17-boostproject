@@ -2,11 +2,13 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { WinstonModule } from 'nest-winston';
 import { AuthModule } from '@/auth/auth.module';
-import { logger } from '@/configs/logger.config';
+import { SessionModule } from '@/auth/session.module';
+import { ChatModule } from '@/chat/chat.module';
 import {
   typeormDevelopConfig,
   typeormProductConfig,
 } from '@/configs/devTypeormConfig';
+import { logger } from '@/configs/logger.config';
 import { StockModule } from '@/stock/stock.module';
 import { UserModule } from '@/user/user.module';
 import { ScraperModule } from './scraper/scraper.module';
@@ -27,6 +29,8 @@ import { ConfigModule } from '@nestjs/config';
     ),
     WinstonModule.forRoot(logger),
     AuthModule,
+    ChatModule,
+    SessionModule,
     ScraperModule,
   ],
   controllers: [],

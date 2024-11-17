@@ -24,3 +24,4 @@ export const typeormDevelopConfig: TypeOrmModuleOptions = {
   //logging: true,
   synchronize: true,
 };
+
