@@ -4,8 +4,7 @@ import { DataSource } from 'typeorm';
 import { getCurrentTime, getOpenApi } from '../openapiUtil.api';
 import { openApiToken } from './openapiToken.api';
 import { openApiConfig } from '../config/openapi.config';
-import { StockPeriod } from '@/stock/domain/stockPeriod';
-import { StockMinutely } from '@/stock/domain/stockMinutely.entity';
+import { StockData, StockMinutely } from '@/stock/domain/stockData.entity';
 
 type MinuteData = {
   stck_bsop_date: string;
@@ -46,9 +45,9 @@ export class OpenapiMinuteData {
   }
 
   private convertResToMinuteData(stockId: string, item: MinuteData) {
-    const stockPeriod = new StockPeriod();
+    const stockPeriod = new StockData();
     stockPeriod.stock = { id: stockId } as Stock;
-    stockPeriod.start_time = new Date(
+    stockPeriod.startTime = new Date(
       parseInt(item.stck_bsop_date.slice(0, 4)),
       parseInt(item.stck_bsop_date.slice(4, 6)) - 1,
       parseInt(item.stck_bsop_date.slice(6, 8)),
@@ -58,7 +57,7 @@ export class OpenapiMinuteData {
     stockPeriod.high = parseInt(item.stck_hgpr);
     stockPeriod.low = parseInt(item.stck_lwpr);
     stockPeriod.volume = BigInt(item.cntg_vol);
-    stockPeriod.created_at = new Date();
+    stockPeriod.createdAt = new Date();
     return stockPeriod;
   }
 

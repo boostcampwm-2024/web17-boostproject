@@ -1,11 +1,13 @@
 import { Stock } from '@/stock/domain/stock.entity';
 import { DataSource, EntityManager } from 'typeorm';
 import { openApiToken } from './openapiToken.api';
-import { StockDaily } from '@/stock/domain/stockDaily.entity';
-import { StockWeekly } from '@/stock/domain/stockWeekly.entity';
-import { StockMonthly } from '@/stock/domain/stockMonthly.entity';
-import { StockYearly } from '@/stock/domain/stockYearly.entity';
-import { StockPeriod } from '@/stock/domain/stockPeriod';
+import {
+  StockData,
+  StockDaily,
+  StockWeekly,
+  StockMonthly,
+  StockYearly,
+} from '@/stock/domain/stockData.entity';
 import { getOpenApi, getPreviousDate, getTodayDate } from '../openapiUtil.api';
 import { Cron } from '@nestjs/schedule';
 
@@ -47,7 +49,7 @@ export class OpenapiPeriodData {
   private readonly url: string =
     '/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice';
   public constructor(private readonly datasourse: DataSource) {
-    this.getItemChartPriceCheck();
+    //this.getItemChartPriceCheck();
   }
 
   @Cron('0 1 * * 1-5')
@@ -70,7 +72,7 @@ export class OpenapiPeriodData {
     const baseTime = INTERVALS * 4;
     const entity = DATE_TO_ENTITY[period];
     const manager = this.datasourse.manager;
-    const stockPeriod = new StockPeriod();
+    const stockPeriod = new StockData();
 
     let time = 0;
     for (const stock of chunk) {
@@ -84,7 +86,7 @@ export class OpenapiPeriodData {
         while (!isFail) {
           configIdx = (configIdx + 1) % openApiToken.configs.length;
           stockPeriod.stock = { id: stock.id } as Stock;
-          stockPeriod.start_time = new Date(
+          stockPeriod.startTime = new Date(
             parseInt(endDate.slice(0, 4)),
             parseInt(endDate.slice(4, 6)) - 1,
             parseInt(endDate.slice(6, 8)),
@@ -114,21 +116,21 @@ export class OpenapiPeriodData {
   }
 
   private async existsChartData(
-    stock: StockPeriod,
+    stock: StockData,
     manager: EntityManager,
-    entity: typeof StockPeriod,
+    entity: typeof StockData,
   ) {
     return await manager.findOne(entity, {
       where: {
         stock: { id: stock.stock.id },
-        created_at: stock.start_time,
+        createdAt: stock.startTime,
       },
     });
   }
 
   private async insertChartData(
-    stock: StockPeriod,
-    entity: typeof StockPeriod,
+    stock: StockData,
+    entity: typeof StockData,
   ) {
     const manager = this.datasourse.manager;
     if (!(await this.existsChartData(stock, manager, entity))) {
@@ -137,7 +139,7 @@ export class OpenapiPeriodData {
   }
 
   private async saveChartData(
-    entity: typeof StockPeriod,
+    entity: typeof StockData,
     stockId: string,
     data: ChartData[],
   ) {
@@ -145,9 +147,9 @@ export class OpenapiPeriodData {
       if (!item || !item.stck_bsop_date) {
         continue;
       }
-      const stockPeriod = new StockPeriod();
+      const stockPeriod = new StockData();
       stockPeriod.stock = { id: stockId } as Stock;
-      stockPeriod.start_time = new Date(
+      stockPeriod.startTime = new Date(
         parseInt(item.stck_bsop_date.slice(0, 4)),
         parseInt(item.stck_bsop_date.slice(4, 6)) - 1,
         parseInt(item.stck_bsop_date.slice(6, 8)),
@@ -157,7 +159,7 @@ export class OpenapiPeriodData {
       stockPeriod.high = parseInt(item.stck_hgpr);
       stockPeriod.low = parseInt(item.stck_lwpr);
       stockPeriod.volume = BigInt(item.acml_vol);
-      stockPeriod.created_at = new Date();
+      stockPeriod.createdAt = new Date();
       await this.insertChartData(stockPeriod, entity);
     }
   }
