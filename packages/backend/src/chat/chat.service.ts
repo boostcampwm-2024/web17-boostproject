@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { Chat } from '@/chat/domain/chat.entity';
 import { ChatScrollResponse } from '@/chat/dto/chat.response';
@@ -23,6 +23,7 @@ export class ChatService {
   }
 
   async scrollFirstChat(stockId: string, scrollSize?: number) {
+    this.validatePageSize(scrollSize);
     const result = await this.findFirstChatScroll(stockId, scrollSize);
     return await this.toScrollResponse(result, scrollSize);
   }
@@ -32,8 +33,15 @@ export class ChatService {
     latestChatId?: number,
     pageSize?: number,
   ) {
+    this.validatePageSize(pageSize);
     const result = await this.findChatScroll(stockId, latestChatId, pageSize);
     return await this.toScrollResponse(result, pageSize);
+  }
+
+  private validatePageSize(scrollSize?: number) {
+    if (scrollSize && scrollSize > 100) {
+      throw new BadRequestException('pageSize should be less than 100');
+    }
   }
 
   private async toScrollResponse(result: Chat[], pageSize: number | undefined) {
