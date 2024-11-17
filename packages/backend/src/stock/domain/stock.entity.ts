@@ -1,6 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import { DateEmbedded } from '@/common/dateEmbedded.entity';
 import { UserStock } from '@/stock/domain/userStock.entity';
+import { StockDaily } from './stockDaily.entity';
 
 @Entity()
 export class Stock {
@@ -24,4 +25,7 @@ export class Stock {
 
   @OneToMany(() => UserStock, (userStock) => userStock.stock)
   userStocks?: UserStock[];
+
+  @OneToMany(() => StockDaily, (stockDaily) => stockDaily.stock)
+  stockDaily?: StockDaily[];
 }

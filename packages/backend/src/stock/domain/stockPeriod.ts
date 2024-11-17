@@ -1,4 +1,4 @@
-import { PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm';
+import { PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, OneToMany, ManyToOne } from 'typeorm';
 import { Stock } from './stock.entity';
 
 export class StockPeriod {
@@ -26,7 +26,7 @@ export class StockPeriod {
   @Column({ type: 'timestamp' })
   created_at: Date;
 
-  @OneToOne(() => Stock)
+  @ManyToOne(() => Stock)
   @JoinColumn({ name: 'stock_id' })
   stock: Stock;
 }

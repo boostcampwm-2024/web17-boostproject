@@ -31,4 +31,12 @@ const getPreviousDate = (date: string, months: number): string => {
   return currentDate.toISOString().split('T')[0].replace(/-/g, '');
 };
 
-export { postOpenApi, getOpenApi, getTodayDate, getPreviousDate };
+const wait = (milisec: number) => {
+  let start = Date.now(),
+    now = start;
+  while (now - start < milisec) {
+    now = Date.now();
+  }
+};
+
+export { postOpenApi, getOpenApi, getTodayDate, getPreviousDate, wait };

@@ -1,14 +1,17 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import axios from 'axios';
 import { openApiConfig } from './config/openapi.config';
-import { DataSource, EntityManager } from 'typeorm';
+import { DataSource, Entity, EntityManager } from 'typeorm';
 import { Logger } from 'winston';
 import { Cron } from '@nestjs/schedule';
 import { Stock } from '@/stock/domain/stock.entity';
 import { StockPeriod } from '@/stock/domain/stockPeriod';
 import { StockDaily } from '@/stock/domain/stockDaily.entity';
-import { getPreviousDate, getTodayDate } from './api/openapiUtil.api';
+import { getPreviousDate, getTodayDate, wait } from './api/openapiUtil.api';
 import { openApiToken } from './api/openapiToken.api';
+import { StockWeekly } from '@/stock/domain/stockWeekly.entity';
+import { StockMonthly } from '@/stock/domain/stockMonthly.entity';
+import { StockYearly } from '@/stock/domain/stockYearly.entity';
 
 type ChartData = {
   stck_bsop_date: string;
@@ -26,12 +29,29 @@ type ChartData = {
   revl_issu_reas: string;
 };
 
+const DATE_TO_ENTITY = {
+  D: StockDaily,
+  W: StockWeekly,
+  M: StockMonthly,
+  Y: StockYearly,
+};
+
+const DATE_TO_MONTH = {
+  D: 3,
+  W: 6,
+  M: 12,
+  Y: 24,
+};
+
+const INTERVALS = 2000;
+
 @Injectable()
 export class OpenapiScraperService {
   public constructor(
     private readonly datasourse: DataSource,
     @Inject('winston') private readonly logger: Logger,
   ) {
+    this.getItemChartPriceCheck();
   }
 
   @Cron('0 1 * * 1-5')
@@ -44,39 +64,66 @@ export class OpenapiScraperService {
     for (let i = 0; i < configCount; i++) {
       const chunk = stocks.slice(i * chunkSize, (i + 1) * chunkSize);
       const config = openApiToken.configs[i];
-      this.getChartData(chunk, config);
+      this.getChartData(chunk, 'D');
+      setTimeout(() => this.getChartData(chunk, 'W'), INTERVALS);
+      setTimeout(() => this.getChartData(chunk, 'M'), INTERVALS * 2);
+      setTimeout(() => this.getChartData(chunk, 'Y'), INTERVALS * 3);
     }
   }
 
-  private async getChartData(chunk: Stock[], config: typeof openApiConfig) {
-    const baseTime = 1000;
+  //private setStockPeriod(stock : string, start_time: string, close?:number, low? : number, high? : number, open: number, volume? : number) {
+  //  const stockPeriod = new StockPeriod();
+
+  //}
+
+  private async getChartData(
+    chunk: Stock[],
+    period: 'D' | 'W' | 'M' | 'Y',
+  ) {
+    const baseTime = INTERVALS * 4;
+    const entity = DATE_TO_ENTITY[period];
+    const manager = this.datasourse.manager;
+    const stockPeriod = new StockPeriod();
+
     let time = 0;
     for (const stock of chunk) {
+      let configIdx = 0;
       time += baseTime;
-      let endDate = getTodayDate();
-      let startDate = getPreviousDate(endDate, 3);
-      let hasData = true;
 
-      setTimeout(async (startDate, endDate) => {
-        while (hasData) {
+      // 여기에 데이터가 있는 지 확인이 필요함.
+      setTimeout(async () => {
+        let endDate = getTodayDate();
+        let startDate = getPreviousDate(endDate, 3);
+        let isFail = false;
+        while (!isFail) {
+          configIdx = (configIdx + 1) % openApiToken.configs.length;
+          stockPeriod.stock = { id: stock.id } as Stock;
+          stockPeriod.start_time = new Date(
+            parseInt(endDate.slice(0, 4)),
+            parseInt(endDate.slice(4, 6)) - 1,
+            parseInt(endDate.slice(6, 8)),
+          );
+          if (await this.existsChartData(stockPeriod, manager, entity)) {
+            return;
+          }
           const query = this.getItemChartPriceQuery(
             stock.id!,
             startDate,
             endDate,
-            'D',
+            period,
           );
-          const data = await this.getItemChartPrice(config, query);
+          const data = await this.getItemChartPrice(openApiToken.configs[configIdx], query);
           if (
             data &&
             data.output2 &&
-            data.output2.length > 0 &&
+            data.output2[0] &&
             data.output2[0].stck_bsop_date
           ) {
-            await this.saveChartData(StockDaily, stock.id!, data.output2);
-            endDate = getPreviousDate(startDate, 3);
-            startDate = getPreviousDate(endDate, 3);
+            await this.saveChartData(entity, stock.id!, data.output2);
+            endDate = getPreviousDate(startDate, DATE_TO_MONTH[period]);
+            startDate = getPreviousDate(endDate, DATE_TO_MONTH[period]);
           } else {
-            hasData = false;
+            isFail = true;
           }
         }
       }, time);
@@ -119,7 +166,7 @@ export class OpenapiScraperService {
       stockPeriod.stock = { id: stockId } as Stock;
       stockPeriod.start_time = new Date(
         parseInt(item.stck_bsop_date.slice(0, 4)),
-        parseInt(item.stck_bsop_date.slice(4, 6)),
+        parseInt(item.stck_bsop_date.slice(4, 6)) - 1,
         parseInt(item.stck_bsop_date.slice(6, 8)),
       );
       stockPeriod.close = parseInt(item.stck_clpr);
