@@ -6,9 +6,7 @@ import { StockWeekly } from '@/stock/domain/stockWeekly.entity';
 import { StockMonthly } from '@/stock/domain/stockMonthly.entity';
 import { StockYearly } from '@/stock/domain/stockYearly.entity';
 import { StockPeriod } from '@/stock/domain/stockPeriod';
-import { getPreviousDate, getTodayDate } from '../openapiUtil.api';
-import { openApiConfig } from '../config/openapi.config';
-import axios from 'axios';
+import { getOpenApi, getPreviousDate, getTodayDate } from '../openapiUtil.api';
 import { Cron } from '@nestjs/schedule';
 
 type ChartData = {
@@ -27,6 +25,8 @@ type ChartData = {
   revl_issu_reas: string;
 };
 
+type Period = 'D' | 'W' | 'M' | 'Y';
+
 const DATE_TO_ENTITY = {
   D: StockDaily,
   W: StockWeekly,
@@ -41,11 +41,11 @@ const DATE_TO_MONTH = {
   Y: 24,
 };
 
-type Period = 'D' | 'W' | 'M' | 'Y';
-
 const INTERVALS = 4000;
 
 export class OpenapiPeriodData {
+  private readonly url: string =
+    '/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice';
   public constructor(private readonly datasourse: DataSource) {
     this.getItemChartPriceCheck();
   }
@@ -98,17 +98,11 @@ export class OpenapiPeriodData {
             endDate,
             period,
           );
-          const data = await this.getItemChartPrice(
-            openApiToken.configs[configIdx],
-            query,
-          );
-          if (
-            data &&
-            data.output2 &&
-            data.output2[0] &&
-            data.output2[0].stck_bsop_date
-          ) {
-            await this.saveChartData(entity, stock.id!, data.output2);
+          const output = (
+            await getOpenApi(this.url, openApiToken.configs[configIdx], query)
+          ).output2;
+          if (output && this.isChartData(output[0])) {
+            await this.saveChartData(entity, stock.id!, output);
             endDate = getPreviousDate(startDate, DATE_TO_MONTH[period]);
             startDate = getPreviousDate(endDate, DATE_TO_MONTH[period]);
           } else {
@@ -168,30 +162,6 @@ export class OpenapiPeriodData {
     }
   }
 
-  private async getItemChartPrice(
-    config: typeof openApiConfig,
-    query: any,
-  ): Promise<any> {
-    try {
-      const response = await axios.get(
-        config.STOCK_URL +
-          '/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice',
-        {
-          params: query,
-          headers: {
-            Authorization: `Bearer ${config.STOCK_API_TOKEN}`,
-            appkey: config.STOCK_API_KEY,
-            appsecret: config.STOCK_API_PASSWORD,
-            tr_id: 'FHKST03010100',
-          },
-        },
-      );
-      return response.data;
-    } catch (error) {
-      throw new Error(`Request failed: ${error}`);
-    }
-  }
-
   private getItemChartPriceQuery(
     stockId: string,
     startDate: string,
@@ -207,5 +177,23 @@ export class OpenapiPeriodData {
       fid_period_div_code: period,
       fid_org_adj_prc: 0,
     };
+  }
+
+  private isChartData(data: any) {
+    return (
+      typeof data.stck_bsop_date === 'string' &&
+      typeof data.stck_clpr === 'string' &&
+      typeof data.stck_oprc === 'string' &&
+      typeof data.stck_hgpr === 'string' &&
+      typeof data.stck_lwpr === 'string' &&
+      typeof data.acml_vol === 'string' &&
+      typeof data.acml_tr_pbmn === 'string' &&
+      typeof data.flng_cls_code === 'string' &&
+      typeof data.prtt_rate === 'string' &&
+      typeof data.mod_yn === 'string' &&
+      typeof data.prdy_vrss_sign === 'string' &&
+      typeof data.prdy_vrss === 'string' &&
+      typeof data.revl_issu_reas === 'string'
+    );
   }
 }

@@ -38,7 +38,7 @@ class OpenapiTokenApi {
     await this.initWebSocketKey();
   }
 
-  @Cron('30 0 * * 1-5')
+  @Cron('50 0 * * 1-5')
   private async initAccessToken() {
     const updatedConfig = await Promise.all(
       this.config.map(async (val) => {
@@ -49,7 +49,7 @@ class OpenapiTokenApi {
     this.config = updatedConfig;
   }
 
-  @Cron('30 0 * * 1-5')
+  @Cron('50 0 * * 1-5')
   private async initWebSocketKey() {
     this.config.forEach(async (val) => {
       val.STOCK_WEBSOCKET_KEY = await this.getWebSocketKey(val)!;
