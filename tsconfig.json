@@ -18,6 +18,7 @@
     "noImplicitAny": true,
     "strictBindCallApply": true,
     "noFallthroughCasesInSwitch": false,
+    "strictPropertyInitialization": false,
     "paths": {
       "@/*": ["*"]
     }
