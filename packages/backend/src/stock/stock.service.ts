@@ -3,7 +3,7 @@ import { plainToInstance } from 'class-transformer';
 import { DataSource, EntityManager } from 'typeorm';
 import { Logger } from 'winston';
 import { Stock } from './domain/stock.entity';
-import { StocksResponse } from './dto/stock.Response';
+import { StockSearchResponse, StocksResponse } from './dto/stock.Response';
 import { UserStock } from '@/stock/domain/userStock.entity';
 
 @Injectable()
@@ -66,6 +66,20 @@ export class StockService {
         id: userStockId,
       });
     });
+  }
+
+  async searchStock(stockName: string) {
+    const queryBuilder = this.datasource
+      .getRepository(Stock)
+      .createQueryBuilder();
+    const result = await queryBuilder
+      .where('stock.stock_name LIKE :name', {
+        isTrading: true,
+        name: `%${stockName}%`,
+      })
+      .limit(10)
+      .getMany();
+    return new StockSearchResponse(result);
   }
 
   validateUserStock(userId: number, userStock: UserStock | null) {
