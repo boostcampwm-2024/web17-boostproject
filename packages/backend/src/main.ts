@@ -10,6 +10,8 @@ import { useSwagger } from '@/configs/swagger.config';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const store = app.get(MEMORY_STORE);
+
+  app.setGlobalPrefix('api');
   app.use(session({ ...sessionConfig, store }));
   app.useGlobalPipes(
     new ValidationPipe({

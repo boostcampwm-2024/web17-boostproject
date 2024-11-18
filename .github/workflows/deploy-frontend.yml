@@ -47,10 +47,10 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push backend Docker image
+      - name: Build and push frontend Docker image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/backend:latest -f packages/backend/Dockerfile .
-          docker push ${{ secrets.DOCKER_USERNAME }}/backend:latest
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend:latest -f packages/frontend/Dockerfile .
+          docker push ${{ secrets.DOCKER_USERNAME }}/frontend:latest
 
       - name: Deploy to server
         uses: appleboy/ssh-action@v1.1.0
