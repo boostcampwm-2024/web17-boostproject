@@ -17,6 +17,7 @@ import {
   ApiParam,
 } from '@nestjs/swagger';
 import { Request } from 'express';
+import { ApiGetStocks, LimitQuery } from './decorator/stock.decorator';
 import { ApiGetStockData } from './decorator/stockData.decorator';
 import { StockDetailResponse } from './dto/stockDetail.response';
 import { StockService } from './stock.service';
@@ -101,7 +102,6 @@ export class StockController {
   }
 
   @Delete('/user')
-  @ApiCookieAuth(sessionConfig.name)
   @ApiOperation({
     summary: '유저 소유 주식 삭제 API',
     description: '유저가 소유 주식을 삭제한다.',
@@ -221,5 +221,11 @@ export class StockController {
     @Param('stockId') stockId: string,
   ): Promise<StockDetailResponse> {
     return await this.stockDetailService.getStockDetailByStockId(stockId);
+  }
+
+  @Get('topViews')
+  @ApiGetStocks('조회수 기반 주식 리스트 조회 API')
+  async getTopStocksByViews(@LimitQuery(5) limit: number) {
+    return await this.stockService.getTopStocksByViews(limit);
   }
 }

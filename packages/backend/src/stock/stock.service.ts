@@ -1,7 +1,9 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { plainToInstance } from 'class-transformer';
 import { DataSource, EntityManager } from 'typeorm';
 import { Logger } from 'winston';
 import { Stock } from './domain/stock.entity';
+import { StocksResponse } from './dto/stock.Response';
 import { UserStock } from '@/stock/domain/userStock.entity';
 
 @Injectable()
@@ -109,5 +111,38 @@ export class StockService {
 
   private async existsStock(stockId: string, manager: EntityManager) {
     return await manager.exists(Stock, { where: { id: stockId } });
+  }
+
+  private StocksQuery() {
+    return this.datasource
+      .getRepository(Stock)
+      .createQueryBuilder('stock')
+      .leftJoin(
+        'stock_live_data',
+        'stockLiveData',
+        'stock.id = stockLiveData.stock_id',
+      )
+      .leftJoin(
+        'stock_detail',
+        'stockDetail',
+        'stock.id = stockDetail.stock_id',
+      )
+      .select([
+        'stock.id AS id',
+        'stock.name AS name',
+        'stockLiveData.currentPrice AS currentPrice',
+        'stockLiveData.changeRate AS changeRate',
+        'stockLiveData.volume AS volume',
+        'stockDetail.marketCap AS marketCap',
+      ]);
+  }
+
+  async getTopStocksByViews(limit: number) {
+    const rawData = await this.StocksQuery()
+      .orderBy('stock.views', 'DESC')
+      .limit(limit)
+      .getRawMany();
+
+    return plainToInstance(StocksResponse, rawData);
   }
 }
