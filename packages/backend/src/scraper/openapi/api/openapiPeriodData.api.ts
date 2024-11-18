@@ -174,7 +174,7 @@ export class OpenapiPeriodData {
       stockPeriod.open = parseInt(item.stck_oprc);
       stockPeriod.high = parseInt(item.stck_hgpr);
       stockPeriod.low = parseInt(item.stck_lwpr);
-      stockPeriod.volume = BigInt(item.acml_vol);
+      stockPeriod.volume = parseInt(item.acml_vol);
       stockPeriod.createdAt = new Date();
       await this.insertChartData(stockPeriod, entity);
     }

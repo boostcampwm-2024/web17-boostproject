@@ -37,7 +37,7 @@ export class OpenapiMinuteData {
     stockPeriod.open = parseInt(item.stck_oprc);
     stockPeriod.high = parseInt(item.stck_hgpr);
     stockPeriod.low = parseInt(item.stck_lwpr);
-    stockPeriod.volume = BigInt(item.cntg_vol);
+    stockPeriod.volume = parseInt(item.cntg_vol);
     stockPeriod.createdAt = new Date();
     return stockPeriod;
   }
