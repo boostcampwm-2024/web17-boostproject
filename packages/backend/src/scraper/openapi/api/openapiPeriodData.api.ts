@@ -36,13 +36,13 @@ const INTERVALS = 4000;
 export class OpenapiPeriodData {
   private readonly url: string =
     '/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice';
-  public constructor(private readonly datasourse: DataSource) {
+  public constructor(private readonly datasource: DataSource) {
     //this.getItemChartPriceCheck();
   }
 
   @Cron('0 1 * * 1-5')
   public async getItemChartPriceCheck() {
-    const entityManager = this.datasourse.manager;
+    const entityManager = this.datasource.manager;
     const stocks = await entityManager.find(Stock);
     const configCount = openApiToken.configs.length;
     const chunkSize = Math.ceil(stocks.length / configCount);
@@ -59,7 +59,7 @@ export class OpenapiPeriodData {
   private async getChartData(chunk: Stock[], period: Period) {
     const baseTime = INTERVALS * 4;
     const entity = DATE_TO_ENTITY[period];
-    const manager = this.datasourse.manager;
+    const manager = this.datasource.manager;
 
     let time = 0;
     for (const stock of chunk) {
@@ -148,7 +148,7 @@ export class OpenapiPeriodData {
   }
 
   private async insertChartData(stock: StockData, entity: typeof StockData) {
-    const manager = this.datasourse.manager;
+    const manager = this.datasource.manager;
     if (!(await this.existsChartData(stock, manager, entity))) {
       await manager.save(entity, stock);
     }

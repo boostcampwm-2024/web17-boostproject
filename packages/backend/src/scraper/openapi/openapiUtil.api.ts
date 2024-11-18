@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { openApiConfig } from './config/openapi.config';
+import { DEFAULT_TR_ID, TR_ID } from './type/openapiUtil.type';
 
 const postOpenApi = async (
   url: string,
@@ -18,6 +19,7 @@ const getOpenApi = async (
   url: string,
   config: typeof openApiConfig,
   query: object,
+  tr_id: TR_ID = DEFAULT_TR_ID,
 ) => {
   try {
     const response = await axios.get(config.STOCK_URL + url, {
@@ -26,7 +28,8 @@ const getOpenApi = async (
         Authorization: `Bearer ${config.STOCK_API_TOKEN}`,
         appkey: config.STOCK_API_KEY,
         appsecret: config.STOCK_API_PASSWORD,
-        tr_id: 'FHKST03010100',
+        tr_id,
+        custtype: 'P',
       },
     });
     return response.data;

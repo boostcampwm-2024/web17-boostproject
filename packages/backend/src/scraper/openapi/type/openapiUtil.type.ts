@@ -1,0 +1,7 @@
+export type TR_ID =
+  | 'FHKST03010100'
+  | 'FHKST66430200'
+  | 'HHKDB669107C0'
+  | 'CTPF1002R';
+
+export const DEFAULT_TR_ID: TR_ID = 'FHKST03010100';
