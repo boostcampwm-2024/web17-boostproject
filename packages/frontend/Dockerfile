@@ -7,5 +7,5 @@ RUN yarn workspace frontend build
 # Nginx 서버로 빌드된 파일 서빙
 FROM nginx:alpine
 COPY --from=builder /packages/packages/frontend/dist /usr/share/nginx/html
-EXPOSE 80
+EXPOSE 8080
 CMD ["nginx", "-g", "daemon off;"]
