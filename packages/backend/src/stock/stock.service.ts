@@ -3,7 +3,7 @@ import { plainToInstance } from 'class-transformer';
 import { DataSource, EntityManager } from 'typeorm';
 import { Logger } from 'winston';
 import { Stock } from './domain/stock.entity';
-import { StockSearchResponse, StocksResponse } from './dto/stock.Response';
+import { StockSearchResponse, StocksResponse } from './dto/stock.response';
 import { UserStock } from '@/stock/domain/userStock.entity';
 
 @Injectable()
