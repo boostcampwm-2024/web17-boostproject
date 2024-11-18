@@ -14,13 +14,13 @@ import { Role } from '@/user/domain/role';
 @Entity({ name: 'users' })
 export class User {
   @PrimaryGeneratedColumn()
-  id?: number;
+  id: number;
 
   @Column({ length: 50 })
-  nickname?: string;
+  nickname: string;
 
   @Column({ length: 50 })
-  email?: string;
+  email: string;
 
   @Column({ length: 5, default: Role.USER })
   role: Role = Role.USER;
@@ -29,14 +29,14 @@ export class User {
   type: OauthType = OauthType.LOCAL;
 
   @Column('decimal', { name: 'oauth_id' })
-  oauthId?: string;
+  oauthId: string;
 
   @Column({ name: 'is_light', default: true })
   isLight: boolean = true;
 
   @Column(() => DateEmbedded, { prefix: '' })
-  date?: DateEmbedded;
+  date: DateEmbedded;
 
   @OneToMany(() => UserStock, (userStock) => userStock.user)
-  userStocks?: UserStock[];
+  userStocks: UserStock[];
 }

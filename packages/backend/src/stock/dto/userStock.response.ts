@@ -22,3 +22,19 @@ export class UserStockResponse {
     this.date = new Date();
   }
 }
+
+export class UserStockOwnerResponse {
+  @ApiProperty({ description: '사용자 주식 소유 여부', example: true })
+  isOwner: boolean;
+
+  @ApiProperty({
+    description: '응답 date',
+    example: new Date(),
+  })
+  date: Date;
+
+  constructor(isOwner: boolean) {
+    this.isOwner = isOwner;
+    this.date = new Date();
+  }
+}

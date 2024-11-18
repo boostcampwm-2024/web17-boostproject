@@ -4,12 +4,14 @@ import * as cookie from 'cookie';
 import { Socket } from 'socket.io';
 import { sessionConfig } from '@/configs/session.config';
 
+const DEFAULT_SESSION_ID = 'connect.sid';
+
 export const websocketCookieParse = (socket: Socket) => {
   if (!socket.request.headers.cookie) {
     throw new WsException('not found cookie');
   }
   const cookies = cookie.parse(socket.request.headers.cookie);
-  const sid = cookies['connect.sid'];
+  const sid = cookies[sessionConfig.name || DEFAULT_SESSION_ID];
   return getSessionIdFromCookie(sid);
 };
 

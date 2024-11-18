@@ -121,6 +121,28 @@ describe('StockService 테스트', () => {
     ).rejects.toThrow('you are not owner of user stock');
   });
 
+  test('소유 주식인지 확인한다.', async () => {
+    const managerMock = {
+      exists: jest.fn().mockResolvedValue(true),
+    };
+    const dataSource = createDataSourceMock(managerMock);
+    const stockService = new StockService(dataSource as DataSource, logger);
+
+    const result = await stockService.isUserStockOwner(stockId, userId);
+
+    expect(result).toBe(true);
+    expect(managerMock.exists).toHaveBeenCalled();
+  });
+
+  test('인증된 유저가 아니면 소유 주식은 항상 false를 반환한다.', async () => {
+    const dataSource = createDataSourceMock({});
+    const stockService = new StockService(dataSource as DataSource, logger);
+
+    const result = await stockService.isUserStockOwner(stockId);
+
+    expect(result).toBe(false);
+  });
+
   test('주식 조회수 기준 상위 데이터를 반환한다.', async () => {
     const limit = 5;
     // QueryBuilder Mock

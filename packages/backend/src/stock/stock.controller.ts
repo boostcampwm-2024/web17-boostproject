@@ -7,8 +7,16 @@ import {
   Param,
   Post,
   Query,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiParam } from '@nestjs/swagger';
+import {
+  ApiCookieAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+} from '@nestjs/swagger';
+import { Request } from 'express';
 import { ApiGetStocks, LimitQuery } from './decorator/stock.decorator';
 import { ApiGetStockData } from './decorator/stockData.decorator';
 import { StockDetailResponse } from './dto/stockDetail.response';
@@ -21,13 +29,20 @@ import {
   StockDataYearlyService,
 } from './stockData.service';
 import { StockDetailService } from './stockDetail.service';
+import SessionGuard from '@/auth/session/session.guard';
+import { GetUser } from '@/common/decorator/user.decorator';
+import { sessionConfig } from '@/configs/session.config';
 import { StockViewsResponse } from '@/stock/dto/stock.Response';
 import { StockViewRequest } from '@/stock/dto/stockView.request';
 import {
-  UserStockCreateRequest,
   UserStockDeleteRequest,
+  UserStockRequest,
 } from '@/stock/dto/userStock.request';
-import { UserStockResponse } from '@/stock/dto/userStock.response';
+import {
+  UserStockOwnerResponse,
+  UserStockResponse,
+} from '@/stock/dto/userStock.response';
+import { User } from '@/user/domain/user.entity';
 
 @Controller('stock')
 export class StockController {
@@ -62,6 +77,7 @@ export class StockController {
   }
 
   @Post('/user')
+  @ApiCookieAuth(sessionConfig.name)
   @ApiOperation({
     summary: '유저 소유 주식 추가 API',
     description: '유저가 소유 주식을 추가한다.',
@@ -70,12 +86,14 @@ export class StockController {
     description: '유저 소유 주식 추가 성공',
     type: UserStockResponse,
   })
+  @UseGuards(SessionGuard)
   async createUserStock(
-    @Body() request: UserStockCreateRequest,
+    @Body() requestBody: UserStockRequest,
+    @GetUser() user: User,
   ): Promise<UserStockResponse> {
     const stock = await this.stockService.createUserStock(
-      request.userId,
-      request.stockId,
+      user.id,
+      requestBody.stockId,
     );
     return new UserStockResponse(
       Number(stock.identifiers[0].id),
@@ -96,17 +114,40 @@ export class StockController {
       date: new Date(),
     },
   })
+  @UseGuards(SessionGuard)
   async deleteUserStock(
     @Body() request: UserStockDeleteRequest,
+    @GetUser() user: User,
   ): Promise<UserStockResponse> {
-    await this.stockService.deleteUserStock(
-      Number(request.userId),
-      request.userStockId,
-    );
+    await this.stockService.deleteUserStock(user.id, request.userStockId);
     return new UserStockResponse(
       request.userStockId,
       '사용자 소유 주식을 삭제했습니다.',
     );
+  }
+
+  @ApiOperation({
+    summary: '유저 소유 주식 확인 API',
+    description: '유저가 소유 주식을 확인한다.',
+  })
+  @ApiOkResponse({
+    description: '유저 소유 확인',
+    type: UserStockOwnerResponse,
+  })
+  @Get('user/ownership')
+  async checkOwnership(
+    @Body() body: UserStockRequest,
+    @Req() request: Request,
+  ) {
+    const user = request.user as User;
+    if (!user) {
+      return new UserStockOwnerResponse(false);
+    }
+    const result = await this.stockService.isUserStockOwner(
+      body.stockId,
+      user.id,
+    );
+    return new UserStockOwnerResponse(result);
   }
 
   @Get(':stockId/minutely')
