@@ -1,3 +1,4 @@
+import { applyDecorators } from '@nestjs/common';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -8,7 +9,6 @@ import {
   ColumnOptions,
 } from 'typeorm';
 import { Stock } from './stock.entity';
-import { applyDecorators } from '@nestjs/common';
 
 export const GenerateBigintColumn = (
   options?: ColumnOptions,
@@ -43,8 +43,8 @@ export class StockData {
   @Column({ type: 'decimal', precision: 15, scale: 2 })
   open: number;
 
-  @GenerateBigintColumn()
-  volume: BigInt;
+  @Column({ type: 'decimal', precision: 15, scale: 2 })
+  volume: number;
 
   @Column({ type: 'timestamp', name: 'start_time' })
   startTime: Date;
