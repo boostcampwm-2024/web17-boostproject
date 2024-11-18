@@ -13,10 +13,10 @@ export class StockLiveData {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'decimal', precision: 15, scale: 2 })
+  @Column({ name: 'current_price', type: 'decimal', precision: 15, scale: 2 })
   currentPrice: number;
 
-  @Column({ type: 'decimal', precision: 5, scale: 2 })
+  @Column({ name: 'change_rate', type: 'decimal', precision: 5, scale: 2 })
   changeRate: number;
 
   @Column()
