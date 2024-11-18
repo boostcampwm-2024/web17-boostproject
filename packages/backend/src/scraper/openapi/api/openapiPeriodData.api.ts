@@ -16,6 +16,7 @@ import {
   StockMonthly,
   StockYearly,
 } from '@/stock/domain/stockData.entity';
+import { Injectable } from '@nestjs/common';
 
 const DATE_TO_ENTITY = {
   D: StockDaily,
@@ -33,11 +34,12 @@ const DATE_TO_MONTH = {
 
 const INTERVALS = 4000;
 
+@Injectable()
 export class OpenapiPeriodData {
   private readonly url: string =
     '/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice';
   public constructor(private readonly datasourse: DataSource) {
-    //this.getItemChartPriceCheck();
+    this.getItemChartPriceCheck();
   }
 
   @Cron('0 1 * * 1-5')

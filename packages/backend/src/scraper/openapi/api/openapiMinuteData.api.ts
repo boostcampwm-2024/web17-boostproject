@@ -10,7 +10,9 @@ import {
 import { openApiToken } from './openapiToken.api';
 import { Stock } from '@/stock/domain/stock.entity';
 import { StockData, StockMinutely } from '@/stock/domain/stockData.entity';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class OpenapiMinuteData {
   private stock: Stock[];
   private readonly entity = StockMinutely;
