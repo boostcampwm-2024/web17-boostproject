@@ -278,8 +278,8 @@ describe('StockService 테스트', () => {
     expect(result).toBe(false);
   });
 
-  test('주식 조회수 기준 상위 데이터를 반환한다.', async () => {
-    const limit = 5;
+  test('주식 하락률 기준 상위 데이터를 반환한다.', async () => {
+    const limit = 20;
     // QueryBuilder Mock
     const queryBuilderMock = {
       leftJoin: jest.fn().mockReturnThis(),
@@ -288,20 +288,20 @@ describe('StockService 테스트', () => {
       limit: jest.fn().mockReturnThis(),
       getRawMany: jest.fn().mockResolvedValue([
         {
-          id: 'A005930',
-          name: '삼성전자',
-          currentPrice: '100000.0',
-          changeRate: '2.5',
-          volume: '500000',
-          marketCap: '500000000000.00',
-        },
-        {
           id: 'A051910',
           name: 'LG화학',
           currentPrice: '75000.0',
           changeRate: '-1.2',
           volume: '300000',
           marketCap: '20000000000.00',
+        },
+        {
+          id: 'A005930',
+          name: '삼성전자',
+          currentPrice: '100000.0',
+          changeRate: '2.5',
+          volume: '500000',
+          marketCap: '500000000000.00',
         },
       ]),
     };
@@ -315,25 +315,17 @@ describe('StockService 테스트', () => {
     const dataSource = createDataSourceMock(managerMock);
     const stockService = new StockService(dataSource as DataSource, logger);
 
-    const result = await stockService.getTopStocksByViews(limit);
+    const result = await stockService.getTopStocksByLosers(limit);
 
     expect(managerMock.getRepository).toHaveBeenCalledWith(Stock);
     expect(queryBuilderMock.orderBy).toHaveBeenCalledWith(
-      'stock.views',
-      'DESC',
+      'stockLiveData.changeRate',
+      'ASC',
     );
     expect(queryBuilderMock.limit).toHaveBeenCalledWith(limit);
     expect(queryBuilderMock.getRawMany).toHaveBeenCalled();
 
     expect(instanceToPlain(result)).toEqual([
-      {
-        id: 'A005930',
-        name: '삼성전자',
-        currentPrice: 100000.0,
-        changeRate: 2.5,
-        volume: 500000,
-        marketCap: '500000000000.00',
-      },
       {
         id: 'A051910',
         name: 'LG화학',
@@ -341,6 +333,14 @@ describe('StockService 테스트', () => {
         changeRate: -1.2,
         volume: 300000,
         marketCap: '20000000000.00',
+      },
+      {
+        id: 'A005930',
+        name: '삼성전자',
+        currentPrice: 100000.0,
+        changeRate: 2.5,
+        volume: 500000,
+        marketCap: '500000000000.00',
       },
     ]);
   });
