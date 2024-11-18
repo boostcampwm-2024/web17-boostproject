@@ -1,3 +1,4 @@
+import { applyDecorators } from '@nestjs/common';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -5,10 +6,28 @@ import {
   CreateDateColumn,
   JoinColumn,
   ManyToOne,
+  ColumnOptions,
 } from 'typeorm';
 import { Stock } from './stock.entity';
 
-abstract class StockData {
+export const GenerateBigintColumn = (
+  options?: ColumnOptions,
+): PropertyDecorator => {
+  return applyDecorators(
+    Column({
+      ...options,
+      type: 'bigint',
+      transformer: {
+        to: (value: bigint): string =>
+          typeof value === 'bigint' ? value.toString() : value,
+        from: (value: string): bigint =>
+          typeof value === 'string' ? BigInt(value) : value,
+      },
+    }),
+  );
+};
+
+export class StockData {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -24,7 +43,7 @@ abstract class StockData {
   @Column({ type: 'decimal', precision: 15, scale: 2 })
   open: number;
 
-  @Column({ type: 'bigint' })
+  @Column({ type: 'decimal', precision: 15, scale: 2 })
   volume: number;
 
   @Column({ type: 'timestamp', name: 'start_time' })
@@ -40,7 +59,6 @@ abstract class StockData {
 
 @Entity('stock_minutely')
 export class StockMinutely extends StockData {}
-
 @Entity('stock_daily')
 export class StockDaily extends StockData {}
 @Entity('stock_weekly')

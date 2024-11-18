@@ -8,5 +8,5 @@
     },
     "strictPropertyInitialization": false
   },
-  "include": ["src/**/*", "test/**/*"]
+  "include": ["src/**/*", "test/**/*", "src/scraper/openapi/type/openapiPeriodData.ts"]
 }
