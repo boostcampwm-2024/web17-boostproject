@@ -1,9 +1,13 @@
 import axios from 'axios';
 import { openApiConfig } from './config/openapi.config';
 
-const postOpenApi = async (url: string, body: {}): Promise<any> => {
+const postOpenApi = async (
+  url: string,
+  config: typeof openApiConfig,
+  body: object,
+) => {
   try {
-    const response = await axios.post(url, body);
+    const response = await axios.post(config.STOCK_URL + url, body);
     return response.data;
   } catch (error) {
     throw new Error(`Request failed: ${error}`);
@@ -13,8 +17,8 @@ const postOpenApi = async (url: string, body: {}): Promise<any> => {
 const getOpenApi = async (
   url: string,
   config: typeof openApiConfig,
-  query: any,
-): Promise<any> => {
+  query: object,
+) => {
   try {
     const response = await axios.get(config.STOCK_URL + url, {
       params: query,

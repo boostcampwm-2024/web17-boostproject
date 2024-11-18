@@ -1,8 +1,8 @@
-import { openApiConfig } from '../config/openapi.config';
-import { Logger } from 'winston';
 import { Inject, NotFoundException } from '@nestjs/common';
-import axios from 'axios';
 import { Cron } from '@nestjs/schedule';
+import { Logger } from 'winston';
+import { openApiConfig } from '../config/openapi.config';
+import { postOpenApi } from '../openapiUtil.api';
 import { logger } from '@/configs/logger.config';
 
 class OpenapiTokenApi {
@@ -56,25 +56,13 @@ class OpenapiTokenApi {
     });
   }
 
-  private async postOpenApi(url: string, body: {}): Promise<any> {
-    try {
-      const response = await axios.post(url, body);
-      return response.data;
-    } catch (error) {
-      throw new Error(`Request failed: ${error}`);
-    }
-  }
-
   private async getToken(config: typeof openApiConfig): Promise<string> {
     const body = {
       grant_type: 'client_credentials',
       appkey: config.STOCK_API_KEY,
       appsecret: config.STOCK_API_PASSWORD,
     };
-    const tmp = await this.postOpenApi(
-      config.STOCK_URL + '/oauth2/tokenP',
-      body,
-    );
+    const tmp = await postOpenApi('/oauth2/tokenP', config, body);
     if (!tmp.access_token) {
       throw new NotFoundException('Access Token Failed');
     }
@@ -87,10 +75,7 @@ class OpenapiTokenApi {
       appkey: config.STOCK_API_KEY,
       secretkey: config.STOCK_API_PASSWORD,
     };
-    const tmp = await this.postOpenApi(
-      config.STOCK_URL + '/oauth2/Approval',
-      body,
-    );
+    const tmp = await postOpenApi('/oauth2/Approval', config, body);
     if (!tmp.approval_key) {
       throw new NotFoundException('WebSocket Key Failed');
     }
