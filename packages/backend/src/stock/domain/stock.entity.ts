@@ -1,6 +1,4 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
-import { DateEmbedded } from '@/common/dateEmbedded.entity';
-import { UserStock } from '@/stock/domain/userStock.entity';
 import {
   StockDaily,
   StockMinutely,
@@ -8,6 +6,9 @@ import {
   StockWeekly,
   StockYearly,
 } from './stockData.entity';
+import { Like } from '@/chat/domain/like.entity';
+import { DateEmbedded } from '@/common/dateEmbedded.entity';
+import { UserStock } from '@/stock/domain/userStock.entity';
 
 @Entity()
 export class Stock {
@@ -26,8 +27,11 @@ export class Stock {
   @Column({ name: 'group_code' })
   groupCode?: string;
 
+  @OneToMany(() => Like, (like) => like.chat)
+  likes?: Like[];
+
   @Column(() => DateEmbedded, { prefix: '' })
-  dare?: DateEmbedded;
+  date?: DateEmbedded;
 
   @OneToMany(() => UserStock, (userStock) => userStock.stock)
   userStocks?: UserStock[];

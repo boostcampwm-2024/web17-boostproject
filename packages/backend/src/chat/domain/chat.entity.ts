@@ -3,9 +3,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ChatType } from '@/chat/domain/chatType.enum';
+import { Like } from '@/chat/domain/like.entity';
 import { DateEmbedded } from '@/common/dateEmbedded.entity';
 import { Stock } from '@/stock/domain/stock.entity';
 import { User } from '@/user/domain/user.entity';
@@ -22,6 +24,9 @@ export class Chat {
   @ManyToOne(() => Stock, (stock) => stock.id)
   @JoinColumn({ name: 'stock_id' })
   stock: Stock;
+
+  @OneToMany(() => Like, (like) => like.chat)
+  likes?: Like[];
 
   @Column()
   message: string;
