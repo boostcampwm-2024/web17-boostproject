@@ -27,37 +27,32 @@ export const StockRankingTable = () => {
           </tr>
         </thead>
         <tbody>
-          {stockData.data.map((stock, index) => {
-            return (
-              <tr
-                key={stock.id}
-                className="display-medium14 text-dark-gray text-right [&>*]:p-4"
-              >
-                <td className="flex gap-6 text-left">
-                  <span className="text-gray">{index + 1}</span>
-                  <Link
-                    to={`${stock.id}`}
-                    className="display-bold14 hover:text-orange cursor-pointer text-ellipsis hover:underline"
-                  >
-                    {stock.name}
-                  </Link>
-                </td>
-                <td>{stock.currentPrice.toLocaleString()}원</td>
-                <td
-                  className={cn(
-                    stock.changeRate >= 0 ? 'text-red' : 'text-blue',
-                  )}
+          {stockData.data.map((stock, index) => (
+            <tr
+              key={stock.id}
+              className="display-medium14 text-dark-gray text-right [&>*]:p-4"
+            >
+              <td className="flex gap-6 text-left">
+                <span className="text-gray">{index + 1}</span>
+                <Link
+                  to={`${stock.id}`}
+                  className="display-bold14 hover:text-orange cursor-pointer text-ellipsis hover:underline"
                 >
-                  {stock.changeRate >= 0 && '+'}
-                  {stock.changeRate.toLocaleString()}원 (
-                  {stock.changeRatePercent}
-                  %)
-                </td>
-                <td>{stock.tradingVolume.toLocaleString()}원</td>
-                <td>{stock.tradingValue.toLocaleString()}주</td>
-              </tr>
-            );
-          })}
+                  {stock.name}
+                </Link>
+              </td>
+              <td>{stock.currentPrice.toLocaleString()}원</td>
+              <td
+                className={cn(stock.changeRate >= 0 ? 'text-red' : 'text-blue')}
+              >
+                {stock.changeRate >= 0 && '+'}
+                {stock.changeRate.toLocaleString()}원 ({stock.changeRatePercent}
+                %)
+              </td>
+              <td>{stock.tradingVolume.toLocaleString()}원</td>
+              <td>{stock.tradingValue.toLocaleString()}주</td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
