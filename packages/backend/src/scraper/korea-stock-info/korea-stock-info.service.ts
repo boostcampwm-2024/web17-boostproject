@@ -1,16 +1,17 @@
-import { Inject, Injectable } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as fs from 'fs';
-import * as path from 'path';
 import * as https from 'https';
+import * as path from 'path';
 import * as readline from 'readline';
-import * as iconv from 'iconv-lite';
-import * as unzipper from 'unzipper';
-import { MasterDownloadDto } from './dto/master-download.dto';
-import { config as dotenvConfig } from 'dotenv';
-import { Stock } from '@/stock/domain/stock.entity';
-import { DataSource, EntityManager } from 'typeorm';
-import { Logger } from 'winston';
+import { Inject, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
+import { config as dotenvConfig } from 'dotenv';
+import * as iconv from 'iconv-lite';
+import { DataSource, EntityManager } from 'typeorm';
+import * as unzipper from 'unzipper';
+import { Logger } from 'winston';
+import { MasterDownloadDto } from './dto/master-download.dto';
+import { Stock } from '@/stock/domain/stock.entity';
 
 dotenvConfig();
 
@@ -78,12 +79,7 @@ export class KoreaStockInfoService {
           });
         })
         .on('error', (err) => {
-          fs.unlink(filePath, (unlinkError) => {
-            if (unlinkError) {
-              this.logger.error(`Error deleting file: ${unlinkError.message}`);
-            }
-            reject(err);
-          });
+          this.handleUnlinkFile(filePath, err, reject);
         });
     });
   }
@@ -121,9 +117,7 @@ export class KoreaStockInfoService {
     return extractedFile;
   }
 
-  public async getKospiMasterData(
-    downloadDto: MasterDownloadDto,
-  ): Promise<void> {
+  private beforeMasterData(downloadDto: MasterDownloadDto): readline.Interface {
     const targetFileName = downloadDto.target + '.mst';
     const fileName = path.join(downloadDto.baseDir, targetFileName);
     const encoding = 'cp949';
@@ -132,71 +126,64 @@ export class KoreaStockInfoService {
       input: fs.createReadStream(fileName).pipe(iconv.decodeStream(encoding)),
       crlfDelay: Infinity,
     });
+    return rl;
+  }
+
+  private handleUnlinkFile(
+    targetFileName: string,
+    err?: Error,
+    callback?: (err: Error) => void,
+  ) {
+    fs.unlink(targetFileName, (unlinkError) => {
+      if (unlinkError) {
+        this.logger.error(`Error deleting file: ${unlinkError.message}`);
+      }
+      if (callback && err) {
+        callback(err);
+      }
+    });
+  }
+
+  private async getMasterData(
+    downloadDto: MasterDownloadDto,
+    offset: number,
+  ): Promise<void> {
+    const targetFileName = downloadDto.target + '.mst';
+    const rl = this.beforeMasterData(downloadDto);
 
     for await (const row of rl) {
       const shortCode = this.getValueFromMst(row, 0, 9);
-      const koreanName = this.getValueFromMst(row, 21, row.length - 228);
+      const koreanName = this.getValueFromMst(row, 21, row.length - offset);
       const groupCode = this.getValueFromMst(
         row,
-        row.length - 228,
-        row.length - 226,
+        row.length - offset,
+        row.length - offset + 2,
       );
 
-      const kospiMaster: Stock = {
+      const masterData: Stock = {
         id: shortCode,
         name: koreanName,
         views: 0,
         isTrading: true,
         groupCode,
       };
-
-      await this.insertStockData(kospiMaster);
+      await this.insertStockData(masterData);
     }
 
-    fs.unlink(targetFileName, (unlinkError) => {
-      if (unlinkError) {
-        this.logger.error(`Error deleting file: ${unlinkError.message}`);
-      }
-    });
+    this.handleUnlinkFile(targetFileName);
+  }
+
+  public async getKospiMasterData(
+    downloadDto: MasterDownloadDto,
+  ): Promise<void> {
+    await this.getMasterData(downloadDto, 228);
     this.logger.info('Kospi master data processing done.');
   }
 
   public async getKosdaqMasterData(
     downloadDto: MasterDownloadDto,
   ): Promise<void> {
-    const targetFileName = downloadDto.target + '.mst';
-    const fileName = path.join(downloadDto.baseDir, targetFileName);
-    const encoding = 'cp949';
-
-    const rl = readline.createInterface({
-      input: fs.createReadStream(fileName).pipe(iconv.decodeStream(encoding)),
-      crlfDelay: Infinity,
-    });
-
-    for await (const row of rl) {
-      const shortCode = this.getValueFromMst(row, 0, 9);
-      const koreanName = this.getValueFromMst(row, 21, row.length - 222);
-      const groupCode = this.getValueFromMst(
-        row,
-        row.length - 222,
-        row.length - 220,
-      );
-
-      const kosdaqMaster: Stock = {
-        id: shortCode,
-        name: koreanName,
-        views: 0,
-        isTrading: true,
-        groupCode,
-      };
-
-      await this.insertStockData(kosdaqMaster);
-    }
-    fs.unlink(targetFileName, (unlinkError) => {
-      if (unlinkError) {
-        this.logger.error(`Error deleting file: ${unlinkError.message}`);
-      }
-    });
+    await this.getMasterData(downloadDto, 222);
     this.logger.info('Kosdaq master data processing done.');
   }
 }

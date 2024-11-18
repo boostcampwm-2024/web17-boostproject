@@ -1,6 +1,14 @@
-import { Stock } from '@/stock/domain/stock.entity';
+import { Cron } from '@nestjs/schedule';
 import { DataSource, EntityManager } from 'typeorm';
+import { getOpenApi, getPreviousDate, getTodayDate } from '../openapiUtil.api';
+import {
+  ChartData,
+  isChartData,
+  ItemChartPriceQuery,
+  Period,
+} from '../type/openapiPeriodData';
 import { openApiToken } from './openapiToken.api';
+import { Stock } from '@/stock/domain/stock.entity';
 import {
   StockData,
   StockDaily,
@@ -8,26 +16,6 @@ import {
   StockMonthly,
   StockYearly,
 } from '@/stock/domain/stockData.entity';
-import { getOpenApi, getPreviousDate, getTodayDate } from '../openapiUtil.api';
-import { Cron } from '@nestjs/schedule';
-
-type ChartData = {
-  stck_bsop_date: string;
-  stck_clpr: string;
-  stck_oprc: string;
-  stck_hgpr: string;
-  stck_lwpr: string;
-  acml_vol: string;
-  acml_tr_pbmn: string;
-  flng_cls_code: string;
-  prtt_rate: string;
-  mod_yn: string;
-  prdy_vrss_sign: string;
-  prdy_vrss: string;
-  revl_issu_reas: string;
-};
-
-type Period = 'D' | 'W' | 'M' | 'Y';
 
 const DATE_TO_ENTITY = {
   D: StockDaily,
@@ -72,47 +60,78 @@ export class OpenapiPeriodData {
     const baseTime = INTERVALS * 4;
     const entity = DATE_TO_ENTITY[period];
     const manager = this.datasourse.manager;
-    const stockPeriod = new StockData();
 
     let time = 0;
     for (const stock of chunk) {
-      let configIdx = 0;
       time += baseTime;
-
-      setTimeout(async () => {
-        let endDate = getTodayDate();
-        let startDate = getPreviousDate(endDate, 3);
-        let isFail = false;
-        while (!isFail) {
-          configIdx = (configIdx + 1) % openApiToken.configs.length;
-          stockPeriod.stock = { id: stock.id } as Stock;
-          stockPeriod.startTime = new Date(
-            parseInt(endDate.slice(0, 4)),
-            parseInt(endDate.slice(4, 6)) - 1,
-            parseInt(endDate.slice(6, 8)),
-          );
-          if (await this.existsChartData(stockPeriod, manager, entity)) {
-            return;
-          }
-          const query = this.getItemChartPriceQuery(
-            stock.id!,
-            startDate,
-            endDate,
-            period,
-          );
-          const output = (
-            await getOpenApi(this.url, openApiToken.configs[configIdx], query)
-          ).output2;
-          if (output && this.isChartData(output[0])) {
-            await this.saveChartData(entity, stock.id!, output);
-            endDate = getPreviousDate(startDate, DATE_TO_MONTH[period]);
-            startDate = getPreviousDate(endDate, DATE_TO_MONTH[period]);
-          } else {
-            isFail = true;
-          }
-        }
-      }, time);
+      setTimeout(
+        () => this.processStockData(stock, period, entity, manager),
+        time,
+      );
     }
+  }
+
+  private async processStockData(
+    stock: Stock,
+    period: Period,
+    entity: typeof StockData,
+    manager: EntityManager,
+  ) {
+    const stockPeriod = new StockData();
+    let configIdx = 0;
+    let end = getTodayDate();
+    let start = getPreviousDate(end, 3);
+    let isFail = false;
+
+    while (isFail) {
+      configIdx = (configIdx + 1) % openApiToken.configs.length;
+      this.setStockPeriod(stockPeriod, stock.id!, end);
+
+      if (await this.existsChartData(stockPeriod, manager, entity)) return;
+
+      const query = this.getItemChartPriceQuery(stock.id!, start, end, period);
+
+      const output = await this.fetchChartData(query, configIdx);
+
+      if (output && isChartData(output[0])) {
+        await this.saveChartData(entity, stock.id!, output);
+        ({ endDate: end, startDate: start } = this.updateDates(start, period));
+      } else isFail = true;
+    }
+  }
+
+  private setStockPeriod(
+    stockPeriod: StockData,
+    stockId: string,
+    endDate: string,
+  ): void {
+    stockPeriod.stock = { id: stockId } as Stock;
+    stockPeriod.startTime = new Date(
+      parseInt(endDate.slice(0, 4)),
+      parseInt(endDate.slice(4, 6)) - 1,
+      parseInt(endDate.slice(6, 8)),
+    );
+  }
+
+  private async fetchChartData(
+    query: ItemChartPriceQuery,
+    configIdx: number,
+  ): Promise<ChartData[]> {
+    const response = await getOpenApi(
+      this.url,
+      openApiToken.configs[configIdx],
+      query,
+    );
+    return response.output2 as ChartData[];
+  }
+
+  private updateDates(
+    startDate: string,
+    period: Period,
+  ): { endDate: string; startDate: string } {
+    const endDate = getPreviousDate(startDate, DATE_TO_MONTH[period]);
+    startDate = getPreviousDate(endDate, DATE_TO_MONTH[period]);
+    return { endDate, startDate };
   }
 
   private async existsChartData(
@@ -128,10 +147,7 @@ export class OpenapiPeriodData {
     });
   }
 
-  private async insertChartData(
-    stock: StockData,
-    entity: typeof StockData,
-  ) {
+  private async insertChartData(stock: StockData, entity: typeof StockData) {
     const manager = this.datasourse.manager;
     if (!(await this.existsChartData(stock, manager, entity))) {
       await manager.save(entity, stock);
@@ -170,7 +186,7 @@ export class OpenapiPeriodData {
     endDate: string,
     period: Period,
     marketCode: 'J' | 'W' = 'J',
-  ): any {
+  ): ItemChartPriceQuery {
     return {
       fid_cond_mrkt_div_code: marketCode,
       fid_input_iscd: stockId,
@@ -179,23 +195,5 @@ export class OpenapiPeriodData {
       fid_period_div_code: period,
       fid_org_adj_prc: 0,
     };
-  }
-
-  private isChartData(data: any) {
-    return (
-      typeof data.stck_bsop_date === 'string' &&
-      typeof data.stck_clpr === 'string' &&
-      typeof data.stck_oprc === 'string' &&
-      typeof data.stck_hgpr === 'string' &&
-      typeof data.stck_lwpr === 'string' &&
-      typeof data.acml_vol === 'string' &&
-      typeof data.acml_tr_pbmn === 'string' &&
-      typeof data.flng_cls_code === 'string' &&
-      typeof data.prtt_rate === 'string' &&
-      typeof data.mod_yn === 'string' &&
-      typeof data.prdy_vrss_sign === 'string' &&
-      typeof data.prdy_vrss === 'string' &&
-      typeof data.revl_issu_reas === 'string'
-    );
   }
 }

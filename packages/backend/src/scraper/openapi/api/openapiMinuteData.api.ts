@@ -1,21 +1,15 @@
-import { Stock } from '@/stock/domain/stock.entity';
 import { Cron } from '@nestjs/schedule';
 import { DataSource } from 'typeorm';
-import { getCurrentTime, getOpenApi } from '../openapiUtil.api';
-import { openApiToken } from './openapiToken.api';
 import { openApiConfig } from '../config/openapi.config';
+import { getCurrentTime, getOpenApi } from '../openapiUtil.api';
+import {
+  isMinuteData,
+  MinuteData,
+  UpdateStockQuery,
+} from '../type/openapiMinuteData.type';
+import { openApiToken } from './openapiToken.api';
+import { Stock } from '@/stock/domain/stock.entity';
 import { StockData, StockMinutely } from '@/stock/domain/stockData.entity';
-
-type MinuteData = {
-  stck_bsop_date: string;
-  stck_cntg_hour: string;
-  stck_prpr: string;
-  stck_oprc: string;
-  stck_hgpr: string;
-  stck_lwpr: string;
-  cntg_vol: string;
-  acml_tr_pbmn: string;
-};
 
 export class OpenapiMinuteData {
   private stock: Stock[];
@@ -23,19 +17,6 @@ export class OpenapiMinuteData {
   private readonly url: string =
     '/uapi/domestic-stock/v1/quotations/inquire-time-itemchartprice';
   public constructor(private readonly datasourse: DataSource) {}
-
-  private isMinuteData(data: any) {
-    return (
-      typeof data.stck_bsop_date === 'string' &&
-      typeof data.stck_cntg_hour === 'string' &&
-      typeof data.stck_prpr === 'string' &&
-      typeof data.stck_oprc === 'string' &&
-      typeof data.stck_hgpr === 'string' &&
-      typeof data.stck_lwpr === 'string' &&
-      typeof data.cntg_vol === 'string' &&
-      typeof data.acml_tr_pbmn === 'string'
-    );
-  }
 
   @Cron('0 1 * * 1-5')
   private async getStockData() {
@@ -75,7 +56,7 @@ export class OpenapiMinuteData {
       const query = this.getUpdateStockQuery(stock.id!, time);
       const response = await getOpenApi(this.url, config, query);
       const output = (await response.data).output2[0] as MinuteData;
-      if (output && this.isMinuteData(output)) {
+      if (output && isMinuteData(output)) {
         const stockPeriod = this.convertResToMinuteData(stock.id!, output);
         this.saveMinuteData(stockPeriod);
       }
@@ -98,13 +79,13 @@ export class OpenapiMinuteData {
     time: string,
     isPastData: boolean = true,
     marketCode: 'J' | 'W' = 'J',
-  ): any {
+  ): UpdateStockQuery {
     return {
-      FID_ETC_CLS_CODE: '',
+      fid_etc_cls_code: '',
       fid_cond_mrkt_div_code: marketCode,
       fid_input_iscd: stockId,
-      FID_INPUT_HOUR_1: time,
-      FID_PW_DATA_INCU_YN: isPastData ? 'Y' : 'N',
+      fid_input_hour_1: time,
+      fid_pw_data_incu_yn: isPastData ? 'Y' : 'N',
     };
   }
 }
