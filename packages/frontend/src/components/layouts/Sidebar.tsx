@@ -2,7 +2,9 @@ import { useState } from 'react';
 import logoCharacter from '/logoCharacter.png';
 import logoTitle from '/logoTitle.png';
 import { MenuList } from './MenuList';
-import { bottomMenuItems, topMenuItems } from '@/constants/menuItems';
+import { Search } from './search';
+import { BOTTOM_MENU_ITEMS, TOP_MENU_ITEMS } from '@/constants/menuItems';
+import { type MenuSection } from '@/types/menu';
 import { cn } from '@/utils/cn';
 
 export const Sidebar = () => {
@@ -16,6 +18,7 @@ export const Sidebar = () => {
   };
 
   return (
+    <div ref={ref}>
     <nav
       className={cn(
         'fixed left-0 top-0 h-full cursor-pointer bg-white px-1 py-4 shadow-md',
@@ -51,5 +54,14 @@ export const Sidebar = () => {
         </div>
       </section>
     </nav>
+      <div
+        className={cn(
+          'fixed top-0 transition-all duration-300 ease-in-out',
+          isHovered ? 'left-60' : 'left-24',
+        )}
+      >
+        {showSearch && <Search className="h-screen" />}
+      </div>
+      </div>
   );
 };
