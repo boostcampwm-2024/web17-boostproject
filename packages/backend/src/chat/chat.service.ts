@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { Chat } from '@/chat/domain/chat.entity';
-import { ChatScrollResponse } from '@/chat/dto/chat.response';
 import { ChatScrollQuery } from '@/chat/dto/chat.request';
+import { ChatScrollResponse } from '@/chat/dto/chat.response';
 
 export interface ChatMessage {
   message: string;

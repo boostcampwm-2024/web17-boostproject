@@ -13,15 +13,15 @@ import {
   ApiOperation,
 } from '@nestjs/swagger';
 import SessionGuard from '@/auth/session/session.guard';
+import { ChatGateway } from '@/chat/chat.gateway';
 import { ChatService } from '@/chat/chat.service';
 import { ToggleLikeApi } from '@/chat/decorator/like.decorator';
-import { ChatScrollRequest } from '@/chat/dto/chat.request';
+import { ChatScrollQuery } from '@/chat/dto/chat.request';
 import { ChatScrollResponse } from '@/chat/dto/chat.response';
 import { LikeRequest } from '@/chat/dto/like.request';
 import { LikeService } from '@/chat/like.service';
 import { GetUser } from '@/common/decorator/user.decorator';
 import { User } from '@/user/domain/user.entity';
-import { ChatGateway } from '@/chat/chat.gateway';
 
 @Controller('chat')
 export class ChatController {
@@ -49,7 +49,7 @@ export class ChatController {
   })
   @Get()
   async findChatList(
-    @Query() request: ChatScrollRequest,
+    @Query() request: ChatScrollQuery,
     @Req() req: Express.Request,
   ) {
     const user = req.user as User;
