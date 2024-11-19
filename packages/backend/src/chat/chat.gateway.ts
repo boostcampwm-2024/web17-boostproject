@@ -7,18 +7,21 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
+import { MemoryStore } from 'express-session';
 import { Server, Socket } from 'socket.io';
 import { Logger } from 'winston';
 import {
   SessionSocket,
   WebSocketSessionGuard,
 } from '@/auth/session/webSocketSession.guard.';
+import { WebsocketSessionService } from '@/auth/session/websocketSession.service';
+import { MEMORY_STORE } from '@/auth/session.module';
 import { ChatService } from '@/chat/chat.service';
 import { Chat } from '@/chat/domain/chat.entity';
+import { ChatScrollQuery, isChatScrollQuery } from '@/chat/dto/chat.request';
+import { LikeResponse } from '@/chat/dto/like.response';
 import { WebSocketExceptionFilter } from '@/middlewares/filter/webSocketException.filter';
 import { StockService } from '@/stock/stock.service';
-import { LikeResponse } from '@/chat/dto/like.response';
-import { ChatScrollQuery, isChatScrollQuery } from '@/chat/dto/chat.request';
 
 interface chatMessage {
   room: string;
@@ -37,12 +40,16 @@ interface chatResponse {
 export class ChatGateway implements OnGatewayConnection {
   @WebSocketServer()
   server: Server;
+  websocketSessionService: WebsocketSessionService;
 
   constructor(
     @Inject('winston') private readonly logger: Logger,
     private readonly stockService: StockService,
     private readonly chatService: ChatService,
-  ) {}
+    @Inject(MEMORY_STORE) sessionStore: MemoryStore,
+  ) {
+    this.websocketSessionService = new WebsocketSessionService(sessionStore);
+  }
 
   @UseGuards(WebSocketSessionGuard)
   @SubscribeMessage('chat')
@@ -74,13 +81,18 @@ export class ChatGateway implements OnGatewayConnection {
 
   async handleConnection(client: Socket) {
     try {
+      const user =
+        await this.websocketSessionService.getAuthenticatedUser(client);
       const { stockId, pageSize } = await this.getChatScrollQuery(client);
       await this.validateExistStock(stockId);
       client.join(stockId);
-      const messages = await this.chatService.scrollFirstChat({
-        stockId,
-        pageSize,
-      });
+      const messages = await this.chatService.scrollFirstChat(
+        {
+          stockId,
+          pageSize,
+        },
+        user?.id,
+      );
       this.logger.info(`client joined room ${stockId}`);
       client.emit('chat', messages);
     } catch (e) {
