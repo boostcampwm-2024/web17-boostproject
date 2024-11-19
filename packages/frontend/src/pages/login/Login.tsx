@@ -26,7 +26,7 @@ export const Login = () => {
 
 export const LoginButton = ({ to, src, alt }: LoginButtonProps) => {
   return (
-    <Link to={to} className="w-72 shadow-sm">
+    <Link to={to} className="w-72 shadow">
       <img src={src} alt={alt} />
     </Link>
   );
