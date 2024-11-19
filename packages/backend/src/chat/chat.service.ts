@@ -18,4 +18,14 @@ export class ChatService {
       message: chatMessage.message,
     });
   }
+
+  async getChatList(stockId: string) {
+    const queryBuilder = this.dataSource.createQueryBuilder(Chat, 'chat');
+    console.log(stockId);
+    return queryBuilder
+      .where('chat.stock_id = :stockId', { stockId })
+      .orderBy('chat.created_at', 'DESC')
+      .limit(100)
+      .getMany();
+  }
 }

@@ -43,8 +43,8 @@ export class StockData {
   @Column({ type: 'decimal', precision: 15, scale: 2 })
   open: number;
 
-  @GenerateBigintColumn()
-  volume: bigint;
+  @Column({ type: 'decimal', precision: 15, scale: 2 })
+  volume: number;
 
   @Column({ type: 'timestamp', name: 'start_time' })
   startTime: Date;
