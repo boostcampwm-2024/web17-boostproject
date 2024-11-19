@@ -22,7 +22,10 @@ export class LikeService {
   }
 
   private async findChat(chatId: number, manager: EntityManager) {
-    const chat = await manager.findOne(Chat, { where: { id: chatId } });
+    const chat = await manager.findOne(Chat, {
+      where: { id: chatId },
+      relations: ['stock'],
+    });
     if (!chat) {
       throw new BadRequestException('Chat not found');
     }
@@ -42,12 +45,7 @@ export class LikeService {
       }),
       manager.save(Chat, chat),
     ]);
-    return {
-      likeCount: chat.likeCount,
-      message: 'like chat',
-      chatId: chat.id,
-      date: chat.date.updatedAt,
-    };
+    return LikeResponse.createLikeResponse(chat);
   }
 
   private async deleteLike(
@@ -57,11 +55,6 @@ export class LikeService {
   ): Promise<LikeResponse> {
     chat.likeCount -= 1;
     await Promise.all([manager.remove(like), manager.save(Chat, chat)]);
-    return {
-      likeCount: chat.likeCount,
-      message: 'like cancel',
-      chatId: chat.id,
-      date: chat.date.updatedAt,
-    };
+    return LikeResponse.createUnlikeResponse(chat);
   }
 }

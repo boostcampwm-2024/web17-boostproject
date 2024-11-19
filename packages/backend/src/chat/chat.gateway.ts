@@ -17,6 +17,7 @@ import { ChatService } from '@/chat/chat.service';
 import { Chat } from '@/chat/domain/chat.entity';
 import { WebSocketExceptionFilter } from '@/middlewares/filter/webSocketException.filter';
 import { StockService } from '@/stock/stock.service';
+import { LikeResponse } from '@/chat/dto/like.response';
 
 interface chatMessage {
   room: string;
@@ -63,6 +64,10 @@ export class ChatGateway implements OnGatewayConnection {
       message: content,
     });
     this.server.to(room).emit('chat', this.toResponse(savedChat));
+  }
+
+  async broadcastLike(response: LikeResponse) {
+    this.server.to(response.stockId).emit('like', response);
   }
 
   async handleConnection(client: Socket) {

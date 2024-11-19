@@ -13,12 +13,14 @@ import { LikeRequest } from '@/chat/dto/like.request';
 import { LikeService } from '@/chat/like.service';
 import { GetUser } from '@/common/decorator/user.decorator';
 import { User } from '@/user/domain/user.entity';
+import { ChatGateway } from '@/chat/chat.gateway';
 
 @Controller('chat')
 export class ChatController {
   constructor(
     private readonly chatService: ChatService,
     private readonly likeService: LikeService,
+    private readonly chatGateWay: ChatGateway,
   ) {}
 
   @ApiOperation({
@@ -50,6 +52,8 @@ export class ChatController {
   @ToggleLikeApi()
   @Post('like')
   async toggleChatLike(@Body() request: LikeRequest, @GetUser() user: User) {
-    return await this.likeService.toggleLike(user.id, request.chatId);
+    const result = await this.likeService.toggleLike(user.id, request.chatId);
+    this.chatGateWay.broadcastLike(result);
+    return result;
   }
 }
