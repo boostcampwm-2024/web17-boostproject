@@ -4,12 +4,19 @@ import logoTitle from '/logoTitle.png';
 import { MenuList } from './MenuList';
 import { Search } from './search';
 import { BOTTOM_MENU_ITEMS, TOP_MENU_ITEMS } from '@/constants/menuItems';
+import { useOutsideClick } from '@/hooks/useOutsideClick';
 import { type MenuSection } from '@/types/menu';
 import { cn } from '@/utils/cn';
 
 export const Sidebar = () => {
   const [isHovered, setIsHovered] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+
+  const ref = useOutsideClick(() => {
+    if (showSearch) {
+      setShowSearch(false);
+    }
+  });
 
   const handleMenuItemClick = (item: MenuSection) => {
     if (item.text === '검색') {
@@ -19,26 +26,26 @@ export const Sidebar = () => {
 
   return (
     <div ref={ref}>
-    <nav
-      className={cn(
-        'fixed left-0 top-0 h-full cursor-pointer bg-white px-1 py-4 shadow-md',
-        'transition-all duration-300 ease-in-out',
-        isHovered ? 'w-60' : 'w-24',
-      )}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <section className="flex flex-col justify-center gap-8">
-        <header className="flex items-center gap-4">
-          <img src={logoCharacter} alt="로고 캐릭터" className="w-20" />
-          <img
-            src={logoTitle}
-            alt="로고 제목"
-            className={cn('w-24 pt-5', isHovered ? 'display' : 'hidden')}
-          />
-        </header>
-        <div
-          className={cn(
+      <nav
+        className={cn(
+          'fixed left-0 top-0 h-full cursor-pointer bg-white px-1 py-4 shadow-md',
+          'transition-all duration-300 ease-in-out',
+          isHovered ? 'w-60' : 'w-24',
+        )}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <section className="flex flex-col justify-center gap-8">
+          <header className="flex items-center gap-4">
+            <img src={logoCharacter} alt="로고 캐릭터" className="w-20" />
+            <img
+              src={logoTitle}
+              alt="로고 제목"
+              className={cn('w-24 pt-5', isHovered ? 'display' : 'hidden')}
+            />
+          </header>
+          <div
+            className={cn(
               'flex h-[calc(100vh-11rem)]',
               isHovered ? 'gap-4' : '',
             )}
@@ -51,9 +58,9 @@ export const Sidebar = () => {
               />
               <MenuList items={BOTTOM_MENU_ITEMS} isHovered={isHovered} />
             </div>
-        </div>
-      </section>
-    </nav>
+          </div>
+        </section>
+      </nav>
       <div
         className={cn(
           'fixed top-0 transition-all duration-300 ease-in-out',
@@ -62,6 +69,6 @@ export const Sidebar = () => {
       >
         {showSearch && <Search className="h-screen" />}
       </div>
-      </div>
+    </div>
   );
 };
