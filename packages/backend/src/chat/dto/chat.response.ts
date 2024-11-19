@@ -7,6 +7,7 @@ interface ChatResponse {
   likeCount: number;
   message: string;
   type: string;
+  liked: boolean;
   createdAt: Date;
 }
 
@@ -25,6 +26,7 @@ export class ChatScrollResponse {
         likeCount: 0,
         message: '안녕하세요',
         type: ChatType.NORMAL,
+        isLiked: true,
         createdAt: new Date(),
       },
     ],
@@ -38,6 +40,7 @@ export class ChatScrollResponse {
       message: chat.message,
       type: chat.type,
       createdAt: chat.date!.createdAt,
+      liked: !!(chat.likes && chat.likes.length > 0),
     }));
     this.hasMore = hasMore;
   }

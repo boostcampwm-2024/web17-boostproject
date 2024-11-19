@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiOkResponse,
@@ -40,12 +48,12 @@ export class ChatController {
     },
   })
   @Get()
-  async findChatList(@Query() request: ChatScrollRequest) {
-    return await this.chatService.scrollNextChat(
-      request.stockId,
-      request.latestChatId,
-      request.pageSize,
-    );
+  async findChatList(
+    @Query() request: ChatScrollRequest,
+    @Req() req: Express.Request,
+  ) {
+    const user = req.user as User;
+    return await this.chatService.scrollNextChat(request, user?.id);
   }
 
   @UseGuards(SessionGuard)

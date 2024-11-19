@@ -28,3 +28,28 @@ export class ChatScrollRequest {
   @IsNumber()
   readonly pageSize?: number;
 }
+
+export interface ChatScrollQuery {
+  stockId: string;
+  latestChatId?: number;
+  pageSize?: number;
+}
+
+export function isChatScrollQuery(object: unknown): object is ChatScrollQuery {
+  if (typeof object !== 'object' || object === null) {
+    return false;
+  }
+
+  if (!('stockId' in object) || typeof object.stockId !== 'string') {
+    return false;
+  }
+
+  if (
+    'latestChatId' in object &&
+    !Number.isInteger(Number(object.latestChatId))
+  ) {
+    return false;
+  }
+
+  return !('pageSize' in object && !Number.isInteger(Number(object.pageSize)));
+}

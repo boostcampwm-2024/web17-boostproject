@@ -18,6 +18,7 @@ import { Chat } from '@/chat/domain/chat.entity';
 import { WebSocketExceptionFilter } from '@/middlewares/filter/webSocketException.filter';
 import { StockService } from '@/stock/stock.service';
 import { LikeResponse } from '@/chat/dto/like.response';
+import { ChatScrollQuery, isChatScrollQuery } from '@/chat/dto/chat.request';
 
 interface chatMessage {
   room: string;
@@ -36,6 +37,7 @@ interface chatResponse {
 export class ChatGateway implements OnGatewayConnection {
   @WebSocketServer()
   server: Server;
+
   constructor(
     @Inject('winston') private readonly logger: Logger,
     private readonly stockService: StockService,
@@ -71,24 +73,40 @@ export class ChatGateway implements OnGatewayConnection {
   }
 
   async handleConnection(client: Socket) {
-    const room = client.handshake.query.stockId;
-    if (
-      !this.isString(room) ||
-      !(await this.stockService.checkStockExist(room))
-    ) {
-      client.emit('error', 'Invalid stockId');
-      this.logger.warn(`client connected with invalid stockId: ${room}`);
+    try {
+      const { stockId, pageSize } = await this.getChatScrollQuery(client);
+      await this.validateExistStock(stockId);
+      client.join(stockId);
+      const messages = await this.chatService.scrollFirstChat({
+        stockId,
+        pageSize,
+      });
+      this.logger.info(`client joined room ${stockId}`);
+      client.emit('chat', messages);
+    } catch (e) {
+      const error = e as Error;
+      this.logger.warn(error.message);
+      client.emit('error', error.message);
       client.disconnect();
-      return;
     }
-    client.join(room);
-    const messages = await this.chatService.scrollFirstChat(room);
-    this.logger.info(`client joined room ${room}`);
-    client.emit('chat', messages);
   }
 
-  private isString(value: string | string[] | undefined): value is string {
-    return typeof value === 'string';
+  private async validateExistStock(stockId: string): Promise<void> {
+    if (!(await this.stockService.checkStockExist(stockId))) {
+      throw new Error(`Stock does not exist: ${stockId}`);
+    }
+  }
+
+  private async getChatScrollQuery(client: Socket): Promise<ChatScrollQuery> {
+    const query = client.handshake.query;
+    if (!isChatScrollQuery(query)) {
+      throw new Error('Invalid chat scroll query');
+    }
+    return {
+      stockId: query.stockId,
+      latestChatId: query.latestChatId,
+      pageSize: query.pageSize,
+    };
   }
 
   private toResponse(chat: Chat): chatResponse {
