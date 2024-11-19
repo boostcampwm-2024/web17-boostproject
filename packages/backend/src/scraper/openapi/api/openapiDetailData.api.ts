@@ -61,19 +61,26 @@ export class OpenapiDetailData {
     for (const stock of chunk) {
       const dataQuery = this.getDetailDataQuery(stock.id!);
       const defaultQuery = this.getDefaultDataQuery(stock.id!);
+      // 여기서 가져올 건 eps -> eps와 per 계산하자.
       const output1 = await getOpenApi(this.incomeUrl, conf, dataQuery, 'FHKST66430200');
+       // 여기서 가져올 건 lstg-stqt - 상장주수를 바탕으로 시가총액 계산, kospi200_item_yn 코스피200종목여부 업데이트
       const output2 = await getOpenApi(
         this.defaultUrl,
         conf,
         defaultQuery,
         'CTPF1002R',
       );
+      // 주식의 52주간 일단위 데이터 전체 중에 최고, 최저가를 바탕으로 최저가, 최고가 계산해서 가져오기
       const output3 = await manager.find(StockDaily, {
+        select: {
+          
+        },
         where: {
 
         }
       })
-      if (isFinancialDetail(output1) && isProductDetail(output2)) {
+      // 주식 마지막 데이터 끌고 오기. 최신 데이터로.
+      if ( isProductDetail(output1)) {
       }
     }
   }
@@ -99,4 +106,13 @@ export class OpenapiDetailData {
       fid_div_cls_code: classify,
     };
   }
+
+  private getDate52WeeksAgo(): Date {
+    const today = new Date();
+    const weeksAgo = 52 * 7;
+    const date52WeeksAgo = new Date(today.setDate(today.getDate() - weeksAgo));
+    date52WeeksAgo.setHours(0, 0, 0, 0);
+    return date52WeeksAgo;
+  }
+  
 }

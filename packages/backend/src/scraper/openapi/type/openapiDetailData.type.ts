@@ -42,12 +42,12 @@ export type ProductDetail = {
   scty_grp_id_cd: string; // 증권그룹ID코드
   excg_dvsn_cd: string; // 거래소구분코드
   setl_mmdd: string; // 결산월일
-  lstg_stqt: string; // 상장주수
+  lstg_stqt: string; // 상장주수 - 이거 사용
   lstg_cptl_amt: string; // 상장자본금액
   cpta: string; // 자본금
   papr: string; // 액면가
   issu_pric: string; // 발행가격
-  kospi200_item_yn: string; // 코스피200종목여부
+  kospi200_item_yn: string; // 코스피200종목여부 - 이것도 사용
   scts_mket_lstg_dt: string; // 유가증권시장상장일자
   scts_mket_lstg_abol_dt: string; // 유가증권시장상장폐지일자
   kosdaq_mket_lstg_dt: string; // 코스닥시장상장일자
