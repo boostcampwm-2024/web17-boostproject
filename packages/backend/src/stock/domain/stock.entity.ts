@@ -13,10 +13,10 @@ import { UserStock } from '@/stock/domain/userStock.entity';
 @Entity()
 export class Stock {
   @PrimaryColumn({ name: 'stock_id' })
-  id?: string;
+  id: string;
 
   @Column({ name: 'stock_name' })
-  name?: string;
+  name: string;
 
   @Column({ default: 0 })
   views: number = 0;
@@ -25,13 +25,13 @@ export class Stock {
   isTrading: boolean = true;
 
   @Column({ name: 'group_code' })
-  groupCode?: string;
-
-  @OneToMany(() => Like, (like) => like.chat)
-  likes?: Like[];
+  groupCode: string;
 
   @Column(() => DateEmbedded, { prefix: '' })
   date?: DateEmbedded;
+
+  @OneToMany(() => Like, (like) => like.chat)
+  likes?: Like[];
 
   @OneToMany(() => UserStock, (userStock) => userStock.stock)
   userStocks?: UserStock[];
