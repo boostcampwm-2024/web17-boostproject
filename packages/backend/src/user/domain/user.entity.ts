@@ -5,6 +5,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Alarm } from '@/alarm/domain/alarm.entity';
 import { DateEmbedded } from '@/common/dateEmbedded.entity';
 import { UserStock } from '@/stock/domain/userStock.entity';
 import { OauthType } from '@/user/domain/ouathType';
@@ -39,4 +40,7 @@ export class User {
 
   @OneToMany(() => UserStock, (userStock) => userStock.user)
   userStocks: UserStock[];
+
+  @OneToMany(() => Alarm, (alarm) => alarm.user)
+  alarms: Alarm[];
 }

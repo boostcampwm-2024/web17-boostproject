@@ -1,6 +1,4 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
-import { DateEmbedded } from '@/common/dateEmbedded.entity';
-import { UserStock } from '@/stock/domain/userStock.entity';
 import {
   StockDaily,
   StockMinutely,
@@ -8,6 +6,9 @@ import {
   StockWeekly,
   StockYearly,
 } from './stockData.entity';
+import { Alarm } from '@/alarm/domain/alarm.entity';
+import { DateEmbedded } from '@/common/dateEmbedded.entity';
+import { UserStock } from '@/stock/domain/userStock.entity';
 
 @Entity()
 export class Stock {
@@ -46,4 +47,7 @@ export class Stock {
 
   @OneToMany(() => StockYearly, (stockYearly) => stockYearly.stock)
   stockYearly?: StockYearly[];
+
+  @OneToMany(() => Alarm, (alarm) => alarm.stock)
+  alarms?: Alarm[];
 }
