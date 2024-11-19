@@ -11,6 +11,12 @@ export class LikeService {
   async toggleLike(userId: number, chatId: number) {
     return await this.dataSource.transaction(async (manager) => {
       const chat = await this.findChat(chatId, manager);
+      const like = await manager.findOne(Like, {
+        where: { user: { id: userId }, chat: { id: chatId } },
+      });
+      if (like) {
+        return await this.deleteLike(manager, chat, like);
+      }
       return await this.saveLike(manager, chat, userId);
     });
   }
@@ -39,6 +45,21 @@ export class LikeService {
     return {
       likeCount: chat.likeCount,
       message: 'like chat',
+      chatId: chat.id,
+      date: chat.date.updatedAt,
+    };
+  }
+
+  private async deleteLike(
+    manager: EntityManager,
+    chat: Chat,
+    like: Like,
+  ): Promise<LikeResponse> {
+    chat.likeCount -= 1;
+    await Promise.all([manager.remove(like), manager.save(Chat, chat)]);
+    return {
+      likeCount: chat.likeCount,
+      message: 'like cancel',
       chatId: chat.id,
       date: chat.date.updatedAt,
     };
