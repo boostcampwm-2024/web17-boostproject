@@ -1,11 +1,12 @@
 import { type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { type MenuItemData } from '@/constants/menuItems';
+import { type MenuSection } from '@/types/menu';
 import { cn } from '@/utils/cn';
 
 interface MenuListProps {
-  items: MenuItemData[];
+  items: MenuSection[];
   isHovered: boolean;
+  onItemClick?: (item: MenuSection) => void;
 }
 
 interface MenuItemProps {
@@ -15,28 +16,33 @@ interface MenuItemProps {
   onClick?: () => void;
 }
 
-export const MenuList = ({ items, isHovered }: MenuListProps) => {
+export const MenuList = ({ items, isHovered, onItemClick }: MenuListProps) => {
   const navigate = useNavigate();
+
+  const handleClick = (item: MenuSection) => {
+    if (item.path) {
+      navigate(item.path);
+    }
+
+    onItemClick?.(item);
+  };
 
   return (
     <ul className="flex flex-col justify-center gap-7">
-      {items.map((menu) => {
-        const { id, icon, text, url } = menu;
-        return (
-          <MenuItem
-            key={id}
-            icon={icon}
-            text={text}
-            isHovered={isHovered}
-            onClick={() => url && navigate(url)}
-          />
-        );
-      })}
+      {items.map((item) => (
+        <MenuItem
+          key={item.id}
+          icon={item.icon}
+          text={item.text}
+          isHovered={isHovered}
+          onClick={() => handleClick(item)}
+        />
+      ))}
     </ul>
   );
 };
 
-const MenuItem = ({ icon, text, onClick, isHovered }: MenuItemProps) => {
+const MenuItem = ({ icon, text, isHovered, onClick }: MenuItemProps) => {
   return (
     <li className="group flex items-center gap-10" onClick={onClick}>
       <button

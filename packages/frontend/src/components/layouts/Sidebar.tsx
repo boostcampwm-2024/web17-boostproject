@@ -7,6 +7,13 @@ import { cn } from '@/utils/cn';
 
 export const Sidebar = () => {
   const [isHovered, setIsHovered] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+
+  const handleMenuItemClick = (item: MenuSection) => {
+    if (item.text === '검색') {
+      setShowSearch((prev) => !prev);
+    }
+  };
 
   return (
     <nav
@@ -29,11 +36,18 @@ export const Sidebar = () => {
         </header>
         <div
           className={cn(
-            'flex h-[calc(100vh-11rem)] flex-col justify-between pl-7',
-          )}
-        >
-          <MenuList items={topMenuItems} isHovered={isHovered} />
-          <MenuList items={bottomMenuItems} isHovered={isHovered} />
+              'flex h-[calc(100vh-11rem)]',
+              isHovered ? 'gap-4' : '',
+            )}
+          >
+            <div className="flex flex-col justify-between pl-7">
+              <MenuList
+                items={TOP_MENU_ITEMS}
+                isHovered={isHovered}
+                onItemClick={handleMenuItemClick}
+              />
+              <MenuList items={BOTTOM_MENU_ITEMS} isHovered={isHovered} />
+            </div>
         </div>
       </section>
     </nav>
