@@ -9,5 +9,6 @@ export class KospiStock {
   @Column({ name: 'is_kospi' })
   isKospi: boolean;
 
-  @OneToOne(() => Stock)
+  @OneToOne(() => Stock, (stock) => stock.id)
+  stock: Stock;
 }
