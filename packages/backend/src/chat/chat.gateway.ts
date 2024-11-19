@@ -13,10 +13,10 @@ import {
   SessionSocket,
   WebSocketSessionGuard,
 } from '@/auth/session/webSocketSession.guard.';
-import { WebSocketExceptionFilter } from '@/middlewares/filter/webSocketException.filter';
-import { StockService } from '@/stock/stock.service';
 import { ChatService } from '@/chat/chat.service';
 import { Chat } from '@/chat/domain/chat.entity';
+import { WebSocketExceptionFilter } from '@/middlewares/filter/webSocketException.filter';
+import { StockService } from '@/stock/stock.service';
 
 interface chatMessage {
   room: string;
@@ -67,16 +67,23 @@ export class ChatGateway implements OnGatewayConnection {
 
   async handleConnection(client: Socket) {
     const room = client.handshake.query.stockId;
-    if (!room || !(await this.stockService.checkStockExist(room as string))) {
+    if (
+      !this.isString(room) ||
+      !(await this.stockService.checkStockExist(room))
+    ) {
       client.emit('error', 'Invalid stockId');
       this.logger.warn(`client connected with invalid stockId: ${room}`);
       client.disconnect();
       return;
     }
-    if (room) {
-      client.join(room);
-      this.logger.info(`client joined room ${room}`);
-    }
+    client.join(room);
+    const messages = await this.chatService.scrollFirstChat(room);
+    this.logger.info(`client joined room ${room}`);
+    client.emit('chat', messages);
+  }
+
+  private isString(value: string | string[] | undefined): value is string {
+    return typeof value === 'string';
   }
 
   private toResponse(chat: Chat): chatResponse {

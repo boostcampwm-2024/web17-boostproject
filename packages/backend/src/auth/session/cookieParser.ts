@@ -16,7 +16,7 @@ export const websocketCookieParse = (socket: Socket) => {
 };
 
 const getSessionIdFromCookie = (cookieValue: string) => {
-  if (cookieValue.startsWith('s:')) {
+  if (cookieValue?.startsWith('s:')) {
     const [id, signature] = cookieValue.slice(2).split('.');
     const expectedSignature = crypto
       .createHmac('sha256', sessionConfig.secret)

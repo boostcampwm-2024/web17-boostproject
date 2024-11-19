@@ -10,7 +10,9 @@ import {
 import { openApiToken } from './openapiToken.api';
 import { Stock } from '@/stock/domain/stock.entity';
 import { StockData, StockMinutely } from '@/stock/domain/stockData.entity';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class OpenapiMinuteData {
   private stock: Stock[];
   private readonly entity = StockMinutely;
@@ -37,7 +39,7 @@ export class OpenapiMinuteData {
     stockPeriod.open = parseInt(item.stck_oprc);
     stockPeriod.high = parseInt(item.stck_hgpr);
     stockPeriod.low = parseInt(item.stck_lwpr);
-    stockPeriod.volume = BigInt(item.cntg_vol);
+    stockPeriod.volume = parseInt(item.cntg_vol);
     stockPeriod.createdAt = new Date();
     return stockPeriod;
   }
