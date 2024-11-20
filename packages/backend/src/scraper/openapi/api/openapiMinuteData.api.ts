@@ -42,18 +42,21 @@ export class OpenapiMinuteData {
       this.stock.push(stock.slice(i * stockSize, (i + 1) * stockSize));
       i++;
     }
-    console.log(stock.length);
-    console.log(this.stock.length);
-    console.log(this.stock[0].length);
   }
 
-  private convertResToMinuteData(stockId: string, item: MinuteData) {
+  private convertResToMinuteData(
+    stockId: string,
+    item: MinuteData,
+    time: string,
+  ) {
     const stockPeriod = new StockData();
     stockPeriod.stock = { id: stockId } as Stock;
     stockPeriod.startTime = new Date(
       parseInt(item.stck_bsop_date.slice(0, 4)),
       parseInt(item.stck_bsop_date.slice(4, 6)) - 1,
       parseInt(item.stck_bsop_date.slice(6, 8)),
+      parseInt(time.slice(0, 2)),
+      parseInt(time.slice(2, 4)),
     );
     stockPeriod.close = parseInt(item.stck_prpr);
     stockPeriod.open = parseInt(item.stck_oprc);
@@ -64,10 +67,20 @@ export class OpenapiMinuteData {
     return stockPeriod;
   }
 
-  private async saveMinuteData(stockId: string, item: MinuteData[]) {
+  private isMarketOpenTime(time: string) {
+    const numberTime = parseInt(time);
+    return numberTime >= 90000 && numberTime <= 153000;
+  }
+
+  private async saveMinuteData(
+    stockId: string,
+    item: MinuteData[],
+    time: string,
+  ) {
     const manager = this.datasource.manager;
+    if (this.isMarketOpenTime(time)) return;
     const stockPeriod = item.map((val) =>
-      this.convertResToMinuteData(stockId, val),
+      this.convertResToMinuteData(stockId, val, time),
     );
     manager.save(this.entity, stockPeriod);
   }
@@ -78,7 +91,6 @@ export class OpenapiMinuteData {
     config: typeof openApiConfig,
   ) {
     const query = this.getUpdateStockQuery(stockId, time);
-    console.log(query);
     try {
       const response = await getOpenApi(
         this.url,
@@ -89,7 +101,7 @@ export class OpenapiMinuteData {
       let output;
       if (response.output2) output = response.output2;
       if (output && output[0] && isMinuteData(output[0])) {
-        this.saveMinuteData(stockId, output);
+        this.saveMinuteData(stockId, output, time);
       }
     } catch (error) {
       console.error(error);
@@ -115,9 +127,7 @@ export class OpenapiMinuteData {
   @Cron(`*/${STOCK_CUT} 9-15 * * 1-5`)
   @UseFilters(OpenapiExceptionFilter)
   private getMinuteData() {
-    console.error('hello');
     if (process.env.NODE_ENV !== 'production') return;
-    console.error('not hello');
     const configCount = openApiToken.configs.length;
     const stock = this.stock[this.flip % STOCK_CUT];
     this.flip++;
