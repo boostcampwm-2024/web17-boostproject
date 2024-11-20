@@ -8,9 +8,8 @@ describe('ChatService 테스트', () => {
     const chatService = new ChatService(dataSource as DataSource);
 
     await expect(() =>
-      chatService.scrollNextChat({
+      chatService.scrollChat({
         stockId: 'A005930',
-        latestChatId: 1,
         pageSize: 101,
       }),
     ).rejects.toThrow('pageSize should be less than 100');
@@ -21,7 +20,7 @@ describe('ChatService 테스트', () => {
     const chatService = new ChatService(dataSource as DataSource);
 
     await expect(() =>
-      chatService.scrollFirstChat({ stockId: 'A005930', pageSize: 101 }),
+      chatService.scrollChat({ stockId: 'A005930', pageSize: 101 }),
     ).rejects.toThrow('pageSize should be less than 100');
   });
 });

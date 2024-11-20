@@ -1,9 +1,9 @@
 /* eslint-disable max-lines-per-function */
-import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { DataSource, EntityManager } from 'typeorm';
-import { User } from './domain/user.entity';
-import { OauthType } from '@/user/domain/ouathType';
-import { UserService } from '@/user/user.service';
+import { BadRequestException, NotFoundException } from "@nestjs/common";
+import { DataSource, EntityManager } from "typeorm";
+import { User } from "./domain/user.entity";
+import { OauthType } from "@/user/domain/ouathType";
+import { UserService } from "@/user/user.service";
 
 export function createDataSourceMock(
   managerMock?: Partial<EntityManager>,
@@ -15,7 +15,7 @@ export function createDataSourceMock(
   };
 
   return {
-    getRepository: managerMock.getRepository,
+    getRepository: managerMock?.getRepository,
     transaction: jest.fn().mockImplementation(async (work) => {
       return work({ ...defaultManagerMock, ...managerMock });
     }),

@@ -86,7 +86,7 @@ export class ChatGateway implements OnGatewayConnection {
       const { stockId, pageSize } = await this.getChatScrollQuery(client);
       await this.validateExistStock(stockId);
       client.join(stockId);
-      const messages = await this.chatService.scrollFirstChat(
+      const messages = await this.chatService.scrollChat(
         {
           stockId,
           pageSize,
