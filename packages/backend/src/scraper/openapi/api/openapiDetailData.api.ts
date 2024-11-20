@@ -139,7 +139,7 @@ export class OpenapiDetailData {
 
   private async getDetailDataChunk(chunk: Stock[], conf: typeof openApiConfig) {
     let delay = 0;
-    for (const stock of chunk) {
+    for await (const stock of chunk) {
       setTimeout(() => this.getDetailDataDelay(stock, conf), delay);
       delay += this.intervals;
     }

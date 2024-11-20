@@ -78,7 +78,7 @@ export class OpenapiMinuteData {
     time: string,
   ) {
     const manager = this.datasource.manager;
-    if (this.isMarketOpenTime(time)) return;
+    if (!this.isMarketOpenTime(time)) return;
     const stockPeriod = item.map((val) =>
       this.convertResToMinuteData(stockId, val, time),
     );

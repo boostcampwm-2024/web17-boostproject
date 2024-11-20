@@ -6,6 +6,7 @@ export type DetailDataQuery = {
   fid_input_iscd: string;
   fid_div_cls_code: '0' | '1';
 };
+
 export type FinancialData = {
   stac_yymm: string; // 결산 년월
   grs: string; // 매출액 증가율
