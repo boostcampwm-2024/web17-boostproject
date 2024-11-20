@@ -1,14 +1,14 @@
 import {
+  ConnectedSocket,
+  MessageBody,
+  SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
-  SubscribeMessage,
-  MessageBody,
-  ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({
-  namespace: '/stock/realtime',
+  namespace: '/api/stock/realtime',
 })
 export class StockGateway {
   @WebSocketServer()

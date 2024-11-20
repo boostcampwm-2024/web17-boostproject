@@ -1,8 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { DataSource, SelectQueryBuilder } from 'typeorm';
+import { WsException } from '@nestjs/websockets';
+import { DataSource, EntityManager, SelectQueryBuilder } from 'typeorm';
 import { Chat } from '@/chat/domain/chat.entity';
 import { ChatScrollQuery } from '@/chat/dto/chat.request';
 import { ChatScrollResponse } from '@/chat/dto/chat.response';
+import { UserStock } from '@/stock/domain/userStock.entity';
 
 export interface ChatMessage {
   message: string;
@@ -23,10 +25,15 @@ export class ChatService {
   constructor(private readonly dataSource: DataSource) {}
 
   async saveChat(userId: number, chatMessage: ChatMessage) {
-    return this.dataSource.manager.save(Chat, {
-      user: { id: userId },
-      stock: { id: chatMessage.stockId },
-      message: chatMessage.message,
+    return this.dataSource.transaction(async (manager) => {
+      if (!(await this.hasStock(userId, chatMessage.stockId, manager))) {
+        throw new WsException('not have stock');
+      }
+      return manager.save(Chat, {
+        user: { id: userId },
+        stock: { id: chatMessage.stockId },
+        message: chatMessage.message,
+      });
     });
   }
 
@@ -55,6 +62,12 @@ export class ChatService {
       ORDER.LIKE,
     );
     return queryBuilder.getMany();
+  }
+
+  private hasStock(userId: number, stockId: string, manager: EntityManager) {
+    return manager.exists(UserStock, {
+      where: { user: { id: userId }, stock: { id: stockId } },
+    });
   }
 
   private validatePageSize(chatScrollQuery: ChatScrollQuery) {
