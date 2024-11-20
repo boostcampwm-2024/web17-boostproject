@@ -7,16 +7,20 @@ export class WebsocketSessionService {
   constructor(private readonly sessionStore: MemoryStore) {}
 
   async getAuthenticatedUser(socket: Socket) {
-    const cookieValue = websocketCookieParse(socket);
-    const session = await this.getSession(cookieValue);
-    return session ? session.passport.user : undefined;
+    try {
+      const cookieValue = websocketCookieParse(socket);
+      const session = await this.getSession(cookieValue);
+      return session ? session.passport.user : null;
+    } catch (error) {
+      return null;
+    }
   }
 
   private getSession(cookieValue: string) {
-    return new Promise<PassportSession | undefined>((resolve) => {
+    return new Promise<PassportSession | null>((resolve) => {
       this.sessionStore.get(cookieValue, (err: Error, session) => {
         if (err || !session) {
-          resolve(undefined);
+          resolve(null);
         }
         resolve(session as PassportSession);
       });
