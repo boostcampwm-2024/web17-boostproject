@@ -4,7 +4,6 @@ interface StockInfoCardProps {
   name: string;
   currentPrice: number;
   changeRate: number;
-  changeRatePercent: number;
   index: number;
 }
 
@@ -12,7 +11,6 @@ export const StockInfoCard = ({
   name,
   currentPrice,
   changeRate,
-  changeRatePercent,
   index,
 }: StockInfoCardProps) => {
   return (
@@ -32,14 +30,13 @@ export const StockInfoCard = ({
           )}
         >
           {changeRate >= 0 && '+'}
-          {changeRate.toLocaleString()}원 ({changeRatePercent}
-          %)
+          {changeRate}%
         </span>
       </div>
       <div className="flex items-center gap-5">
         <span className="display-bold12 text-dark-gray">현재가</span>
         <span className="display-medium12 text-dark-gray">
-          {currentPrice.toLocaleString()}
+          {currentPrice?.toLocaleString()}
         </span>
       </div>
     </div>
