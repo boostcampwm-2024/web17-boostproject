@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UseFilters } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { DataSource, EntityManager } from 'typeorm';
-import { getOpenApi, getPreviousDate, getTodayDate } from '../openapiUtil.api';
+import { OpenapiExceptionFilter } from '../Decorator/openapiException.filter';
 import {
   ChartData,
   isChartData,
@@ -9,6 +9,11 @@ import {
   Period,
 } from '../type/openapiPeriodData';
 import { TR_IDS } from '../type/openapiUtil.type';
+import {
+  getOpenApi,
+  getPreviousDate,
+  getTodayDate,
+} from '../util/openapiUtil.api';
 import { openApiToken } from './openapiToken.api';
 import { Stock } from '@/stock/domain/stock.entity';
 import {
@@ -44,6 +49,7 @@ export class OpenapiPeriodData {
   }
 
   @Cron('0 1 * * 1-5')
+  @UseFilters(OpenapiExceptionFilter)
   public async getItemChartPriceCheck() {
     const entityManager = this.datasource.manager;
     const stocks = await entityManager.find(Stock);

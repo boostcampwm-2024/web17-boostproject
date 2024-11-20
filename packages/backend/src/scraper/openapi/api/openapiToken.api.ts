@@ -1,7 +1,8 @@
-import { Inject } from '@nestjs/common';
+import { Inject, UseFilters } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Logger } from 'winston';
 import { openApiConfig } from '../config/openapi.config';
+import { OpenapiExceptionFilter } from '../Decorator/openapiException.filter';
 import { OpenapiException } from '../util/openapiCustom.error';
 import { postOpenApi } from '../util/openapiUtil.api';
 import { logger } from '@/configs/logger.config';
@@ -58,6 +59,7 @@ class OpenapiTokenApi {
   }
 
   @Cron('50 0 * * 1-5')
+  @UseFilters(OpenapiExceptionFilter)
   private async initAccessToken() {
     const updatedConfig = await Promise.all(
       this.config.map(async (val) => {
@@ -69,6 +71,7 @@ class OpenapiTokenApi {
   }
 
   @Cron('50 0 * * 1-5')
+  @UseFilters(OpenapiExceptionFilter)
   private async initWebSocketKey() {
     this.config.forEach(async (val) => {
       val.STOCK_WEBSOCKET_KEY = await this.getWebSocketKey(val)!;

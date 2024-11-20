@@ -1,7 +1,8 @@
+import { UseFilters } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Between, DataSource } from 'typeorm';
 import { openApiConfig } from '../config/openapi.config';
-import { getOpenApi } from '../openapiUtil.api';
+import { OpenapiExceptionFilter } from '../Decorator/openapiException.filter';
 import {
   DetailDataQuery,
   FinancialData,
@@ -11,6 +12,7 @@ import {
   StockDetailQuery,
 } from '../type/openapiDetailData.type';
 import { TR_IDS } from '../type/openapiUtil.type';
+import { getOpenApi } from '../util/openapiUtil.api';
 import { openApiToken } from './openapiToken.api';
 import { Stock } from '@/stock/domain/stock.entity';
 import { StockDaily } from '@/stock/domain/stockData.entity';
@@ -28,6 +30,7 @@ export class OpenapiDetailData {
   constructor(private readonly datasource: DataSource) {}
 
   @Cron('0 8 * * 1-5')
+  @UseFilters(OpenapiExceptionFilter)
   public async getDetailData() {
     const entityManager = this.datasource.manager;
     const stocks = await entityManager.find(Stock);

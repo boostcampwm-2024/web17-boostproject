@@ -1,6 +1,25 @@
+/* eslint-disable @typescript-eslint/no-explicit-any*/
+import { HttpStatus } from '@nestjs/common';
 import axios from 'axios';
-import { openApiConfig } from './config/openapi.config';
-import { TR_ID } from './type/openapiUtil.type';
+import { openApiConfig } from '../config/openapi.config';
+import { TR_ID } from '../type/openapiUtil.type';
+import { OpenapiException } from './openapiCustom.error';
+
+const throwOpenapiException = (error: any) => {
+  if (error.message && error.response && error.response.status) {
+    throw new OpenapiException(
+      `Request failed: ${error.message}`,
+      error.response.status,
+      error,
+    );
+  } else {
+    throw new OpenapiException(
+      `Unknown error: ${error.message || 'No message'}`,
+      HttpStatus.INTERNAL_SERVER_ERROR,
+      error,
+    );
+  }
+};
 
 const postOpenApi = async (
   url: string,
@@ -11,7 +30,7 @@ const postOpenApi = async (
     const response = await axios.post(config.STOCK_URL + url, body);
     return response.data;
   } catch (error) {
-    throw new Error(`Request failed: ${error}`);
+    throwOpenapiException(error);
   }
 };
 
@@ -34,7 +53,7 @@ const getOpenApi = async (
     });
     return response.data;
   } catch (error) {
-    throw new Error(`Request failed: ${error}`);
+    throwOpenapiException(error);
   }
 };
 

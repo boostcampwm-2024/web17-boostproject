@@ -1,14 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UseFilters } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { DataSource } from 'typeorm';
 import { openApiConfig } from '../config/openapi.config';
-import { getCurrentTime, getOpenApi } from '../openapiUtil.api';
+import { OpenapiExceptionFilter } from '../Decorator/openapiException.filter';
 import {
   isMinuteData,
   MinuteData,
   UpdateStockQuery,
 } from '../type/openapiMinuteData.type';
 import { TR_IDS } from '../type/openapiUtil.type';
+import { getCurrentTime, getOpenApi } from '../util/openapiUtil.api';
 import { openApiToken } from './openapiToken.api';
 import { Stock } from '@/stock/domain/stock.entity';
 import { StockData, StockMinutely } from '@/stock/domain/stockData.entity';
@@ -25,6 +26,7 @@ export class OpenapiMinuteData {
   }
 
   @Cron('0 1 * * 1-5')
+  @UseFilters(OpenapiExceptionFilter)
   private async getStockData() {
     this.stock = await this.datasource.manager.findBy(Stock, {
       isTrading: true,
