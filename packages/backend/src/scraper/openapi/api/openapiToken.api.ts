@@ -1,8 +1,9 @@
-import { Inject, NotFoundException } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Logger } from 'winston';
 import { openApiConfig } from '../config/openapi.config';
-import { postOpenApi } from '../openapiUtil.api';
+import { OpenapiException } from '../util/openapiCustom.error';
+import { postOpenApi } from '../util/openapiUtil.api';
 import { logger } from '@/configs/logger.config';
 
 class OpenapiTokenApi {
@@ -34,8 +35,26 @@ class OpenapiTokenApi {
   }
 
   private async initAuthenValue() {
-    await this.initAccessToken();
-    await this.initWebSocketKey();
+    const delay = 60000;
+    const delayMinute = delay / 1000 / 60;
+
+    try {
+      await this.initAccessToken();
+      await this.initWebSocketKey();
+    } catch (error) {
+      if (error instanceof Error) {
+        this.logger.warn(
+          `Request failed: ${error.message}. Retrying in ${delayMinute} minute...`,
+        );
+      } else {
+        this.logger.warn(
+          `Request failed. Retrying in ${delayMinute} minute...`,
+        );
+        await new Promise((resolve) => setTimeout(resolve, delay));
+        await this.initAccessToken();
+        await this.initWebSocketKey();
+      }
+    }
   }
 
   @Cron('50 0 * * 1-5')
@@ -64,7 +83,7 @@ class OpenapiTokenApi {
     };
     const tmp = await postOpenApi('/oauth2/tokenP', config, body);
     if (!tmp.access_token) {
-      throw new NotFoundException('Access Token Failed');
+      throw new OpenapiException('Access Token Failed', 403);
     }
     return tmp.access_token as string;
   }
@@ -77,7 +96,7 @@ class OpenapiTokenApi {
     };
     const tmp = await postOpenApi('/oauth2/Approval', config, body);
     if (!tmp.approval_key) {
-      throw new NotFoundException('WebSocket Key Failed');
+      throw new OpenapiException('WebSocket Key Failed', 403);
     }
     return tmp.approval_key as string;
   }

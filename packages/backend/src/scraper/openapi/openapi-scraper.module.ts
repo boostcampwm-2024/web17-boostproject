@@ -1,17 +1,39 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { OpenapiDetailData } from './api/openapiDetailData.api';
 import { OpenapiMinuteData } from './api/openapiMinuteData.api';
 import { OpenapiPeriodData } from './api/openapiPeriodData.api';
 import { OpenapiScraperService } from './openapi-scraper.service';
-import { DataSource } from 'typeorm';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { Stock } from '@/stock/domain/stock.entity';
-import { StockDaily, StockMinutely, StockMonthly, StockWeekly, StockYearly } from '@/stock/domain/stockData.entity';
-import { StockLiveData } from '@/stock/domain/stockLiveData.entity';
+import {
+  StockDaily,
+  StockMinutely,
+  StockMonthly,
+  StockWeekly,
+  StockYearly,
+} from '@/stock/domain/stockData.entity';
 import { StockDetail } from '@/stock/domain/stockDetail.entity';
+import { StockLiveData } from '@/stock/domain/stockLiveData.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Stock, StockMinutely , StockDaily, StockWeekly, StockMonthly, StockYearly, StockLiveData, StockDetail])],
+  imports: [
+    TypeOrmModule.forFeature([
+      Stock,
+      StockMinutely,
+      StockDaily,
+      StockWeekly,
+      StockMonthly,
+      StockYearly,
+      StockLiveData,
+      StockDetail,
+    ]),
+  ],
   controllers: [],
-  providers: [OpenapiPeriodData, OpenapiMinuteData, OpenapiScraperService],
+  providers: [
+    OpenapiPeriodData,
+    OpenapiMinuteData,
+    OpenapiDetailData,
+    OpenapiScraperService,
+  ],
 })
 export class OpenapiScraperModule {}
