@@ -178,36 +178,36 @@ export type StockDetailQuery = {
   code: string;
 };
 
-export type FinancialDetail = {
-  stac_yymm: string; // 결산 년월
-  sale_account: string; // 매출액
-  sale_cost: string; // 매출원가
-  sale_totl_prfi: string; // 매출총이익
-  depr_cost: string; // 감가상각비
-  sell_mang: string; // 판매관리비
-  bsop_prti: string; // 영업이익
-  bsop_non_ernn: string; // 영업외수익
-  bsop_non_expn: string; // 영업외비용
-  op_prfi: string; // 영업이익
-  spec_prfi: string; // 특별이익
-  spec_loss: string; // 특별손실
-  thtr_ntin: string; // 세전순이익
-};
+//export type FinancialDetail = {
+//  stac_yymm: string; // 결산 년월
+//  sale_account: string; // 매출액
+//  sale_cost: string; // 매출원가
+//  sale_totl_prfi: string; // 매출총이익
+//  depr_cost: string; // 감가상각비
+//  sell_mang: string; // 판매관리비
+//  bsop_prti: string; // 영업이익
+//  bsop_non_ernn: string; // 영업외수익
+//  bsop_non_expn: string; // 영업외비용
+//  op_prfi: string; // 영업이익
+//  spec_prfi: string; // 특별이익
+//  spec_loss: string; // 특별손실
+//  thtr_ntin: string; // 세전순이익
+//};
 
-export const isFinancialDetail = (data: any): data is FinancialDetail => {
-  return (
-    typeof data.stac_yymm === 'string' &&
-    typeof data.sale_account === 'string' &&
-    typeof data.sale_cost === 'string' &&
-    typeof data.sale_totl_prfi === 'string' &&
-    typeof data.depr_cost === 'string' &&
-    typeof data.sell_mang === 'string' &&
-    typeof data.bsop_prti === 'string' &&
-    typeof data.bsop_non_ernn === 'string' &&
-    typeof data.bsop_non_expn === 'string' &&
-    typeof data.op_prfi === 'string' &&
-    typeof data.spec_prfi === 'string' &&
-    typeof data.spec_loss === 'string' &&
-    typeof data.thtr_ntin === 'string'
-  );
-};
+//export const isFinancialDetail = (data: any): data is FinancialDetail => {
+//  return (
+//    typeof data.stac_yymm === 'string' &&
+//    typeof data.sale_account === 'string' &&
+//    typeof data.sale_cost === 'string' &&
+//    typeof data.sale_totl_prfi === 'string' &&
+//    typeof data.depr_cost === 'string' &&
+//    typeof data.sell_mang === 'string' &&
+//    typeof data.bsop_prti === 'string' &&
+//    typeof data.bsop_non_ernn === 'string' &&
+//    typeof data.bsop_non_expn === 'string' &&
+//    typeof data.op_prfi === 'string' &&
+//    typeof data.spec_prfi === 'string' &&
+//    typeof data.spec_loss === 'string' &&
+//    typeof data.thtr_ntin === 'string'
+//  );
+//};

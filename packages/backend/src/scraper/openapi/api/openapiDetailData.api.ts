@@ -1,38 +1,36 @@
 import { Cron } from '@nestjs/schedule';
-import { DataSource } from 'typeorm';
+import { Between, DataSource } from 'typeorm';
 import { openApiConfig } from '../config/openapi.config';
 import { getOpenApi } from '../openapiUtil.api';
 import {
   DetailDataQuery,
   FinancialData,
-  FinancialDetail,
   isFinancialData,
-  isFinancialDetail,
   isProductDetail,
   ProductDetail,
   StockDetailQuery,
 } from '../type/openapiDetailData.type';
 import { openApiToken } from './openapiToken.api';
 import { Stock } from '@/stock/domain/stock.entity';
-import { StockDetail } from '@/stock/domain/stockDetail.entity';
 import { StockDaily } from '@/stock/domain/stockData.entity';
+import { StockDetail } from '@/stock/domain/stockDetail.entity';
 
 export class OpenapiDetailData {
   private readonly financialUrl: string =
     '/uapi/domestic-stock/v1/finance/financial-ratio';
   private readonly defaultUrl: string =
     '/uapi/domestic-stock/v1/quotations/search-stock-info';
-  private readonly incomeUrl: string = '/uapi/domestic-stock/v1/finance/income-statement';
-  private readonly intervals = 4000;
+  private readonly incomeUrl: string =
+    '/uapi/domestic-stock/v1/finance/income-statement';
+  private readonly intervals = 100;
   private readonly config: (typeof openApiConfig)[] = openApiToken.configs;
   constructor(private readonly datasource: DataSource) {}
 
-  @Cron('10 1 * * 1-5')
+  @Cron('0 8 * * 1-5')
   public async getDetailData() {
     const entityManager = this.datasource.manager;
     const stocks = await entityManager.find(Stock);
     const configCount = this.config.length;
-
     const chunkSize = Math.ceil(stocks.length / configCount);
 
     for (let i = 0; i < configCount; i++) {
@@ -41,47 +39,104 @@ export class OpenapiDetailData {
     }
   }
 
-  private async saveDetailData(output1: FinancialData, output2: ProductDetail, output3 : StockDaily[]) {
+  private async saveDetailData(stockDetail: StockDetail) {
     const entityManager = this.datasource.manager;
     const entity = StockDetail;
-    entityManager.create(entity, output1);
+    entityManager.create(entity, stockDetail);
   }
 
-  private makeStockDetailObject(
-    output1: FinancialDetail,
+  private async calPer(eps: number): Promise<number> {
+    if (eps <= 0) return NaN;
+    const manager = this.datasource.manager;
+    const latestResult = await manager.find(StockDaily, {
+      skip: 0,
+      take: 1,
+      order: { createdAt: 'desc' },
+    });
+    const currentPrice = latestResult[0].close;
+    const per = currentPrice / eps;
+
+    return per;
+  }
+
+  private async calMarketCap(lstg: number) {
+    const manager = this.datasource.manager;
+    const latestResult = await manager.find(StockDaily, {
+      skip: 0,
+      take: 1,
+      order: { createdAt: 'desc' },
+    });
+    const currentPrice = latestResult[0].close;
+    const marketCap = lstg * currentPrice;
+    return marketCap;
+  }
+
+  private async get52WeeksLowHigh() {
+    const manager = this.datasource.manager;
+    const nowDate = new Date();
+    const weeksAgoDate = this.getDate52WeeksAgo();
+    // 주식의 52주간 일단위 데이터 전체 중에 최고, 최저가를 바탕으로 최저가, 최고가 계산해서 가져오기
+    const output = await manager.find(StockDaily, {
+      select: ['low', 'high'],
+      where: {
+        startTime: Between(weeksAgoDate, nowDate),
+      },
+    });
+    const result = output.reduce((prev, cur) => {
+      if (prev.low > cur.low) prev.low = cur.low;
+      if (prev.high < cur.high) prev.high = cur.high;
+      return cur;
+    }, new StockDaily());
+    return { low: result.low, high: result.high };
+  }
+
+  private async makeStockDetailObject(
+    output1: FinancialData,
     output2: ProductDetail,
-  ): StockDetail {
+  ): Promise<StockDetail> {
     const result = new StockDetail();
-    result.marketCap = output2.
+    result.marketCap =
+      (await this.calMarketCap(parseInt(output2.lstg_stqt))) + '';
+    result.eps = parseInt(output1.eps);
+    const { low, high } = await this.get52WeeksLowHigh();
+    result.low52w = low;
+    result.high52w = high;
+    result.eps = parseInt(output1.eps);
+    result.per = await this.calPer(parseInt(output1.eps));
+    result.updatedAt = new Date();
     return result;
   }
 
-  private async getDetailDataChunk(chunk: Stock[], conf: typeof openApiConfig) {
-    const manager = this.datasource.manager;
-    for (const stock of chunk) {
-      const dataQuery = this.getDetailDataQuery(stock.id!);
-      const defaultQuery = this.getDefaultDataQuery(stock.id!);
-      // 여기서 가져올 건 eps -> eps와 per 계산하자.
-      const output1 = await getOpenApi(this.incomeUrl, conf, dataQuery, 'FHKST66430200');
-       // 여기서 가져올 건 lstg-stqt - 상장주수를 바탕으로 시가총액 계산, kospi200_item_yn 코스피200종목여부 업데이트
-      const output2 = await getOpenApi(
-        this.defaultUrl,
-        conf,
-        defaultQuery,
-        'CTPF1002R',
-      );
-      // 주식의 52주간 일단위 데이터 전체 중에 최고, 최저가를 바탕으로 최저가, 최고가 계산해서 가져오기
-      const output3 = await manager.find(StockDaily, {
-        select: {
-          
-        },
-        where: {
+  private async getDetailDataDelay(stock: Stock, conf: typeof openApiConfig) {
+    const dataQuery = this.getDetailDataQuery(stock.id!);
+    const defaultQuery = this.getDefaultDataQuery(stock.id!);
 
-        }
-      })
-      // 주식 마지막 데이터 끌고 오기. 최신 데이터로.
-      if ( isProductDetail(output1)) {
-      }
+    // 여기서 가져올 건 eps -> eps와 per 계산하자.
+    const output1 = await getOpenApi(
+      this.incomeUrl,
+      conf,
+      dataQuery,
+      'FHKST66430200',
+    );
+    // 여기서 가져올 건 lstg-stqt - 상장주수를 바탕으로 시가총액 계산, kospi200_item_yn 코스피200종목여부 업데이트
+    const output2 = await getOpenApi(
+      this.defaultUrl,
+      conf,
+      defaultQuery,
+      'CTPF1002R',
+    );
+
+    if (isFinancialData(output1) && isProductDetail(output2)) {
+      const stockDetail = await this.makeStockDetailObject(output1, output2);
+      this.saveDetailData(stockDetail);
+    }
+  }
+
+  private async getDetailDataChunk(chunk: Stock[], conf: typeof openApiConfig) {
+    let delay = 0;
+    for (const stock of chunk) {
+      setTimeout(() => this.getDetailDataDelay(stock, conf), delay);
+      delay += this.intervals;
     }
   }
 
@@ -114,5 +169,4 @@ export class OpenapiDetailData {
     date52WeeksAgo.setHours(0, 0, 0, 0);
     return date52WeeksAgo;
   }
-  
 }

@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { DataSource, EntityManager } from 'typeorm';
 import { getOpenApi, getPreviousDate, getTodayDate } from '../openapiUtil.api';
@@ -16,7 +17,6 @@ import {
   StockMonthly,
   StockYearly,
 } from '@/stock/domain/stockData.entity';
-import { Injectable } from '@nestjs/common';
 
 const DATE_TO_ENTITY = {
   D: StockDaily,
@@ -38,7 +38,7 @@ const INTERVALS = 4000;
 export class OpenapiPeriodData {
   private readonly url: string =
     '/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice';
-  public constructor(private readonly datasourse: DataSource) {
+  public constructor(private readonly datasource: DataSource) {
     this.getItemChartPriceCheck();
   }
 
