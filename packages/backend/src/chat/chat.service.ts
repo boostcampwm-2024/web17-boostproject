@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import { DataSource, SelectQueryBuilder } from 'typeorm';
 import { Chat } from '@/chat/domain/chat.entity';
 import { ChatScrollQuery } from '@/chat/dto/chat.request';
 import { ChatScrollResponse } from '@/chat/dto/chat.response';
@@ -8,6 +8,13 @@ export interface ChatMessage {
   message: string;
   stockId: string;
 }
+
+const ORDER = {
+  LIKE: 'like',
+  LATEST: 'latest',
+} as const;
+
+export type Order = (typeof ORDER)[keyof typeof ORDER];
 
 const DEFAULT_PAGE_SIZE = 20;
 
@@ -42,9 +49,10 @@ export class ChatService {
     chatScrollQuery: ChatScrollQuery,
     userId?: number,
   ) {
-    const queryBuilder = await this.buildChatScrollByLikeQuery(
+    const queryBuilder = await this.buildChatScrollQuery(
       chatScrollQuery,
       userId,
+      ORDER.LIKE,
     );
     return queryBuilder.getMany();
   }
@@ -69,13 +77,17 @@ export class ChatService {
     chatScrollQuery: ChatScrollQuery,
     userId?: number,
   ) {
-    const queryBuilder = this.buildChatScrollQuery(chatScrollQuery, userId);
+    const queryBuilder = await this.buildChatScrollQuery(
+      chatScrollQuery,
+      userId,
+    );
     return queryBuilder.getMany();
   }
 
-  private async buildChatScrollByLikeQuery(
+  private async buildChatScrollQuery(
     chatScrollQuery: ChatScrollQuery,
     userId?: number,
+    order: Order = ORDER.LATEST,
   ) {
     const queryBuilder = this.dataSource.createQueryBuilder(Chat, 'chat');
     const { stockId, latestChatId, pageSize } = chatScrollQuery;
@@ -86,9 +98,26 @@ export class ChatService {
         userId,
       })
       .where('chat.stock_id = :stockId', { stockId })
-      .orderBy('chat.likeCount', 'DESC')
-      .addOrderBy('chat.id', 'DESC')
       .take(size + 1);
+
+    if (order === ORDER.LIKE) {
+      return this.buildLikeCountQuery(queryBuilder, latestChatId);
+    }
+    queryBuilder.orderBy('chat.id', 'DESC');
+    if (latestChatId) {
+      queryBuilder.andWhere('chat.id < :latestChatId', { latestChatId });
+    }
+
+    return queryBuilder;
+  }
+
+  private async buildLikeCountQuery(
+    queryBuilder: SelectQueryBuilder<Chat>,
+    latestChatId?: number,
+  ) {
+    queryBuilder
+      .orderBy('chat.likeCount', 'DESC')
+      .addOrderBy('chat.id', 'DESC');
     if (latestChatId) {
       const chat = await this.dataSource.manager.findOne(Chat, {
         where: { id: latestChatId },
@@ -96,7 +125,8 @@ export class ChatService {
       });
       if (chat) {
         queryBuilder.andWhere(
-          'chat.likeCount < :likeCount or (chat.likeCount = :likeCount and chat.id < :latestChatId)',
+          'chat.likeCount < :likeCount or' +
+            ' (chat.likeCount = :likeCount and chat.id < :latestChatId)',
           {
             likeCount: chat.likeCount,
             latestChatId,
@@ -104,29 +134,6 @@ export class ChatService {
         );
       }
     }
-
-    return queryBuilder;
-  }
-
-  private buildChatScrollQuery(
-    chatScrollQuery: ChatScrollQuery,
-    userId?: number,
-  ) {
-    const queryBuilder = this.dataSource.createQueryBuilder(Chat, 'chat');
-    const { stockId, latestChatId, pageSize } = chatScrollQuery;
-    const size = pageSize ? pageSize : DEFAULT_PAGE_SIZE;
-
-    queryBuilder
-      .leftJoinAndSelect('chat.likes', 'like', 'like.user_id = :userId', {
-        userId,
-      })
-      .where('chat.stock_id = :stockId', { stockId })
-      .orderBy('chat.id', 'DESC')
-      .take(size + 1);
-    if (latestChatId) {
-      queryBuilder.andWhere('chat.id < :latestChatId', { latestChatId });
-    }
-
     return queryBuilder;
   }
 }
