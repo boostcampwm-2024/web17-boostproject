@@ -24,21 +24,20 @@ export class ChatService {
   }
 
   async scrollFirstChat(chatScrollQuery: ChatScrollQuery, userId?: number) {
-    const { pageSize } = chatScrollQuery;
-    this.validatePageSize(pageSize);
+    this.validatePageSize(chatScrollQuery);
     const result = await this.findFirstChatScroll(chatScrollQuery, userId);
-    return await this.toScrollResponse(result, pageSize);
+    return await this.toScrollResponse(result, chatScrollQuery.pageSize);
   }
 
   async scrollNextChat(chatScrollQuery: ChatScrollQuery, userId?: number) {
-    const { pageSize } = chatScrollQuery;
-    this.validatePageSize(pageSize);
+    this.validatePageSize(chatScrollQuery);
     const result = await this.findChatScroll(chatScrollQuery, userId);
-    return await this.toScrollResponse(result, pageSize);
+    return await this.toScrollResponse(result, chatScrollQuery.pageSize);
   }
 
-  private validatePageSize(scrollSize?: number) {
-    if (scrollSize && scrollSize > 100) {
+  private validatePageSize(chatScrollQuery: ChatScrollQuery) {
+    const { pageSize } = chatScrollQuery;
+    if (pageSize && pageSize > 100) {
       throw new BadRequestException('pageSize should be less than 100');
     }
   }
@@ -100,7 +99,7 @@ export class ChatService {
         latestChatId,
       })
       .orderBy('chat.id', 'DESC')
-      .limit(pageSize + 1)
+      .take(pageSize + 1)
       .getMany();
   }
 }

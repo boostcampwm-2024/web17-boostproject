@@ -13,7 +13,7 @@ import { Logger } from 'winston';
 import {
   SessionSocket,
   WebSocketSessionGuard,
-} from '@/auth/session/webSocketSession.guard.';
+} from '@/auth/session/webSocketSession.guard';
 import { WebsocketSessionService } from '@/auth/session/websocketSession.service';
 import { MEMORY_STORE } from '@/auth/session.module';
 import { ChatService } from '@/chat/chat.service';
@@ -116,8 +116,8 @@ export class ChatGateway implements OnGatewayConnection {
     }
     return {
       stockId: query.stockId,
-      latestChatId: query.latestChatId,
-      pageSize: query.pageSize,
+      latestChatId: query.latestChatId ? Number(query.latestChatId) : undefined,
+      pageSize: query.pageSize ? Number(query.pageSize) : undefined,
     };
   }
 

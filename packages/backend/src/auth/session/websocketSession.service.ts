@@ -1,7 +1,7 @@
 import { MemoryStore } from 'express-session';
 import { Socket } from 'socket.io';
 import { websocketCookieParse } from '@/auth/session/cookieParser';
-import { PassportSession } from '@/auth/session/webSocketSession.guard.';
+import { PassportSession } from '@/auth/session/webSocketSession.guard';
 
 export class WebsocketSessionService {
   constructor(private readonly sessionStore: MemoryStore) {}
