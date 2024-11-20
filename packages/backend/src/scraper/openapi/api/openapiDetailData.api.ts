@@ -10,6 +10,7 @@ import {
   ProductDetail,
   StockDetailQuery,
 } from '../type/openapiDetailData.type';
+import { TR_IDS } from '../type/openapiUtil.type';
 import { openApiToken } from './openapiToken.api';
 import { Stock } from '@/stock/domain/stock.entity';
 import { StockDaily } from '@/stock/domain/stockData.entity';
@@ -40,9 +41,9 @@ export class OpenapiDetailData {
   }
 
   private async saveDetailData(stockDetail: StockDetail) {
-    const entityManager = this.datasource.manager;
+    const manager = this.datasource.manager;
     const entity = StockDetail;
-    entityManager.create(entity, stockDetail);
+    manager.save(entity, stockDetail);
   }
 
   private async calPer(eps: number): Promise<number> {
@@ -116,14 +117,14 @@ export class OpenapiDetailData {
       this.incomeUrl,
       conf,
       dataQuery,
-      'FHKST66430200',
+      TR_IDS.FINANCIAL_DATA,
     );
     // 여기서 가져올 건 lstg-stqt - 상장주수를 바탕으로 시가총액 계산, kospi200_item_yn 코스피200종목여부 업데이트
     const output2 = await getOpenApi(
       this.defaultUrl,
       conf,
       defaultQuery,
-      'CTPF1002R',
+      TR_IDS.PRODUCTION_DETAIL,
     );
 
     if (isFinancialData(output1) && isProductDetail(output2)) {

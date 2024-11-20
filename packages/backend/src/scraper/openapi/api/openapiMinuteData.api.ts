@@ -8,6 +8,7 @@ import {
   MinuteData,
   UpdateStockQuery,
 } from '../type/openapiMinuteData.type';
+import { TR_IDS } from '../type/openapiUtil.type';
 import { openApiToken } from './openapiToken.api';
 import { Stock } from '@/stock/domain/stock.entity';
 import { StockData, StockMinutely } from '@/stock/domain/stockData.entity';
@@ -18,11 +19,14 @@ export class OpenapiMinuteData {
   private readonly entity = StockMinutely;
   private readonly url: string =
     '/uapi/domestic-stock/v1/quotations/inquire-time-itemchartprice';
-  public constructor(private readonly datasourse: DataSource) {}
+  private readonly intervals: number = 60;
+  public constructor(private readonly datasource: DataSource) {
+    this.getStockData().then(() => this.getMinuteData());
+  }
 
   @Cron('0 1 * * 1-5')
   private async getStockData() {
-    this.stock = await this.datasourse.manager.findBy(Stock, {
+    this.stock = await this.datasource.manager.findBy(Stock, {
       isTrading: true,
     });
   }
@@ -44,28 +48,49 @@ export class OpenapiMinuteData {
     return stockPeriod;
   }
 
-  private async saveMinuteData(stockPeriod: StockMinutely) {
-    const manager = this.datasourse.manager;
-    manager.create(this.entity, stockPeriod);
+  private async saveMinuteData(stockId: string, item: MinuteData) {
+    const manager = this.datasource.manager;
+    const stockPeriod = this.convertResToMinuteData(stockId, item);
+    manager.save(this.entity, stockPeriod);
+  }
+
+  private async getMinuteDataInterval(
+    stockId: string,
+    time: string,
+    config: typeof openApiConfig,
+  ) {
+    const query = this.getUpdateStockQuery(stockId, time);
+    console.log(query);
+    const response = await getOpenApi(
+      this.url,
+      config,
+      query,
+      TR_IDS.MINUTE_DATA,
+    );
+    let output;
+    if (response.output2) output = response.output2;
+    if (output && output[0] && isMinuteData(output[0])) {
+      this.saveMinuteData(stockId, output[0]);
+    }
   }
 
   private async getMinuteDataChunk(
     chunk: Stock[],
     config: typeof openApiConfig,
   ) {
+    const time = getCurrentTime();
+    let interval = 0;
     for await (const stock of chunk) {
-      const time = getCurrentTime();
-      const query = this.getUpdateStockQuery(stock.id!, time);
-      const response = await getOpenApi(this.url, config, query);
-      const output = (await response.data).output2[0] as MinuteData;
-      if (output && isMinuteData(output)) {
-        const stockPeriod = this.convertResToMinuteData(stock.id!, output);
-        this.saveMinuteData(stockPeriod);
-      }
+      setTimeout(
+        () => this.getMinuteDataInterval(stock.id!, time, config),
+        interval,
+      );
+      interval += this.intervals;
     }
   }
 
-  @Cron('* 9-16 * * 1-5')
+  @Cron('* 9-14 * * 1-5')
+  @Cron('0-30 15 * * 1-5')
   private getMinuteData() {
     const configCount = openApiToken.configs.length;
     const chunkSize = Math.ceil(this.stock.length / configCount);

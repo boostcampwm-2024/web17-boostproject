@@ -8,6 +8,7 @@ import {
   ItemChartPriceQuery,
   Period,
 } from '../type/openapiPeriodData';
+import { TR_IDS } from '../type/openapiUtil.type';
 import { openApiToken } from './openapiToken.api';
 import { Stock } from '@/stock/domain/stock.entity';
 import {
@@ -123,6 +124,7 @@ export class OpenapiPeriodData {
       this.url,
       openApiToken.configs[configIdx],
       query,
+      TR_IDS.ITEM_CHART_PRICE,
     );
     return response.output2 as ChartData[];
   }
