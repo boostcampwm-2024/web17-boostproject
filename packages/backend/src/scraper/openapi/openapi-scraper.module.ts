@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { OpenapiMinuteData } from './api/openapiMinuteData.api';
-import { OpenapiPeriodData } from './api/openapiPeriodData.api';
 import { OpenapiScraperService } from './openapi-scraper.service';
 import { Stock } from '@/stock/domain/stock.entity';
 import {
@@ -28,6 +26,6 @@ import { StockLiveData } from '@/stock/domain/stockLiveData.entity';
     ]),
   ],
   controllers: [],
-  providers: [OpenapiPeriodData, OpenapiMinuteData, OpenapiScraperService],
+  providers: [OpenapiScraperService],
 })
 export class OpenapiScraperModule {}
