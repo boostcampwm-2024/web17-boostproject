@@ -1,3 +1,3 @@
 export * from './types';
-export * from './useGetTopGainers';
+export * from './useGetTopViews';
 export * from './useGetStocksByPrice';
