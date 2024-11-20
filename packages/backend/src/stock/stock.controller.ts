@@ -32,6 +32,7 @@ import { StockDetailService } from './stockDetail.service';
 import SessionGuard from '@/auth/session/session.guard';
 import { GetUser } from '@/common/decorator/user.decorator';
 import { sessionConfig } from '@/configs/session.config';
+import { StockSearchRequest } from '@/stock/dto/stock.request';
 import {
   StockSearchResponse,
   StockViewsResponse,
@@ -46,7 +47,6 @@ import {
   UserStockResponse,
 } from '@/stock/dto/userStock.response';
 import { User } from '@/user/domain/user.entity';
-import { StockSearchRequest } from '@/stock/dto/stock.request';
 
 @Controller('stock')
 export class StockController {
