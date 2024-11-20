@@ -9,19 +9,15 @@ import {
 } from '@nestjs/common';
 import { AlarmService } from './alarm.service';
 import { Alarm } from './domain/alarm.entity';
+import { AlarmRequest } from './dto/alarm.request';
 
-@Controller('alarms')
+@Controller('alarm')
 export class AlarmController {
   constructor(private readonly alarmService: AlarmService) {}
 
   @Post()
-  async create(@Body() alarmData: Partial<Alarm>): Promise<Alarm> {
-    return this.alarmService.create(alarmData);
-  }
-
-  @Get()
-  async findAll(): Promise<Alarm[]> {
-    return this.alarmService.findAll();
+  async create(@Body() alarmRequest: AlarmRequest) {
+    return await this.alarmService.create(alarmRequest);
   }
 
   @Get(':id')
@@ -32,14 +28,24 @@ export class AlarmController {
   @Put(':id')
   async update(
     @Param('id') id: number,
-    @Body() updateData: Partial<Alarm>,
+    @Body() updateData: AlarmRequest,
   ): Promise<Alarm> {
     return this.alarmService.update(id, updateData);
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: number): Promise<{ message: string }> {
+  async delete(@Param('id') id: number) {
     await this.alarmService.delete(id);
     return { message: `Alarm with ID ${id} deleted successfully` };
+  }
+
+  @Get('user/:userId')
+  async getByUserId(@Param('userId') userId: number): Promise<Alarm[]> {
+    return await this.alarmService.findByUserId(userId);
+  }
+
+  @Get('stock/:stockId')
+  async getByStockId(@Param('stockId') stockId: string): Promise<Alarm[]> {
+    return await this.alarmService.findByStockId(stockId);
   }
 }

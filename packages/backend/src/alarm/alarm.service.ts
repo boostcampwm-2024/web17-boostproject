@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { Alarm } from './domain/alarm.entity';
+import { AlarmRequest } from './dto/alarm.request';
 
 @Injectable()
 export class AlarmService {
@@ -19,10 +20,23 @@ export class AlarmService {
     });
   }
 
-  async findAll(): Promise<Alarm[]> {
+  async findByUserId(userId: number): Promise<Alarm[]> {
     return await this.dataSource.transaction(async (manager) => {
       const repository = manager.getRepository(Alarm);
-      return repository.find({ relations: ['user', 'stock'] });
+      return repository.find({
+        where: { user: { id: userId } },
+        relations: ['user', 'stock'],
+      });
+    });
+  }
+
+  async findByStockId(stockId: string): Promise<Alarm[]> {
+    return await this.dataSource.transaction(async (manager) => {
+      const repository = manager.getRepository(Alarm);
+      return repository.find({
+        where: { stock: { id: stockId } },
+        relations: ['user', 'stock'],
+      });
     });
   }
 
@@ -36,7 +50,7 @@ export class AlarmService {
     });
   }
 
-  async update(id: number, updateData: Partial<Alarm>): Promise<Alarm> {
+  async update(id: number, updateData: AlarmRequest): Promise<Alarm> {
     return await this.dataSource.transaction(async (manager) => {
       const repository = manager.getRepository(Alarm);
 
