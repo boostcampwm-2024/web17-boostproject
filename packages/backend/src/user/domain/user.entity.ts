@@ -10,6 +10,7 @@ import { UserStock } from '@/stock/domain/userStock.entity';
 import { OauthType } from '@/user/domain/ouathType';
 import { Role } from '@/user/domain/role';
 
+@Index('nickname_sub_name', ['nickname', 'subName'], { unique: true })
 @Index('type_oauth_id', ['type', 'oauthId'], { unique: true })
 @Entity({ name: 'users' })
 export class User {
@@ -18,6 +19,9 @@ export class User {
 
   @Column({ length: 50 })
   nickname: string;
+
+  @Column({ length: 10 })
+  subName: string;
 
   @Column({ length: 50 })
   email: string;
