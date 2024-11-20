@@ -32,6 +32,7 @@ export class OpenapiDetailData {
   @Cron('0 8 * * 1-5')
   @UseFilters(OpenapiExceptionFilter)
   public async getDetailData() {
+    if (process.env.NODE_ENV !== 'production') return;
     const entityManager = this.datasource.manager;
     const stocks = await entityManager.find(Stock);
     const configCount = this.config.length;

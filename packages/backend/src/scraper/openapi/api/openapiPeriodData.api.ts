@@ -45,12 +45,13 @@ export class OpenapiPeriodData {
   private readonly url: string =
     '/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice';
   public constructor(private readonly datasource: DataSource) {
-    this.getItemChartPriceCheck();
+    //this.getItemChartPriceCheck();
   }
 
   @Cron('0 1 * * 1-5')
   @UseFilters(OpenapiExceptionFilter)
   public async getItemChartPriceCheck() {
+    if (process.env.NODE_ENV !== 'production') return;
     const entityManager = this.datasource.manager;
     const stocks = await entityManager.find(Stock);
     const configCount = openApiToken.configs.length;

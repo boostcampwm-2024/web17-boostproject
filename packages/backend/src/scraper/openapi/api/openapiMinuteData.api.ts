@@ -14,23 +14,37 @@ import { openApiToken } from './openapiToken.api';
 import { Stock } from '@/stock/domain/stock.entity';
 import { StockData, StockMinutely } from '@/stock/domain/stockData.entity';
 
+const STOCK_CUT = 4;
+
 @Injectable()
 export class OpenapiMinuteData {
-  private stock: Stock[];
+  private stock: Stock[][] = [];
   private readonly entity = StockMinutely;
   private readonly url: string =
     '/uapi/domestic-stock/v1/quotations/inquire-time-itemchartprice';
-  private readonly intervals: number = 60;
+  private readonly intervals: number = 130;
+  private flip: number = 0;
   public constructor(private readonly datasource: DataSource) {
-    this.getStockData().then(() => this.getMinuteData());
+    this.getStockData();
   }
 
   @Cron('0 1 * * 1-5')
   @UseFilters(OpenapiExceptionFilter)
   private async getStockData() {
-    this.stock = await this.datasource.manager.findBy(Stock, {
+    if (process.env.NODE_ENV !== 'production') return;
+    const stock = await this.datasource.manager.findBy(Stock, {
       isTrading: true,
     });
+    const stockSize = Math.ceil(stock.length / STOCK_CUT);
+    let i = 0;
+    this.stock = [];
+    while (i < STOCK_CUT) {
+      this.stock.push(stock.slice(i * stockSize, (i + 1) * stockSize));
+      i++;
+    }
+    console.log(stock.length);
+    console.log(this.stock.length);
+    console.log(this.stock[0].length);
   }
 
   private convertResToMinuteData(stockId: string, item: MinuteData) {
@@ -50,9 +64,11 @@ export class OpenapiMinuteData {
     return stockPeriod;
   }
 
-  private async saveMinuteData(stockId: string, item: MinuteData) {
+  private async saveMinuteData(stockId: string, item: MinuteData[]) {
     const manager = this.datasource.manager;
-    const stockPeriod = this.convertResToMinuteData(stockId, item);
+    const stockPeriod = item.map((val) =>
+      this.convertResToMinuteData(stockId, val),
+    );
     manager.save(this.entity, stockPeriod);
   }
 
@@ -63,19 +79,24 @@ export class OpenapiMinuteData {
   ) {
     const query = this.getUpdateStockQuery(stockId, time);
     console.log(query);
-    const response = await getOpenApi(
-      this.url,
-      config,
-      query,
-      TR_IDS.MINUTE_DATA,
-    );
-    let output;
-    if (response.output2) output = response.output2;
-    if (output && output[0] && isMinuteData(output[0])) {
-      this.saveMinuteData(stockId, output[0]);
+    try {
+      const response = await getOpenApi(
+        this.url,
+        config,
+        query,
+        TR_IDS.MINUTE_DATA,
+      );
+      let output;
+      if (response.output2) output = response.output2;
+      if (output && output[0] && isMinuteData(output[0])) {
+        this.saveMinuteData(stockId, output);
+      }
+    } catch (error) {
+      console.error(error);
     }
   }
 
+  @UseFilters(OpenapiExceptionFilter)
   private async getMinuteDataChunk(
     chunk: Stock[],
     config: typeof openApiConfig,
@@ -91,14 +112,18 @@ export class OpenapiMinuteData {
     }
   }
 
-  @Cron('* 9-14 * * 1-5')
-  @Cron('0-30 15 * * 1-5')
+  @Cron(`*/${STOCK_CUT} 9-15 * * 1-5`)
+  @UseFilters(OpenapiExceptionFilter)
   private getMinuteData() {
+    console.error('hello');
+    if (process.env.NODE_ENV !== 'production') return;
+    console.error('not hello');
     const configCount = openApiToken.configs.length;
-    const chunkSize = Math.ceil(this.stock.length / configCount);
-
+    const stock = this.stock[this.flip % STOCK_CUT];
+    this.flip++;
+    const chunkSize = Math.ceil(stock.length / configCount);
     for (let i = 0; i < configCount; i++) {
-      const chunk = this.stock.slice(i * chunkSize, (i + 1) * chunkSize);
+      const chunk = stock.slice(i * chunkSize, (i + 1) * chunkSize);
       this.getMinuteDataChunk(chunk, openApiToken.configs[i]);
     }
   }

@@ -3,13 +3,13 @@ import {
   Catch,
   HttpException,
   HttpStatus,
-  Logger,
 } from '@nestjs/common';
+import { Logger } from 'winston';
 import { OpenapiException } from '../util/openapiCustom.error';
 
 @Catch()
 export class OpenapiExceptionFilter implements ExceptionFilter {
-  private readonly logger = new Logger(OpenapiExceptionFilter.name);
+  private readonly logger = new Logger();
 
   catch(exception: unknown) {
     const status =
