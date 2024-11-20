@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useGetTopGainers, useGetTopLosers } from '@/apis/queries/stocks';
+import { useGetStocksByPrice } from '@/apis/queries/stocks';
 import DownArrow from '@/assets/down-arrow.svg?react';
 import { cn } from '@/utils/cn';
 
@@ -8,10 +8,7 @@ export const StockRankingTable = () => {
   const LIMIT = 20;
   const [isGaining, setIsGaining] = useState(true);
 
-  const { data: topGainers } = useGetTopGainers({ limit: LIMIT });
-  const { data: topLosers } = useGetTopLosers({ limit: LIMIT });
-
-  const stockList = isGaining ? topGainers : topLosers;
+  const { data } = useGetStocksByPrice({ limit: LIMIT, isGaining });
 
   return (
     <div className="rounded-md bg-white px-6 shadow">
@@ -28,9 +25,12 @@ export const StockRankingTable = () => {
             <th>종목</th>
             <th className="text-right">현재가</th>
             <th className="flex items-center justify-end gap-1 text-right">
-              <p> 등락률</p>
+              <p>등락률({isGaining ? '상승순' : '하락순'})</p>
               <DownArrow
-                className="cursor-pointer"
+                className={cn(
+                  'cursor-pointer',
+                  isGaining ? 'rotate-0' : 'rotate-180',
+                )}
                 onClick={() => setIsGaining((prev) => !prev)}
               />
             </th>
@@ -39,7 +39,7 @@ export const StockRankingTable = () => {
           </tr>
         </thead>
         <tbody>
-          {stockList?.map((stock, index) => (
+          {data?.map((stock, index) => (
             <tr
               key={stock.id}
               className="display-medium14 text-dark-gray text-right [&>*]:p-4"
