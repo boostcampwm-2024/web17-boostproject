@@ -7,6 +7,7 @@ import {
 import { Logger } from 'winston';
 import { StockLiveData } from './domain/stockLiveData.entity';
 import { StockGateway } from './stock.gateway';
+import { AlarmService } from '@/alarm/alarm.service';
 
 @EventSubscriber()
 export class StockLiveDataSubscriber
@@ -14,6 +15,7 @@ export class StockLiveDataSubscriber
 {
   constructor(
     private readonly stockGateway: StockGateway,
+    private readonly alarmService: AlarmService,
     @Inject('winston') private readonly logger: Logger,
   ) {}
 
@@ -21,6 +23,7 @@ export class StockLiveDataSubscriber
     return StockLiveData;
   }
 
+  // eslint-disable-next-line max-lines-per-function
   async afterUpdate(event: UpdateEvent<StockLiveData>) {
     try {
       const updatedStockLiveData =
@@ -33,6 +36,13 @@ export class StockLiveDataSubscriber
           changeRate: change,
           volume: volume,
         } = updatedStockLiveData;
+
+        const alarms = await this.alarmService.getMatchingAlarms(
+          stockId,
+          price,
+          volume,
+        );
+
         this.stockGateway.onUpdateStock(stockId, price, change, volume);
       } else {
         this.logger.error(

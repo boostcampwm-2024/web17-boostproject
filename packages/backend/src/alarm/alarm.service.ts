@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, LessThanOrEqual, Repository } from 'typeorm';
 import { Alarm } from './domain/alarm.entity';
 import { AlarmRequest } from './dto/alarm.request';
 
@@ -81,4 +81,37 @@ export class AlarmService {
       await repository.delete(id);
     });
   }
+
+  async getMatchingAlarms(
+    stockId: string,
+    currentPrice: number,
+    currentVolume: number,
+  ): Promise<Alarm[]> {
+    return this.alarmRepository.find({
+      where: [
+        { stock: { id: stockId }, targetPrice: LessThanOrEqual(currentPrice) },
+        {
+          stock: { id: stockId },
+          targetVolume: LessThanOrEqual(currentVolume),
+        },
+      ],
+    });
+  }
+
+  private async sendAlarmNotification(alarm: Alarm): Promise<void> {
+    const { user, stock, targetPrice, targetVolume } = alarm;
+
+    const payload = {
+      title: '주식 알림',
+      body: `${stock.name}: ${
+        targetPrice ? `가격이 ${targetPrice}에 도달했습니다.` : ''
+      } ${targetVolume ? `거래량이 (${targetVolume}에 도달했습니다.` : ''}`,
+    };
+
+    // 웹 푸시 전송
+
+    await this.handleAlarmAfterNotification();
+  }
+
+  private async handleAlarmAfterNotification() {}
 }
