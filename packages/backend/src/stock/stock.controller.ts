@@ -32,7 +32,10 @@ import { StockDetailService } from './stockDetail.service';
 import SessionGuard from '@/auth/session/session.guard';
 import { GetUser } from '@/common/decorator/user.decorator';
 import { sessionConfig } from '@/configs/session.config';
-import { StockViewsResponse } from '@/stock/dto/stock.Response';
+import {
+  StockSearchResponse,
+  StockViewsResponse,
+} from '@/stock/dto/stock.response';
 import { StockViewRequest } from '@/stock/dto/stockView.request';
 import {
   UserStockDeleteRequest,
@@ -43,6 +46,7 @@ import {
   UserStockResponse,
 } from '@/stock/dto/userStock.response';
 import { User } from '@/user/domain/user.entity';
+import { StockSearchRequest } from '@/stock/dto/stock.request';
 
 @Controller('stock')
 export class StockController {
@@ -148,6 +152,19 @@ export class StockController {
       user.id,
     );
     return new UserStockOwnerResponse(result);
+  }
+
+  @ApiOperation({
+    summary: '주식 검색 API',
+    description: '주식 이름에 매칭되는 주식을 검색',
+  })
+  @ApiOkResponse({
+    description: '검색 완료',
+    type: StockSearchResponse,
+  })
+  @Get()
+  async searchStock(@Query() request: StockSearchRequest) {
+    return await this.stockService.searchStock(request.name);
   }
 
   @Get(':stockId/minutely')

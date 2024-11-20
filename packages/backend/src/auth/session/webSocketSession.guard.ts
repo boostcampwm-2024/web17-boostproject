@@ -15,7 +15,7 @@ export interface SessionSocket extends Socket {
   session?: User;
 }
 
-interface PassportSession extends SessionData {
+export interface PassportSession extends SessionData {
   passport: { user: User };
 }
 
