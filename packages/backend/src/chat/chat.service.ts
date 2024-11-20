@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { Chat } from '@/chat/domain/chat.entity';
+import { ChatScrollQuery } from '@/chat/dto/chat.request';
 import { ChatScrollResponse } from '@/chat/dto/chat.response';
 
 export interface ChatMessage {
@@ -22,24 +23,21 @@ export class ChatService {
     });
   }
 
-  async scrollFirstChat(stockId: string, scrollSize?: number) {
-    this.validatePageSize(scrollSize);
-    const result = await this.findFirstChatScroll(stockId, scrollSize);
-    return await this.toScrollResponse(result, scrollSize);
+  async scrollFirstChat(chatScrollQuery: ChatScrollQuery, userId?: number) {
+    this.validatePageSize(chatScrollQuery);
+    const result = await this.findFirstChatScroll(chatScrollQuery, userId);
+    return await this.toScrollResponse(result, chatScrollQuery.pageSize);
   }
 
-  async scrollNextChat(
-    stockId: string,
-    latestChatId?: number,
-    pageSize?: number,
-  ) {
-    this.validatePageSize(pageSize);
-    const result = await this.findChatScroll(stockId, latestChatId, pageSize);
-    return await this.toScrollResponse(result, pageSize);
+  async scrollNextChat(chatScrollQuery: ChatScrollQuery, userId?: number) {
+    this.validatePageSize(chatScrollQuery);
+    const result = await this.findChatScroll(chatScrollQuery, userId);
+    return await this.toScrollResponse(result, chatScrollQuery.pageSize);
   }
 
-  private validatePageSize(scrollSize?: number) {
-    if (scrollSize && scrollSize > 100) {
+  private validatePageSize(chatScrollQuery: ChatScrollQuery) {
+    const { pageSize } = chatScrollQuery;
+    if (pageSize && pageSize > 100) {
       throw new BadRequestException('pageSize should be less than 100');
     }
   }
@@ -54,45 +52,54 @@ export class ChatService {
   }
 
   private async findChatScroll(
-    stockId: string,
-    latestChatId?: number,
-    pageSize?: number,
+    chatScrollQuery: ChatScrollQuery,
+    userId?: number,
   ) {
-    if (!latestChatId) {
-      return await this.findFirstChatScroll(stockId, pageSize);
+    if (!chatScrollQuery.latestChatId) {
+      return await this.findFirstChatScroll(chatScrollQuery, userId);
     } else {
-      return await this.findNextChatScroll(stockId, latestChatId, pageSize);
+      return await this.findNextChatScroll(chatScrollQuery);
     }
   }
 
-  private async findFirstChatScroll(stockId: string, pageSize?: number) {
+  private async findFirstChatScroll(
+    chatScrollQuery: ChatScrollQuery,
+    userId?: number,
+  ) {
     const queryBuilder = this.dataSource.createQueryBuilder(Chat, 'chat');
-    if (!pageSize) {
-      pageSize = DEFAULT_PAGE_SIZE;
+    if (!chatScrollQuery.pageSize) {
+      chatScrollQuery.pageSize = DEFAULT_PAGE_SIZE;
     }
+    const { stockId, pageSize } = chatScrollQuery;
     return queryBuilder
+      .leftJoinAndSelect('chat.likes', 'like', 'like.user_id = :userId', {
+        userId,
+      })
       .where('chat.stock_id = :stockId', { stockId })
       .orderBy('chat.id', 'DESC')
-      .limit(pageSize + 1)
+      .take(pageSize + 1)
       .getMany();
   }
 
   private async findNextChatScroll(
-    stockId: string,
-    latestChatId: number,
-    pageSize?: number,
+    chatScrollQuery: ChatScrollQuery,
+    userId?: number,
   ) {
     const queryBuilder = this.dataSource.createQueryBuilder(Chat, 'chat');
-    if (!pageSize) {
-      pageSize = DEFAULT_PAGE_SIZE;
+    if (!chatScrollQuery.pageSize) {
+      chatScrollQuery.pageSize = DEFAULT_PAGE_SIZE;
     }
+    const { stockId, latestChatId, pageSize } = chatScrollQuery;
     return queryBuilder
+      .leftJoinAndSelect('chat.likes', 'like', 'like.user_id = :userId', {
+        userId,
+      })
       .where('chat.stock_id = :stockId and chat.id < :latestChatId', {
         stockId,
         latestChatId,
       })
       .orderBy('chat.id', 'DESC')
-      .limit(pageSize + 1)
+      .take(pageSize + 1)
       .getMany();
   }
 }

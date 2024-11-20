@@ -164,7 +164,6 @@ export class StockController {
   })
   @Get()
   async searchStock(@Query() request: StockSearchRequest) {
-    console.log(request.name);
     return await this.stockService.searchStock(request.name);
   }
 

@@ -1,13 +1,22 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiOkResponse,
   ApiOperation,
 } from '@nestjs/swagger';
 import SessionGuard from '@/auth/session/session.guard';
+import { ChatGateway } from '@/chat/chat.gateway';
 import { ChatService } from '@/chat/chat.service';
 import { ToggleLikeApi } from '@/chat/decorator/like.decorator';
-import { ChatScrollRequest } from '@/chat/dto/chat.request';
+import { ChatScrollQuery } from '@/chat/dto/chat.request';
 import { ChatScrollResponse } from '@/chat/dto/chat.response';
 import { LikeRequest } from '@/chat/dto/like.request';
 import { LikeService } from '@/chat/like.service';
@@ -19,6 +28,7 @@ export class ChatController {
   constructor(
     private readonly chatService: ChatService,
     private readonly likeService: LikeService,
+    private readonly chatGateWay: ChatGateway,
   ) {}
 
   @ApiOperation({
@@ -38,18 +48,20 @@ export class ChatController {
     },
   })
   @Get()
-  async findChatList(@Query() request: ChatScrollRequest) {
-    return await this.chatService.scrollNextChat(
-      request.stockId,
-      request.latestChatId,
-      request.pageSize,
-    );
+  async findChatList(
+    @Query() request: ChatScrollQuery,
+    @Req() req: Express.Request,
+  ) {
+    const user = req.user as User;
+    return await this.chatService.scrollNextChat(request, user?.id);
   }
 
   @UseGuards(SessionGuard)
   @ToggleLikeApi()
   @Post('like')
   async toggleChatLike(@Body() request: LikeRequest, @GetUser() user: User) {
-    return await this.likeService.toggleLike(user.id, request.chatId);
+    const result = await this.likeService.toggleLike(user.id, request.chatId);
+    this.chatGateWay.broadcastLike(result);
+    return result;
   }
 }

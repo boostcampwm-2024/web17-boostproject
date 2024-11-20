@@ -19,6 +19,10 @@ async function bootstrap() {
       transformOptions: { enableImplicitConversion: true },
     }),
   );
+  app.enableCors({
+    origin: true,
+    credentials: true,
+  });
   useSwagger(app);
   app.use(passport.initialize());
   app.use(passport.session());

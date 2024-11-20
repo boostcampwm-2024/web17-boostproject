@@ -1,13 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class ChatScrollRequest {
+export class ChatScrollQuery {
   @ApiProperty({
     description: '종목 주식 id(종목방 id)',
     example: 'A005930',
   })
   @IsString()
-  readonly stockId: string;
+  stockId: string;
 
   @ApiProperty({
     description: '최신 채팅 id',
@@ -16,7 +16,7 @@ export class ChatScrollRequest {
   })
   @IsOptional()
   @IsNumber()
-  readonly latestChatId?: number;
+  latestChatId?: number;
 
   @ApiProperty({
     description: '페이지 크기',
@@ -26,5 +26,24 @@ export class ChatScrollRequest {
   })
   @IsOptional()
   @IsNumber()
-  readonly pageSize?: number;
+  pageSize?: number;
+}
+
+export function isChatScrollQuery(object: unknown): object is ChatScrollQuery {
+  if (typeof object !== 'object' || object === null) {
+    return false;
+  }
+
+  if (!('stockId' in object) || typeof object.stockId !== 'string') {
+    return false;
+  }
+
+  if (
+    'latestChatId' in object &&
+    !Number.isInteger(Number(object.latestChatId))
+  ) {
+    return false;
+  }
+
+  return !('pageSize' in object && !Number.isInteger(Number(object.pageSize)));
 }
