@@ -29,6 +29,26 @@ export class ChatService {
     return await this.toScrollResponse(result, chatScrollQuery.pageSize);
   }
 
+  async scrollChatByLike(chatScrollQuery: ChatScrollQuery, userId?: number) {
+    this.validatePageSize(chatScrollQuery);
+    const result = await this.findChatScrollOrderByLike(
+      chatScrollQuery,
+      userId,
+    );
+    return await this.toScrollResponse(result, chatScrollQuery.pageSize);
+  }
+
+  async findChatScrollOrderByLike(
+    chatScrollQuery: ChatScrollQuery,
+    userId?: number,
+  ) {
+    const queryBuilder = await this.buildChatScrollByLikeQuery(
+      chatScrollQuery,
+      userId,
+    );
+    return queryBuilder.getMany();
+  }
+
   private validatePageSize(chatScrollQuery: ChatScrollQuery) {
     const { pageSize } = chatScrollQuery;
     if (pageSize && pageSize > 100) {
@@ -51,6 +71,41 @@ export class ChatService {
   ) {
     const queryBuilder = this.buildChatScrollQuery(chatScrollQuery, userId);
     return queryBuilder.getMany();
+  }
+
+  private async buildChatScrollByLikeQuery(
+    chatScrollQuery: ChatScrollQuery,
+    userId?: number,
+  ) {
+    const queryBuilder = this.dataSource.createQueryBuilder(Chat, 'chat');
+    const { stockId, latestChatId, pageSize } = chatScrollQuery;
+    const size = pageSize ? pageSize : DEFAULT_PAGE_SIZE;
+
+    queryBuilder
+      .leftJoinAndSelect('chat.likes', 'like', 'like.user_id = :userId', {
+        userId,
+      })
+      .where('chat.stock_id = :stockId', { stockId })
+      .orderBy('chat.likeCount', 'DESC')
+      .addOrderBy('chat.id', 'DESC')
+      .take(size + 1);
+    if (latestChatId) {
+      const chat = await this.dataSource.manager.findOne(Chat, {
+        where: { id: latestChatId },
+        select: ['likeCount'],
+      });
+      if (chat) {
+        queryBuilder.andWhere(
+          'chat.likeCount < :likeCount or (chat.likeCount = :likeCount and chat.id < :latestChatId)',
+          {
+            likeCount: chat.likeCount,
+            latestChatId,
+          },
+        );
+      }
+    }
+
+    return queryBuilder;
   }
 
   private buildChatScrollQuery(
