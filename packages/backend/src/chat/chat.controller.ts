@@ -53,7 +53,7 @@ export class ChatController {
     @Req() req: Express.Request,
   ) {
     const user = req.user as User;
-    return await this.chatService.scrollNextChat(request, user?.id);
+    return await this.chatService.scrollChat(request, user?.id);
   }
 
   @UseGuards(SessionGuard)

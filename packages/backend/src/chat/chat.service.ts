@@ -23,13 +23,7 @@ export class ChatService {
     });
   }
 
-  async scrollFirstChat(chatScrollQuery: ChatScrollQuery, userId?: number) {
-    this.validatePageSize(chatScrollQuery);
-    const result = await this.findFirstChatScroll(chatScrollQuery, userId);
-    return await this.toScrollResponse(result, chatScrollQuery.pageSize);
-  }
-
-  async scrollNextChat(chatScrollQuery: ChatScrollQuery, userId?: number) {
+  async scrollChat(chatScrollQuery: ChatScrollQuery, userId?: number) {
     this.validatePageSize(chatScrollQuery);
     const result = await this.findChatScroll(chatScrollQuery, userId);
     return await this.toScrollResponse(result, chatScrollQuery.pageSize);
@@ -55,51 +49,29 @@ export class ChatService {
     chatScrollQuery: ChatScrollQuery,
     userId?: number,
   ) {
-    if (!chatScrollQuery.latestChatId) {
-      return await this.findFirstChatScroll(chatScrollQuery, userId);
-    } else {
-      return await this.findNextChatScroll(chatScrollQuery);
-    }
+    const queryBuilder = this.buildChatScrollQuery(chatScrollQuery, userId);
+    return queryBuilder.getMany();
   }
 
-  private async findFirstChatScroll(
+  private buildChatScrollQuery(
     chatScrollQuery: ChatScrollQuery,
     userId?: number,
   ) {
     const queryBuilder = this.dataSource.createQueryBuilder(Chat, 'chat');
-    if (!chatScrollQuery.pageSize) {
-      chatScrollQuery.pageSize = DEFAULT_PAGE_SIZE;
-    }
-    const { stockId, pageSize } = chatScrollQuery;
-    return queryBuilder
+    const { stockId, latestChatId, pageSize } = chatScrollQuery;
+    const size = pageSize ? pageSize : DEFAULT_PAGE_SIZE;
+
+    queryBuilder
       .leftJoinAndSelect('chat.likes', 'like', 'like.user_id = :userId', {
         userId,
       })
       .where('chat.stock_id = :stockId', { stockId })
       .orderBy('chat.id', 'DESC')
-      .take(pageSize + 1)
-      .getMany();
-  }
-
-  private async findNextChatScroll(
-    chatScrollQuery: ChatScrollQuery,
-    userId?: number,
-  ) {
-    const queryBuilder = this.dataSource.createQueryBuilder(Chat, 'chat');
-    if (!chatScrollQuery.pageSize) {
-      chatScrollQuery.pageSize = DEFAULT_PAGE_SIZE;
+      .take(size + 1);
+    if (latestChatId) {
+      queryBuilder.andWhere('chat.id < :latestChatId', { latestChatId });
     }
-    const { stockId, latestChatId, pageSize } = chatScrollQuery;
-    return queryBuilder
-      .leftJoinAndSelect('chat.likes', 'like', 'like.user_id = :userId', {
-        userId,
-      })
-      .where('chat.stock_id = :stockId and chat.id < :latestChatId', {
-        stockId,
-        latestChatId,
-      })
-      .orderBy('chat.id', 'DESC')
-      .take(pageSize + 1)
-      .getMany();
+
+    return queryBuilder;
   }
 }
