@@ -10,7 +10,9 @@ export const sessionConfig = {
   name: process.env.COOKIE_NAME,
   cookie: {
     maxAge: Number(process.env.COOKIE_MAX_AGE),
+    httpOnly: true,
     secure: true,
+    domain: 'juchum.info',
     sameSite: 'none' as none,
   },
 };
