@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable max-lines-per-function */
 
-import { applyDecorators } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
-import { StockDataResponse } from '../dto/stockData.response';
+import { applyDecorators } from "@nestjs/common";
+import { ApiOperation, ApiParam, ApiQuery, ApiResponse } from "@nestjs/swagger";
+import { StockDataResponse } from "../dto/stockData.response";
 
 export function ApiGetStockData(summary: string, type: string) {
   return applyDecorators(
@@ -21,6 +21,14 @@ export function ApiGetStockData(summary: string, type: string) {
       example: '2024-04-01T00:00:00.000Z',
       type: String,
       format: 'date-time',
+    }),
+    ApiQuery({
+      name: 'timeunit',
+      required: false,
+      description: '시간 단위',
+      example: 'minute',
+      type: String,
+      enum: ['minute', 'day', 'week', 'month', 'year'],
     }),
     ApiResponse({
       status: 200,

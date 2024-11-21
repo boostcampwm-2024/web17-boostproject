@@ -32,6 +32,7 @@ import { StockDetailService } from './stockDetail.service';
 import SessionGuard from '@/auth/session/session.guard';
 import { GetUser } from '@/common/decorator/user.decorator';
 import { sessionConfig } from '@/configs/session.config';
+import { StockSearchRequest } from '@/stock/dto/stock.request';
 import {
   StockSearchResponse,
   StockViewsResponse,
@@ -46,7 +47,16 @@ import {
   UserStockResponse,
 } from '@/stock/dto/userStock.response';
 import { User } from '@/user/domain/user.entity';
-import { StockSearchRequest } from '@/stock/dto/stock.request';
+
+const TIME_UNIT = {
+  MINUTE: 'minute',
+  DAY: 'day',
+  WEEK: 'week',
+  MONTH: 'month',
+  YEAR: 'year',
+} as const;
+
+type TIME_UNIT = (typeof TIME_UNIT)[keyof typeof TIME_UNIT];
 
 @Controller('stock')
 export class StockController {
@@ -167,61 +177,25 @@ export class StockController {
     return await this.stockService.searchStock(request.name);
   }
 
-  @Get(':stockId/minutely')
-  @ApiGetStockData('주식 분 단위 데이터 조회 API', '분')
-  async getStockDataMinutely(
-    @Param('stockId') stockId: string,
-    @Query('lastStartTime') lastStartTime?: string,
-  ) {
-    return this.stockDataMinutelyService.getStockDataMinutely(
-      stockId,
-      lastStartTime,
-    );
-  }
-
-  @Get(':stockId/daily')
-  @ApiGetStockData('주식 일 단위 데이터 조회 API', '일')
+  @Get('/:stockId')
+  @ApiGetStockData('주식 시간 단위 데이터 조회 API', '일')
   async getStockDataDaily(
     @Param('stockId') stockId: string,
     @Query('lastStartTime') lastStartTime?: string,
+    @Query('timeunit') timeunit: TIME_UNIT = TIME_UNIT.MINUTE,
   ) {
-    return this.stockDataDailyService.getStockDataDaily(stockId, lastStartTime);
-  }
-
-  @Get(':stockId/weekly')
-  @ApiGetStockData('주식 주 단위 데이터 조회 API', '주')
-  async getStockDataWeekly(
-    @Param('stockId') stockId: string,
-    @Query('lastStartTime') lastStartTime?: string,
-  ) {
-    return this.stockDataWeeklyService.getStockDataWeekly(
-      stockId,
-      lastStartTime,
-    );
-  }
-
-  @Get(':stockId/mothly')
-  @ApiGetStockData('주식 월 단위 데이터 조회 API', '월')
-  async getStockDataMonthly(
-    @Param('stockId') stockId: string,
-    @Query('lastStartTime') lastStartTime?: string,
-  ) {
-    return this.stockDataMonthlyService.getStockDataMonthly(
-      stockId,
-      lastStartTime,
-    );
-  }
-
-  @Get(':stockId/yearly')
-  @ApiGetStockData('주식 연 단위 데이터 조회 API', '연')
-  async getStockDataYearly(
-    @Param('stockId') stockId: string,
-    @Query('lastStartTime') lastStartTime?: string,
-  ) {
-    return this.stockDataYearlyService.getStockDataYearly(
-      stockId,
-      lastStartTime,
-    );
+    switch (timeunit) {
+      case TIME_UNIT.MINUTE:
+        return this.getMinutelyData(stockId, lastStartTime);
+      case TIME_UNIT.DAY:
+        return this.getDailyData(stockId, lastStartTime);
+      case TIME_UNIT.MONTH:
+        return this.getStockDataMonthly(stockId, lastStartTime);
+      case TIME_UNIT.WEEK:
+        return this.getStockDataWeekly(stockId, lastStartTime);
+      default:
+        return this.getStockDataYearly(stockId, lastStartTime);
+    }
   }
 
   @ApiOperation({
@@ -256,5 +230,46 @@ export class StockController {
   @ApiGetStocks('가격 하락률 기반 주식 리스트 조회 API')
   async getTopStocksByLosers(@LimitQuery(20) limit: number) {
     return await this.stockService.getTopStocksByLosers(limit);
+  }
+
+  private getStockDataYearly(
+    stockId: string,
+    lastStartTime: string | undefined,
+  ) {
+    return this.stockDataYearlyService.getStockDataYearly(
+      stockId,
+      lastStartTime,
+    );
+  }
+
+  private getStockDataWeekly(
+    stockId: string,
+    lastStartTime: string | undefined,
+  ) {
+    return this.stockDataWeeklyService.getStockDataWeekly(
+      stockId,
+      lastStartTime,
+    );
+  }
+
+  private getStockDataMonthly(
+    stockId: string,
+    lastStartTime: string | undefined,
+  ) {
+    return this.stockDataMonthlyService.getStockDataMonthly(
+      stockId,
+      lastStartTime,
+    );
+  }
+
+  private getMinutelyData(stockId: string, lastStartTime?: string) {
+    return this.stockDataMinutelyService.getStockDataMinutely(
+      stockId,
+      lastStartTime,
+    );
+  }
+
+  private getDailyData(stockId: string, lastStartTime?: string) {
+    return this.stockDataDailyService.getStockDataDaily(stockId, lastStartTime);
   }
 }
