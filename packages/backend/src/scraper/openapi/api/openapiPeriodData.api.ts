@@ -1,12 +1,19 @@
+import { Injectable, UseFilters } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { DataSource, EntityManager } from 'typeorm';
-import { getOpenApi, getPreviousDate, getTodayDate } from '../openapiUtil.api';
+import { OpenapiExceptionFilter } from '../Decorator/openapiException.filter';
 import {
   ChartData,
   isChartData,
   ItemChartPriceQuery,
   Period,
 } from '../type/openapiPeriodData';
+import { TR_IDS } from '../type/openapiUtil.type';
+import {
+  getOpenApi,
+  getPreviousDate,
+  getTodayDate,
+} from '../util/openapiUtil.api';
 import { openApiToken } from './openapiToken.api';
 import { Stock } from '@/stock/domain/stock.entity';
 import {
@@ -16,7 +23,6 @@ import {
   StockMonthly,
   StockYearly,
 } from '@/stock/domain/stockData.entity';
-import { Injectable } from '@nestjs/common';
 
 const DATE_TO_ENTITY = {
   D: StockDaily,
@@ -38,13 +44,15 @@ const INTERVALS = 4000;
 export class OpenapiPeriodData {
   private readonly url: string =
     '/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice';
-  public constructor(private readonly datasourse: DataSource) {
-    this.getItemChartPriceCheck();
+  public constructor(private readonly datasource: DataSource) {
+    //this.getItemChartPriceCheck();
   }
 
   @Cron('0 1 * * 1-5')
+  @UseFilters(OpenapiExceptionFilter)
   public async getItemChartPriceCheck() {
-    const entityManager = this.datasourse.manager;
+    if (process.env.NODE_ENV !== 'production') return;
+    const entityManager = this.datasource.manager;
     const stocks = await entityManager.find(Stock);
     const configCount = openApiToken.configs.length;
     const chunkSize = Math.ceil(stocks.length / configCount);
@@ -61,7 +69,7 @@ export class OpenapiPeriodData {
   private async getChartData(chunk: Stock[], period: Period) {
     const baseTime = INTERVALS * 4;
     const entity = DATE_TO_ENTITY[period];
-    const manager = this.datasourse.manager;
+    const manager = this.datasource.manager;
 
     let time = 0;
     for (const stock of chunk) {
@@ -123,6 +131,7 @@ export class OpenapiPeriodData {
       this.url,
       openApiToken.configs[configIdx],
       query,
+      TR_IDS.ITEM_CHART_PRICE,
     );
     return response.output2 as ChartData[];
   }
@@ -150,7 +159,7 @@ export class OpenapiPeriodData {
   }
 
   private async insertChartData(stock: StockData, entity: typeof StockData) {
-    const manager = this.datasourse.manager;
+    const manager = this.datasource.manager;
     if (!(await this.existsChartData(stock, manager, entity))) {
       await manager.save(entity, stock);
     }

@@ -21,7 +21,7 @@ export class KoreaStockInfoService {
     private readonly datasource: DataSource,
     @Inject('winston') private readonly logger: Logger,
   ) {
-    //this.initKoreaStockInfo();
+    this.initKoreaStockInfo();
   }
 
   private async existsStockInfo(stockId: string, manager: EntityManager) {

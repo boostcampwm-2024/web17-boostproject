@@ -1,10 +1,10 @@
-import { createDataSourceMock } from '@/user/user.service.spec';
 import { DataSource } from 'typeorm';
-import { LikeService } from '@/chat/like.service';
 import { Chat } from '@/chat/domain/chat.entity';
+import { Like } from '@/chat/domain/like.entity';
+import { LikeService } from '@/chat/like.service';
 import { Stock } from '@/stock/domain/stock.entity';
 import { User } from '@/user/domain/user.entity';
-import { Like } from '@/chat/domain/like.entity';
+import { createDataSourceMock } from '@/user/user.service.spec';
 
 function createChat(): Chat {
   return {
