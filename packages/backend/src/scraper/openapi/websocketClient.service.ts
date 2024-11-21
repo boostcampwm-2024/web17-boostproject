@@ -41,6 +41,9 @@ export class WebsocketClient {
         this.sendPong();
         return;
       }
+      if (message.header && message.header.tr_id === 'H0STCNT0') {
+        return;
+      }
       this.openapiLiveData.output(data);
     });
 

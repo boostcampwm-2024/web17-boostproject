@@ -86,9 +86,7 @@ export class OpenapiLiveData {
   }
 
   public async output(message: Buffer, iv?: string, key?: string) {
-    const str = message.toString();
-    if (str.split('|').length < 3) return;
-    const parsed = str.split('|');
+    const parsed = message.toString().split('|');
     if (parsed.length > 0) {
       if (parsed[0] == '1' && iv && key)
         parsed[4] = decryptAES256(parsed[4], iv, key);
