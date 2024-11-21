@@ -1,6 +1,6 @@
 import { Inject, Injectable, UseFilters } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { DataSource } from 'typeorm';
+import { Between, DataSource } from 'typeorm';
 import { Logger } from 'winston';
 import { openApiConfig } from '../config/openapi.config';
 import { OpenapiExceptionFilter } from '../Decorator/openapiException.filter';
@@ -130,23 +130,26 @@ export class OpenapiDetailData {
   }
 
   private async get52WeeksLowHigh() {
-    //const manager = this.datasource.manager;
-    //const nowDate = new Date();
-    //const weeksAgoDate = this.getDate52WeeksAgo();
-    //// 주식의 52주간 일단위 데이터 전체 중에 최고, 최저가를 바탕으로 최저가, 최고가 계산해서 가져오기
-    //const output = await manager.find(StockDaily, {
-    //  select: ['low', 'high'],
-    //  where: {
-    //    startTime: Between(weeksAgoDate, nowDate),
-    //  },
-    //});
-    //const result = output.reduce((prev, cur) => {
-    //  if (prev.low > cur.low) prev.low = cur.low;
-    //  if (prev.high < cur.high) prev.high = cur.high;
-    //  return cur;
-    //}, new StockDaily());
-    //return { low: result.low, high: result.high };
-    return { low: 0, high: 0 };
+    const manager = this.datasource.manager;
+    const nowDate = new Date();
+    const weeksAgoDate = this.getDate52WeeksAgo();
+    // 주식의 52주간 일단위 데이터 전체 중에 최고, 최저가를 바탕으로 최저가, 최고가 계산해서 가져오기
+    const output = await manager.find(StockDaily, {
+      select: ['low', 'high'],
+      where: {
+        startTime: Between(weeksAgoDate, nowDate),
+      },
+    });
+    const result = output.reduce((prev, cur) => {
+      if (prev.low > cur.low) prev.low = cur.low;
+      if (prev.high < cur.high) prev.high = cur.high;
+      return cur;
+    }, new StockDaily());
+    let low = 0;
+    let high = 0;
+    if (result.low && !isNaN(result.low)) low = result.low;
+    if (result.high && !isNaN(result.high)) high = result.high;
+    return { low, high };
   }
 
   private async makeStockDetailObject(
