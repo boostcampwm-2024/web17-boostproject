@@ -3,7 +3,7 @@ import { ChartTheme } from '.';
 import tailwindConfig from '@/../tailwind.config';
 
 const colorConfig = resolveConfig(tailwindConfig).theme.colors;
-console.log(colorConfig.red);
+
 export const darkTheme: ChartTheme = {
   background: '#1a1a1a',
   textColor: '#ffffffe6',
