@@ -73,9 +73,13 @@ class OpenapiTokenApi {
 
   @Cron('50 0 * * 1-5')
   private async initWebSocketKey() {
-    this.config.forEach(async (val) => {
-      val.STOCK_WEBSOCKET_KEY = await this.getWebSocketKey(val)!;
-    });
+    const updatedConfig = await Promise.all(
+      this.config.map(async (val) => {
+        val.STOCK_WEBSOCKET_KEY = await this.getWebSocketKey(val)!;
+        return val;
+      }),
+    );
+    this.config = updatedConfig;
   }
 
   private async getToken(config: typeof openApiConfig): Promise<string> {

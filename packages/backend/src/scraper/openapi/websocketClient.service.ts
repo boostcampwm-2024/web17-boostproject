@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
+import { Logger } from 'winston';
 import { WebSocket } from 'ws';
+import { OpenapiLiveData } from './api/openapiLiveData.api';
 
 @Injectable()
 export class WebsocketClient {
@@ -10,21 +12,36 @@ export class WebsocketClient {
   private readonly url =
     process.env.WS_URL ?? 'ws://ops.koreainvestment.com:21000';
 
-  constructor(@Inject('winston') private readonly logger: Logger) {
+  constructor(
+    @Inject('winston') private readonly logger: Logger,
+    private readonly openapiLiveData: OpenapiLiveData,
+  ) {
     this.connect();
   }
+
+  // TODO : subscribe 구조로 리팩토링
+  private subscribe() {}
 
   @Cron('0 2 * * 1-5')
   private connect() {
     this.client = new WebSocket(this.url);
 
     this.client.on('open', () => {
-      this.logger.log('WebSocket connection established');
-      this.sendMessage('Initial message');
+      this.logger.info('WebSocket connection established');
+      this.openapiLiveData.getMessage().then((val) => {
+        val.forEach((message) => this.sendMessage(message));
+      });
     });
 
     this.client.on('message', (data: any) => {
-      this.logger.log(`Received message: ${data}`);
+      this.logger.info(`Received message: ${data}`);
+      const message = JSON.parse(data);
+      if (message.header && message.header.tr_id === 'PINGPONG') {
+        this.logger.info(`Received PING: ${JSON.stringify(message)}`);
+        this.sendPong();
+        return;
+      }
+      this.openapiLiveData.output(data);
     });
 
     this.client.on('close', () => {
@@ -39,10 +56,18 @@ export class WebsocketClient {
     });
   }
 
+  private sendPong() {
+    const pongMessage = {
+      header: { tr_id: 'PINGPONG', datetime: new Date().toISOString() },
+    };
+    this.client.send(JSON.stringify(pongMessage));
+    this.logger.info(`Sent PONG: ${JSON.stringify(pongMessage)}`);
+  }
+
   private sendMessage(message: string) {
     if (this.client.readyState === WebSocket.OPEN) {
       this.client.send(message);
-      this.logger.log(`Sent message: ${message}`);
+      this.logger.info(`Sent message: ${message}`);
     } else {
       this.logger.warn('WebSocket is not open. Message not sent.');
     }

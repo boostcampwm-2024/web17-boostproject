@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any*/
+import * as crypto from 'crypto';
 import { HttpStatus } from '@nestjs/common';
 import axios from 'axios';
 import { openApiConfig } from '../config/openapi.config';
@@ -77,6 +78,20 @@ const getCurrentTime = () => {
   const seconds = String(now.getSeconds()).padStart(2, '0');
   return `${hours}${minutes}${seconds}`;
 };
+const decryptAES256 = (
+  encryptedText: string,
+  key: string,
+  iv: string,
+): string => {
+  const decipher = crypto.createDecipheriv(
+    'aes-256-cbc',
+    Buffer.from(key, 'hex'),
+    Buffer.from(iv, 'hex'),
+  );
+  let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
+  decrypted += decipher.final('utf8');
+  return decrypted;
+};
 
 export {
   postOpenApi,
@@ -84,4 +99,5 @@ export {
   getTodayDate,
   getPreviousDate,
   getCurrentTime,
+  decryptAES256,
 };
