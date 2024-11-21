@@ -14,6 +14,7 @@ import {
 import { TR_IDS } from '../type/openapiUtil.type';
 import { getOpenApi } from '../util/openapiUtil.api';
 import { openApiToken } from './openapiToken.api';
+import { KospiStock } from '@/stock/domain/kospiStock.entity';
 import { Stock } from '@/stock/domain/stock.entity';
 import { StockDaily } from '@/stock/domain/stockData.entity';
 import { StockDetail } from '@/stock/domain/stockDetail.entity';
@@ -48,6 +49,12 @@ export class OpenapiDetailData {
   private async saveDetailData(stockDetail: StockDetail) {
     const manager = this.datasource.manager;
     const entity = StockDetail;
+    manager.save(entity, stockDetail);
+  }
+
+  private async saveKospiData(stockDetail: KospiStock) {
+    const manager = this.datasource.manager;
+    const entity = KospiStock;
     manager.save(entity, stockDetail);
   }
 
@@ -99,8 +106,10 @@ export class OpenapiDetailData {
   private async makeStockDetailObject(
     output1: FinancialData,
     output2: ProductDetail,
+    stockId: string,
   ): Promise<StockDetail> {
     const result = new StockDetail();
+    result.stock = { id: stockId } as Stock;
     result.marketCap =
       (await this.calMarketCap(parseInt(output2.lstg_stqt))) + '';
     result.eps = parseInt(output1.eps);
@@ -113,10 +122,15 @@ export class OpenapiDetailData {
     return result;
   }
 
-  private async getDetailDataDelay(stock: Stock, conf: typeof openApiConfig) {
-    const dataQuery = this.getDetailDataQuery(stock.id!);
-    const defaultQuery = this.getDefaultDataQuery(stock.id!);
+  private async makeKospiStockObject(output: ProductDetail, stockId: string) {
+    const ret = new KospiStock();
+    ret.isKospi = output.kospi200_item_yn === 'Y' ? true : false;
+    ret.stock = { id: stockId } as Stock;
+    return ret;
+  }
 
+  private async getFinancialData(stock: Stock, conf: typeof openApiConfig) {
+    const dataQuery = this.getDetailDataQuery(stock.id!);
     // 여기서 가져올 건 eps -> eps와 per 계산하자.
     const output1 = await getOpenApi(
       this.incomeUrl,
@@ -124,6 +138,12 @@ export class OpenapiDetailData {
       dataQuery,
       TR_IDS.FINANCIAL_DATA,
     );
+    return output1;
+  }
+
+  private async getProductData(stock: Stock, conf: typeof openApiConfig) {
+    const defaultQuery = this.getDefaultDataQuery(stock.id!);
+
     // 여기서 가져올 건 lstg-stqt - 상장주수를 바탕으로 시가총액 계산, kospi200_item_yn 코스피200종목여부 업데이트
     const output2 = await getOpenApi(
       this.defaultUrl,
@@ -131,10 +151,22 @@ export class OpenapiDetailData {
       defaultQuery,
       TR_IDS.PRODUCTION_DETAIL,
     );
+    return output2;
+  }
+
+  private async getDetailDataDelay(stock: Stock, conf: typeof openApiConfig) {
+    const output1 = await this.getFinancialData(stock, conf);
+    const output2 = await this.getProductData(stock, conf);
 
     if (isFinancialData(output1) && isProductDetail(output2)) {
-      const stockDetail = await this.makeStockDetailObject(output1, output2);
+      const stockDetail = await this.makeStockDetailObject(
+        output1,
+        output2,
+        stock.id!,
+      );
       this.saveDetailData(stockDetail);
+      const kospiStock = await this.makeKospiStockObject(output2, stock.id!);
+      this.saveKospiData(kospiStock);
     }
   }
 

@@ -1,4 +1,4 @@
-import { Column, Entity, OneToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
 import { Stock } from './stock.entity';
 
 @Entity()
@@ -10,5 +10,6 @@ export class KospiStock {
   isKospi: boolean;
 
   @OneToOne(() => Stock, (stock) => stock.id)
+  @JoinColumn({ name: 'stock_id' })
   stock: Stock;
 }
