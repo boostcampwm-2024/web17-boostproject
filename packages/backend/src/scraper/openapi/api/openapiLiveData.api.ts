@@ -2,12 +2,7 @@ import { Inject } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 import { Logger } from 'winston';
 import { openApiConfig } from '../config/openapi.config';
-import {
-  MessageResponse,
-  StockData,
-  isMessageResponse,
-  parseStockData,
-} from '../type/openapiLiveData.type';
+import { StockData, parseStockData } from '../type/openapiLiveData.type';
 import { decryptAES256 } from '../util/openapiUtil.api';
 import { openApiToken } from './openapiToken.api';
 import { KospiStock } from '@/stock/domain/kospiStock.entity';

@@ -22,6 +22,20 @@ export class WebsocketClient {
   // TODO : subscribe 구조로 리팩토링
   private subscribe() {}
 
+  private message(data: any) {
+    this.logger.info(`Received message: ${data}`);
+    const message = JSON.parse(data);
+    if (message.header && message.header.tr_id === 'PINGPONG') {
+      this.logger.info(`Received PING: ${JSON.stringify(message)}`);
+      this.sendPong();
+      return;
+    }
+    if (message.header && message.header.tr_id === 'H0STCNT0') {
+      return;
+    }
+    this.openapiLiveData.output(data);
+  }
+
   @Cron('0 2 * * 1-5')
   private connect() {
     this.client = new WebSocket(this.url);
@@ -34,17 +48,7 @@ export class WebsocketClient {
     });
 
     this.client.on('message', (data: any) => {
-      this.logger.info(`Received message: ${data}`);
-      const message = JSON.parse(data);
-      if (message.header && message.header.tr_id === 'PINGPONG') {
-        this.logger.info(`Received PING: ${JSON.stringify(message)}`);
-        this.sendPong();
-        return;
-      }
-      if (message.header && message.header.tr_id === 'H0STCNT0') {
-        return;
-      }
-      this.openapiLiveData.output(data);
+      this.message(data);
     });
 
     this.client.on('close', () => {
