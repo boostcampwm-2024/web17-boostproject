@@ -1,14 +1,17 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { usePostStockView } from '@/apis/queries/stock-detail';
 import { useGetStocksByPrice } from '@/apis/queries/stocks';
 import DownArrow from '@/assets/down-arrow.svg?react';
 import { cn } from '@/utils/cn';
 
+const LIMIT = 20;
+
 export const StockRankingTable = () => {
-  const LIMIT = 20;
   const [isGaining, setIsGaining] = useState(true);
 
   const { data } = useGetStocksByPrice({ limit: LIMIT, isGaining });
+  const { mutate } = usePostStockView();
 
   return (
     <div className="rounded-md bg-white px-6 shadow">
@@ -48,6 +51,7 @@ export const StockRankingTable = () => {
                 <span className="text-gray w-3 flex-shrink-0">{index + 1}</span>
                 <Link
                   to={`${stock.id}`}
+                  onClick={() => mutate(stock.id)}
                   className="display-bold14 hover:text-orange cursor-pointer text-ellipsis hover:underline"
                   aria-label={stock.name}
                 >
