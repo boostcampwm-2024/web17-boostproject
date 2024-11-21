@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable max-lines-per-function */
 
-import { applyDecorators } from "@nestjs/common";
-import { ApiOperation, ApiParam, ApiQuery, ApiResponse } from "@nestjs/swagger";
-import { StockDataResponse } from "../dto/stockData.response";
+import { applyDecorators } from '@nestjs/common';
+import { ApiOperation, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { StockDataResponse } from '../dto/stockData.response';
 
 export function ApiGetStockData(summary: string, type: string) {
   return applyDecorators(
