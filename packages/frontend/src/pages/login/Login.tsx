@@ -1,7 +1,5 @@
 import { Link } from 'react-router-dom';
 import google from '@/assets/google.png';
-import kakao from '@/assets/kakao.png';
-import naver from '@/assets/naver.png';
 
 interface LoginButtonProps {
   to: string;
@@ -10,6 +8,8 @@ interface LoginButtonProps {
 }
 
 export const Login = () => {
+  const googleLoginUrl = '/api/auth/google/login';
+
   return (
     <div className="flex h-[calc(100vh-8rem)] flex-col items-center justify-center">
       <main className="relative flex flex-col gap-36 rounded-lg bg-gradient-to-br from-[#ffe259] to-[#ffa751] p-16 py-24 shadow-sm">
@@ -19,9 +19,11 @@ export const Login = () => {
           <p className="display-medium20">주춤주춤과 함께해요!</p>
         </section>
         <section className="relative z-10 flex flex-col gap-4">
-          <LoginButton to="/" src={google} alt="구글 로그인" />
-          <LoginButton to="/" src={kakao} alt="카카오 로그인" />
-          <LoginButton to="/" src={naver} alt="네이버 로그인" />
+          <LoginButton
+            to={`${import.meta.env.VITE_BASE_URL}${googleLoginUrl}`}
+            src={google}
+            alt="구글 로그인"
+          />
         </section>
       </main>
     </div>
