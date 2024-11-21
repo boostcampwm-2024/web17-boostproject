@@ -7,7 +7,7 @@ export type DetailDataQuery = {
   fid_div_cls_code: '0' | '1';
 };
 
-export type FinancialData = {
+export type FinancialRatio = {
   stac_yymm: string; // 결산 년월
   grs: string; // 매출액 증가율
   bsop_prfi_inrt: string; // 영업 이익 증가율
@@ -20,7 +20,7 @@ export type FinancialData = {
   lblt_rate: string; // 부채 비율
 };
 
-export function isFinancialData(data: any): data is FinancialData {
+export function isFinancialRatioData(data: any): data is FinancialRatio {
   return (
     data &&
     typeof data.stac_yymm === 'string' &&
@@ -176,7 +176,7 @@ export const isProductDetail = (data: any): data is ProductDetail => {
 
 export type StockDetailQuery = {
   pdno: string;
-  code: string;
+  prdt_type_cd: string;
 };
 
 //export type FinancialDetail = {

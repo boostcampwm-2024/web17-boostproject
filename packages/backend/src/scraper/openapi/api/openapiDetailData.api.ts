@@ -1,12 +1,13 @@
-import { Injectable, UseFilters } from '@nestjs/common';
+import { Inject, Injectable, UseFilters } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { Between, DataSource } from 'typeorm';
+import { DataSource } from 'typeorm';
+import { Logger } from 'winston';
 import { openApiConfig } from '../config/openapi.config';
 import { OpenapiExceptionFilter } from '../Decorator/openapiException.filter';
 import {
   DetailDataQuery,
-  FinancialData,
-  isFinancialData,
+  FinancialRatio,
+  isFinancialRatioData,
   isProductDetail,
   ProductDetail,
   StockDetailQuery,
@@ -23,39 +24,69 @@ import { StockDetail } from '@/stock/domain/stockDetail.entity';
 export class OpenapiDetailData {
   private readonly financialUrl: string =
     '/uapi/domestic-stock/v1/finance/financial-ratio';
-  private readonly defaultUrl: string =
+  private readonly productUrl: string =
     '/uapi/domestic-stock/v1/quotations/search-stock-info';
-  private readonly incomeUrl: string =
-    '/uapi/domestic-stock/v1/finance/income-statement';
-  private readonly intervals = 100;
-  private readonly config: (typeof openApiConfig)[] = openApiToken.configs;
-  constructor(private readonly datasource: DataSource) {}
+  private readonly intervals = 1000;
+  constructor(
+    private readonly datasource: DataSource,
+    @Inject('winston') private readonly logger: Logger,
+  ) {
+    setTimeout(() => this.getDetailData(), 5000);
+  }
 
   @Cron('0 8 * * 1-5')
   @UseFilters(OpenapiExceptionFilter)
   public async getDetailData() {
-    if (process.env.NODE_ENV !== 'production') return;
+    //if (process.env.NODE_ENV !== 'production') return;
     const entityManager = this.datasource.manager;
     const stocks = await entityManager.find(Stock);
-    const configCount = this.config.length;
+    const configCount = openApiToken.configs.length;
     const chunkSize = Math.ceil(stocks.length / configCount);
 
     for (let i = 0; i < configCount; i++) {
+      this.logger.info(openApiToken.configs[i]);
       const chunk = stocks.slice(i * chunkSize, (i + 1) * chunkSize);
-      this.getDetailDataChunk(chunk, this.config[i]);
+      this.getDetailDataChunk(chunk, openApiToken.configs[i]);
     }
   }
 
   private async saveDetailData(stockDetail: StockDetail) {
     const manager = this.datasource.manager;
     const entity = StockDetail;
-    manager.save(entity, stockDetail);
+    const existingStockDetail = await manager.findOne(entity, {
+      where: {
+        stock: { id: stockDetail.stock.id },
+      },
+    });
+    if (existingStockDetail) {
+      manager.update(
+        entity,
+        { stock: { id: stockDetail.stock.id } },
+        stockDetail,
+      );
+    } else {
+      manager.save(entity, stockDetail);
+    }
   }
 
   private async saveKospiData(stockDetail: KospiStock) {
     const manager = this.datasource.manager;
     const entity = KospiStock;
-    manager.save(entity, stockDetail);
+    const existingStockDetail = await manager.findOne(entity, {
+      where: {
+        stock: { id: stockDetail.stock.id },
+      },
+    });
+
+    if (existingStockDetail) {
+      manager.update(
+        entity,
+        { stock: { id: stockDetail.stock.id } },
+        stockDetail,
+      );
+    } else {
+      manager.save(entity, stockDetail);
+    }
   }
 
   private async calPer(eps: number): Promise<number> {
@@ -66,10 +97,16 @@ export class OpenapiDetailData {
       take: 1,
       order: { createdAt: 'desc' },
     });
-    const currentPrice = latestResult[0].close;
-    const per = currentPrice / eps;
+    // TODO : price가 없는 경우 0으로 리턴, 나중에 NaN과 대응되게 리턴
+    if (latestResult && latestResult[0] && latestResult[0].close) {
+      const currentPrice = latestResult[0].close;
+      const per = currentPrice / eps;
 
-    return per;
+      if (isNaN(per)) return 0;
+      else return per;
+    } else {
+      return 0;
+    }
   }
 
   private async calMarketCap(lstg: number) {
@@ -79,32 +116,41 @@ export class OpenapiDetailData {
       take: 1,
       order: { createdAt: 'desc' },
     });
-    const currentPrice = latestResult[0].close;
-    const marketCap = lstg * currentPrice;
-    return marketCap;
+
+    // TODO : price가 없는 경우 0으로 리턴, 나중에 NaN과 대응되게 리턴
+    if (latestResult && latestResult[0] && latestResult[0].close) {
+      const currentPrice = latestResult[0].close;
+      const marketCap = lstg * currentPrice;
+
+      if (isNaN(marketCap)) return 0;
+      else return marketCap;
+    } else {
+      return 0;
+    }
   }
 
   private async get52WeeksLowHigh() {
-    const manager = this.datasource.manager;
-    const nowDate = new Date();
-    const weeksAgoDate = this.getDate52WeeksAgo();
-    // 주식의 52주간 일단위 데이터 전체 중에 최고, 최저가를 바탕으로 최저가, 최고가 계산해서 가져오기
-    const output = await manager.find(StockDaily, {
-      select: ['low', 'high'],
-      where: {
-        startTime: Between(weeksAgoDate, nowDate),
-      },
-    });
-    const result = output.reduce((prev, cur) => {
-      if (prev.low > cur.low) prev.low = cur.low;
-      if (prev.high < cur.high) prev.high = cur.high;
-      return cur;
-    }, new StockDaily());
-    return { low: result.low, high: result.high };
+    //const manager = this.datasource.manager;
+    //const nowDate = new Date();
+    //const weeksAgoDate = this.getDate52WeeksAgo();
+    //// 주식의 52주간 일단위 데이터 전체 중에 최고, 최저가를 바탕으로 최저가, 최고가 계산해서 가져오기
+    //const output = await manager.find(StockDaily, {
+    //  select: ['low', 'high'],
+    //  where: {
+    //    startTime: Between(weeksAgoDate, nowDate),
+    //  },
+    //});
+    //const result = output.reduce((prev, cur) => {
+    //  if (prev.low > cur.low) prev.low = cur.low;
+    //  if (prev.high < cur.high) prev.high = cur.high;
+    //  return cur;
+    //}, new StockDaily());
+    //return { low: result.low, high: result.high };
+    return { low: 0, high: 0 };
   }
 
   private async makeStockDetailObject(
-    output1: FinancialData,
+    output1: FinancialRatio,
     output2: ProductDetail,
     stockId: string,
   ): Promise<StockDetail> {
@@ -116,8 +162,12 @@ export class OpenapiDetailData {
     const { low, high } = await this.get52WeeksLowHigh();
     result.low52w = low;
     result.high52w = high;
-    result.eps = parseInt(output1.eps);
-    result.per = await this.calPer(parseInt(output1.eps));
+    const eps = parseInt(output1.eps);
+    if (isNaN(eps)) result.eps = 0;
+    else result.eps = eps;
+    const per = await this.calPer(eps);
+    if (isNaN(per)) result.per = 0;
+    else result.per = per;
     result.updatedAt = new Date();
     return result;
   }
@@ -129,36 +179,45 @@ export class OpenapiDetailData {
     return ret;
   }
 
-  private async getFinancialData(stock: Stock, conf: typeof openApiConfig) {
+  private async getFinancialRatio(stock: Stock, conf: typeof openApiConfig) {
     const dataQuery = this.getDetailDataQuery(stock.id!);
     // 여기서 가져올 건 eps -> eps와 per 계산하자.
-    const output1 = await getOpenApi(
-      this.incomeUrl,
+    const response = await getOpenApi(
+      this.financialUrl,
       conf,
       dataQuery,
       TR_IDS.FINANCIAL_DATA,
     );
-    return output1;
+    if (response.output) {
+      const output1 = response.output;
+      return output1[0];
+    }
   }
 
   private async getProductData(stock: Stock, conf: typeof openApiConfig) {
-    const defaultQuery = this.getDefaultDataQuery(stock.id!);
+    const defaultQuery = this.getFinancialDataQuery(stock.id!);
 
     // 여기서 가져올 건 lstg-stqt - 상장주수를 바탕으로 시가총액 계산, kospi200_item_yn 코스피200종목여부 업데이트
-    const output2 = await getOpenApi(
-      this.defaultUrl,
+    const response = await getOpenApi(
+      this.productUrl,
       conf,
       defaultQuery,
       TR_IDS.PRODUCTION_DETAIL,
     );
-    return output2;
+    if (response.output) {
+      const output2 = response.output;
+      return output2;
+      //return bufferToObject(output2);
+    }
   }
 
   private async getDetailDataDelay(stock: Stock, conf: typeof openApiConfig) {
-    const output1 = await this.getFinancialData(stock, conf);
+    const output1 = await this.getFinancialRatio(stock, conf);
     const output2 = await this.getProductData(stock, conf);
 
-    if (isFinancialData(output1) && isProductDetail(output2)) {
+    this.logger.info(JSON.stringify(output1));
+    this.logger.info(JSON.stringify(output2));
+    if (isFinancialRatioData(output1) && isProductDetail(output2)) {
       const stockDetail = await this.makeStockDetailObject(
         output1,
         output2,
@@ -167,6 +226,8 @@ export class OpenapiDetailData {
       this.saveDetailData(stockDetail);
       const kospiStock = await this.makeKospiStockObject(output2, stock.id!);
       this.saveKospiData(kospiStock);
+
+      this.logger.info(`${stock.id!} is saved`);
     }
   }
 
@@ -178,25 +239,25 @@ export class OpenapiDetailData {
     }
   }
 
-  private getDefaultDataQuery(
+  private getFinancialDataQuery(
     stockId: string,
     code: '300' | '301' | '302' | '306' = '300',
   ): StockDetailQuery {
     return {
       pdno: stockId,
-      code: code,
+      prdt_type_cd: code,
     };
   }
 
   private getDetailDataQuery(
     stockId: string,
     divCode: 'J' = 'J',
-    classify: '0' | '1' = '1',
+    classify: '0' | '1' = '0',
   ): DetailDataQuery {
     return {
+      fid_div_cls_code: classify,
       fid_cond_mrkt_div_code: divCode,
       fid_input_iscd: stockId,
-      fid_div_cls_code: classify,
     };
   }
 

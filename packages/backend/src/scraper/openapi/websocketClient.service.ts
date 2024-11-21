@@ -16,7 +16,9 @@ export class WebsocketClient {
     @Inject('winston') private readonly logger: Logger,
     private readonly openapiLiveData: OpenapiLiveData,
   ) {
-    this.connect();
+    if (process.env.NODE_ENV === 'production') {
+      this.connect();
+    }
   }
 
   // TODO : subscribe 구조로 리팩토링
