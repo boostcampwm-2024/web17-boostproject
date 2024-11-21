@@ -1,7 +1,8 @@
-import { Inject } from '@nestjs/common';
+import { Inject, UseFilters } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Logger } from 'winston';
 import { openApiConfig } from '../config/openapi.config';
+import { OpenapiExceptionFilter } from '../Decorator/openapiException.filter';
 import { OpenapiException } from '../util/openapiCustom.error';
 import { postOpenApi } from '../util/openapiUtil.api';
 import { logger } from '@/configs/logger.config';
@@ -34,6 +35,7 @@ class OpenapiTokenApi {
     return this.config;
   }
 
+  @UseFilters(OpenapiExceptionFilter)
   private async initAuthenValue() {
     const delay = 60000;
     const delayMinute = delay / 1000 / 60;
@@ -50,9 +52,10 @@ class OpenapiTokenApi {
         this.logger.warn(
           `Request failed. Retrying in ${delayMinute} minute...`,
         );
-        await new Promise((resolve) => setTimeout(resolve, delay));
-        await this.initAccessToken();
-        await this.initWebSocketKey();
+        setTimeout(async () => {
+          await this.initAccessToken();
+          await this.initWebSocketKey();
+        }, delay);
       }
     }
   }

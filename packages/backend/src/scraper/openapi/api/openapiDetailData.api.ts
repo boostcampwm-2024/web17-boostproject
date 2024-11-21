@@ -1,4 +1,4 @@
-import { UseFilters } from '@nestjs/common';
+import { Injectable, UseFilters } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Between, DataSource } from 'typeorm';
 import { openApiConfig } from '../config/openapi.config';
@@ -18,6 +18,7 @@ import { Stock } from '@/stock/domain/stock.entity';
 import { StockDaily } from '@/stock/domain/stockData.entity';
 import { StockDetail } from '@/stock/domain/stockDetail.entity';
 
+@Injectable()
 export class OpenapiDetailData {
   private readonly financialUrl: string =
     '/uapi/domestic-stock/v1/finance/financial-ratio';
