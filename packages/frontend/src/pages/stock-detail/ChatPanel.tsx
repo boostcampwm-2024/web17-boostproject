@@ -1,21 +1,24 @@
 import type { ChatDataType, ChatDataResponse } from '@/sockets/types';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { TextArea } from './components';
 import { ChatMessage } from './components/ChatMessage';
 import DownArrow from '@/assets/down-arrow.svg?react';
-import { useSocketChat } from '@/sockets/chat';
+import { socketChat } from '@/sockets/config';
+import { useWebsocket } from '@/sockets/useWebsocket';
 
 export const ChatPanel = () => {
   const STOCK_ID = '005930';
-
   const [chatData, setChatData] = useState<ChatDataType[]>();
-  const { socket: socketChat, isConnected } = useSocketChat({
-    stockId: STOCK_ID,
-  });
+
+  const socket = useMemo(() => {
+    return socketChat({ stockId: STOCK_ID });
+  }, [STOCK_ID]);
+
+  const { isConnected } = useWebsocket(socket);
 
   const handleSendMessage = (message: string) => {
     if (isConnected) {
-      socketChat.emit('chat', {
+      socket.emit('chat', {
         room: STOCK_ID,
         content: message,
       });
@@ -30,13 +33,13 @@ export const ChatPanel = () => {
     };
 
     if (isConnected) {
-      socketChat.on('chat', handleChat);
+      socket.on('chat', handleChat);
 
       return () => {
-        socketChat.off('chat', handleChat);
+        socket.off('chat', handleChat);
       };
     }
-  }, []);
+  }, [isConnected, socket]);
 
   return (
     <article className="flex flex-col gap-5 rounded-md bg-white p-7">
