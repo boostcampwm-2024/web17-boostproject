@@ -40,12 +40,12 @@ export class AlarmController {
   }
 
   @Get('user/:userId')
-  async getByUserId(@Param('userId') userId: number): Promise<Alarm[]> {
+  async getByUserId(@Param('userId') userId: number) {
     return await this.alarmService.findByUserId(userId);
   }
 
   @Get('stock/:stockId')
-  async getByStockId(@Param('stockId') stockId: string): Promise<Alarm[]> {
+  async getByStockId(@Param('stockId') stockId: string) {
     return await this.alarmService.findByStockId(stockId);
   }
 }

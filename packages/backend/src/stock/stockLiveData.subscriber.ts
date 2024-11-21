@@ -37,12 +37,6 @@ export class StockLiveDataSubscriber
           volume: volume,
         } = updatedStockLiveData;
 
-        const alarms = await this.alarmService.getMatchingAlarms(
-          stockId,
-          price,
-          volume,
-        );
-
         this.stockGateway.onUpdateStock(stockId, price, change, volume);
       } else {
         this.logger.error(
