@@ -53,7 +53,7 @@ export class ChatController {
     @Req() req: Express.Request,
   ) {
     const user = req.user as User;
-    return await this.chatService.scrollNextChat(request, user?.id);
+    return await this.chatService.scrollChat(request, user?.id);
   }
 
   @UseGuards(SessionGuard)
@@ -63,5 +63,30 @@ export class ChatController {
     const result = await this.likeService.toggleLike(user.id, request.chatId);
     this.chatGateWay.broadcastLike(result);
     return result;
+  }
+
+  @ApiOperation({
+    summary: '채팅 스크롤 조회 API(좋아요 순)',
+    description: '좋아요 순으로 채팅을 스크롤하여 조회한다.',
+  })
+  @ApiOkResponse({
+    description: '스크롤 조회 성공',
+    type: ChatScrollResponse,
+  })
+  @ApiBadRequestResponse({
+    description: '스크롤 크기 100 초과',
+    example: {
+      message: 'pageSize should be less than 100',
+      error: 'Bad Request',
+      statusCode: 400,
+    },
+  })
+  @Get('/like')
+  async findChatListByLike(
+    @Query() request: ChatScrollQuery,
+    @Req() req: Express.Request,
+  ) {
+    const user = req.user as User;
+    return await this.chatService.scrollChatByLike(request, user?.id);
   }
 }

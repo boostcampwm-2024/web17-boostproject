@@ -150,7 +150,7 @@ export class StockController {
   })
   @Get('user/ownership')
   async checkOwnership(
-    @Body() body: UserStockRequest,
+    @Query() body: UserStockRequest,
     @Req() request: Request,
   ) {
     const user = request.user as User;

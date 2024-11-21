@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
@@ -34,6 +35,7 @@ export class Chat {
   @Column({ type: 'enum', enum: ChatType, default: ChatType.NORMAL })
   type: ChatType = ChatType.NORMAL;
 
+  @Index()
   @Column({ name: 'like_count', default: 0 })
   likeCount: number = 0;
 

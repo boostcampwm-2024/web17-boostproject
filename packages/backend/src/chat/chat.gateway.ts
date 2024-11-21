@@ -35,7 +35,7 @@ interface chatResponse {
   createdAt: Date;
 }
 
-@WebSocketGateway({ namespace: 'chat' })
+@WebSocketGateway({ namespace: '/api/chat/realtime' })
 @UseFilters(WebSocketExceptionFilter)
 export class ChatGateway implements OnGatewayConnection {
   @WebSocketServer()
@@ -86,7 +86,7 @@ export class ChatGateway implements OnGatewayConnection {
       const { stockId, pageSize } = await this.getChatScrollQuery(client);
       await this.validateExistStock(stockId);
       client.join(stockId);
-      const messages = await this.chatService.scrollFirstChat(
+      const messages = await this.chatService.scrollChat(
         {
           stockId,
           pageSize,
