@@ -19,11 +19,7 @@ export const Login = () => {
           <p className="display-medium20">주춤주춤과 함께해요!</p>
         </section>
         <section className="relative z-10 flex flex-col gap-4">
-          <LoginButton
-            to={`${import.meta.env.VITE_BASE_URL}${googleLoginUrl}`}
-            src={google}
-            alt="구글 로그인"
-          />
+          <LoginButton to={googleLoginUrl} src={google} alt="구글 로그인" />
         </section>
       </main>
     </div>
