@@ -1287,10 +1287,10 @@
     multer "1.4.4-lts.1"
     tslib "2.7.0"
 
-"@nestjs/platform-socket.io@^10.4.7":
-  version "10.4.7"
-  resolved "https://registry.yarnpkg.com/@nestjs/platform-socket.io/-/platform-socket.io-10.4.7.tgz#0c22c204e72aba83dff5b517dcd4802fc0f17594"
-  integrity sha512-CpmrqswpD/O4SyF/IUzKj14BUf0eTLyDja9svPCRIJX8AdF47mKCMbz5vtU6vpJtxVnq1e1Xd+xcdZ6FIf6HtQ==
+"@nestjs/platform-socket.io@^10.4.8":
+  version "10.4.8"
+  resolved "https://registry.yarnpkg.com/@nestjs/platform-socket.io/-/platform-socket.io-10.4.8.tgz#cf483794f3b1831d804a3ac3a3f7b999664489d4"
+  integrity sha512-KzCL+P037HiaW3iODueJ/vw5a8bSr6uIturgGSuRz6c8WR+SfqKC6jNXw0JTW5NVqEqX8tOunEVXoI3MFnWz/w==
   dependencies:
     socket.io "4.8.0"
     tslib "2.7.0"
@@ -1340,10 +1340,10 @@
   dependencies:
     uuid "9.0.1"
 
-"@nestjs/websockets@^10.4.7":
-  version "10.4.7"
-  resolved "https://registry.yarnpkg.com/@nestjs/websockets/-/websockets-10.4.7.tgz#20d4da5e38a1f1dff866f780e694c907eaa23b8f"
-  integrity sha512-ajuoptYLYm+l3+KtaA9Ed+cO9yB34PtBE8UObavRT8Euh/f7QfeJiKcrU3+BQSAiTWM3nF2qfuV4CfEkP9uKuw==
+"@nestjs/websockets@^10.4.8":
+  version "10.4.8"
+  resolved "https://registry.yarnpkg.com/@nestjs/websockets/-/websockets-10.4.8.tgz#9c2b982059e850a56999f56c87ac3a88acbce4ea"
+  integrity sha512-IpObWsZvjjUxmBuIF/AkcyXrFFzwNYNsw2reZXHy7C31wJsYAjwr6rHMSRGyqsxfqTA2DqjCczorewM6BAEXig==
   dependencies:
     iterare "1.2.1"
     object-hash "3.0.0"
@@ -2268,6 +2268,13 @@
   version "13.12.2"
   resolved "https://registry.yarnpkg.com/@types/validator/-/validator-13.12.2.tgz#760329e756e18a4aab82fc502b51ebdfebbe49f5"
   integrity sha512-6SlHBzUW8Jhf3liqrGGXyTJSIFe4nqlJ5A5KaMZ2l/vbM3Wh3KSybots/wfWVzNLK4D1NZluDlSQIbIEPx6oyA==
+
+"@types/ws@^8.5.13":
+  version "8.5.13"
+  resolved "https://registry.yarnpkg.com/@types/ws/-/ws-8.5.13.tgz#6414c280875e2691d0d1e080b05addbf5cb91e20"
+  integrity sha512-osM/gWBTPKgHV8XkTunnegTRIsvF6owmf5w+JtAfOw472dptdm0dlGv4xCt6GwQRcC2XVOvvRE/0bAoQcL2QkA==
+  dependencies:
+    "@types/node" "*"
 
 "@types/yargs-parser@*":
   version "21.0.3"
@@ -8971,7 +8978,7 @@ write-file-atomic@^4.0.2:
     imurmurhash "^0.1.4"
     signal-exit "^3.0.7"
 
-ws@^8.2.3:
+ws@^8.18.0, ws@^8.2.3:
   version "8.18.0"
   resolved "https://registry.yarnpkg.com/ws/-/ws-8.18.0.tgz#0d7505a6eafe2b0e712d232b42279f53bc289bbc"
   integrity sha512-8VbfWfHLbbwu3+N6OKsOMpBdT4kXPDDB9cJk2bJ6mh9ucxdlnNvH1e+roYkKmN9Nxw2yjz7VzeO9oOz2zJ04Pw==

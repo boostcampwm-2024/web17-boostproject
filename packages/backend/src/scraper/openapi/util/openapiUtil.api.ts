@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any*/
+import * as crypto from 'crypto';
 import { HttpStatus } from '@nestjs/common';
 import axios from 'axios';
 import { openApiConfig } from '../config/openapi.config';
@@ -78,10 +79,37 @@ const getCurrentTime = () => {
   return `${hours}${minutes}${seconds}`;
 };
 
+const decryptAES256 = (
+  encryptedText: string,
+  key: string,
+  iv: string,
+): string => {
+  const decipher = crypto.createDecipheriv(
+    'aes-256-cbc',
+    Buffer.from(key, 'hex'),
+    Buffer.from(iv, 'hex'),
+  );
+  let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
+  decrypted += decipher.final('utf8');
+  return decrypted;
+};
+
+const bufferToObject = (buffer: Buffer): any => {
+  try {
+    const jsonString = buffer.toString('utf-8');
+    return JSON.parse(jsonString);
+  } catch (error) {
+    console.error('Failed to convert buffer to object:', error);
+    throw error;
+  }
+};
+
 export {
   postOpenApi,
   getOpenApi,
   getTodayDate,
   getPreviousDate,
   getCurrentTime,
+  decryptAES256,
+  bufferToObject,
 };

@@ -1,4 +1,5 @@
 import { Column, Entity, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
+import { KospiStock } from './kospiStock.entity';
 import {
   StockDaily,
   StockMinutely,
@@ -9,7 +10,6 @@ import {
 import { Like } from '@/chat/domain/like.entity';
 import { DateEmbedded } from '@/common/dateEmbedded.entity';
 import { UserStock } from '@/stock/domain/userStock.entity';
-import { KospiStock } from './kospiStock.entity';
 
 @Entity()
 export class Stock {
