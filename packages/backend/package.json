@@ -45,7 +45,8 @@
     "typeorm": "^0.3.20",
     "unzipper": "^0.12.3",
     "winston": "^3.17.0",
-    "winston-daily-rotate-file": "^5.0.0"
+    "winston-daily-rotate-file": "^5.0.0",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
@@ -58,6 +59,7 @@
     "@types/passport-google-oauth20": "^2.0.16",
     "@types/supertest": "^6.0.0",
     "@types/unzipper": "^0.10.10",
+    "@types/ws": "^8.5.13",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
     "cz-emoji-conventional": "^1.1.0",
