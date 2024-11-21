@@ -63,7 +63,7 @@ export const Sidebar = () => {
       </nav>
       <div
         className={cn(
-          'fixed top-0 transition-all duration-300 ease-in-out',
+          'fixed top-0 z-10 transition-all duration-300 ease-in-out',
           isHovered ? 'left-60' : 'left-24',
         )}
       >
