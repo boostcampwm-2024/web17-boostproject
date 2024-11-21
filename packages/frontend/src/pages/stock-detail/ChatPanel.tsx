@@ -24,9 +24,7 @@ export const ChatPanel = () => {
 
   useEffect(() => {
     const handleChat = (message: ChatDataResponse) => {
-      console.log('Received message:', message);
       if (message?.chats) {
-        console.log('Chats:', message.chats);
         setChatData(message.chats);
       }
     };
@@ -38,7 +36,7 @@ export const ChatPanel = () => {
         socketChat.off('chat', handleChat);
       };
     }
-  }, [socketChat, isConnected]);
+  }, []);
 
   return (
     <article className="flex flex-col gap-5 rounded-md bg-white p-7">
