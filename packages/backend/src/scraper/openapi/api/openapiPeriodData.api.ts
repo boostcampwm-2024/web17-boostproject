@@ -1,6 +1,7 @@
-import { Injectable, UseFilters } from '@nestjs/common';
+import { Inject, Injectable, UseFilters } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { DataSource, EntityManager } from 'typeorm';
+import { Logger } from 'winston';
 import { OpenapiExceptionFilter } from '../Decorator/openapiException.filter';
 import {
   ChartData,
@@ -44,7 +45,10 @@ const INTERVALS = 4000;
 export class OpenapiPeriodData {
   private readonly url: string =
     '/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice';
-  public constructor(private readonly datasource: DataSource) {
+  public constructor(
+    private readonly datasource: DataSource,
+    @Inject('winston') private readonly logger: Logger,
+  ) {
     //this.getItemChartPriceCheck();
   }
 
@@ -123,17 +127,18 @@ export class OpenapiPeriodData {
     );
   }
 
-  private async fetchChartData(
-    query: ItemChartPriceQuery,
-    configIdx: number,
-  ): Promise<ChartData[]> {
-    const response = await getOpenApi(
-      this.url,
-      openApiToken.configs[configIdx],
-      query,
-      TR_IDS.ITEM_CHART_PRICE,
-    );
-    return response.output2 as ChartData[];
+  private async fetchChartData(query: ItemChartPriceQuery, configIdx: number) {
+    try {
+      const response = await getOpenApi(
+        this.url,
+        openApiToken.configs[configIdx],
+        query,
+        TR_IDS.ITEM_CHART_PRICE,
+      );
+      return response.output2 as ChartData[];
+    } catch (error) {
+      this.logger.error(error);
+    }
   }
 
   private updateDates(

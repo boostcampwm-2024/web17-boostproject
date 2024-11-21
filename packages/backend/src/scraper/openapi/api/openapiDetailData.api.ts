@@ -31,13 +31,13 @@ export class OpenapiDetailData {
     private readonly datasource: DataSource,
     @Inject('winston') private readonly logger: Logger,
   ) {
-    setTimeout(() => this.getDetailData(), 5000);
+    //setTimeout(() => this.getDetailData(), 5000);
   }
 
   @Cron('0 8 * * 1-5')
   @UseFilters(OpenapiExceptionFilter)
   public async getDetailData() {
-    //if (process.env.NODE_ENV !== 'production') return;
+    if (process.env.NODE_ENV !== 'production') return;
     const entityManager = this.datasource.manager;
     const stocks = await entityManager.find(Stock);
     const configCount = openApiToken.configs.length;
@@ -185,15 +185,19 @@ export class OpenapiDetailData {
   private async getFinancialRatio(stock: Stock, conf: typeof openApiConfig) {
     const dataQuery = this.getDetailDataQuery(stock.id!);
     // 여기서 가져올 건 eps -> eps와 per 계산하자.
-    const response = await getOpenApi(
-      this.financialUrl,
-      conf,
-      dataQuery,
-      TR_IDS.FINANCIAL_DATA,
-    );
-    if (response.output) {
-      const output1 = response.output;
-      return output1[0];
+    try {
+      const response = await getOpenApi(
+        this.financialUrl,
+        conf,
+        dataQuery,
+        TR_IDS.FINANCIAL_DATA,
+      );
+      if (response.output) {
+        const output1 = response.output;
+        return output1[0];
+      }
+    } catch (error) {
+      this.logger.error(error);
     }
   }
 
@@ -201,16 +205,20 @@ export class OpenapiDetailData {
     const defaultQuery = this.getFinancialDataQuery(stock.id!);
 
     // 여기서 가져올 건 lstg-stqt - 상장주수를 바탕으로 시가총액 계산, kospi200_item_yn 코스피200종목여부 업데이트
-    const response = await getOpenApi(
-      this.productUrl,
-      conf,
-      defaultQuery,
-      TR_IDS.PRODUCTION_DETAIL,
-    );
-    if (response.output) {
-      const output2 = response.output;
-      return output2;
-      //return bufferToObject(output2);
+    try {
+      const response = await getOpenApi(
+        this.productUrl,
+        conf,
+        defaultQuery,
+        TR_IDS.PRODUCTION_DETAIL,
+      );
+      if (response.output) {
+        const output2 = response.output;
+        return output2;
+        //return bufferToObject(output2);
+      }
+    } catch (error) {
+      this.logger.error(error);
     }
   }
 
