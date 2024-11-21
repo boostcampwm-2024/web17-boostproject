@@ -8,6 +8,8 @@ export const sessionConfig = {
   resave: false,
   saveUninitialized: false,
   name: process.env.COOKIE_NAME,
+  secure: true,
+  sameSite: 'none',
   cookie: {
     maxAge: Number(process.env.COOKIE_MAX_AGE),
   },
