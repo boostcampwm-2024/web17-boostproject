@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { usePostStockView } from '@/apis/queries/stock-detail';
 import { useGetStocksByPrice } from '@/apis/queries/stocks';
 import DownArrow from '@/assets/down-arrow.svg?react';
+import stockData from '@/mocks/stock.json';
 import { cn } from '@/utils/cn';
 
 const LIMIT = 20;
@@ -42,7 +43,7 @@ export const StockRankingTable = () => {
           </tr>
         </thead>
         <tbody>
-          {data?.map((stock, index) => (
+          {stockData.data?.map((stock, index) => (
             <tr
               key={stock.id}
               className="display-medium14 text-dark-gray text-right [&>*]:p-4"
@@ -51,7 +52,7 @@ export const StockRankingTable = () => {
                 <span className="text-gray w-3 flex-shrink-0">{index + 1}</span>
                 <Link
                   to={`${stock.id}`}
-                  onClick={() => mutate(stock.id)}
+                  onClick={() => mutate(stock.id.toString())}
                   className="display-bold14 hover:text-orange cursor-pointer text-ellipsis hover:underline"
                   aria-label={stock.name}
                 >

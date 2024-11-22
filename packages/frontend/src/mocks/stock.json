@@ -6,8 +6,8 @@
       "currentPrice": 82600,
       "changeRate": 3200,
       "changeRatePercent": 5.9,
-      "tradingVolume": 12850000,
-      "tradingValue": 1061410000000
+      "volume": 12850000,
+      "marketCap": 1061410000000
     },
     {
       "id": 2,
@@ -15,8 +15,8 @@
       "currentPrice": 2750.5,
       "changeRate": -6500,
       "changeRatePercent": 3.6,
-      "tradingVolume": 500000,
-      "tradingValue": 1377500000
+      "volume": 500000,
+      "marketCap": 1377500000
     },
     {
       "id": 3,
@@ -24,8 +24,8 @@
       "currentPrice": 3400.1,
       "changeRate": -1000,
       "changeRatePercent": 2.5,
-      "tradingVolume": 300000,
-      "tradingValue": 1020300000
+      "volume": 300000,
+      "marketCap": 1020300000
     },
     {
       "id": 4,
@@ -33,8 +33,8 @@
       "currentPrice": 145.3,
       "changeRate": 2.5,
       "changeRatePercent": 1.8,
-      "tradingVolume": 10000000,
-      "tradingValue": 1453000000
+      "volume": 10000000,
+      "marketCap": 1453000000
     },
     {
       "id": 5,
@@ -42,8 +42,8 @@
       "currentPrice": 680.4,
       "changeRate": 15.2,
       "changeRatePercent": 2.3,
-      "tradingVolume": 1200000,
-      "tradingValue": 816480000
+      "volume": 1200000,
+      "marketCap": 816480000
     },
     {
       "id": 6,
@@ -51,8 +51,8 @@
       "currentPrice": 300.1,
       "changeRate": 4.0,
       "changeRatePercent": 1.3,
-      "tradingVolume": 8000000,
-      "tradingValue": 2400800000
+      "volume": 8000000,
+      "marketCap": 2400800000
     },
     {
       "id": 7,
@@ -60,8 +60,8 @@
       "currentPrice": 345.8,
       "changeRate": -10.5,
       "changeRatePercent": -3.0,
-      "tradingVolume": 600000,
-      "tradingValue": 207480000
+      "volume": 600000,
+      "marketCap": 207480000
     },
     {
       "id": 8,
@@ -69,8 +69,8 @@
       "currentPrice": 525.4,
       "changeRate": 20.6,
       "changeRatePercent": 4.0,
-      "tradingVolume": 900000,
-      "tradingValue": 473860000
+      "volume": 900000,
+      "marketCap": 473860000
     },
     {
       "id": 9,
@@ -78,8 +78,8 @@
       "currentPrice": 135.7,
       "changeRate": -5.2,
       "changeRatePercent": -3.7,
-      "tradingVolume": 200000,
-      "tradingValue": 27140000
+      "volume": 200000,
+      "marketCap": 27140000
     },
     {
       "id": 10,
@@ -87,8 +87,8 @@
       "currentPrice": 55.5,
       "changeRate": 1.0,
       "changeRatePercent": 1.8,
-      "tradingVolume": 4000000,
-      "tradingValue": 222000000
+      "volume": 4000000,
+      "marketCap": 222000000
     },
     {
       "id": 11,
@@ -96,8 +96,8 @@
       "currentPrice": 95.0,
       "changeRate": 1.5,
       "changeRatePercent": 1.6,
-      "tradingVolume": 1500000,
-      "tradingValue": 142500000
+      "volume": 1500000,
+      "marketCap": 142500000
     },
     {
       "id": 12,
@@ -105,8 +105,8 @@
       "currentPrice": 60.2,
       "changeRate": -0.3,
       "changeRatePercent": -0.5,
-      "tradingVolume": 3000000,
-      "tradingValue": 180600000
+      "volume": 3000000,
+      "marketCap": 180600000
     },
     {
       "id": 13,
@@ -114,8 +114,8 @@
       "currentPrice": 165.0,
       "changeRate": 3.0,
       "changeRatePercent": 1.8,
-      "tradingVolume": 800000,
-      "tradingValue": 132000000
+      "volume": 800000,
+      "marketCap": 132000000
     },
     {
       "id": 14,
@@ -123,8 +123,8 @@
       "currentPrice": 140.5,
       "changeRate": 0.5,
       "changeRatePercent": 0.4,
-      "tradingVolume": 2000000,
-      "tradingValue": 281000000
+      "volume": 2000000,
+      "marketCap": 281000000
     },
     {
       "id": 15,
@@ -132,8 +132,8 @@
       "currentPrice": 175.0,
       "changeRate": -2.0,
       "changeRatePercent": -1.1,
-      "tradingVolume": 400000,
-      "tradingValue": 70000000
+      "volume": 400000,
+      "marketCap": 70000000
     },
     {
       "id": 16,
@@ -141,8 +141,8 @@
       "currentPrice": 220.3,
       "changeRate": 6.0,
       "changeRatePercent": 2.8,
-      "tradingVolume": 1500000,
-      "tradingValue": 330450000
+      "volume": 1500000,
+      "marketCap": 330450000
     },
     {
       "id": 17,
@@ -150,8 +150,8 @@
       "currentPrice": 130.8,
       "changeRate": 1.8,
       "changeRatePercent": 1.4,
-      "tradingVolume": 900000,
-      "tradingValue": 117720000
+      "volume": 900000,
+      "marketCap": 117720000
     },
     {
       "id": 18,
@@ -159,8 +159,8 @@
       "currentPrice": 540.2,
       "changeRate": 10.5,
       "changeRatePercent": 2.0,
-      "tradingVolume": 300000,
-      "tradingValue": 162060000
+      "volume": 300000,
+      "marketCap": 162060000
     },
     {
       "id": 19,
@@ -168,8 +168,8 @@
       "currentPrice": 270.0,
       "changeRate": -3.0,
       "changeRatePercent": -1.1,
-      "tradingVolume": 200000,
-      "tradingValue": 54000000
+      "volume": 200000,
+      "marketCap": 54000000
     },
     {
       "id": 20,
@@ -177,8 +177,8 @@
       "currentPrice": 90.5,
       "changeRate": 2.0,
       "changeRatePercent": 2.3,
-      "tradingVolume": 1000000,
-      "tradingValue": 90500000
+      "volume": 1000000,
+      "marketCap": 90500000
     }
   ]
 }
