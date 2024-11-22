@@ -57,7 +57,11 @@ export class OpenapiLiveData {
   }
 
   private async getKospiStockId() {
-    const kospi = await this.manager.find(KospiStock);
+    const kospi = await this.manager.find(KospiStock, {
+      where: {
+        isKospi: true,
+      },
+    });
     return kospi;
   }
 
@@ -82,12 +86,13 @@ export class OpenapiLiveData {
 
   public async output(message: Buffer, iv?: string, key?: string) {
     const parsed = message.toString().split('|');
+    console.log(message.toString());
     if (parsed.length > 0) {
       if (parsed[0] == '1' && iv && key)
-        parsed[4] = decryptAES256(parsed[4], iv, key);
+        parsed[3] = decryptAES256(parsed[3], iv, key);
       if (parsed[1] !== this.TR_ID) return;
-      const stockData = parsed[4].split('^');
-      const length = stockData.length / parseInt(parsed[3]);
+      const stockData = parsed[3].split('^');
+      const length = stockData.length / parseInt(parsed[2]);
       const size = parseInt(parsed[2]);
       const i = 0;
       while (i < size) {

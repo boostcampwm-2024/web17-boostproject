@@ -32,6 +32,7 @@ class OpenapiTokenApi {
   }
 
   public get configs() {
+    //TODO : 현재 구조에서 받아올 때마다 확인후 할당으로 변경
     return this.config;
   }
 

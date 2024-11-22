@@ -26,13 +26,12 @@ export class WebsocketClient {
 
   private message(data: any) {
     this.logger.info(`Received message: ${data}`);
-    const message = JSON.parse(data);
-    if (message.header && message.header.tr_id === 'PINGPONG') {
-      this.logger.info(`Received PING: ${JSON.stringify(message)}`);
+    if (data.header && data.header.tr_id === 'PINGPONG') {
+      this.logger.info(`Received PING: ${JSON.stringify(data)}`);
       this.sendPong();
       return;
     }
-    if (message.header && message.header.tr_id === 'H0STCNT0') {
+    if (data.header && data.header.tr_id === 'H0STCNT0') {
       return;
     }
     this.openapiLiveData.output(data);
@@ -50,7 +49,11 @@ export class WebsocketClient {
     });
 
     this.client.on('message', (data: any) => {
-      this.message(data);
+      try {
+        this.message(data);
+      } catch (error) {
+        this.logger.info(error);
+      }
     });
 
     this.client.on('close', () => {
