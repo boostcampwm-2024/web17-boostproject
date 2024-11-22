@@ -1,17 +1,17 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { usePostStockView } from '@/apis/queries/stock-detail';
-import { useGetStocksByPrice } from '@/apis/queries/stocks';
+// import { useGetStocksByPrice } from '@/apis/queries/stocks';
 import DownArrow from '@/assets/down-arrow.svg?react';
 import stockData from '@/mocks/stock.json';
 import { cn } from '@/utils/cn';
 
-const LIMIT = 20;
+// const LIMIT = 20;
 
 export const StockRankingTable = () => {
   const [isGaining, setIsGaining] = useState(true);
 
-  const { data } = useGetStocksByPrice({ limit: LIMIT, isGaining });
+  // const { data } = useGetStocksByPrice({ limit: LIMIT, isGaining });
   const { mutate } = usePostStockView();
 
   return (
