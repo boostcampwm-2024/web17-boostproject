@@ -3,6 +3,7 @@ import { StockInfoCard } from './components/StockInfoCard';
 import { StockRankingTable } from './StockRankingTable';
 import { useGetTopViews } from '@/apis/queries/stocks';
 import marketData from '@/mocks/market.json';
+import stock from '@/mocks/stock.json';
 
 const LIMIT = 5;
 
@@ -51,15 +52,17 @@ export const Stocks = () => {
           이 종목은 어떠신가요?
         </h2>
         <div className="grid w-fit grid-cols-5 gap-5">
-          {topViews?.map((stock, index) => (
-            <StockInfoCard
-              key={stock.id}
-              index={index}
-              name={stock.name}
-              currentPrice={stock.currentPrice}
-              changeRate={stock.changeRate}
-            />
-          ))}
+          {stock.data
+            .slice(0, 5)
+            ?.map((stock, index) => (
+              <StockInfoCard
+                key={stock.id}
+                index={index}
+                name={stock.name}
+                currentPrice={stock.currentPrice}
+                changeRate={stock.changeRate}
+              />
+            ))}
         </div>
       </article>
       <article>

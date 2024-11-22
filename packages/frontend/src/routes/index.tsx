@@ -19,7 +19,7 @@ export const router = createBrowserRouter([
         element: <Stocks />,
       },
       {
-        path: 'stocks/:id',
+        path: 'stocks/:stockId',
         element: <StockDetail />,
       },
       {
