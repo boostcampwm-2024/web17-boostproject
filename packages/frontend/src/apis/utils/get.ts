@@ -10,13 +10,13 @@ interface GetParams {
 export const get = async <T>({ schema, url }: GetParams): Promise<T | null> => {
   try {
     const { data } = await instance.get(url);
-    const result = schema.parse(data);
+    const result = schema.safeParse(data);
 
     if (!result.success) {
       throw new Error(formatZodError(result.error));
     }
 
-    return result;
+    return data;
   } catch (error) {
     if (process.env.NODE_ENV === 'development') {
       console.error('API error:', error);

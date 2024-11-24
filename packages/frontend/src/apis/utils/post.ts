@@ -16,13 +16,13 @@ export const post = async <T>({
 }: PostParams): Promise<T | null> => {
   try {
     const { data } = await instance.post(url, { params });
-    const result = schema.parse(data);
+    const result = schema.safeParse(data);
 
     if (!result.success) {
       throw new Error(formatZodError(result.error));
     }
 
-    return result;
+    return data;
   } catch (error) {
     if (process.env.NODE_ENV === 'development') {
       console.error('API error:', error);
