@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { StockDetail } from '../domain/stockDetail.entity';
 
 export class StockDetailResponse {
   @ApiProperty({
@@ -36,4 +37,13 @@ export class StockDetailResponse {
     example: 53000,
   })
   low52w: number;
+
+  constructor(stockDetail: StockDetail) {
+    this.eps = stockDetail.eps;
+    this.per = stockDetail.per;
+    this.high52w = stockDetail.high52w;
+    this.low52w = stockDetail.low52w;
+    this.marketCap = Number(stockDetail.marketCap);
+    this.name = stockDetail.stock.name;
+  }
 }
