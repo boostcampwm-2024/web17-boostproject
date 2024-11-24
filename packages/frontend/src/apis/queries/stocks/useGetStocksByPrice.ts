@@ -1,29 +1,32 @@
-import type { GetStockListRequest, GetStockListResponse } from './types';
 import { useQuery } from '@tanstack/react-query';
-import { instance } from '@/apis/config';
+import {
+  GetStockListResponseSchema,
+  type GetStockListRequest,
+  type GetStockListResponse,
+} from './schema';
+import { get } from '@/apis/utils/get';
 
-const getTopGainers = async ({
-  limit,
-}: GetStockListRequest): Promise<GetStockListResponse[]> => {
-  const { data } = await instance.get(`/api/stock/topGainers?limit=${limit}`);
-  return data;
-};
+const getTopGainers = ({ limit }: Partial<GetStockListRequest>) =>
+  get<GetStockListResponse[]>({
+    schema: GetStockListResponseSchema,
+    url: `/api/stock/topGainers?limit=${limit}`,
+  });
 
-const getTopLosers = async ({
-  limit,
-}: GetStockListRequest): Promise<GetStockListResponse[]> => {
-  const { data } = await instance.get(`/api/stock/topLosers?limit=${limit}`);
-  return data;
-};
+const getTopLosers = ({ limit }: Partial<GetStockListRequest>) =>
+  get<GetStockListResponse[]>({
+    schema: GetStockListResponseSchema,
+    url: `/api/stock/topLosers?limit=${limit}`,
+  });
 
 export const useGetStocksByPrice = ({
   limit,
-  isGaining,
-}: GetStockListRequest & { isGaining: boolean }) => {
-  return useQuery<GetStockListResponse[], Error>({
-    queryKey: ['stocks', isGaining],
-    queryFn: isGaining
-      ? () => getTopGainers({ limit })
-      : () => getTopLosers({ limit }),
+  sortType,
+}: GetStockListRequest) => {
+  return useQuery({
+    queryKey: ['stocks', sortType],
+    queryFn:
+      sortType === 'increase'
+        ? () => getTopGainers({ limit })
+        : () => getTopLosers({ limit }),
   });
 };
