@@ -2,7 +2,11 @@ import { Inject } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 import { Logger } from 'winston';
 import { openApiConfig } from '../config/openapi.config';
-import { StockData, parseStockData } from '../type/openapiLiveData.type';
+import {
+  StockData,
+  parseStockData,
+  stockDataKeys,
+} from '../type/openapiLiveData.type';
 import { decryptAES256 } from '../util/openapiUtil.api';
 import { openApiToken } from './openapiToken.api';
 import { KospiStock } from '@/stock/domain/kospiStock.entity';
@@ -11,6 +15,7 @@ import { StockLiveData } from '@/stock/domain/stockLiveData.entity';
 export class OpenapiLiveData {
   public readonly TR_ID: string = 'H0STCNT0';
   private readonly WEBSOCKET_MAX: number = 40;
+  private readonly FIELD_LENGTH: number = stockDataKeys.length;
   constructor(
     @Inject('winston') private readonly logger: Logger,
     private readonly manager: EntityManager,
@@ -84,15 +89,49 @@ export class OpenapiLiveData {
     return stockLiveData;
   }
 
-  public async output(message: Buffer, iv?: string, key?: string) {
-    const parsed = message.toString().split('|');
-    if (parsed.length > 0) {
-      if (parsed[0] == '1' && iv && key)
-        parsed[3] = decryptAES256(parsed[3], iv, key);
-      if (parsed[1] !== this.TR_ID) return;
-      const stockData = parsed[3].split('^');
-      const length = stockData.length / parseInt(parsed[2]);
-      const size = parseInt(parsed[2]);
+  private parseStockData = (input: string) => {
+    const dataBlocks = input.split('|'); // 데이터 구분
+    const results = [];
+    const size = parseInt(dataBlocks[2]); // 데이터 건수
+    const rawData = dataBlocks[3];
+    const values = rawData.split('^'); // 필드 구분자 '^'
+
+    for (let i = 0; i < size; i++) {
+      //TODO : type narrowing require
+      const parsedData: Record<string, string | number | null> = {};
+      parsedData['STOCK_ID'] = values[i * this.FIELD_LENGTH];
+      stockDataKeys.forEach((field: string, index: number) => {
+        const value = values[index + this.FIELD_LENGTH * i];
+        if (!value) return (parsedData[field] = null);
+
+        // 숫자형 필드 처리
+        if (isNaN(parseInt(value))) {
+          parsedData[field] = value; // 문자열 그대로 저장
+        } else {
+          parsedData[field] = parseFloat(value); // 숫자로 변환
+        }
+      });
+      results.push(parsedData);
+    }
+    return results;
+  };
+
+  public async output(
+    message: Record<string, unknown> | string,
+    iv?: string,
+    key?: string,
+  ) {
+    const data =
+      typeof message === 'string'
+        ? message.split('|')
+        : JSON.stringify(message);
+    if (typeof data !== 'string') {
+      if (data[0] == '1' && iv && key)
+        data[3] = decryptAES256(data[3], iv, key);
+      if (data[1] !== this.TR_ID) return;
+      const stockData = data[3].split('^');
+      const length = stockData.length / parseInt(data[2]);
+      const size = parseInt(data[2]);
       const i = 0;
       while (i < size) {
         const data = stockData.splice(i * length, (i + 1) * length);
