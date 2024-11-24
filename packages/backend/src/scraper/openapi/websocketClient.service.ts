@@ -2,7 +2,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Logger } from 'winston';
-import { RawData, WebSocket } from 'ws';
+import { WebSocket } from 'ws';
 import { OpenapiLiveData } from './api/openapiLiveData.api';
 import { openApiToken } from './api/openapiToken.api';
 import { openApiConfig } from './config/openapi.config';
@@ -79,7 +79,7 @@ export class WebsocketClient {
   private initMessage() {
     this.client.on('message', async (data) => {
       try {
-        const message = this.parseMessage(data);
+        const message = this.parseMessage(data.toString());
         if (message.header) {
           if (message.header.tr_id === 'PINGPONG') {
             this.logger.info(`Received PING: ${JSON.stringify(data)}`);
@@ -99,7 +99,7 @@ export class WebsocketClient {
     });
   }
 
-  private parseMessage(data: RawData) {
+  private parseMessage(data: string) {
     if (typeof data === 'object') {
       return data;
     } else {

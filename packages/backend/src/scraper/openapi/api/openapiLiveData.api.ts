@@ -1,6 +1,8 @@
+import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { StockLiveData } from '@/stock/domain/stockLiveData.entity';
 
+@Injectable()
 export class OpenapiLiveData {
   public readonly TR_ID: string = 'H0STCNT0';
   constructor(private readonly datasource: DataSource) {}
