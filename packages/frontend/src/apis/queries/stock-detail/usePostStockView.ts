@@ -1,20 +1,22 @@
-import type { PostStockViewRequest, PostStockViewResponse } from './types';
-import { useMutation, type UseMutationOptions } from '@tanstack/react-query';
-import { instance } from '@/apis/config';
+import { useMutation } from '@tanstack/react-query';
+import {
+  PostViewResponseSchema,
+  type PostStockViewRequest,
+  type PostViewResponse,
+} from './schema';
+import { post } from '@/apis/utils/post';
 
-const postStockView = async ({
-  stockId,
-}: PostStockViewRequest): Promise<PostStockViewResponse> => {
-  const { data } = await instance.post('/api/stock/view', { stockId });
-  return data;
-};
+const postStockView = async ({ stockId }: PostStockViewRequest) =>
+  post<PostViewResponse>({
+    params: stockId,
+    schema: PostViewResponseSchema,
+    url: 'api/stock/view',
+  });
 
-export const usePostStockView = (
-  options?: UseMutationOptions<PostStockViewResponse, Error, string>,
-) => {
-  return useMutation<PostStockViewResponse, Error, string>({
-    mutationKey: ['stock_view'],
-    mutationFn: (stockId) => postStockView({ stockId }),
-    ...options,
+export const usePostStockView = () => {
+  return useMutation({
+    mutationKey: ['stockView'],
+    mutationFn: ({ stockId }: PostStockViewRequest) =>
+      postStockView({ stockId }),
   });
 };

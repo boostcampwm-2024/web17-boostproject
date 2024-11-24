@@ -17,3 +17,16 @@ export const GetStockResponseSchema = z.object({
 
 export type GetStockResponse = z.infer<typeof GetStockResponseSchema>;
 
+export const PostStockViewRequestSchema = z.object({
+  stockId: z.string(),
+});
+
+export type PostStockViewRequest = z.infer<typeof PostStockViewRequestSchema>;
+
+export const PostViewResponseSchema = z.object({
+  id: z.string(),
+  message: z.string(),
+  date: z.date(),
+});
+
+export type PostViewResponse = z.infer<typeof PostViewResponseSchema>;

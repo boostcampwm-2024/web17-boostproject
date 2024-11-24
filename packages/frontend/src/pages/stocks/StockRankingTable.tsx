@@ -52,7 +52,7 @@ export const StockRankingTable = () => {
                 <span className="text-gray w-3 flex-shrink-0">{index + 1}</span>
                 <Link
                   to={`${stock.id}`}
-                  onClick={() => mutate(stock.id.toString())}
+                  onClick={() => mutate({ stockId: stock.id.toString() })}
                   className="display-bold14 hover:text-orange cursor-pointer text-ellipsis hover:underline"
                   aria-label={stock.name}
                 >
