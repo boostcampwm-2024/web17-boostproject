@@ -2,7 +2,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Logger } from 'winston';
-import { WebSocket } from 'ws';
+import { RawData, WebSocket } from 'ws';
 import { OpenapiLiveData } from './api/openapiLiveData.api';
 import { parseMessage } from './parse/openapi.parser';
 import { openApiToken } from '@/scraper/openapi/api/openapiToken.api';
@@ -78,18 +78,15 @@ export class WebsocketClient {
   private initMessage() {
     this.client.on('message', async (data) => {
       try {
-        let message;
-        if (typeof data === 'object') {
-          message = data;
-        } else {
-          message = parseMessage(data as string);
-        }
-        if (message.header && message.header.tr_id === 'PINGPONG') {
-          this.logger.info(`Received PING: ${JSON.stringify(data)}`);
-          this.sendPong();
-          return;
-        }
-        if (message.header && message.header.tr_id === 'H0STCNT0') {
+        const message = this.parseMessage(data);
+        if (message.header) {
+          if (message.header.tr_id === 'PINGPONG') {
+            this.logger.info(`Received PING: ${JSON.stringify(data)}`);
+            this.client.pong({
+              tr_id: 'PINGPONG',
+              datetime: new Date().toISOString(),
+            });
+          }
           return;
         }
         this.logger.info(`Recived data : ${data}`);
@@ -101,20 +98,20 @@ export class WebsocketClient {
     });
   }
 
+  private parseMessage(data: RawData) {
+    if (typeof data === 'object') {
+      return data;
+    } else {
+      return parseMessage(data as string);
+    }
+  }
+
   @Cron('0 2 * * 1-5')
   connect() {
     this.client = new WebSocket(this.url);
     this.initOpen();
     this.initMessage();
     this.initDisconnect();
-  }
-
-  private sendPong() {
-    const pongMessage = {
-      header: { tr_id: 'PINGPONG', datetime: new Date().toISOString() },
-    };
-    this.client.send(JSON.stringify(pongMessage));
-    this.logger.info(`Sent PONG: ${JSON.stringify(pongMessage)}`);
   }
 
   private convertObjectToMessage(
