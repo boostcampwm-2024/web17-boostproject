@@ -195,7 +195,7 @@ export class OpenapiDetailData {
         return output1[0];
       }
     } catch (error) {
-      this.logger.error(error);
+      this.logger.warn(error);
     }
   }
 
@@ -213,10 +213,9 @@ export class OpenapiDetailData {
       if (response.output) {
         const output2 = response.output;
         return output2;
-        //return bufferToObject(output2);
       }
     } catch (error) {
-      this.logger.error(error);
+      this.logger.warn(error);
     }
   }
 
