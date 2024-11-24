@@ -7,11 +7,11 @@ import { ScraperModule } from './scraper/scraper.module';
 import { AuthModule } from '@/auth/auth.module';
 import { SessionModule } from '@/auth/session.module';
 import { ChatModule } from '@/chat/chat.module';
-import { logger } from '@/configs/logger.config';
 import {
   typeormDevelopConfig,
   typeormProductConfig,
 } from '@/configs/typeormConfig';
+import { logger } from '@/configs/logger.config';
 import { StockModule } from '@/stock/stock.module';
 import { UserModule } from '@/user/user.module';
 
@@ -19,14 +19,14 @@ import { UserModule } from '@/user/user.module';
   imports: [
     ConfigModule.forRoot({ cache: true, isGlobal: true }),
     ScheduleModule.forRoot(),
+    ScraperModule,
+    StockModule,
+    UserModule,
     TypeOrmModule.forRoot(
       process.env.NODE_ENV === 'production'
         ? typeormProductConfig
         : typeormDevelopConfig,
     ),
-    ScraperModule,
-    StockModule,
-    UserModule,
     WinstonModule.forRoot(logger),
     AuthModule,
     ChatModule,
