@@ -1,8 +1,7 @@
-import { Inject, Injectable, UseFilters } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { DataSource, EntityManager } from 'typeorm';
 import { Logger } from 'winston';
-import { OpenapiExceptionFilter } from '../Decorator/openapiException.filter';
 import {
   ChartData,
   isChartData,
@@ -45,7 +44,7 @@ const INTERVALS = 4000;
 export class OpenapiPeriodData {
   private readonly url: string =
     '/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice';
-  public constructor(
+  constructor(
     private readonly datasource: DataSource,
     @Inject('winston') private readonly logger: Logger,
   ) {
@@ -53,11 +52,13 @@ export class OpenapiPeriodData {
   }
 
   @Cron('0 1 * * 1-5')
-  @UseFilters(OpenapiExceptionFilter)
-  public async getItemChartPriceCheck() {
+  async getItemChartPriceCheck() {
     if (process.env.NODE_ENV !== 'production') return;
-    const entityManager = this.datasource.manager;
-    const stocks = await entityManager.find(Stock);
+    const stocks = await this.datasource.manager.find(Stock, {
+      where: {
+        isTrading: true,
+      },
+    });
     const configCount = openApiToken.configs.length;
     const chunkSize = Math.ceil(stocks.length / configCount);
 
@@ -73,15 +74,11 @@ export class OpenapiPeriodData {
   private async getChartData(chunk: Stock[], period: Period) {
     const baseTime = INTERVALS * 4;
     const entity = DATE_TO_ENTITY[period];
-    const manager = this.datasource.manager;
 
     let time = 0;
     for (const stock of chunk) {
       time += baseTime;
-      setTimeout(
-        () => this.processStockData(stock, period, entity, manager),
-        time,
-      );
+      setTimeout(() => this.processStockData(stock, period, entity), time);
     }
   }
 
@@ -89,25 +86,26 @@ export class OpenapiPeriodData {
     stock: Stock,
     period: Period,
     entity: typeof StockData,
-    manager: EntityManager,
   ) {
     const stockPeriod = new StockData();
+    const manager = this.datasource.manager;
     let configIdx = 0;
     let end = getTodayDate();
     let start = getPreviousDate(end, 3);
     let isFail = false;
 
-    while (isFail) {
+    while (!isFail) {
       configIdx = (configIdx + 1) % openApiToken.configs.length;
       this.setStockPeriod(stockPeriod, stock.id!, end);
 
+      // chart 데이터가 있는 지 확인 -> 리턴
       if (await this.existsChartData(stockPeriod, manager, entity)) return;
 
       const query = this.getItemChartPriceQuery(stock.id!, start, end, period);
 
       const output = await this.fetchChartData(query, configIdx);
 
-      if (output && isChartData(output[0])) {
+      if (output) {
         await this.saveChartData(entity, stock.id!, output);
         ({ endDate: end, startDate: start } = this.updateDates(start, period));
       } else isFail = true;
@@ -137,7 +135,7 @@ export class OpenapiPeriodData {
       );
       return response.output2 as ChartData[];
     } catch (error) {
-      this.logger.error(error);
+      this.logger.warn(error);
     }
   }
 
@@ -170,28 +168,33 @@ export class OpenapiPeriodData {
     }
   }
 
+  private convertObjectToStockData(item: ChartData, stockId: string) {
+    const stockPeriod = new StockData();
+    stockPeriod.stock = { id: stockId } as Stock;
+    stockPeriod.startTime = new Date(
+      parseInt(item.stck_bsop_date.slice(0, 4)),
+      parseInt(item.stck_bsop_date.slice(4, 6)) - 1,
+      parseInt(item.stck_bsop_date.slice(6, 8)),
+    );
+    stockPeriod.close = parseInt(item.stck_clpr);
+    stockPeriod.open = parseInt(item.stck_oprc);
+    stockPeriod.high = parseInt(item.stck_hgpr);
+    stockPeriod.low = parseInt(item.stck_lwpr);
+    stockPeriod.volume = parseInt(item.acml_vol);
+    stockPeriod.createdAt = new Date();
+    return stockPeriod;
+  }
+
   private async saveChartData(
     entity: typeof StockData,
     stockId: string,
     data: ChartData[],
   ) {
     for (const item of data) {
-      if (!item || !item.stck_bsop_date) {
+      if (!isChartData(item)) {
         continue;
       }
-      const stockPeriod = new StockData();
-      stockPeriod.stock = { id: stockId } as Stock;
-      stockPeriod.startTime = new Date(
-        parseInt(item.stck_bsop_date.slice(0, 4)),
-        parseInt(item.stck_bsop_date.slice(4, 6)) - 1,
-        parseInt(item.stck_bsop_date.slice(6, 8)),
-      );
-      stockPeriod.close = parseInt(item.stck_clpr);
-      stockPeriod.open = parseInt(item.stck_oprc);
-      stockPeriod.high = parseInt(item.stck_hgpr);
-      stockPeriod.low = parseInt(item.stck_lwpr);
-      stockPeriod.volume = parseInt(item.acml_vol);
-      stockPeriod.createdAt = new Date();
+      const stockPeriod = this.convertObjectToStockData(item, stockId);
       await this.insertChartData(stockPeriod, entity);
     }
   }

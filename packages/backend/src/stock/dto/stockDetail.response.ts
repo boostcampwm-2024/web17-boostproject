@@ -8,6 +8,12 @@ export class StockDetailResponse {
   marketCap: number;
 
   @ApiProperty({
+    description: '주식의 이름',
+    example: '삼성전자',
+  })
+  name: string;
+
+  @ApiProperty({
     description: '주식의 EPS',
     example: 4091,
   })

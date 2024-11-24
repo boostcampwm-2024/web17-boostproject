@@ -1,8 +1,9 @@
-import { Injectable, UseFilters } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { DataSource } from 'typeorm';
+import { Logger } from 'winston';
 import { openApiConfig } from '../config/openapi.config';
-import { OpenapiExceptionFilter } from '../Decorator/openapiException.filter';
+
 import {
   isMinuteData,
   MinuteData,
@@ -24,13 +25,15 @@ export class OpenapiMinuteData {
     '/uapi/domestic-stock/v1/quotations/inquire-time-itemchartprice';
   private readonly intervals: number = 130;
   private flip: number = 0;
-  public constructor(private readonly datasource: DataSource) {
+  constructor(
+    private readonly datasource: DataSource,
+    @Inject('winston') private readonly logger: Logger,
+  ) {
     this.getStockData();
   }
 
   @Cron('0 1 * * 1-5')
-  @UseFilters(OpenapiExceptionFilter)
-  private async getStockData() {
+  async getStockData() {
     if (process.env.NODE_ENV !== 'production') return;
     const stock = await this.datasource.manager.findBy(Stock, {
       isTrading: true,
@@ -104,11 +107,10 @@ export class OpenapiMinuteData {
         this.saveMinuteData(stockId, output, time);
       }
     } catch (error) {
-      console.error(error);
+      this.logger.warn(error);
     }
   }
 
-  @UseFilters(OpenapiExceptionFilter)
   private async getMinuteDataChunk(
     chunk: Stock[],
     config: typeof openApiConfig,
@@ -125,8 +127,7 @@ export class OpenapiMinuteData {
   }
 
   @Cron(`*/${STOCK_CUT} 9-15 * * 1-5`)
-  @UseFilters(OpenapiExceptionFilter)
-  private getMinuteData() {
+  getMinuteData() {
     if (process.env.NODE_ENV !== 'production') return;
     const configCount = openApiToken.configs.length;
     const stock = this.stock[this.flip % STOCK_CUT];

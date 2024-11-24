@@ -39,5 +39,6 @@ import { StockLiveData } from '@/stock/domain/stockLiveData.entity';
     OpenapiLiveData,
     WebsocketClient,
   ],
+  exports: [WebsocketClient],
 })
 export class OpenapiScraperModule {}

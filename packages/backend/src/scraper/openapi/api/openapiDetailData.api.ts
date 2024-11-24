@@ -1,9 +1,8 @@
-import { Inject, Injectable, UseFilters } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Between, DataSource } from 'typeorm';
 import { Logger } from 'winston';
 import { openApiConfig } from '../config/openapi.config';
-import { OpenapiExceptionFilter } from '../Decorator/openapiException.filter';
 import {
   DetailDataQuery,
   FinancialRatio,
@@ -35,8 +34,7 @@ export class OpenapiDetailData {
   }
 
   @Cron('0 8 * * 1-5')
-  @UseFilters(OpenapiExceptionFilter)
-  public async getDetailData() {
+  async getDetailData() {
     if (process.env.NODE_ENV !== 'production') return;
     const entityManager = this.datasource.manager;
     const stocks = await entityManager.find(Stock);
@@ -197,7 +195,7 @@ export class OpenapiDetailData {
         return output1[0];
       }
     } catch (error) {
-      this.logger.error(error);
+      this.logger.warn(error);
     }
   }
 
@@ -215,10 +213,9 @@ export class OpenapiDetailData {
       if (response.output) {
         const output2 = response.output;
         return output2;
-        //return bufferToObject(output2);
       }
     } catch (error) {
-      this.logger.error(error);
+      this.logger.warn(error);
     }
   }
 

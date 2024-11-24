@@ -1,15 +1,14 @@
-import { Inject, UseFilters } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Logger } from 'winston';
 import { openApiConfig } from '../config/openapi.config';
-import { OpenapiExceptionFilter } from '../Decorator/openapiException.filter';
 import { OpenapiException } from '../util/openapiCustom.error';
 import { postOpenApi } from '../util/openapiUtil.api';
 import { logger } from '@/configs/logger.config';
 
 class OpenapiTokenApi {
   private config: (typeof openApiConfig)[] = [];
-  public constructor(@Inject('winston') private readonly logger: Logger) {
+  constructor(@Inject('winston') private readonly logger: Logger) {
     const accounts = openApiConfig.STOCK_ACCOUNT!.split(',');
     const api_keys = openApiConfig.STOCK_API_KEY!.split(',');
     const api_passwords = openApiConfig.STOCK_API_PASSWORD!.split(',');
@@ -31,11 +30,11 @@ class OpenapiTokenApi {
     this.initAuthenValue();
   }
 
-  public get configs() {
+  get configs() {
+    //TODO : 현재 구조에서 받아올 때마다 확인후 할당으로 변경
     return this.config;
   }
 
-  @UseFilters(OpenapiExceptionFilter)
   private async initAuthenValue() {
     const delay = 60000;
     const delayMinute = delay / 1000 / 60;
@@ -61,7 +60,7 @@ class OpenapiTokenApi {
   }
 
   @Cron('50 0 * * 1-5')
-  private async initAccessToken() {
+  async initAccessToken() {
     const updatedConfig = await Promise.all(
       this.config.map(async (val) => {
         val.STOCK_API_TOKEN = await this.getToken(val)!;
@@ -72,7 +71,7 @@ class OpenapiTokenApi {
   }
 
   @Cron('50 0 * * 1-5')
-  private async initWebSocketKey() {
+  async initWebSocketKey() {
     const updatedConfig = await Promise.all(
       this.config.map(async (val) => {
         val.STOCK_WEBSOCKET_KEY = await this.getWebSocketKey(val)!;
