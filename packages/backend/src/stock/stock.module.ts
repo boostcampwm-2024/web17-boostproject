@@ -23,6 +23,7 @@ import {
 } from './stockData.service';
 import { StockDetailService } from './stockDetail.service';
 import { StockLiveDataSubscriber } from './stockLiveData.subscriber';
+import { OpenapiScraperModule } from '@/scraper/openapi/openapi-scraper.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { StockLiveDataSubscriber } from './stockLiveData.subscriber';
       StockLiveData,
       StockDetail,
     ]),
+    OpenapiScraperModule,
   ],
   controllers: [StockController],
   providers: [
