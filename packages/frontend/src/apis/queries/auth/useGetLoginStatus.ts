@@ -1,15 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
-import { GetLoginStatusResponse } from './types';
-import { instance } from '@/apis/config';
+import { GetLoginStatusSchema, type GetLoginStatus } from './schema';
+import { get } from '@/apis/utils/get';
 
-const getLoginStatus = async (): Promise<GetLoginStatusResponse> => {
-  const { data } = await instance.get('/api/auth/google/status');
-  return data;
-};
+const getLoginStatus = () =>
+  get<GetLoginStatus>({
+    schema: GetLoginStatusSchema,
+    url: '/api/auth/google/status',
+  });
 
 export const useGetLoginStatus = () => {
-  return useQuery<GetLoginStatusResponse, Error>({
-    queryKey: ['login_status'],
+  return useQuery({
+    queryKey: ['loginStatus'],
     queryFn: getLoginStatus,
   });
 };
