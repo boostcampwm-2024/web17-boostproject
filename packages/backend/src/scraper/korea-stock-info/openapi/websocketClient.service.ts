@@ -4,11 +4,12 @@ import { Cron } from '@nestjs/schedule';
 import { Logger } from 'winston';
 import { RawData, WebSocket } from 'ws';
 import { OpenapiLiveData } from './api/openapiLiveData.api';
+import { openApiToken } from './api/openapiToken.api';
+import { openApiConfig } from './config/openapi.config';
 import { parseMessage } from './parse/openapi.parser';
-import { openApiToken } from '@/scraper/openapi/api/openapiToken.api';
-import { openApiConfig } from '@/scraper/openapi/config/openapi.config';
 
 type TR_IDS = '0' | '1';
+
 @Injectable()
 export class WebsocketClient {
   private client: WebSocket;
