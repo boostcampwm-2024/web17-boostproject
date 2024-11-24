@@ -6,19 +6,20 @@ import {
   NotificationPanel,
   StockMetricsPanel,
 } from '.';
+import { useGetStockDetail } from '@/apis/queries/stock-detail';
 import Plus from '@/assets/plus.svg?react';
 import { Button } from '@/components/ui/button';
 import stockData from '@/mocks/stock.json';
 
 export const StockDetail = () => {
-  const { stockId = '' } = useParams();
+  const { stockId } = useParams();
+  const { data } = useGetStockDetail({ stockId: stockId ?? '' });
 
-  const detailData = stockData.data.find((data) => data.id === +stockId);
 
   return (
     <div className="flex flex-col gap-7">
       <header className="flex gap-7">
-        <h1 className="display-bold24">{detailData?.name}</h1>
+        <h1 className="display-bold24">{data?.name}</h1>
         <Button className="flex items-center justify-center gap-1">
           <Plus /> 내 주식 추가
         </Button>
