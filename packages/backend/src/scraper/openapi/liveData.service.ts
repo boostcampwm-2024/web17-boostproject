@@ -87,7 +87,6 @@ export class LiveData {
   private initMessageCallback =
     (client: WebSocket) => async (data: RawData) => {
       try {
-        console.log(data);
         const message = this.parseMessage(data);
         if (message.header) {
           if (message.header.tr_id === 'PINGPONG') {
