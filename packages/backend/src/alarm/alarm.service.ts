@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { Alarm } from './domain/alarm.entity';
 import { AlarmRequest } from './dto/alarm.request';
-import { PushService } from './webPush.service';
+import { PushService } from './push.service';
 
 @Injectable()
 export class AlarmService {
