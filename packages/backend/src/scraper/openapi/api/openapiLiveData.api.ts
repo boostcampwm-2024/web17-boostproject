@@ -5,7 +5,6 @@ import { openApiConfig } from '../config/openapi.config';
 import { isOpenapiLiveData } from '../type/openapiLiveData.type';
 import { TR_IDS } from '../type/openapiUtil.type';
 import { getOpenApi } from '../util/openapiUtil.api';
-import { OpenapiTokenApi } from './openapiToken.api';
 import { Stock } from '@/stock/domain/stock.entity';
 import { StockLiveData } from '@/stock/domain/stockLiveData.entity';
 
@@ -15,7 +14,6 @@ export class OpenapiLiveData {
     '/uapi/domestic-stock/v1/quotations/inquire-ccnl';
   constructor(
     private readonly datasource: DataSource,
-    private readonly config: OpenapiTokenApi,
     @Inject('winston') private readonly logger: Logger,
   ) {}
 
