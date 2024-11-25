@@ -6,6 +6,7 @@ import {
 import { DataSource, EntityManager } from 'typeorm';
 import { OauthType } from './domain/ouathType';
 import { User } from './domain/user.entity';
+import { status, subject } from '@/user/constants/randomNickname';
 
 type RegisterRequest = Required<
   Pick<User, 'email' | 'nickname' | 'type' | 'oauthId'>
@@ -76,33 +77,10 @@ export class UserService {
     return user.isLight;
   }
 
-  private generateRandomNickname(): string {
-    const adjectives = [
-      '강력한',
-      '지혜로운',
-      '소중한',
-      '빛나는',
-      '고요한',
-      '용감한',
-      '행운의',
-      '신비로운',
-    ];
-    const animals = [
-      '호랑이',
-      '독수리',
-      '용',
-      '사슴',
-      '백호',
-      '하늘새',
-      '백두산 호랑이',
-      '붉은 여우',
-    ];
-
-    const randomAdjective =
-      adjectives[Math.floor(Math.random() * adjectives.length)];
-    const randomAnimal = animals[Math.floor(Math.random() * animals.length)];
-
-    return `${randomAdjective} ${randomAnimal}`;
+  private generateRandomNickname() {
+    const statusName = status[Math.floor(Math.random() * status.length)];
+    const subjectName = subject[Math.floor(Math.random() * subject.length)];
+    return `${statusName}${subjectName}`;
   }
 
   private async getMaxOauthId(oauthType: OauthType, manager: EntityManager) {
