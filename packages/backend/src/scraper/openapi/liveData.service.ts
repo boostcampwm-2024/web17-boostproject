@@ -1,5 +1,3 @@
-//TODO :  9시 ~ 3시 반까지는 openapi에서 가져오고, 아니면 websocket으로 가져오기
-
 import { Inject, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Logger } from 'winston';
@@ -26,18 +24,16 @@ export class LiveData {
     @Inject('winston') private readonly logger: Logger,
   ) {
     this.connect();
-    this.subscribe('000150');
-    setTimeout(() => this.discribe('000150'), 15000);
   }
 
   async subscribe(stockId: string) {
+    this.clientStock.add(stockId);
     if (this.isCloseTime(new Date(), this.startTime, this.endTime)) {
       const result = await this.openapiLiveData.connectLiveData(stockId);
       const stockLiveData = this.openapiLiveData.convertLiveData(result);
       this.logger.info('in open api');
       this.openapiLiveData.saveLiveData(stockLiveData);
     } else {
-      this.clientStock.add(stockId);
       // TODO : 하나의 config만 사용중.
       const message = this.convertObjectToMessage(
         (await this.openApiToken.configs())[0],
