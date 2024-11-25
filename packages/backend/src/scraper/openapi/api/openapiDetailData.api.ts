@@ -13,7 +13,7 @@ import {
 } from '../type/openapiDetailData.type';
 import { TR_IDS } from '../type/openapiUtil.type';
 import { getOpenApi } from '../util/openapiUtil.api';
-import { openApiToken } from './openapiToken.api';
+import { OpenapiTokenApi } from './openapiToken.api';
 import { KospiStock } from '@/stock/domain/kospiStock.entity';
 import { Stock } from '@/stock/domain/stock.entity';
 import { StockDaily } from '@/stock/domain/stockData.entity';
@@ -27,6 +27,7 @@ export class OpenapiDetailData {
     '/uapi/domestic-stock/v1/quotations/search-stock-info';
   private readonly intervals = 1000;
   constructor(
+    private readonly openApiToken: OpenapiTokenApi,
     private readonly datasource: DataSource,
     @Inject('winston') private readonly logger: Logger,
   ) {
@@ -38,13 +39,13 @@ export class OpenapiDetailData {
     if (process.env.NODE_ENV !== 'production') return;
     const entityManager = this.datasource.manager;
     const stocks = await entityManager.find(Stock);
-    const configCount = openApiToken.configs.length;
+    const configCount = this.openApiToken.configs.length;
     const chunkSize = Math.ceil(stocks.length / configCount);
 
     for (let i = 0; i < configCount; i++) {
-      this.logger.info(openApiToken.configs[i]);
+      this.logger.info(this.openApiToken.configs[i]);
       const chunk = stocks.slice(i * chunkSize, (i + 1) * chunkSize);
-      this.getDetailDataChunk(chunk, openApiToken.configs[i]);
+      this.getDetailDataChunk(chunk, this.openApiToken.configs[i]);
     }
   }
 

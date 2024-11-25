@@ -11,7 +11,7 @@ import {
 } from '../type/openapiMinuteData.type';
 import { TR_IDS } from '../type/openapiUtil.type';
 import { getCurrentTime, getOpenApi } from '../util/openapiUtil.api';
-import { openApiToken } from './openapiToken.api';
+import { OpenapiTokenApi } from './openapiToken.api';
 import { Stock } from '@/stock/domain/stock.entity';
 import { StockData, StockMinutely } from '@/stock/domain/stockData.entity';
 
@@ -27,9 +27,10 @@ export class OpenapiMinuteData {
   private flip: number = 0;
   constructor(
     private readonly datasource: DataSource,
+    private readonly openApiToken: OpenapiTokenApi,
     @Inject('winston') private readonly logger: Logger,
   ) {
-    this.getStockData();
+    //this.getStockData();
   }
 
   @Cron('0 1 * * 1-5')
@@ -126,16 +127,16 @@ export class OpenapiMinuteData {
     }
   }
 
-  @Cron(`*/${STOCK_CUT} 9-15 * * 1-5`)
+  //@Cron(`*/${STOCK_CUT} 9-15 * * 1-5`)
   getMinuteData() {
     if (process.env.NODE_ENV !== 'production') return;
-    const configCount = openApiToken.configs.length;
+    const configCount = this.openApiToken.configs.length;
     const stock = this.stock[this.flip % STOCK_CUT];
     this.flip++;
     const chunkSize = Math.ceil(stock.length / configCount);
     for (let i = 0; i < configCount; i++) {
       const chunk = stock.slice(i * chunkSize, (i + 1) * chunkSize);
-      this.getMinuteDataChunk(chunk, openApiToken.configs[i]);
+      this.getMinuteDataChunk(chunk, this.openApiToken.configs[i]);
     }
   }
 
