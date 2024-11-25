@@ -1,11 +1,10 @@
 import { StockIndexCard } from './components/StockIndexCard';
 import { StockInfoCard } from './components/StockInfoCard';
 import { StockRankingTable } from './StockRankingTable';
-// import { useGetTopViews } from '@/apis/queries/stocks';
+import { useGetTopViews } from '@/apis/queries/stocks';
 import marketData from '@/mocks/market.json';
-import stock from '@/mocks/stock.json';
 
-// const LIMIT = 5;
+const LIMIT = 5;
 
 export const Stocks = () => {
   const kospi = marketData.data.filter((value) => value.name === '코스피')[0];
@@ -14,7 +13,7 @@ export const Stocks = () => {
     (value) => value.name === '달러환율',
   )[0];
 
-  // const { data: topViews } = useGetTopViews({ limit: LIMIT });
+  const { data: topViews } = useGetTopViews({ limit: LIMIT });
 
   return (
     <main className="flex flex-col gap-16">
@@ -52,17 +51,15 @@ export const Stocks = () => {
           이 종목은 어떠신가요?
         </h2>
         <div className="grid w-fit grid-cols-5 gap-5">
-          {stock.data
-            .slice(0, 5)
-            ?.map((stock, index) => (
-              <StockInfoCard
-                key={stock.id}
-                index={index}
-                name={stock.name}
-                currentPrice={stock.currentPrice}
-                changeRate={stock.changeRate}
-              />
-            ))}
+          {topViews?.map((stock, index) => (
+            <StockInfoCard
+              key={stock.id}
+              index={index}
+              name={stock.name}
+              currentPrice={stock.currentPrice}
+              changeRate={stock.changeRate}
+            />
+          ))}
         </div>
       </article>
       <article>

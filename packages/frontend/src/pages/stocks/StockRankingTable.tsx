@@ -1,17 +1,20 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { usePostStockView } from '@/apis/queries/stock-detail';
-// import { useGetStocksByPrice } from '@/apis/queries/stocks';
+import {
+  type GetStockListRequest,
+  useGetStocksByPrice,
+} from '@/apis/queries/stocks';
 import DownArrow from '@/assets/down-arrow.svg?react';
-import stockData from '@/mocks/stock.json';
 import { cn } from '@/utils/cn';
 
-// const LIMIT = 20;
+const LIMIT = 20;
 
 export const StockRankingTable = () => {
-  const [isGaining, setIsGaining] = useState(true);
+  const [sortType, setSortType] =
+    useState<GetStockListRequest['sortType']>('increase');
 
-  // const { data } = useGetStocksByPrice({ limit: LIMIT, isGaining });
+  const { data } = useGetStocksByPrice({ limit: LIMIT, sortType });
   const { mutate } = usePostStockView();
 
   return (
@@ -29,13 +32,18 @@ export const StockRankingTable = () => {
             <th>종목</th>
             <th className="text-right">현재가</th>
             <th className="flex items-center justify-end gap-1 text-right">
-              <p>등락률({isGaining ? '상승순' : '하락순'})</p>
+              <p>등락률({sortType === 'increase' ? '상승순' : '하락순'})</p>
               <DownArrow
                 className={cn(
                   'cursor-pointer',
-                  isGaining ? 'rotate-0' : 'rotate-180',
+                  sortType === 'increase' ? 'rotate-0' : 'rotate-180',
                 )}
-                onClick={() => setIsGaining((prev) => !prev)}
+                onClick={() =>
+                  setSortType((prev) => {
+                    if (prev === 'increase') return 'decrease';
+                    return 'increase';
+                  })
+                }
               />
             </th>
             <th className="text-right">거래대금</th>
@@ -43,7 +51,7 @@ export const StockRankingTable = () => {
           </tr>
         </thead>
         <tbody>
-          {stockData.data?.map((stock, index) => (
+          {data?.map((stock, index) => (
             <tr
               key={stock.id}
               className="display-medium14 text-dark-gray text-right [&>*]:p-4"
@@ -52,7 +60,7 @@ export const StockRankingTable = () => {
                 <span className="text-gray w-3 flex-shrink-0">{index + 1}</span>
                 <Link
                   to={`${stock.id}`}
-                  onClick={() => mutate(stock.id.toString())}
+                  onClick={() => mutate({ stockId: stock.id.toString() })}
                   className="display-bold14 hover:text-orange cursor-pointer text-ellipsis hover:underline"
                   aria-label={stock.name}
                 >

@@ -1,14 +1,18 @@
-import type { ChatDataType, ChatDataResponse } from '@/sockets/types';
 import { useEffect, useMemo, useState } from 'react';
 import { TextArea } from './components';
 import { ChatMessage } from './components/ChatMessage';
 import DownArrow from '@/assets/down-arrow.svg?react';
 import { socketChat } from '@/sockets/config';
+import {
+  ChatDataSchema,
+  type ChatData,
+  type ChatDataResponse,
+} from '@/sockets/schema';
 import { useWebsocket } from '@/sockets/useWebsocket';
 
 export const ChatPanel = () => {
   const STOCK_ID = '005930';
-  const [chatData, setChatData] = useState<ChatDataType[]>();
+  const [chatData, setChatData] = useState<ChatData[]>();
 
   const socket = useMemo(() => {
     return socketChat({ stockId: STOCK_ID });
@@ -27,7 +31,9 @@ export const ChatPanel = () => {
 
   useEffect(() => {
     const handleChat = (message: ChatDataResponse) => {
-      if (message?.chats) {
+      const validatedChatData = ChatDataSchema.safeParse(message?.chats);
+
+      if (validatedChatData.success && message?.chats) {
         setChatData(message.chats);
       }
     };
