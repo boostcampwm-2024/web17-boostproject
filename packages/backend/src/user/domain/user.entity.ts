@@ -9,6 +9,7 @@ import { DateEmbedded } from '@/common/dateEmbedded.entity';
 import { UserStock } from '@/stock/domain/userStock.entity';
 import { OauthType } from '@/user/domain/ouathType';
 import { Role } from '@/user/domain/role';
+import { Mention } from '@/chat/domain/mention.entity';
 
 @Index('nickname_sub_name', ['nickname', 'subName'], { unique: true })
 @Index('type_oauth_id', ['type', 'oauthId'], { unique: true })
@@ -43,4 +44,7 @@ export class User {
 
   @OneToMany(() => UserStock, (userStock) => userStock.user)
   userStocks: UserStock[];
+
+  @OneToMany(() => Mention, (mention) => mention.user)
+  mentions: Mention[];
 }

@@ -12,6 +12,7 @@ import { Like } from '@/chat/domain/like.entity';
 import { DateEmbedded } from '@/common/dateEmbedded.entity';
 import { Stock } from '@/stock/domain/stock.entity';
 import { User } from '@/user/domain/user.entity';
+import { Mention } from '@/chat/domain/mention.entity';
 
 @Entity()
 export class Chat {
@@ -41,4 +42,7 @@ export class Chat {
 
   @Column(() => DateEmbedded, { prefix: '' })
   date: DateEmbedded;
+
+  @OneToMany(() => Mention, (mention) => mention.chat)
+  mentions: Mention[];
 }
