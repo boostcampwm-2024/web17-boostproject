@@ -49,22 +49,26 @@ export const ChatPanel = () => {
 
   return (
     <article className="flex flex-col gap-5 rounded-md bg-white p-7">
-      <h2 className="display-medium20 text-center">채팅</h2>
+      <h2 className="display-bold20 text-center font-bold">채팅</h2>
       <TextArea onSend={handleSendMessage} />
       <div className="border-light-gray flex items-center justify-end gap-1 border-b-2 pb-2">
         <p className="display-medium12 text-dark-gray">최신순</p>
         <DownArrow className="cursor-pointer" />
       </div>
       <section className="flex flex-col gap-5">
-        {chatData?.map((chat) => (
-          <ChatMessage
-            key={chat.id}
-            name={chat.nickname}
-            contents={chat.message}
-            likeCount={chat.likeCount}
-            liked={chat.liked}
-          />
-        ))}
+        {chatData ? (
+          chatData.map((chat) => (
+            <ChatMessage
+              key={chat.id}
+              name={chat.nickname}
+              contents={chat.message}
+              likeCount={chat.likeCount}
+              liked={chat.liked}
+            />
+          ))
+        ) : (
+          <p className="text-center">채팅이 없어요.</p>
+        )}
       </section>
     </article>
   );
