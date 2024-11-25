@@ -84,16 +84,3 @@ export class PriorityQueue<T> {
     return this.heap.length === 0;
   }
 }
-
-const pq = new PriorityQueue<string>();
-
-pq.enqueue('Task A', 2);
-pq.enqueue('Task B', 1);
-pq.enqueue('Task C', 3);
-
-console.log(pq.dequeue()); // Task B
-console.log(pq.peek()); // Task A
-console.log(pq.dequeue()); // Task A
-console.log(pq.isEmpty()); // false
-console.log(pq.dequeue()); // Task C
-console.log(pq.isEmpty()); // true

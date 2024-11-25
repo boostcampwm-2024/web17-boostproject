@@ -14,7 +14,7 @@ import {
   getPreviousDate,
   getTodayDate,
 } from '../util/openapiUtil.api';
-import { openApiToken } from './openapiToken.api';
+import { OpenapiTokenApi } from './openapiToken.api';
 import { Stock } from '@/stock/domain/stock.entity';
 import {
   StockData,
@@ -46,6 +46,7 @@ export class OpenapiPeriodData {
     '/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice';
   constructor(
     private readonly datasource: DataSource,
+    private readonly openApiToken: OpenapiTokenApi,
     @Inject('winston') private readonly logger: Logger,
   ) {
     //this.getItemChartPriceCheck();
@@ -59,7 +60,7 @@ export class OpenapiPeriodData {
         isTrading: true,
       },
     });
-    const configCount = openApiToken.configs.length;
+    const configCount = this.openApiToken.configs.length;
     const chunkSize = Math.ceil(stocks.length / configCount);
 
     for (let i = 0; i < configCount; i++) {
@@ -95,7 +96,7 @@ export class OpenapiPeriodData {
     let isFail = false;
 
     while (!isFail) {
-      configIdx = (configIdx + 1) % openApiToken.configs.length;
+      configIdx = (configIdx + 1) % this.openApiToken.configs.length;
       this.setStockPeriod(stockPeriod, stock.id!, end);
 
       // chart 데이터가 있는 지 확인 -> 리턴
@@ -129,7 +130,7 @@ export class OpenapiPeriodData {
     try {
       const response = await getOpenApi(
         this.url,
-        openApiToken.configs[configIdx],
+        this.openApiToken.configs[configIdx],
         query,
         TR_IDS.ITEM_CHART_PRICE,
       );
