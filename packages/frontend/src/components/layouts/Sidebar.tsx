@@ -25,7 +25,6 @@ export const Sidebar = () => {
   });
 
   const handleMenuItemClick = (item: MenuSection) => {
-    console.log(item.text);
     if (item.text === '검색') {
       setShowSearch(true);
       setShowAlarm(false);
