@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { DataSource, EntityManager } from 'typeorm';
 import { User } from './domain/user.entity';

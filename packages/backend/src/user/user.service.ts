@@ -6,6 +6,7 @@ import {
 import { DataSource, EntityManager } from 'typeorm';
 import { OauthType } from './domain/ouathType';
 import { User } from './domain/user.entity';
+import { status, subject } from '@/user/constants/randomNickname';
 
 type RegisterRequest = Required<
   Pick<User, 'email' | 'nickname' | 'type' | 'oauthId'>
@@ -49,6 +50,19 @@ export class UserService {
     return manager.exists(User, { where: { nickname } });
   }
 
+  async registerTester() {
+    return await this.dataSource.transaction(async (manager) => {
+      return await manager.save(User, {
+        nickname: this.generateRandomNickname(),
+        email: 'tester@nav',
+        type: OauthType.LOCAL,
+        oauthId: String(
+          (await this.getMaxOauthId(OauthType.LOCAL, manager)) + 1,
+        ),
+      });
+    });
+  }
+
   async findUserByOauthIdAndType(oauthId: string, type: OauthType) {
     return await this.dataSource.manager.findOne(User, {
       where: { oauthId, type },
@@ -83,6 +97,22 @@ export class UserService {
     }
 
     return user.isLight;
+  }
+
+  private generateRandomNickname() {
+    const statusName = status[Math.floor(Math.random() * status.length)];
+    const subjectName = subject[Math.floor(Math.random() * subject.length)];
+    return `${statusName}${subjectName}`;
+  }
+
+  private async getMaxOauthId(oauthType: OauthType, manager: EntityManager) {
+    const result = await manager
+      .createQueryBuilder(User, 'user')
+      .select('MAX(user.oauthId)', 'max')
+      .where('user.type = :oauthType', { oauthType })
+      .getRawOne();
+
+    return result ? Number(result.max) : 1;
   }
 
   private async validateUserExists(

@@ -110,6 +110,7 @@ export class ChatService {
       .leftJoinAndSelect('chat.likes', 'like', 'like.user_id = :userId', {
         userId,
       })
+      .leftJoinAndSelect('chat.user', 'user')
       .where('chat.stock_id = :stockId', { stockId })
       .take(size + 1);
 

@@ -69,11 +69,10 @@ export class StockService {
   }
 
   async searchStock(stockName: string) {
-    const queryBuilder = this.datasource
+    const result = await this.datasource
       .getRepository(Stock)
-      .createQueryBuilder();
-    const result = await queryBuilder
-      .where('stock.stock_name LIKE :name', {
+      .createQueryBuilder('stock')
+      .where('stock.is_trading = :isTrading and stock.stock_name LIKE :name', {
         isTrading: true,
         name: `%${stockName}%`,
       })
@@ -92,6 +91,33 @@ export class StockService {
     if (userStock.user.id !== userId) {
       throw new BadRequestException('you are not owner of user stock');
     }
+  }
+
+  async getTopStocksByViews(limit: number) {
+    const rawData = await this.StocksQuery()
+      .orderBy('stock.views', 'DESC')
+      .limit(limit)
+      .getRawMany();
+
+    return plainToInstance(StocksResponse, rawData);
+  }
+
+  async getTopStocksByGainers(limit: number) {
+    const rawData = await this.StocksQuery()
+      .orderBy('stockLiveData.changeRate', 'DESC')
+      .limit(limit)
+      .getRawMany();
+
+    return plainToInstance(StocksResponse, rawData);
+  }
+
+  async getTopStocksByLosers(limit: number) {
+    const rawData = await this.StocksQuery()
+      .orderBy('stockLiveData.changeRate', 'ASC')
+      .limit(limit)
+      .getRawMany();
+
+    return plainToInstance(StocksResponse, rawData);
   }
 
   private async validateStockExists(stockId: string, manager: EntityManager) {
@@ -149,32 +175,5 @@ export class StockService {
         'stockLiveData.volume AS volume',
         'stockDetail.marketCap AS marketCap',
       ]);
-  }
-
-  async getTopStocksByViews(limit: number) {
-    const rawData = await this.StocksQuery()
-      .orderBy('stock.views', 'DESC')
-      .limit(limit)
-      .getRawMany();
-
-    return plainToInstance(StocksResponse, rawData);
-  }
-
-  async getTopStocksByGainers(limit: number) {
-    const rawData = await this.StocksQuery()
-      .orderBy('stockLiveData.changeRate', 'DESC')
-      .limit(limit)
-      .getRawMany();
-
-    return plainToInstance(StocksResponse, rawData);
-  }
-
-  async getTopStocksByLosers(limit: number) {
-    const rawData = await this.StocksQuery()
-      .orderBy('stockLiveData.changeRate', 'ASC')
-      .limit(limit)
-      .getRawMany();
-
-    return plainToInstance(StocksResponse, rawData);
   }
 }

@@ -22,6 +22,14 @@ export function ApiGetStockData(summary: string, type: string) {
       type: String,
       format: 'date-time',
     }),
+    ApiQuery({
+      name: 'timeunit',
+      required: false,
+      description: '시간 단위',
+      example: 'minute',
+      type: String,
+      enum: ['minute', 'day', 'week', 'month', 'year'],
+    }),
     ApiResponse({
       status: 200,
       description: `주식의 ${type} 단위 데이터 성공적으로 조회`,

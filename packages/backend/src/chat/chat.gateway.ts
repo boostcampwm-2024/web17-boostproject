@@ -35,7 +35,7 @@ interface chatResponse {
   createdAt: Date;
 }
 
-@WebSocketGateway({ namespace: 'chat' })
+@WebSocketGateway({ namespace: '/api/chat/realtime' })
 @UseFilters(WebSocketExceptionFilter)
 export class ChatGateway implements OnGatewayConnection {
   @WebSocketServer()

@@ -1,4 +1,3 @@
-import { applyDecorators } from '@nestjs/common';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -6,26 +5,8 @@ import {
   CreateDateColumn,
   JoinColumn,
   ManyToOne,
-  ColumnOptions,
 } from 'typeorm';
 import { Stock } from './stock.entity';
-
-export const GenerateBigintColumn = (
-  options?: ColumnOptions,
-): PropertyDecorator => {
-  return applyDecorators(
-    Column({
-      ...options,
-      type: 'bigint',
-      transformer: {
-        to: (value: bigint): string =>
-          typeof value === 'bigint' ? value.toString() : value,
-        from: (value: string): bigint =>
-          typeof value === 'string' ? BigInt(value) : value,
-      },
-    }),
-  );
-};
 
 export class StockData {
   @PrimaryGeneratedColumn()
