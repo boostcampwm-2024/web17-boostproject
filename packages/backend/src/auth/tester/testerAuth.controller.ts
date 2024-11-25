@@ -1,5 +1,10 @@
 import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiOkResponse,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { TestAuthGuard } from '@/auth/tester/guard/tester.guard';
 
@@ -11,6 +16,16 @@ export class TesterAuthController {
   @ApiOperation({
     summary: '테스터 로그인 api',
     description: '테스터로 로그인합니다.',
+  })
+  @ApiQuery({
+    name: 'username',
+    required: true,
+    description: '테스터 아이디(값만 넣으면 됨)',
+  })
+  @ApiQuery({
+    name: 'password',
+    required: true,
+    description: '테스터 비밀번호(값만 넣으면 됨)',
   })
   @Get('/login')
   @UseGuards(TestAuthGuard)
