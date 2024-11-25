@@ -27,7 +27,6 @@ export class LiveData {
   }
 
   async subscribe(stockId: string) {
-    this.clientStock.add(stockId);
     if (this.isCloseTime(new Date(), this.startTime, this.endTime)) {
       const result = await this.openapiLiveData.connectLiveData(stockId);
       const stockLiveData = this.openapiLiveData.convertLiveData(result);
@@ -35,6 +34,7 @@ export class LiveData {
       this.openapiLiveData.saveLiveData(stockLiveData);
     } else {
       // TODO : 하나의 config만 사용중.
+      this.clientStock.add(stockId);
       const message = this.convertObjectToMessage(
         (await this.openApiToken.configs())[0],
         stockId,
@@ -45,13 +45,15 @@ export class LiveData {
   }
 
   async discribe(stockId: string) {
-    this.clientStock.delete(stockId);
-    const message = this.convertObjectToMessage(
-      (await this.openApiToken.configs())[0],
-      stockId,
-      '0',
-    );
-    this.webSocketClient.discribe(message);
+    if (this.clientStock.has(stockId)) {
+      this.clientStock.delete(stockId);
+      const message = this.convertObjectToMessage(
+        (await this.openApiToken.configs())[0],
+        stockId,
+        '0',
+      );
+      this.webSocketClient.discribe(message);
+    }
   }
 
   private initOpenCallback =
