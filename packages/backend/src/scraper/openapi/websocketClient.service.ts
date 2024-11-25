@@ -25,7 +25,6 @@ export class WebsocketClient {
   ) {
     if (process.env.NODE_ENV === 'production') {
       this.connect();
-      setTimeout(() => this.subscribe('000150'), 5000);
     }
   }
 
@@ -91,8 +90,9 @@ export class WebsocketClient {
           return;
         }
         this.logger.info(`Recived data : ${data}`);
+        this.logger.info(`Stock id : ${message[0]['STOCK_ID']}`);
         const liveData = this.openapiLiveData.convertLiveData(message);
-        this.openapiLiveData.saveLiveData(liveData);
+        await this.openapiLiveData.saveLiveData(liveData);
       } catch (error) {
         this.logger.warn(error);
       }

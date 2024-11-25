@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { OpenapiToken } from '../domain/openapiToken.entity';
 import { OpenapiDetailData } from './api/openapiDetailData.api';
 import { OpenapiLiveData } from './api/openapiLiveData.api';
 import { OpenapiMinuteData } from './api/openapiMinuteData.api';
