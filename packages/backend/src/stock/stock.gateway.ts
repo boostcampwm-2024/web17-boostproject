@@ -10,8 +10,6 @@ import { LiveData } from '@/scraper/openapi/liveData.service';
 
 @WebSocketGateway({
   namespace: '/api/stock/realtime',
-  cors: true,
-  transports: ['websocket'],
 })
 export class StockGateway {
   @WebSocketServer()

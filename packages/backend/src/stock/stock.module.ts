@@ -26,7 +26,6 @@ import { StockLiveDataSubscriber } from './stockLiveData.subscriber';
 import { OpenapiLiveData } from '@/scraper/openapi/api/openapiLiveData.api';
 import { OpenapiTokenApi } from '@/scraper/openapi/api/openapiToken.api';
 import { LiveData } from '@/scraper/openapi/liveData.service';
-import { OpenapiScraperModule } from '@/scraper/openapi/openapi-scraper.module';
 import { WebsocketClient } from '@/scraper/openapi/websocket/websocketClient.websocket';
 
 @Module({
@@ -41,7 +40,6 @@ import { WebsocketClient } from '@/scraper/openapi/websocket/websocketClient.web
       StockLiveData,
       StockDetail,
     ]),
-    OpenapiScraperModule,
   ],
   controllers: [StockController],
   providers: [

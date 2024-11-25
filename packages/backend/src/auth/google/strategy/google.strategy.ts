@@ -1,9 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy, VerifyCallback } from 'passport-google-oauth20';
 import { GoogleAuthService } from '@/auth/google/googleAuth.service';
 import { OauthType } from '@/user/domain/ouathType';
-import { Logger } from 'winston';
 
 export interface OauthUserInfo {
   type: OauthType;
@@ -15,7 +14,7 @@ export interface OauthUserInfo {
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy) {
-  constructor(private readonly googleAuthService: GoogleAuthService, @Inject('winston') private readonly logger: Logger) {
+  constructor(private readonly googleAuthService: GoogleAuthService) {
     super({
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
