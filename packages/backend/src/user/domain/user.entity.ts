@@ -20,7 +20,7 @@ export class User {
   @Column({ length: 50 })
   nickname: string;
 
-  @Column({ length: 10 })
+  @Column({ length: 10, default: '0001' })
   subName: string;
 
   @Column({ length: 50 })
