@@ -53,9 +53,7 @@ export class OpenapiTokenApi {
     );
 
     if (expired.length || !config.length) {
-      console.log('in if');
-      console.log(expired);
-      console.log(config);
+
       await this.initAuthenValue();
       const newTokens = await this.convertConfigToTokenEntity(this.config);
       this.savePropertyToDB(newTokens);
