@@ -1,14 +1,21 @@
-import { Inject } from '@nestjs/common';
+import { Global, Inject, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
+import { DataSource } from 'typeorm';
 import { Logger } from 'winston';
+import { OpenapiToken } from '../../domain/openapiToken.entity';
 import { openApiConfig } from '../config/openapi.config';
 import { OpenapiException } from '../util/openapiCustom.error';
 import { postOpenApi } from '../util/openapiUtil.api';
-import { logger } from '@/configs/logger.config';
 
-class OpenapiTokenApi {
+@Global()
+@Injectable()
+export class OpenapiTokenApi {
   private config: (typeof openApiConfig)[] = [];
-  constructor(@Inject('winston') private readonly logger: Logger) {
+  constructor(
+    @Inject('winston') private readonly logger: Logger,
+    private readonly datasource: DataSource,
+  ) {
+    if (process.env.NODE_ENV !== 'production') return;
     const accounts = openApiConfig.STOCK_ACCOUNT!.split(',');
     const api_keys = openApiConfig.STOCK_API_KEY!.split(',');
     const api_passwords = openApiConfig.STOCK_API_PASSWORD!.split(',');
@@ -27,12 +34,112 @@ class OpenapiTokenApi {
         STOCK_API_PASSWORD: api_passwords[i],
       });
     }
-    this.initAuthenValue();
+    this.init();
   }
 
   get configs() {
-    //TODO : 현재 구조에서 받아올 때마다 확인후 할당으로 변경
+    this.init();
     return this.config;
+  }
+
+  @Cron('30 0 * * 1-5')
+  async init() {
+    const tokens = await this.convertConfigToTokenEntity(this.config);
+    const config = await this.getPropertyFromDB(tokens);
+    const expired = config.filter(
+      (val) =>
+        this.isTokenExpired(val.api_token_expire) &&
+        this.isTokenExpired(val.websocket_key_expire),
+    );
+
+    if (expired.length || !config.length) {
+      console.log('in if');
+      console.log(expired);
+      console.log(config);
+      await this.initAuthenValue();
+      const newTokens = await this.convertConfigToTokenEntity(this.config);
+      this.savePropertyToDB(newTokens);
+    } else {
+      this.config = await this.convertTokenEntityToConfig(config);
+    }
+  }
+
+  private isTokenExpired(startDate?: Date) {
+    if (!startDate) return true;
+    const now = new Date();
+    //실제 만료 시간은 24시간이지만, 문제의 소지가 발생하는 것을 방지하기 위해 20시간으로 설정함.
+    const baseTimeToMilliSec = 20 * 60 * 60 * 1000;
+    const timeDiff = now.getTime() - startDate.getTime();
+
+    return timeDiff >= baseTimeToMilliSec;
+  }
+
+  private async convertTokenEntityToConfig(tokens: OpenapiToken[]) {
+    const result: (typeof openApiConfig)[] = [];
+    tokens.forEach((val) => {
+      const config: typeof openApiConfig = {
+        STOCK_ACCOUNT: val.account,
+        STOCK_API_KEY: val.api_key,
+        STOCK_API_PASSWORD: val.api_password,
+        STOCK_API_TOKEN: val.api_token,
+        STOCK_URL: val.api_url,
+        STOCK_WEBSOCKET_KEY: val.websocket_key,
+      };
+      result.push(config);
+    });
+    return result;
+  }
+
+  private async convertConfigToTokenEntity(config: (typeof openApiConfig)[]) {
+    const result: OpenapiToken[] = [];
+    config.forEach((val) => {
+      const token = new OpenapiToken();
+      if (
+        val.STOCK_URL &&
+        val.STOCK_ACCOUNT &&
+        val.STOCK_API_KEY &&
+        val.STOCK_API_PASSWORD
+      ) {
+        token.api_url = val.STOCK_URL;
+        token.account = val.STOCK_ACCOUNT;
+        token.api_key = val.STOCK_API_KEY;
+        token.api_password = val.STOCK_API_PASSWORD;
+      }
+      token.api_token = val.STOCK_API_TOKEN;
+      token.websocket_key = val.STOCK_WEBSOCKET_KEY;
+      token.api_token_expire = new Date();
+      token.websocket_key_expire = new Date();
+      result.push(token);
+    });
+    return result;
+  }
+
+  private async savePropertyToDB(tokens: OpenapiToken[]) {
+    tokens.forEach(async (val) => {
+      this.datasource.manager.save(OpenapiToken, val);
+    });
+  }
+
+  private async getPropertyFromDB(tokens: OpenapiToken[]) {
+    const result: OpenapiToken[] = [];
+    await Promise.all(
+      tokens.map(async (val) => {
+        const findByToken = await this.datasource.manager.findOne(
+          OpenapiToken,
+          {
+            where: {
+              account: val.account,
+              api_key: val.api_key,
+              api_password: val.api_password,
+            },
+          },
+        );
+        if (findByToken) {
+          result.push(findByToken);
+        }
+      }),
+    );
+    return result;
   }
 
   private async initAuthenValue() {
@@ -59,8 +166,7 @@ class OpenapiTokenApi {
     }
   }
 
-  @Cron('50 0 * * 1-5')
-  async initAccessToken() {
+  private async initAccessToken() {
     const updatedConfig = await Promise.all(
       this.config.map(async (val) => {
         val.STOCK_API_TOKEN = await this.getToken(val)!;
@@ -70,8 +176,7 @@ class OpenapiTokenApi {
     this.config = updatedConfig;
   }
 
-  @Cron('50 0 * * 1-5')
-  async initWebSocketKey() {
+  private async initWebSocketKey() {
     const updatedConfig = await Promise.all(
       this.config.map(async (val) => {
         val.STOCK_WEBSOCKET_KEY = await this.getWebSocketKey(val)!;
@@ -107,6 +212,3 @@ class OpenapiTokenApi {
     return tmp.approval_key as string;
   }
 }
-
-const openApiToken = new OpenapiTokenApi(logger);
-export { openApiToken };
