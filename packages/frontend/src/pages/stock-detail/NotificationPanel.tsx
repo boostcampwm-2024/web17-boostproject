@@ -20,7 +20,7 @@ export const NotificationPanel = ({ className }: NotificationPanelProps) => {
     >
       <h2 className="display-bold20 text-center font-bold">알림</h2>
       {!loginStatus || loginStatus.message === 'Not Authenticated' ? (
-        <p className="text-center">로그인 후 이용 가능합니다.</p>
+        <p className="text-center">로그인 후 이용 가능해요.</p>
       ) : goalPrice ? (
         <>
           <Alarm goalPrice={goalPrice} method={method} date={date} />
