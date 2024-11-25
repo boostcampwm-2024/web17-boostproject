@@ -1,6 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { Logger } from 'winston';
+import { openApiConfig } from '../config/openapi.config';
+import { isOpenapiLiveData } from '../type/openapiLiveData.type';
 import { TR_IDS } from '../type/openapiUtil.type';
 import { getOpenApi } from '../util/openapiUtil.api';
 import { OpenapiTokenApi } from './openapiToken.api';
@@ -42,6 +44,25 @@ export class OpenapiLiveData {
     }
   }
 
+  convertResponseToStockLiveData = (
+    data: OpenapiLiveData,
+    stockId: string,
+  ): StockLiveData | undefined => {
+    const stockLiveData = new StockLiveData();
+    if (isOpenapiLiveData(data)) {
+      stockLiveData.stock = { id: stockId } as Stock;
+      stockLiveData.currentPrice = parseFloat(data.stck_prpr);
+      stockLiveData.changeRate = parseFloat(data.prdy_ctrt);
+      stockLiveData.volume = parseInt(data.acml_vol);
+      stockLiveData.high = parseFloat(data.stck_hgpr);
+      stockLiveData.low = parseFloat(data.stck_lwpr);
+      stockLiveData.open = parseFloat(data.stck_oprc);
+      stockLiveData.updatedAt = new Date();
+
+      return stockLiveData;
+    }
+  };
+
   convertLiveData(messages: Record<string, string>[]): StockLiveData[] {
     const stockData: StockLiveData[] = [];
     messages.map((message) => {
@@ -53,22 +74,22 @@ export class OpenapiLiveData {
       stockLiveData.high = parseFloat(message.STCK_HGPR);
       stockLiveData.low = parseFloat(message.STCK_LWPR);
       stockLiveData.open = parseFloat(message.STCK_OPRC);
-      stockLiveData.previousClose = parseFloat(message.WGHN_AVRG_STCK_PRC);
       stockLiveData.updatedAt = new Date();
+
       stockData.push(stockLiveData);
     });
     return stockData;
   }
 
-  async connectLiveData(stockId: string) {
+  async connectLiveData(stockId: string, config: typeof openApiConfig) {
     const query = this.makeLiveDataQuery(stockId);
 
     try {
       const result = await getOpenApi(
         this.url,
-        (await this.config.configs())[0],
+        config,
         query,
-        TR_IDS.ITEM_CHART_PRICE,
+        TR_IDS.LIVE_DATA,
       );
       return result;
     } catch (error) {

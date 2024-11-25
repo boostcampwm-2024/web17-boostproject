@@ -24,14 +24,29 @@ export class LiveData {
     @Inject('winston') private readonly logger: Logger,
   ) {
     this.connect();
+    this.subscribe('000020');
+  }
+
+  private async openapiSubscribe(stockId: string) {
+    const config = (await this.openApiToken.configs())[0];
+    const result = await this.openapiLiveData.connectLiveData(stockId, config);
+    this.logger.info(JSON.stringify(result));
+    try {
+      const stockLiveData = this.openapiLiveData.convertResponseToStockLiveData(
+        result.output,
+        stockId,
+      );
+      if (stockLiveData) {
+        this.openapiLiveData.saveLiveData([stockLiveData]);
+      }
+    } catch (error) {
+      this.logger.warn(`Subscribe error in open api : ${error}`);
+    }
   }
 
   async subscribe(stockId: string) {
     if (this.isCloseTime(new Date(), this.startTime, this.endTime)) {
-      const result = await this.openapiLiveData.connectLiveData(stockId);
-      const stockLiveData = this.openapiLiveData.convertLiveData(result);
-      this.logger.info('in open api');
-      this.openapiLiveData.saveLiveData(stockLiveData);
+      await this.openapiSubscribe(stockId);
     } else {
       // TODO : 하나의 config만 사용중.
       this.clientStock.add(stockId);
@@ -110,7 +125,7 @@ export class LiveData {
     const startMinutes = start.getHours() * 60 + start.getMinutes();
     const endMinutes = end.getHours() * 60 + end.getMinutes();
 
-    return dateMinutes >= startMinutes && dateMinutes <= endMinutes;
+    return dateMinutes <= startMinutes || dateMinutes >= endMinutes;
   }
 
   @Cron('0 2 * * 1-5')
