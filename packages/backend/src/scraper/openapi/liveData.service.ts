@@ -14,8 +14,6 @@ type TR_IDS = '0' | '1';
 // TODO : 비즈니스 로직을 분리해야함.
 @Injectable()
 export class LiveData {
-  private readonly url =
-    process.env.WS_URL ?? 'ws://ops.koreainvestment.com:21000';
   private readonly clientStock: Set<string> = new Set();
   private readonly reconnectInterval = 60 * 1000 * 1000;
 
@@ -27,6 +25,7 @@ export class LiveData {
   ) {
     this.connect();
     this.subscribe('000150');
+    setTimeout(() => this.discribe('000150'), 15000);
   }
 
   async subscribe(stockId: string) {

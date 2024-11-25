@@ -6,7 +6,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { WebsocketClient } from '@/scraper/openapi/websocket/websocketClient.websocket';
+import { LiveData } from '@/scraper/openapi/liveData.service';
 
 @WebSocketGateway({
   namespace: '/api/stock/realtime',
@@ -17,7 +17,7 @@ export class StockGateway {
   @WebSocketServer()
   server: Server;
 
-  constructor(private readonly websocketClient: WebsocketClient) {}
+  constructor(private readonly liveData: LiveData) {}
 
   @SubscribeMessage('connectStock')
   async handleConnectStock(
@@ -27,7 +27,7 @@ export class StockGateway {
     client.join(stockId);
 
     if ((await this.server.in(stockId).fetchSockets()).length === 0) {
-      this.websocketClient.subscribe(stockId);
+      this.liveData.subscribe(stockId);
     }
     client.emit('connectionSuccess', {
       message: `Successfully connected to stock room: ${stockId}`,
