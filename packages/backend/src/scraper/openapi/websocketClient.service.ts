@@ -2,9 +2,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Logger } from 'winston';
-import { WebSocket } from 'ws';
+import { RawData, WebSocket } from 'ws';
 import { OpenapiLiveData } from './api/openapiLiveData.api';
-import { openApiToken } from './api/openapiToken.api';
+import { OpenapiTokenApi } from './api/openapiToken.api';
 import { openApiConfig } from './config/openapi.config';
 import { parseMessage } from './parse/openapi.parser';
 
@@ -20,10 +20,12 @@ export class WebsocketClient {
 
   constructor(
     @Inject('winston') private readonly logger: Logger,
+    private readonly openApiToken: OpenapiTokenApi,
     private readonly openapiLiveData: OpenapiLiveData,
   ) {
     if (process.env.NODE_ENV === 'production') {
       this.connect();
+      setTimeout(() => this.subscribe('000150'), 5000);
     }
   }
 
@@ -32,7 +34,7 @@ export class WebsocketClient {
     this.clientStock.add(stockId);
     // TODO : 하나의 config만 사용중.
     const message = this.convertObjectToMessage(
-      openApiToken.configs[0],
+      this.openApiToken.configs[0],
       stockId,
       '1',
     );
@@ -42,7 +44,7 @@ export class WebsocketClient {
   discribe(stockId: string) {
     this.clientStock.delete(stockId);
     const message = this.convertObjectToMessage(
-      openApiToken.configs[0],
+      this.openApiToken.configs[0],
       stockId,
       '0',
     );
@@ -67,7 +69,7 @@ export class WebsocketClient {
       this.logger.info('WebSocket connection established');
       for (const stockId of this.clientStock.keys()) {
         const message = this.convertObjectToMessage(
-          openApiToken.configs[0],
+          this.openApiToken.configs[0],
           stockId,
           '1',
         );
@@ -77,16 +79,14 @@ export class WebsocketClient {
   }
 
   private initMessage() {
-    this.client.on('message', async (data) => {
+    this.client.on('message', async (data: RawData) => {
       try {
-        const message = this.parseMessage(data.toString());
+        console.log(data);
+        const message = this.parseMessage(data);
         if (message.header) {
           if (message.header.tr_id === 'PINGPONG') {
-            this.logger.info(`Received PING: ${JSON.stringify(data)}`);
-            this.client.pong({
-              tr_id: 'PINGPONG',
-              datetime: new Date().toISOString(),
-            });
+            this.logger.info(`Received PING: ${data}`);
+            this.client.pong(data);
           }
           return;
         }
@@ -99,9 +99,11 @@ export class WebsocketClient {
     });
   }
 
-  private parseMessage(data: string) {
-    if (typeof data === 'object') {
+  private parseMessage(data: RawData) {
+    if (typeof data === 'object' && !(data instanceof Buffer)) {
       return data;
+    } else if (typeof data === 'object') {
+      return parseMessage(data.toString());
     } else {
       return parseMessage(data as string);
     }
