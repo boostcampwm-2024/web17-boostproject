@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+//TODO :  9시 ~ 3시 반까지는 openapi에서 가져오고, 아니면 websocket으로 가져오기
+
 import { Inject, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Logger } from 'winston';
@@ -7,85 +8,70 @@ import { OpenapiLiveData } from './api/openapiLiveData.api';
 import { OpenapiTokenApi } from './api/openapiToken.api';
 import { openApiConfig } from './config/openapi.config';
 import { parseMessage } from './parse/openapi.parser';
+import { WebsocketClient } from './websocket/websocketClient.websocket';
 
 type TR_IDS = '0' | '1';
-
+// TODO : 비즈니스 로직을 분리해야함.
 @Injectable()
-export class WebsocketClient {
-  private client: WebSocket;
-  private readonly reconnectInterval = 60000;
+export class LiveData {
   private readonly url =
     process.env.WS_URL ?? 'ws://ops.koreainvestment.com:21000';
   private readonly clientStock: Set<string> = new Set();
+  private readonly reconnectInterval = 60 * 1000 * 1000;
 
   constructor(
-    @Inject('winston') private readonly logger: Logger,
     private readonly openApiToken: OpenapiTokenApi,
+    private readonly webSocketClient: WebsocketClient,
     private readonly openapiLiveData: OpenapiLiveData,
+    @Inject('winston') private readonly logger: Logger,
   ) {
-    if (process.env.NODE_ENV === 'production') {
-      this.connect();
-    }
+    this.connect();
+    this.subscribe('000150');
   }
 
-  // TODO : subscribe 구조로 리팩토링
-  subscribe(stockId: string) {
+  async subscribe(stockId: string) {
     this.clientStock.add(stockId);
     // TODO : 하나의 config만 사용중.
     const message = this.convertObjectToMessage(
-      this.openApiToken.configs[0],
+      (await this.openApiToken.configs())[0],
       stockId,
       '1',
     );
-    this.sendMessage(message);
+    this.webSocketClient.subscribe(message);
   }
 
-  discribe(stockId: string) {
+  async discribe(stockId: string) {
     this.clientStock.delete(stockId);
     const message = this.convertObjectToMessage(
-      this.openApiToken.configs[0],
+      (await this.openApiToken.configs())[0],
       stockId,
       '0',
     );
-    this.sendMessage(message);
+    this.webSocketClient.discribe(message);
   }
 
-  private initDisconnect() {
-    this.client.on('close', () => {
-      this.logger.warn(
-        `WebSocket connection closed. Reconnecting in ${this.reconnectInterval / 60 / 1000} minute...`,
-      );
-    });
-
-    this.client.on('error', (error: any) => {
-      this.logger.error(`WebSocket error: ${error.message}`);
-      setTimeout(() => this.connect(), this.reconnectInterval);
-    });
-  }
-
-  private initOpen() {
-    this.client.on('open', () => {
+  private initOpenCallback =
+    (sendMessage: (message: string) => void) => async () => {
       this.logger.info('WebSocket connection established');
       for (const stockId of this.clientStock.keys()) {
         const message = this.convertObjectToMessage(
-          this.openApiToken.configs[0],
+          (await this.openApiToken.configs())[0],
           stockId,
           '1',
         );
-        this.sendMessage(message);
+        sendMessage(message);
       }
-    });
-  }
+    };
 
-  private initMessage() {
-    this.client.on('message', async (data: RawData) => {
+  private initMessageCallback =
+    (client: WebSocket) => async (data: RawData) => {
       try {
         console.log(data);
         const message = this.parseMessage(data);
         if (message.header) {
           if (message.header.tr_id === 'PINGPONG') {
             this.logger.info(`Received PING: ${data}`);
-            this.client.pong(data);
+            client.pong(data);
           }
           return;
         }
@@ -96,25 +82,31 @@ export class WebsocketClient {
       } catch (error) {
         this.logger.warn(error);
       }
-    });
-  }
+    };
 
-  private parseMessage(data: RawData) {
-    if (typeof data === 'object' && !(data instanceof Buffer)) {
-      return data;
-    } else if (typeof data === 'object') {
-      return parseMessage(data.toString());
+  private initCloseCallback = () => {
+    this.logger.warn(
+      `WebSocket connection closed. Reconnecting in ${this.reconnectInterval / 60 / 1000} minute...`,
+    );
+  };
+
+  private initErrorCallback = (error: unknown) => {
+    if (error instanceof Error) {
+      this.logger.error(`WebSocket error: ${error.message}`);
     } else {
-      return parseMessage(data as string);
+      this.logger.error('WebSocket error: callback function');
     }
-  }
+    setTimeout(() => this.connect(), this.reconnectInterval);
+  };
 
   @Cron('0 2 * * 1-5')
   connect() {
-    this.client = new WebSocket(this.url);
-    this.initOpen();
-    this.initMessage();
-    this.initDisconnect();
+    this.webSocketClient.connect(
+      this.initOpenCallback,
+      this.initMessageCallback,
+      this.initCloseCallback,
+      this.initErrorCallback,
+    );
   }
 
   private convertObjectToMessage(
@@ -122,6 +114,7 @@ export class WebsocketClient {
     stockId: string,
     tr_type: TR_IDS,
   ): string {
+    this.logger.info(JSON.stringify(config));
     const message = {
       header: {
         approval_key: config.STOCK_WEBSOCKET_KEY!,
@@ -139,12 +132,13 @@ export class WebsocketClient {
     return JSON.stringify(message);
   }
 
-  private sendMessage(message: string) {
-    if (this.client.readyState === WebSocket.OPEN) {
-      this.client.send(message);
-      this.logger.info(`Sent message: ${message}`);
+  private parseMessage(data: RawData) {
+    if (typeof data === 'object' && !(data instanceof Buffer)) {
+      return data;
+    } else if (typeof data === 'object') {
+      return parseMessage(data.toString());
     } else {
-      this.logger.warn('WebSocket is not open. Message not sent.');
+      return parseMessage(data as string);
     }
   }
 }

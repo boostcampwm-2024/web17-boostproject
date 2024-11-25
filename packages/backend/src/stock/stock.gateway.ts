@@ -6,7 +6,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { WebsocketClient } from '@/scraper/openapi/websocketClient.service';
+import { WebsocketClient } from '@/scraper/openapi/websocket/websocketClient.websocket';
 
 @WebSocketGateway({
   namespace: '/api/stock/realtime',

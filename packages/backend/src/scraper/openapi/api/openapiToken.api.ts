@@ -15,7 +15,6 @@ export class OpenapiTokenApi {
     @Inject('winston') private readonly logger: Logger,
     private readonly datasource: DataSource,
   ) {
-    if (process.env.NODE_ENV !== 'production') return;
     const accounts = openApiConfig.STOCK_ACCOUNT!.split(',');
     const api_keys = openApiConfig.STOCK_API_KEY!.split(',');
     const api_passwords = openApiConfig.STOCK_API_PASSWORD!.split(',');
@@ -37,8 +36,8 @@ export class OpenapiTokenApi {
     this.init();
   }
 
-  get configs() {
-    this.init();
+  async configs() {
+    await this.init();
     return this.config;
   }
 
