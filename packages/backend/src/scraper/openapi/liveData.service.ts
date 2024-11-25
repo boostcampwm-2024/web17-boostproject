@@ -11,12 +11,14 @@ import { parseMessage } from './parse/openapi.parser';
 import { WebsocketClient } from './websocket/websocketClient.websocket';
 
 type TR_IDS = '0' | '1';
-// TODO : 비즈니스 로직을 분리해야함.
+
 @Injectable()
 export class LiveData {
   private readonly clientStock: Set<string> = new Set();
   private readonly reconnectInterval = 60 * 1000 * 1000;
 
+  private readonly startTime: Date = new Date(2024, 0, 1, 9, 0, 0, 0);
+  private readonly endTime: Date = new Date(2024, 0, 1, 15, 30, 0, 0);
   constructor(
     private readonly openApiToken: OpenapiTokenApi,
     private readonly webSocketClient: WebsocketClient,
@@ -29,14 +31,21 @@ export class LiveData {
   }
 
   async subscribe(stockId: string) {
-    this.clientStock.add(stockId);
-    // TODO : 하나의 config만 사용중.
-    const message = this.convertObjectToMessage(
-      (await this.openApiToken.configs())[0],
-      stockId,
-      '1',
-    );
-    this.webSocketClient.subscribe(message);
+    if (this.isCloseTime(new Date(), this.startTime, this.endTime)) {
+      const result = await this.openapiLiveData.connectLiveData(stockId);
+      const stockLiveData = this.openapiLiveData.convertLiveData(result);
+      this.logger.info('in open api');
+      this.openapiLiveData.saveLiveData(stockLiveData);
+    } else {
+      this.clientStock.add(stockId);
+      // TODO : 하나의 config만 사용중.
+      const message = this.convertObjectToMessage(
+        (await this.openApiToken.configs())[0],
+        stockId,
+        '1',
+      );
+      this.webSocketClient.subscribe(message);
+    }
   }
 
   async discribe(stockId: string) {
@@ -98,9 +107,17 @@ export class LiveData {
     setTimeout(() => this.connect(), this.reconnectInterval);
   };
 
+  private isCloseTime(date: Date, start: Date, end: Date): boolean {
+    const dateMinutes = date.getHours() * 60 + date.getMinutes();
+    const startMinutes = start.getHours() * 60 + start.getMinutes();
+    const endMinutes = end.getHours() * 60 + end.getMinutes();
+
+    return dateMinutes >= startMinutes && dateMinutes <= endMinutes;
+  }
+
   @Cron('0 2 * * 1-5')
   connect() {
-    this.webSocketClient.connect(
+    this.webSocketClient.connectPacade(
       this.initOpenCallback,
       this.initMessageCallback,
       this.initCloseCallback,

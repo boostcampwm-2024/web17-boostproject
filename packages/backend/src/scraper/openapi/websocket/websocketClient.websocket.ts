@@ -37,7 +37,7 @@ export class WebsocketClient {
     this.client.on('message', fn);
   }
 
-  connect(
+  connectPacade(
     initOpenCallback: (fn: (message: string) => void) => () => void,
     initMessageCallback: (client: WebSocket) => (data: RawData) => void,
     initCloseCallback: () => void,
