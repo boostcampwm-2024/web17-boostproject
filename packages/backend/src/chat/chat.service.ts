@@ -102,27 +102,41 @@ export class ChatService {
     userId?: number,
     order: Order = ORDER.LATEST,
   ) {
-    const queryBuilder = this.dataSource.createQueryBuilder(Chat, 'chat');
     const { stockId, latestChatId, pageSize } = chatScrollQuery;
     const size = pageSize ? pageSize : DEFAULT_PAGE_SIZE;
-
-    queryBuilder
-      .leftJoinAndSelect('chat.likes', 'like', 'like.user_id = :userId', {
-        userId,
-      })
-      .leftJoinAndSelect('chat.user', 'user')
-      .where('chat.stock_id = :stockId', { stockId })
-      .take(size + 1);
-
+    const queryBuilder = await this.buildInitialChatScrollQuery(
+      stockId,
+      size,
+      userId,
+    );
     if (order === ORDER.LIKE) {
       return this.buildLikeCountQuery(queryBuilder, latestChatId);
     }
-    queryBuilder.orderBy('chat.id', 'DESC');
-    if (latestChatId) {
-      queryBuilder.andWhere('chat.id < :latestChatId', { latestChatId });
-    }
+    return this.buildLatestChatIdQuery(queryBuilder, latestChatId);
+  }
 
-    return queryBuilder;
+  private async buildInitialChatScrollQuery(
+    stockId: string,
+    size: number,
+    userId?: number,
+  ) {
+    console.log('stockId', stockId);
+    return this.dataSource
+      .createQueryBuilder(Chat, 'chat')
+      .leftJoinAndSelect('chat.likes', 'like', 'like.user_id = :userId', {
+        userId,
+      })
+      .leftJoinAndSelect(
+        'chat.mentions',
+        'mention',
+        'mention.user_id = :userId',
+        {
+          userId,
+        },
+      )
+      .leftJoinAndSelect('chat.user', 'user')
+      .where('chat.stock_id = :stockId', { stockId })
+      .take(size + 1);
   }
 
   private async buildLikeCountQuery(
@@ -147,6 +161,17 @@ export class ChatService {
           },
         );
       }
+    }
+    return queryBuilder;
+  }
+
+  private async buildLatestChatIdQuery(
+    queryBuilder: SelectQueryBuilder<Chat>,
+    latestChatId?: number,
+  ) {
+    queryBuilder.orderBy('chat.id', 'DESC');
+    if (latestChatId) {
+      queryBuilder.andWhere('chat.id < :latestChatId', { latestChatId });
     }
     return queryBuilder;
   }
