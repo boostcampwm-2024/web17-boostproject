@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { z } from 'zod';
 import { instance } from '../config';
 import { formatZodError } from './formatZodError';
@@ -5,22 +6,22 @@ import { formatZodError } from './formatZodError';
 interface GetParams {
   schema: z.ZodType;
   url: string;
+  payload?: Record<string, any>;
 }
 
-export const get = async <T>({ schema, url }: GetParams): Promise<T | null> => {
-  try {
-    const { data } = await instance.get(url);
-    const result = schema.safeParse(data);
+export const get = async <T>({
+  schema,
+  url,
+  payload,
+}: GetParams): Promise<T> => {
+  const { data } = await instance.get(url, {
+    params: payload,
+  });
+  const result = schema.safeParse(data);
 
-    if (!result.success) {
-      throw new Error(formatZodError(result.error));
-    }
-
-    return data;
-  } catch (error) {
-    if (process.env.NODE_ENV === 'development') {
-      console.error('API error:', error);
-    }
-    return null;
+  if (!result.success) {
+    throw new Error(formatZodError(result.error));
   }
+
+  return data;
 };
