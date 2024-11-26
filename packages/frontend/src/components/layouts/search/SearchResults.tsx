@@ -36,6 +36,7 @@ export const SearchResults = ({
           <Link
             to={`/stocks/${stock.id}`}
             key={stock.id}
+            reloadDocument
             className="text-dark-gray hover:text-orange leading-7 hover:underline"
           >
             {stock.name}
