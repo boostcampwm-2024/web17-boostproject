@@ -3,10 +3,11 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { DataSource, EntityManager } from 'typeorm';
+import { DataSource, EntityManager, Like } from 'typeorm';
 import { OauthType } from './domain/ouathType';
 import { User } from './domain/user.entity';
 import { status, subject } from '@/user/constants/randomNickname';
+import { UserSearchResult } from '@/user/dto/User.response';
 
 type RegisterRequest = Required<
   Pick<User, 'email' | 'nickname' | 'type' | 'oauthId'>
@@ -28,6 +29,14 @@ export class UserService {
         subName,
       });
     });
+  }
+
+  async searchUserByNicknameAndSubName(nickname: string, subName: string) {
+    const users = await this.dataSource.manager.find(User, {
+      where: { nickname: Like(`%${nickname}%`), subName },
+      take: 10,
+    });
+    return new UserSearchResult(users);
   }
 
   async createSubName(nickname: string) {
