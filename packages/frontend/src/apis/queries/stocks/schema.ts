@@ -50,3 +50,14 @@ export const StockTimeSeriesResponseSchema = z.object({
 export type StockTimeSeriesResponse = z.infer<
   typeof StockTimeSeriesResponseSchema
 >;
+
+export const SearchResultSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+});
+
+export const SearchResultsResponseSchema = z.object({
+  searchResults: z.array(SearchResultSchema),
+});
+
+export type SearchResultsResponse = z.infer<typeof SearchResultsResponseSchema>;
