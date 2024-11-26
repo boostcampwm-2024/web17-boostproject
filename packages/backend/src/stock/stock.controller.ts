@@ -177,6 +177,40 @@ export class StockController {
     return await this.stockService.searchStock(request.name);
   }
 
+  @Get('topViews')
+  @ApiGetStocks('조회수 기반 주식 리스트 조회 API')
+  async getTopStocksByViews(@LimitQuery(5) limit: number) {
+    return await this.stockService.getTopStocksByViews(limit);
+  }
+
+  @Get('topGainers')
+  @ApiGetStocks('가격 상승률 기반 주식 리스트 조회 API')
+  async getTopStocksByGainers(@LimitQuery(20) limit: number) {
+    return await this.stockService.getTopStocksByGainers(limit);
+  }
+
+  @Get('topLosers')
+  @ApiGetStocks('가격 하락률 기반 주식 리스트 조회 API')
+  async getTopStocksByLosers(@LimitQuery(20) limit: number) {
+    return await this.stockService.getTopStocksByLosers(limit);
+  }
+
+  @ApiOperation({
+    summary: '주식 상세 정보 조회 API',
+    description: '시가 총액, EPS, PER, 52주 최고가, 52주 최저가를 조회합니다',
+  })
+  @ApiOkResponse({
+    description: '주식 상세 정보 조회 성공',
+    type: StockDetailResponse,
+  })
+  @ApiParam({ name: 'stockId', required: true, description: '주식 ID' })
+  @Get(':stockId/detail')
+  async getStockDetail(
+    @Param('stockId') stockId: string,
+  ): Promise<StockDetailResponse> {
+    return await this.stockDetailService.getStockDetailByStockId(stockId);
+  }
+
   @Get('/:stockId')
   @ApiGetStockData('주식 시간 단위 데이터 조회 API', '일')
   async getStockDataDaily(
@@ -196,40 +230,6 @@ export class StockController {
       default:
         return this.getStockDataYearly(stockId, lastStartTime);
     }
-  }
-
-  @ApiOperation({
-    summary: '주식 상세 정보 조회 API',
-    description: '시가 총액, EPS, PER, 52주 최고가, 52주 최저가를 조회합니다',
-  })
-  @ApiOkResponse({
-    description: '주식 상세 정보 조회 성공',
-    type: StockDetailResponse,
-  })
-  @ApiParam({ name: 'stockId', required: true, description: '주식 ID' })
-  @Get(':stockId/detail')
-  async getStockDetail(
-    @Param('stockId') stockId: string,
-  ): Promise<StockDetailResponse> {
-    return await this.stockDetailService.getStockDetailByStockId(stockId);
-  }
-
-  @Get('topViews')
-  @ApiGetStocks('조회수 기반 주식 리스트 조회 API')
-  async getTopStocksByViews(@LimitQuery(5) limit: number) {
-    return await this.stockService.getTopStocksByViews(limit);
-  }
-
-  @Get('topGainers')
-  @ApiGetStocks('가격 상승률 기반 주식 리스트 조회 API')
-  async getTopStocksByGainers(@LimitQuery(20) limit: number) {
-    return await this.stockService.getTopStocksByGainers(limit);
-  }
-
-  @Get('topLosers')
-  @ApiGetStocks('가격 하락률 기반 주식 리스트 조회 API')
-  async getTopStocksByLosers(@LimitQuery(20) limit: number) {
-    return await this.stockService.getTopStocksByLosers(limit);
   }
 
   private getStockDataYearly(
