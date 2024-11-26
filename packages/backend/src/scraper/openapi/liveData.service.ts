@@ -30,7 +30,6 @@ export class LiveData {
   private async openapiSubscribe(stockId: string) {
     const config = (await this.openApiToken.configs())[0];
     const result = await this.openapiLiveData.connectLiveData(stockId, config);
-    this.logger.info(JSON.stringify(result));
     try {
       const stockLiveData = this.openapiLiveData.convertResponseToStockLiveData(
         result.output,
@@ -90,13 +89,10 @@ export class LiveData {
         const message = this.parseMessage(data);
         if (message.header) {
           if (message.header.tr_id === 'PINGPONG') {
-            this.logger.info(`Received PING: ${data}`);
             client.pong(data);
           }
           return;
         }
-        this.logger.info(`Recived data : ${data}`);
-        this.logger.info(`Stock id : ${message[0]['STOCK_ID']}`);
         const liveData = this.openapiLiveData.convertLiveData(message);
         await this.openapiLiveData.saveLiveData(liveData);
       } catch (error) {
@@ -142,7 +138,6 @@ export class LiveData {
     stockId: string,
     tr_type: TR_IDS,
   ): string {
-    this.logger.info(JSON.stringify(config));
     const message = {
       header: {
         approval_key: config.STOCK_WEBSOCKET_KEY!,

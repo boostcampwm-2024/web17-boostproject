@@ -30,9 +30,7 @@ export class OpenapiDetailData {
     private readonly openApiToken: OpenapiTokenApi,
     private readonly datasource: DataSource,
     @Inject('winston') private readonly logger: Logger,
-  ) {
-    //setTimeout(() => this.getDetailData(), 5000);
-  }
+  ) {}
 
   @Cron('0 8 * * 1-5')
   async getDetailData() {
@@ -224,8 +222,8 @@ export class OpenapiDetailData {
     const output1 = await this.getFinancialRatio(stock, conf);
     const output2 = await this.getProductData(stock, conf);
 
-    this.logger.info(JSON.stringify(output1));
-    this.logger.info(JSON.stringify(output2));
+    console.log(output1);
+    console.log(output2);
     if (isFinancialRatioData(output1) && isProductDetail(output2)) {
       const stockDetail = await this.makeStockDetailObject(
         output1,
@@ -236,7 +234,7 @@ export class OpenapiDetailData {
       const kospiStock = await this.makeKospiStockObject(output2, stock.id!);
       this.saveKospiData(kospiStock);
 
-      this.logger.info(`${stock.id!} is saved`);
+      this.logger.info(`${stock.id!} detail data is saved`);
     }
   }
 

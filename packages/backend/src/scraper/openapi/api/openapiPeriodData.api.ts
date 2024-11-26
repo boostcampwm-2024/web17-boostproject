@@ -157,7 +157,7 @@ export class OpenapiPeriodData {
     return await manager.findOne(entity, {
       where: {
         stock: { id: stock.stock.id },
-        createdAt: stock.startTime,
+        startTime: stock.startTime,
       },
     });
   }

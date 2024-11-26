@@ -12,12 +12,10 @@ export class WebsocketClient {
   constructor(@Inject('winston') private readonly logger: Logger) {}
 
   subscribe(message: string) {
-    this.logger.info(`Subscribe : ${message}`);
     this.sendMessage(message);
   }
 
   discribe(message: string) {
-    this.logger.info(`Discribe : ${message}`);
     this.sendMessage(message);
   }
 
