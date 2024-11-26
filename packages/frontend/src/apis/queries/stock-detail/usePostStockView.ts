@@ -6,7 +6,7 @@ import {
 } from './schema';
 import { post } from '@/apis/utils/post';
 
-const postStockView = async ({ stockId }: PostStockViewRequest) =>
+const postStockView = ({ stockId }: PostStockViewRequest) =>
   post<PostViewResponse>({
     params: stockId,
     schema: PostViewResponseSchema,
