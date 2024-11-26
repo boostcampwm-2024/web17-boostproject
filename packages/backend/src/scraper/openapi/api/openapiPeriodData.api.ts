@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { DataSource, EntityManager } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { Logger } from 'winston';
 import {
   ChartData,
@@ -32,13 +32,13 @@ const DATE_TO_ENTITY = {
 };
 
 const DATE_TO_MONTH = {
-  D: 3,
+  D: 1,
   W: 6,
-  M: 12,
-  Y: 24,
+  M: 24,
+  Y: 120,
 };
 
-const INTERVALS = 4000;
+const INTERVALS = 10000;
 
 @Injectable()
 export class OpenapiPeriodData {
@@ -48,9 +48,7 @@ export class OpenapiPeriodData {
     private readonly datasource: DataSource,
     private readonly openApiToken: OpenapiTokenApi,
     @Inject('winston') private readonly logger: Logger,
-  ) {
-    //this.getItemChartPriceCheck();
-  }
+  ) {}
 
   @Cron('0 1 * * 1-5')
   async getItemChartPriceCheck() {
@@ -60,20 +58,15 @@ export class OpenapiPeriodData {
         isTrading: true,
       },
     });
-    const configCount = this.openApiToken.configs.length;
-    const chunkSize = Math.ceil(stocks.length / configCount);
 
-    for (let i = 0; i < configCount; i++) {
-      const chunk = stocks.slice(i * chunkSize, (i + 1) * chunkSize);
-      this.getChartData(chunk, 'D');
-      setTimeout(() => this.getChartData(chunk, 'W'), INTERVALS);
-      setTimeout(() => this.getChartData(chunk, 'M'), INTERVALS * 2);
-      setTimeout(() => this.getChartData(chunk, 'Y'), INTERVALS * 3);
-    }
+    await this.getChartData(stocks, 'Y');
+    await this.getChartData(stocks, 'M');
+    await this.getChartData(stocks, 'W');
+    await this.getChartData(stocks, 'D');
   }
 
   private async getChartData(chunk: Stock[], period: Period) {
-    const baseTime = INTERVALS * 4;
+    const baseTime = INTERVALS;
     const entity = DATE_TO_ENTITY[period];
 
     let time = 0;
@@ -89,18 +82,15 @@ export class OpenapiPeriodData {
     entity: typeof StockData,
   ) {
     const stockPeriod = new StockData();
-    const manager = this.datasource.manager;
     let configIdx = 0;
     let end = getTodayDate();
-    let start = getPreviousDate(end, 3);
+    let start = getPreviousDate(end, DATE_TO_MONTH[period]);
     let isFail = false;
 
     while (!isFail) {
-      configIdx = (configIdx + 1) % this.openApiToken.configs.length;
+      await new Promise((resolve) => setTimeout(resolve, INTERVALS / 10));
+      configIdx = (configIdx + 1) % (await this.openApiToken.configs()).length;
       this.setStockPeriod(stockPeriod, stock.id!, end);
-
-      // chart 데이터가 있는 지 확인 -> 리턴
-      if (await this.existsChartData(stockPeriod, manager, entity)) return;
 
       const query = this.getItemChartPriceQuery(stock.id!, start, end, period);
 
@@ -108,7 +98,7 @@ export class OpenapiPeriodData {
 
       if (output) {
         await this.saveChartData(entity, stock.id!, output);
-        ({ endDate: end, startDate: start } = this.updateDates(start, period));
+        ({ endDate: end, startDate: start } = this.updateDates(end, period));
       } else isFail = true;
     }
   }
@@ -130,41 +120,39 @@ export class OpenapiPeriodData {
     try {
       const response = await getOpenApi(
         this.url,
-        this.openApiToken.configs[configIdx],
+        (await this.openApiToken.configs())[configIdx],
         query,
         TR_IDS.ITEM_CHART_PRICE,
       );
       return response.output2 as ChartData[];
     } catch (error) {
       this.logger.warn(error);
+      setTimeout(() => this.fetchChartData(query, configIdx), INTERVALS / 10);
     }
   }
 
   private updateDates(
-    startDate: string,
+    endDate: string,
     period: Period,
   ): { endDate: string; startDate: string } {
-    const endDate = getPreviousDate(startDate, DATE_TO_MONTH[period]);
-    startDate = getPreviousDate(endDate, DATE_TO_MONTH[period]);
+    endDate = getPreviousDate(endDate, DATE_TO_MONTH[period]);
+    const startDate = getPreviousDate(endDate, DATE_TO_MONTH[period]);
     return { endDate, startDate };
   }
 
-  private async existsChartData(
-    stock: StockData,
-    manager: EntityManager,
-    entity: typeof StockData,
-  ) {
+  private async existsChartData(stock: StockData, entity: typeof StockData) {
+    const manager = this.datasource.manager;
     return await manager.findOne(entity, {
       where: {
         stock: { id: stock.stock.id },
-        createdAt: stock.startTime,
+        startTime: stock.startTime,
       },
     });
   }
 
   private async insertChartData(stock: StockData, entity: typeof StockData) {
     const manager = this.datasource.manager;
-    if (!(await this.existsChartData(stock, manager, entity))) {
+    if (!(await this.existsChartData(stock, entity))) {
       await manager.save(entity, stock);
     }
   }

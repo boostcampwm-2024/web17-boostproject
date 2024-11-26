@@ -15,7 +15,6 @@ export class OpenapiTokenApi {
     @Inject('winston') private readonly logger: Logger,
     private readonly datasource: DataSource,
   ) {
-    if (process.env.NODE_ENV !== 'production') return;
     const accounts = openApiConfig.STOCK_ACCOUNT!.split(',');
     const api_keys = openApiConfig.STOCK_API_KEY!.split(',');
     const api_passwords = openApiConfig.STOCK_API_PASSWORD!.split(',');
@@ -34,17 +33,23 @@ export class OpenapiTokenApi {
         STOCK_API_PASSWORD: api_passwords[i],
       });
     }
-    this.init();
   }
 
-  get configs() {
-    this.init();
+  async configs() {
+    await this.init();
     return this.config;
   }
 
   @Cron('30 0 * * 1-5')
   async init() {
-    const tokens = await this.convertConfigToTokenEntity(this.config);
+    const expired_config = this.config.filter(
+      (val) =>
+        this.isTokenExpired(val.STOCK_API_TIMEOUT) &&
+        this.isTokenExpired(val.STOCK_WEBSOCKET_TIMEOUT),
+    );
+    const isUndefined = this.config[0].STOCK_WEBSOCKET_TIMEOUT ? false : true;
+    if (!isUndefined && !expired_config.length) return;
+    const tokens = this.convertConfigToTokenEntity(this.config);
     const config = await this.getPropertyFromDB(tokens);
     const expired = config.filter(
       (val) =>
@@ -54,24 +59,24 @@ export class OpenapiTokenApi {
 
     if (expired.length || !config.length) {
       await this.initAuthenValue();
-      const newTokens = await this.convertConfigToTokenEntity(this.config);
-      this.savePropertyToDB(newTokens);
+      const newTokens = this.convertConfigToTokenEntity(this.config);
+      await this.savePropertyToDB(newTokens);
     } else {
-      this.config = await this.convertTokenEntityToConfig(config);
+      this.config = this.convertTokenEntityToConfig(config);
     }
   }
 
   private isTokenExpired(startDate?: Date) {
     if (!startDate) return true;
     const now = new Date();
-    //실제 만료 시간은 24시간이지만, 문제의 소지가 발생하는 것을 방지하기 위해 20시간으로 설정함.
+    //실제 만료 시간은 24시간이지만, 문제가 발생할 여지를 줄이기 위해 20시간으로 설정
     const baseTimeToMilliSec = 20 * 60 * 60 * 1000;
     const timeDiff = now.getTime() - startDate.getTime();
 
     return timeDiff >= baseTimeToMilliSec;
   }
 
-  private async convertTokenEntityToConfig(tokens: OpenapiToken[]) {
+  private convertTokenEntityToConfig(tokens: OpenapiToken[]) {
     const result: (typeof openApiConfig)[] = [];
     tokens.forEach((val) => {
       const config: typeof openApiConfig = {
@@ -81,13 +86,15 @@ export class OpenapiTokenApi {
         STOCK_API_TOKEN: val.api_token,
         STOCK_URL: val.api_url,
         STOCK_WEBSOCKET_KEY: val.websocket_key,
+        STOCK_API_TIMEOUT: val.api_token_expire,
+        STOCK_WEBSOCKET_TIMEOUT: val.websocket_key_expire,
       };
       result.push(config);
     });
     return result;
   }
 
-  private async convertConfigToTokenEntity(config: (typeof openApiConfig)[]) {
+  private convertConfigToTokenEntity(config: (typeof openApiConfig)[]) {
     const result: OpenapiToken[] = [];
     config.forEach((val) => {
       const token = new OpenapiToken();
@@ -171,6 +178,7 @@ export class OpenapiTokenApi {
       }),
     );
     this.config = updatedConfig;
+    this.logger.info(`Init access token : ${this.config}`);
   }
 
   private async initWebSocketKey() {
@@ -181,6 +189,7 @@ export class OpenapiTokenApi {
       }),
     );
     this.config = updatedConfig;
+    this.logger.info(`Init websocket token : ${this.config}`);
   }
 
   private async getToken(config: typeof openApiConfig): Promise<string> {

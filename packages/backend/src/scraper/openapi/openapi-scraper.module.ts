@@ -1,12 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { OpenapiDetailData } from './api/openapiDetailData.api';
-import { OpenapiLiveData } from './api/openapiLiveData.api';
 import { OpenapiMinuteData } from './api/openapiMinuteData.api';
 import { OpenapiPeriodData } from './api/openapiPeriodData.api';
 import { OpenapiTokenApi } from './api/openapiToken.api';
 import { OpenapiScraperService } from './openapi-scraper.service';
-import { WebsocketClient } from './websocketClient.service';
 import { Stock } from '@/stock/domain/stock.entity';
 import {
   StockDaily,
@@ -41,10 +39,7 @@ import { FluctuationRankStock } from '@/stock/domain/FluctuationRankStock.entity
     OpenapiMinuteData,
     OpenapiDetailData,
     OpenapiScraperService,
-    OpenapiLiveData,
     OpenapiFluctuationData,
-    WebsocketClient,
   ],
-  exports: [WebsocketClient],
 })
 export class OpenapiScraperModule {}

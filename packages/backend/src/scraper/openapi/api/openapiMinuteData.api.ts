@@ -128,15 +128,15 @@ export class OpenapiMinuteData {
   }
 
   //@Cron(`*/${STOCK_CUT} 9-15 * * 1-5`)
-  getMinuteData() {
+  async getMinuteData() {
     if (process.env.NODE_ENV !== 'production') return;
-    const configCount = this.openApiToken.configs.length;
+    const configCount = (await this.openApiToken.configs()).length;
     const stock = this.stock[this.flip % STOCK_CUT];
     this.flip++;
     const chunkSize = Math.ceil(stock.length / configCount);
     for (let i = 0; i < configCount; i++) {
       const chunk = stock.slice(i * chunkSize, (i + 1) * chunkSize);
-      this.getMinuteDataChunk(chunk, this.openApiToken.configs[i]);
+      this.getMinuteDataChunk(chunk, (await this.openApiToken.configs())[i]);
     }
   }
 
