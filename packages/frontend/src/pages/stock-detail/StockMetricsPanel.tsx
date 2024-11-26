@@ -1,5 +1,5 @@
 import { MetricItem, Title } from './components';
-import { METRICS_DATA } from '@/constants/metric_detail';
+import { METRICS_DATA } from '@/constants/metricDetail';
 import { type StockMetricsPanelProps } from '@/types/metrics';
 
 export const StockMetricsPanel = ({
