@@ -14,8 +14,10 @@ const getSearchStocks = (name: string) =>
 export const useGetSearchStocks = (name: string) => {
   return useQuery({
     queryKey: ['stockSearch', name],
-    queryFn: () => getSearchStocks(name),
+    queryFn: async () => {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      return getSearchStocks(name);
+    },
     enabled: false,
-    retry: 0,
   });
 };
