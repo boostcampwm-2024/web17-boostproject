@@ -20,7 +20,6 @@ export const TradingChart = ({ theme = lightTheme }: TradingChartProps) => {
 
   const { data } = useGetStocksPriceSeries({
     stockId: stockId ?? '',
-    lastStartTime: '2024-04-01T00:00:00.000Z',
     timeUnit,
   });
 

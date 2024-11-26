@@ -20,7 +20,7 @@ export type GetStockListResponse = z.infer<typeof GetStockListResponseSchema>;
 
 export const StockTimeSeriesRequestSchema = z.object({
   stockId: z.string(),
-  lastStartTime: z.string().datetime(),
+  lastStartTime: z.string().datetime().optional(),
   timeUnit: z.enum(['day', 'week', 'month', 'year']),
 });
 

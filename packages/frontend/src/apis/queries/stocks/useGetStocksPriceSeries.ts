@@ -13,7 +13,11 @@ const getStocksPriceSeries = ({
 }: StockTimeSeriesRequest) =>
   get<StockTimeSeriesResponse>({
     schema: StockTimeSeriesResponseSchema,
-    url: `/api/stock/${stockId}?lastStartTime=${lastStartTime}&timeunit=${timeUnit}`,
+    url: `/api/stock/${stockId}`,
+    payload: {
+      lastStartTime,
+      timeUnit,
+    },
   });
 
 export const useGetStocksPriceSeries = ({
