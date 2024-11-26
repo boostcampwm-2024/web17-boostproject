@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, EntityManager } from 'typeorm';
+import { Chat } from '@/chat/domain/chat.entity';
 import { Mention } from '@/chat/domain/mention.entity';
 import { User } from '@/user/domain/user.entity';
 
@@ -12,7 +13,7 @@ export class MentionService {
       if (!(await this.existsChatAndUser(chatId, userId, manager))) {
         return null;
       }
-      return await this.dataSource.manager.save(Mention, {
+      return await manager.save(Mention, {
         chat: { id: chatId },
         user: { id: userId },
       });
@@ -27,8 +28,8 @@ export class MentionService {
     if (!(await manager.exists(User, { where: { id: userId } }))) {
       return false;
     }
-    return await manager.exists(Mention, {
-      where: { chat: { id: chatId }, user: { id: userId } },
+    return await manager.exists(Chat, {
+      where: { id: chatId },
     });
   }
 }
