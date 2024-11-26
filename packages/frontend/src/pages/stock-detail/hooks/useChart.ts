@@ -48,6 +48,13 @@ export const useChart = ({
       width: containerRef.current.clientWidth,
       height: containerRef.current.clientHeight,
       ...createChartOptions(theme),
+      handleScroll: {
+        mouseWheel: false,
+        pressedMouseMove: false,
+        horzTouchDrag: false,
+        vertTouchDrag: false,
+      },
+      handleScale: false,
     });
 
     const volumeSeries = chart.current.addHistogramSeries(
