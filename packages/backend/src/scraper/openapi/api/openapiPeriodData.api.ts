@@ -7,7 +7,7 @@ import {
   isChartData,
   ItemChartPriceQuery,
   Period,
-} from '../type/openapiPeriodData';
+} from '../type/openapiPeriodData.type';
 import { TR_IDS } from '../type/openapiUtil.type';
 import {
   getOpenApi,

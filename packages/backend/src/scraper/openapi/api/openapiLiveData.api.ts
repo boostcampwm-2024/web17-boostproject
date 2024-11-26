@@ -42,7 +42,7 @@ export class OpenapiLiveData {
     }
   }
 
-  // 현재가 체결로는 데이터가 부족해 현재가 시세를 사용함.
+  // 현재가 체결
   convertResponseToStockLiveData = (
     data: OpenapiLiveData,
     stockId: string,
