@@ -5,11 +5,11 @@ import {
   CreateDateColumn,
   JoinColumn,
   ManyToOne,
-  Unique,
+  Index,
 } from 'typeorm';
 import { Stock } from './stock.entity';
 
-@Unique(['stock.id', 'startTime'])
+@Index('stock_id_start_time', ['stock.id', 'startTime'], { unique: true })
 export class StockData {
   @PrimaryGeneratedColumn()
   id: number;
