@@ -9,9 +9,9 @@ import {
 import { Chat } from '@/chat/domain/chat.entity';
 import { User } from '@/user/domain/user.entity';
 
-@Index('chat_user_unique', ['chat', 'user'], { unique: true })
+@Index('chat_user_unique', ['chat', 'user'])
 @Entity()
-export class Like {
+export class Mention {
   @PrimaryGeneratedColumn()
   id: number;
 
