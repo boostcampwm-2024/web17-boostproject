@@ -48,9 +48,7 @@ export class OpenapiPeriodData {
     private readonly datasource: DataSource,
     private readonly openApiToken: OpenapiTokenApi,
     @Inject('winston') private readonly logger: Logger,
-  ) {
-    this.getItemChartPriceCheck();
-  }
+  ) {}
 
   @Cron('0 1 * * 1-5')
   async getItemChartPriceCheck() {
