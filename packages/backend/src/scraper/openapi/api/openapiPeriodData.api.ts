@@ -85,7 +85,6 @@ export class OpenapiPeriodData {
     entity: typeof StockData,
   ) {
     const stockPeriod = new StockData();
-    const manager = this.datasource.manager;
     let configIdx = 0;
     let end = getTodayDate();
     let start = getPreviousDate(end, DATE_TO_MONTH[period]);
@@ -95,7 +94,7 @@ export class OpenapiPeriodData {
       configIdx = (configIdx + 1) % (await this.openApiToken.configs()).length;
       this.setStockPeriod(stockPeriod, stock.id!, end);
 
-      if (await this.existsChartData(stockPeriod, manager, entity)) return;
+      if (await this.existsChartData(stockPeriod, entity)) return;
 
       const query = this.getItemChartPriceQuery(stock.id!, start, end, period);
 
@@ -103,11 +102,7 @@ export class OpenapiPeriodData {
 
       if (output) {
         await this.saveChartData(entity, stock.id!, output);
-        ({ endDate: end, startDate: start } = this.updateDates(
-          start,
-          end,
-          period,
-        ));
+        ({ endDate: end, startDate: start } = this.updateDates(end, period));
       } else isFail = true;
     }
   }
@@ -141,20 +136,16 @@ export class OpenapiPeriodData {
   }
 
   private updateDates(
-    startDate: string,
     endDate: string,
     period: Period,
   ): { endDate: string; startDate: string } {
+    const startDate = endDate;
     endDate = getPreviousDate(endDate, DATE_TO_MONTH[period]);
-    startDate = getPreviousDate(startDate, DATE_TO_MONTH[period]);
     return { endDate, startDate };
   }
 
-  private async existsChartData(
-    stock: StockData,
-    manager: EntityManager,
-    entity: typeof StockData,
-  ) {
+  private async existsChartData(stock: StockData, entity: typeof StockData) {
+    const manager = this.datasource.manager;
     return await manager.findOne(entity, {
       where: {
         stock: { id: stock.stock.id },
@@ -165,7 +156,7 @@ export class OpenapiPeriodData {
 
   private async insertChartData(stock: StockData, entity: typeof StockData) {
     const manager = this.datasource.manager;
-    if (!(await this.existsChartData(stock, manager, entity))) {
+    if (!(await this.existsChartData(stock, entity))) {
       await manager.save(entity, stock);
     }
   }
