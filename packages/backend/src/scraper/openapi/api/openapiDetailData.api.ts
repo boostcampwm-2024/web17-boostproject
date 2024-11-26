@@ -19,9 +19,7 @@ export class OpenapiDetailData {
     @Inject('winston') private readonly logger: Logger,
     private readonly datasource: DataSource,
     private readonly config: OpenapiTokenApi,
-  ) {
-    this.start();
-  }
+  ) {}
 
   @Cron('35 0 * * 1-5')
   async start() {
