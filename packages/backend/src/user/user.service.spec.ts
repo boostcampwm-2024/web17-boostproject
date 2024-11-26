@@ -5,20 +5,28 @@ import { User } from './domain/user.entity';
 import { OauthType } from '@/user/domain/ouathType';
 import { UserService } from '@/user/user.service';
 
+const defaultManagerMock: Partial<EntityManager> = {
+  findOne: jest.fn(),
+  save: jest.fn(),
+  exists: jest.fn(),
+};
+
 export function createDataSourceMock(
   managerMock?: Partial<EntityManager>,
 ): Partial<DataSource> {
-  const defaultManagerMock: Partial<EntityManager> = {
-    findOne: jest.fn(),
-    save: jest.fn(),
-    exists: jest.fn(),
-  };
-
   return {
     getRepository: managerMock?.getRepository,
     transaction: jest.fn().mockImplementation(async (work) => {
       return work({ ...defaultManagerMock, ...managerMock });
     }),
+  };
+}
+
+export function createManagerDataSourceMock(
+  managerMock?: Partial<EntityManager>,
+) {
+  return {
+    manager: managerMock,
   };
 }
 
@@ -57,6 +65,45 @@ describe('UserService 테스트', () => {
       async () => await userService.register(registerRequest),
     ).rejects.toThrow('user already exists');
   });
+
+  test('같은 닉네임이 없을 때 기본 서브 닉네임을 생성한다.', async () => {
+    const managerMock = {
+      exists: jest.fn().mockResolvedValueOnce(false),
+      save: jest.fn().mockResolvedValue(registerRequest),
+    };
+    const dataSource = createDataSourceMock(managerMock);
+    const userService = new UserService(dataSource as DataSource);
+
+    const subName = await userService.createSubName('test');
+
+    expect(subName).toBe('0001');
+  });
+
+  test.each([
+    ['0001', '0002'],
+    ['0009', '0010'],
+    ['0099', '0100'],
+    ['0999', '1000'],
+  ])(
+    '같은 닉네임이 있을 때 현제 서브네임 최대 값에서 1을 더한 값이 생성',
+    async (maxSubName, newSubName) => {
+      const managerMock = {
+        exists: jest.fn().mockResolvedValue(true),
+        save: jest.fn().mockResolvedValue(registerRequest),
+        createQueryBuilder: jest.fn().mockReturnValue({
+          select: jest.fn().mockReturnThis(),
+          where: jest.fn().mockReturnThis(),
+          getRawOne: jest.fn().mockResolvedValue({ max: maxSubName }),
+        }),
+      };
+      const dataSource = createDataSourceMock(managerMock);
+      const userService = new UserService(dataSource as DataSource);
+
+      const subName = await userService.createSubName('test');
+
+      expect(subName).toBe(newSubName);
+    },
+  );
 
   test('유저 테마를 업데이트한다', async () => {
     const userId = 1;
@@ -117,7 +164,7 @@ describe('UserService 테스트', () => {
     const managerMock = {
       findOne: jest.fn().mockResolvedValue(mockUser),
     };
-    const dataSource = createDataSourceMock(managerMock);
+    const dataSource = createManagerDataSourceMock(managerMock);
     const userService = new UserService(dataSource as DataSource);
 
     const result = await userService.getUserTheme(userId);
@@ -135,7 +182,7 @@ describe('UserService 테스트', () => {
     const managerMock = {
       findOne: jest.fn().mockResolvedValue(null),
     };
-    const dataSource = createDataSourceMock(managerMock);
+    const dataSource = createManagerDataSourceMock(managerMock);
     const userService = new UserService(dataSource as DataSource);
 
     await expect(userService.getUserTheme(userId)).rejects.toThrow(

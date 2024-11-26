@@ -18,20 +18,22 @@ import { WebsocketSessionService } from '@/auth/session/websocketSession.service
 import { MEMORY_STORE } from '@/auth/session.module';
 import { ChatService } from '@/chat/chat.service';
 import { Chat } from '@/chat/domain/chat.entity';
-import { ChatScrollQuery, isChatScrollQuery } from '@/chat/dto/chat.request';
+import {
+  ChatMessage,
+  ChatScrollQuery,
+  isChatScrollQuery,
+} from '@/chat/dto/chat.request';
 import { LikeResponse } from '@/chat/dto/like.response';
+import { MentionService } from '@/chat/mention.service';
 import { WebSocketExceptionFilter } from '@/middlewares/filter/webSocketException.filter';
 import { StockService } from '@/stock/stock.service';
-
-interface chatMessage {
-  room: string;
-  content: string;
-}
+import { User } from '@/user/domain/user.entity';
 
 interface chatResponse {
   likeCount: number;
   message: string;
   type: string;
+  mentioned: boolean;
   createdAt: Date;
 }
 
@@ -39,13 +41,15 @@ interface chatResponse {
 @UseFilters(WebSocketExceptionFilter)
 export class ChatGateway implements OnGatewayConnection {
   @WebSocketServer()
-  server: Server;
-  websocketSessionService: WebsocketSessionService;
+  private server: Server;
+  private websocketSessionService: WebsocketSessionService;
+  private users = new Map<number, string>();
 
   constructor(
     @Inject('winston') private readonly logger: Logger,
     private readonly stockService: StockService,
     private readonly chatService: ChatService,
+    private readonly mentionService: MentionService,
     @Inject(MEMORY_STORE) sessionStore: MemoryStore,
   ) {
     this.websocketSessionService = new WebsocketSessionService(sessionStore);
@@ -54,10 +58,10 @@ export class ChatGateway implements OnGatewayConnection {
   @UseGuards(WebSocketSessionGuard)
   @SubscribeMessage('chat')
   async handleConnectStock(
-    @MessageBody() message: chatMessage,
+    @MessageBody() message: ChatMessage,
     @ConnectedSocket() client: SessionSocket,
   ) {
-    const { room, content } = message;
+    const { room, content, mention } = message;
     if (!client.rooms.has(room)) {
       client.emit('error', 'You are not in the room');
       this.logger.warn(`client is not in the room ${room}`);
@@ -72,6 +76,17 @@ export class ChatGateway implements OnGatewayConnection {
       stockId: room,
       message: content,
     });
+    if (mention) {
+      await this.mentionService.createMention(savedChat.id, mention);
+      const mentionedSocket = this.users.get(Number(mention));
+      if (mentionedSocket) {
+        const chatResponse = this.toResponse(savedChat);
+        this.server.to(room).except(mentionedSocket).emit('chat', chatResponse);
+        chatResponse.mentioned = true;
+        this.server.to(mentionedSocket).emit('chat', chatResponse);
+        return;
+      }
+    }
     this.server.to(room).emit('chat', this.toResponse(savedChat));
   }
 
@@ -86,21 +101,32 @@ export class ChatGateway implements OnGatewayConnection {
       const { stockId, pageSize } = await this.getChatScrollQuery(client);
       await this.validateExistStock(stockId);
       client.join(stockId);
-      const messages = await this.chatService.scrollChat(
-        {
-          stockId,
-          pageSize,
-        },
-        user?.id,
-      );
+      const messages = await this.scrollChat(stockId, user, pageSize);
       this.logger.info(`client joined room ${stockId}`);
       client.emit('chat', messages);
+      if (user) {
+        this.users.set(user.id, client.id);
+      }
     } catch (e) {
       const error = e as Error;
       this.logger.warn(error.message);
       client.emit('error', error.message);
       client.disconnect();
     }
+  }
+
+  private async scrollChat(
+    stockId: string,
+    user: User | null,
+    pageSize?: number,
+  ) {
+    return await this.chatService.scrollChat(
+      {
+        stockId,
+        pageSize,
+      },
+      user?.id,
+    );
   }
 
   private async validateExistStock(stockId: string): Promise<void> {
@@ -126,6 +152,7 @@ export class ChatGateway implements OnGatewayConnection {
       likeCount: chat.likeCount,
       message: chat.message,
       type: chat.type,
+      mentioned: false,
       createdAt: chat.date?.createdAt || new Date(),
     };
   }

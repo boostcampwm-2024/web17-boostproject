@@ -33,17 +33,20 @@ export function isChatScrollQuery(object: unknown): object is ChatScrollQuery {
   if (typeof object !== 'object' || object === null) {
     return false;
   }
-
   if (!('stockId' in object) || typeof object.stockId !== 'string') {
     return false;
   }
-
   if (
     'latestChatId' in object &&
     !Number.isInteger(Number(object.latestChatId))
   ) {
     return false;
   }
-
   return !('pageSize' in object && !Number.isInteger(Number(object.pageSize)));
+}
+
+export interface ChatMessage {
+  room: string;
+  content: string;
+  mention?: number;
 }

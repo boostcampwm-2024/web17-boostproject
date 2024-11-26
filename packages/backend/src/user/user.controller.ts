@@ -1,11 +1,12 @@
 import {
-  Controller,
-  Patch,
-  Param,
   Body,
+  Controller,
+  Get,
   HttpCode,
   HttpStatus,
-  Get,
+  Param,
+  Patch,
+  Query,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { UpdateUserThemeResponse } from './dto/userTheme.response';
@@ -14,6 +15,23 @@ import { UserService } from './user.service';
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @Get()
+  @ApiOperation({
+    summary: '유저 닉네임과 서브 닉네임으로 유저 조회 API',
+    description: '유저 닉네임과 서브 닉네임으로 유저를 조회합니다.',
+  })
+  @ApiParam({ name: 'nickname', type: 'string', description: '유저 닉네임' })
+  @ApiParam({ name: 'subName', type: 'string', description: '유저 서브네임' })
+  async searchUser(
+    @Query('nickname') nickname: string,
+    @Query('subName') subName: string,
+  ) {
+    return await this.userService.searchUserByNicknameAndSubName(
+      nickname,
+      subName,
+    );
+  }
 
   @Patch(':id/theme')
   @HttpCode(HttpStatus.OK)
