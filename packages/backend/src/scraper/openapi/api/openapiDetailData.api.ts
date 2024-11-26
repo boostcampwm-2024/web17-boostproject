@@ -31,7 +31,7 @@ export class OpenapiDetailData {
     private readonly datasource: DataSource,
     @Inject('winston') private readonly logger: Logger,
   ) {
-    this.getDetailData();
+    //this.getDetailData();
   }
 
   @Cron('0 8 * * 1-5')
