@@ -56,6 +56,7 @@ export class LiveData {
       this.webSocketClient.subscribe(message);
     }
   }
+  
 
   async discribe(stockId: string) {
     if (this.clientStock.has(stockId)) {
