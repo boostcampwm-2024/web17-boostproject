@@ -6,20 +6,23 @@ import { openApiConfig } from '../config/openapi.config';
 import { DetailData, isDetailData } from '../type/openapiDetailData.type';
 import { TR_ID } from '../type/openapiUtil.type';
 import { getOpenApi } from '../util/openapiUtil.api';
+import { Openapi } from './openapi.abstract';
 import { OpenapiTokenApi } from './openapiToken.api';
 import { Stock } from '@/stock/domain/stock.entity';
 import { StockDetail } from '@/stock/domain/stockDetail.entity';
 
 @Injectable()
-export class OpenapiDetailData {
+export class OpenapiDetailData extends Openapi {
   private readonly TR_ID: TR_ID = 'FHKST01010100';
   private readonly url: string =
     '/uapi/domestic-stock/v1/quotations/inquire-price';
   constructor(
     @Inject('winston') private readonly logger: Logger,
-    private readonly datasource: DataSource,
+    protected readonly datasource: DataSource,
     private readonly config: OpenapiTokenApi,
-  ) {}
+  ) {
+    super(datasource);
+  }
 
   @Cron('35 0 * * 1-5')
   async start() {
@@ -33,7 +36,7 @@ export class OpenapiDetailData {
     }
   }
 
-  private async interval(idx: number, stocks: Stock[]) {
+  protected async interval(idx: number, stocks: Stock[]) {
     const interval = 100;
     let time = 0;
     for (const stock of stocks) {
@@ -42,7 +45,7 @@ export class OpenapiDetailData {
     }
   }
 
-  private async step(idx: number, stock: Stock) {
+  protected async step(idx: number, stock: Stock) {
     try {
       const config = (await this.config.configs())[idx];
       const res = await this.getFromUrl(config, stock.id);
@@ -56,14 +59,14 @@ export class OpenapiDetailData {
     }
   }
 
-  private async getFromUrl(config: typeof openApiConfig, stockId: string) {
+  protected async getFromUrl(config: typeof openApiConfig, stockId: string) {
     const query = this.query(stockId);
     const res = await getOpenApi(this.url, config, query, this.TR_ID);
     if (res) return res;
     else throw new Error();
   }
 
-  private convertResToEntity(res: DetailData, stockId: string): StockDetail {
+  protected convertResToEntity(res: DetailData, stockId: string): StockDetail {
     const result = new StockDetail();
     result.eps = parseInt(res.eps);
     result.high52w = parseInt(res.w52_hgpr);
@@ -75,15 +78,15 @@ export class OpenapiDetailData {
     return result;
   }
 
-  private async getStockId() {
-    const entity = Stock;
-    const manager = this.datasource.manager;
-    const result = await manager.find(entity, {
-      select: { id: true },
-      where: { isTrading: true },
-    });
-    return result;
-  }
+  //private async getStockId() {
+  //  const entity = Stock;
+  //  const manager = this.datasource.manager;
+  //  const result = await manager.find(entity, {
+  //    select: { id: true },
+  //    where: { isTrading: true },
+  //  });
+  //  return result;
+  //}
 
   private async save(saveEntity: StockDetail) {
     const entity = StockDetail;
@@ -100,7 +103,7 @@ export class OpenapiDetailData {
       .execute();
   }
 
-  private query(stockId: string, code: 'J' = 'J') {
+  protected query(stockId: string, code: 'J' = 'J') {
     return {
       fid_cond_mrkt_div_code: code,
       fid_input_iscd: stockId,
