@@ -224,8 +224,6 @@ export class OpenapiDetailData {
     const output1 = await this.getFinancialRatio(stock, conf);
     const output2 = await this.getProductData(stock, conf);
 
-    console.log(output1);
-    console.log(output2);
     if (isFinancialRatioData(output1) && isProductDetail(output2)) {
       const stockDetail = await this.makeStockDetailObject(
         output1,

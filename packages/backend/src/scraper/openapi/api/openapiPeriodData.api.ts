@@ -35,7 +35,7 @@ const DATE_TO_MONTH = {
   D: 1,
   W: 6,
   M: 24,
-  Y: 360,
+  Y: 120,
 };
 
 const INTERVALS = 10000;
@@ -92,10 +92,6 @@ export class OpenapiPeriodData {
     while (!isFail) {
       configIdx = (configIdx + 1) % (await this.openApiToken.configs()).length;
       this.setStockPeriod(stockPeriod, stock.id!, end);
-
-      //console.log(`id : ${stock.id}, start : ${start} end : ${end}`);
-
-      //if (await this.existsChartData(stockPeriod, entity)) return;
 
       const query = this.getItemChartPriceQuery(stock.id!, start, end, period);
 
