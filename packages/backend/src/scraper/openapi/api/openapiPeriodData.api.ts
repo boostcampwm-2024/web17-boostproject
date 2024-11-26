@@ -67,6 +67,7 @@ export class OpenapiPeriodData {
     this.getChartData(stocks, 'Y');
   }
 
+  @Cron('0 2 * * 1-5')
   private async getChartData(chunk: Stock[], period: Period) {
     const baseTime = INTERVALS;
     const entity = DATE_TO_ENTITY[period];
@@ -94,7 +95,6 @@ export class OpenapiPeriodData {
       configIdx = (configIdx + 1) % (await this.openApiToken.configs()).length;
       this.setStockPeriod(stockPeriod, stock.id!, end);
 
-      // chart 데이터가 있는 지 확인 -> 리턴
       if (await this.existsChartData(stockPeriod, manager, entity)) return;
 
       const query = this.getItemChartPriceQuery(stock.id!, start, end, period);
@@ -136,7 +136,7 @@ export class OpenapiPeriodData {
       return response.output2 as ChartData[];
     } catch (error) {
       this.logger.warn(error);
-      setTimeout(() => this.fetchChartData(query, configIdx), INTERVALS);
+      setTimeout(() => this.fetchChartData(query, configIdx), INTERVALS / 10);
     }
   }
 
