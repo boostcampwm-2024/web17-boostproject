@@ -1,3 +1,5 @@
+import { type StockMetricsPanelProps } from '@/types/metrics';
+
 export const METRIC_DETAILS = {
   price: {
     currentPrice: {
@@ -31,4 +33,56 @@ export const METRIC_DETAILS = {
       message: '주당순이익으로, 기업의 수익성을 보여줘요.',
     },
   },
+};
+
+export const METRICS_DATA = ({
+  price,
+  volume,
+  change,
+  high52w,
+  low52w,
+  marketCap,
+  per,
+  eps,
+}: StockMetricsPanelProps) => {
+  return {
+    price: {
+      title: '가격',
+      metrics: [
+        {
+          ...METRIC_DETAILS.price.currentPrice,
+          value: price?.toLocaleString(),
+        },
+        {
+          ...METRIC_DETAILS.price.tradingVolume,
+          value: volume?.toLocaleString(),
+        },
+        {
+          ...METRIC_DETAILS.price.fluctuationRate,
+          value: change?.toLocaleString(),
+        },
+        {
+          ...METRIC_DETAILS.price.fiftyTwoWeekRange,
+          value: `${high52w?.toLocaleString()}/${low52w?.toLocaleString()}`,
+        },
+      ],
+    },
+    enterpriseValue: {
+      title: '기업가치',
+      metrics: [
+        {
+          ...METRIC_DETAILS.enterpriseValue.marketCap,
+          value: marketCap?.toLocaleString(),
+        },
+        {
+          ...METRIC_DETAILS.enterpriseValue.per,
+          value: per?.toLocaleString(),
+        },
+        {
+          ...METRIC_DETAILS.enterpriseValue.eps,
+          value: eps?.toLocaleString(),
+        },
+      ],
+    },
+  };
 };
