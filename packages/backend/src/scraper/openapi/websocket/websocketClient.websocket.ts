@@ -19,22 +19,20 @@ export class WebsocketClient {
     this.sendMessage(message);
   }
 
-  // TODO : 분리
-  private initDisconnect(
-    initCloseCallback: () => void,
-    initErrorCallback: (error: unknown) => void,
-  ) {
-    this.client.on('close', initCloseCallback);
-
-    this.client.on('error', initErrorCallback);
-  }
-
   private initOpen(fn: () => void) {
     this.client.on('open', fn);
   }
 
   private initMessage(fn: (data: RawData) => void) {
     this.client.on('message', fn);
+  }
+
+  private initDisconnect(initCloseCallback: () => void) {
+    this.client.on('close', initCloseCallback);
+  }
+
+  private initError(initErrorCallback: (error: unknown) => void) {
+    this.client.on('error', initErrorCallback);
   }
 
   connectPacade(
@@ -45,7 +43,8 @@ export class WebsocketClient {
   ) {
     this.initOpen(initOpenCallback(this.sendMessage));
     this.initMessage(initMessageCallback(this.client));
-    this.initDisconnect(initCloseCallback, initErrorCallback);
+    this.initDisconnect(initCloseCallback);
+    this.initError(initErrorCallback);
   }
 
   private sendMessage(message: string) {

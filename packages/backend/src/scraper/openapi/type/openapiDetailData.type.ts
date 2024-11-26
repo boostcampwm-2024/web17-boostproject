@@ -106,6 +106,7 @@ export type ProductDetail = {
 
 export const isProductDetail = (data: any): data is ProductDetail => {
   return (
+    data &&
     typeof data.pdno === 'string' &&
     typeof data.prdt_type_cd === 'string' &&
     typeof data.mket_id_cd === 'string' &&

@@ -30,7 +30,9 @@ export class OpenapiDetailData {
     private readonly openApiToken: OpenapiTokenApi,
     private readonly datasource: DataSource,
     @Inject('winston') private readonly logger: Logger,
-  ) {}
+  ) {
+    this.getDetailData();
+  }
 
   @Cron('0 8 * * 1-5')
   async getDetailData() {
@@ -189,7 +191,7 @@ export class OpenapiDetailData {
         dataQuery,
         TR_IDS.FINANCIAL_DATA,
       );
-      if (response.output) {
+      if (response.output && response.output[0]) {
         const output1 = response.output;
         return output1[0];
       }
