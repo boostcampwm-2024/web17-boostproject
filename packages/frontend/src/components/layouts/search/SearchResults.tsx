@@ -1,5 +1,6 @@
 import Lottie from 'react-lottie-player';
 import { Link } from 'react-router-dom';
+import { usePostStockView } from '@/apis/queries/stock-detail';
 import { type SearchResultsResponse } from '@/apis/queries/stocks';
 import loading from '@/components/lottie/loading-animation.json';
 
@@ -14,6 +15,8 @@ export const SearchResults = ({
   isLoading,
   isError,
 }: SearchResultsProps) => {
+  const { mutate } = usePostStockView();
+
   if (isLoading) {
     return (
       <Lottie
@@ -36,6 +39,7 @@ export const SearchResults = ({
           <Link
             to={`/stocks/${stock.id}`}
             key={stock.id}
+            onClick={() => mutate({ stockId: stock.id })}
             reloadDocument
             className="text-dark-gray hover:text-orange leading-7 hover:underline"
           >

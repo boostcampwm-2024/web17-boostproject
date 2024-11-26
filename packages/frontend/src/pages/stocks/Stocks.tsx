@@ -1,12 +1,15 @@
+import { useNavigate } from 'react-router-dom';
 import { StockIndexCard } from './components/StockIndexCard';
 import { StockInfoCard } from './components/StockInfoCard';
 import { StockRankingTable } from './StockRankingTable';
+import { usePostStockView } from '@/apis/queries/stock-detail';
 import { useGetTopViews } from '@/apis/queries/stocks';
 import marketData from '@/mocks/market.json';
 
 const LIMIT = 5;
 
 export const Stocks = () => {
+  const navigate = useNavigate();
   const kospi = marketData.data.filter((value) => value.name === '코스피')[0];
   const kosdaq = marketData.data.filter((value) => value.name === '코스닥')[0];
   const rateOfExchange = marketData.data.filter(
@@ -14,6 +17,7 @@ export const Stocks = () => {
   )[0];
 
   const { data: topViews } = useGetTopViews({ limit: LIMIT });
+  const { mutate } = usePostStockView();
 
   return (
     <main className="flex flex-col gap-16">
@@ -58,6 +62,10 @@ export const Stocks = () => {
               name={stock.name}
               currentPrice={stock.currentPrice}
               changeRate={stock.changeRate}
+              onClick={() => {
+                mutate({ stockId: stock.id });
+                navigate(stock.id);
+              }}
             />
           ))}
         </div>
