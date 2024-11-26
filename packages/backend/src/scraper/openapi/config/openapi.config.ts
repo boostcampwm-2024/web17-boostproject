@@ -9,6 +9,8 @@ export const openApiConfig: {
   STOCK_API_PASSWORD: string | undefined;
   STOCK_API_TOKEN?: string;
   STOCK_WEBSOCKET_KEY?: string;
+  STOCK_API_TIMEOUT?: Date;
+  STOCK_WEBSOCKET_TIMEOUT?: Date;
 } = {
   STOCK_URL: process.env.STOCK_URL,
   STOCK_ACCOUNT: process.env.STOCK_ACCOUNT,

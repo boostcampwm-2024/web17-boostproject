@@ -61,10 +61,10 @@ export class OpenapiPeriodData {
       },
     });
 
-    this.getChartData(stocks, 'D');
-    this.getChartData(stocks, 'W');
-    this.getChartData(stocks, 'M');
-    this.getChartData(stocks, 'Y');
+    await this.getChartData(stocks, 'Y');
+    await this.getChartData(stocks, 'M');
+    await this.getChartData(stocks, 'W');
+    await this.getChartData(stocks, 'D');
   }
 
   private async getChartData(chunk: Stock[], period: Period) {
@@ -90,6 +90,7 @@ export class OpenapiPeriodData {
     let isFail = false;
 
     while (!isFail) {
+      await new Promise((resolve) => setTimeout(resolve, INTERVALS / 100));
       configIdx = (configIdx + 1) % (await this.openApiToken.configs()).length;
       this.setStockPeriod(stockPeriod, stock.id!, end);
 

@@ -36,13 +36,19 @@ export class OpenapiTokenApi {
   }
 
   async configs() {
-    this.logger.info('config called');
     await this.init();
     return this.config;
   }
 
   @Cron('30 0 * * 1-5')
   async init() {
+    const expired_config = this.config.filter(
+      (val) =>
+        this.isTokenExpired(val.STOCK_API_TIMEOUT) &&
+        this.isTokenExpired(val.STOCK_WEBSOCKET_TIMEOUT),
+    );
+    const isUndefined = this.config[0].STOCK_WEBSOCKET_TIMEOUT ? false : true;
+    if (!isUndefined && !expired_config.length) return;
     const tokens = this.convertConfigToTokenEntity(this.config);
     const config = await this.getPropertyFromDB(tokens);
     const expired = config.filter(
@@ -80,6 +86,8 @@ export class OpenapiTokenApi {
         STOCK_API_TOKEN: val.api_token,
         STOCK_URL: val.api_url,
         STOCK_WEBSOCKET_KEY: val.websocket_key,
+        STOCK_API_TIMEOUT: val.api_token_expire,
+        STOCK_WEBSOCKET_TIMEOUT: val.websocket_key_expire,
       };
       result.push(config);
     });
