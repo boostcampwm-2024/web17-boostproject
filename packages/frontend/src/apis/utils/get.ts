@@ -7,20 +7,13 @@ interface GetParams {
   url: string;
 }
 
-export const get = async <T>({ schema, url }: GetParams): Promise<T | null> => {
-  try {
-    const { data } = await instance.get(url);
-    const result = schema.safeParse(data);
+export const get = async <T>({ schema, url }: GetParams): Promise<T> => {
+  const { data } = await instance.get(url);
+  const result = schema.safeParse(data);
 
-    if (!result.success) {
-      throw new Error(formatZodError(result.error));
-    }
-
-    return data;
-  } catch (error) {
-    if (process.env.NODE_ENV === 'development') {
-      console.error('API error:', error);
-    }
-    return null;
+  if (!result.success) {
+    throw new Error(formatZodError(result.error));
   }
+
+  return data;
 };
