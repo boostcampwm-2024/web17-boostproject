@@ -5,9 +5,11 @@ import {
   CreateDateColumn,
   JoinColumn,
   ManyToOne,
+  Unique,
 } from 'typeorm';
 import { Stock } from './stock.entity';
 
+@Unique(['stock.id', 'startTime'])
 export class StockData {
   @PrimaryGeneratedColumn()
   id: number;
