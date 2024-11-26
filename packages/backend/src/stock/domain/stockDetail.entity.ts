@@ -27,7 +27,7 @@ export class StockDetail {
   @Column({ type: 'integer' })
   eps: number;
 
-  @Column({ type: 'decimal', precision: 6, scale: 3 })
+  @Column({ type: 'decimal', precision: 15, scale: 2 })
   per: number;
 
   @Column({ type: 'integer' })

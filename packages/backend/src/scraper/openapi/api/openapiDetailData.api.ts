@@ -90,7 +90,16 @@ export class OpenapiDetailData {
   private async save(saveEntity: StockDetail) {
     const entity = StockDetail;
     const manager = this.datasource.manager;
-    await manager.save(entity, saveEntity);
+    await manager
+      .createQueryBuilder()
+      .insert()
+      .into(entity)
+      .values(saveEntity)
+      .orUpdate(
+        ['market_cap', 'eps', 'per', 'high52w', 'low52w', 'updated_at'],
+        ['stock_id'],
+      )
+      .execute();
   }
 
   private query(stockId: string, code: 'J' = 'J') {
