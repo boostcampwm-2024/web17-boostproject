@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-// import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { RadioButton } from './components/RadioButton';
 import { useChart } from './hooks/useChart';
 import { useChartResize } from './hooks/useChartResize';
@@ -13,13 +13,13 @@ interface TradingChartProps {
 }
 
 export const TradingChart = ({ theme = lightTheme }: TradingChartProps) => {
-  // const { stockId } = useParams();
+  const { stockId } = useParams();
   const [timeUnit, setTimeUnit] =
     useState<StockTimeSeriesRequest['timeUnit']>('day');
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { data } = useGetStocksPriceSeries({
-    stockId: '005930',
+    stockId: stockId ?? '',
     lastStartTime: '2024-04-01T00:00:00.000Z',
     timeUnit,
   });
