@@ -90,7 +90,7 @@ export class OpenapiPeriodData {
     let isFail = false;
 
     while (!isFail) {
-      await new Promise((resolve) => setTimeout(resolve, INTERVALS / 100));
+      await new Promise((resolve) => setTimeout(resolve, INTERVALS / 10));
       configIdx = (configIdx + 1) % (await this.openApiToken.configs()).length;
       this.setStockPeriod(stockPeriod, stock.id!, end);
 
