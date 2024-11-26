@@ -1,8 +1,4 @@
 export const METRIC_DETAILS = {
-  tradingVolume: {
-    name: '거래량',
-    message: '특정 기간 동안 거래된 주식의 수량이에요.',
-  },
   price: {
     currentPrice: {
       name: '현재가',

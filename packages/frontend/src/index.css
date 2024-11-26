@@ -54,3 +54,22 @@
     @apply text-xs;
   }
 }
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #dadada;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #aeaeae;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

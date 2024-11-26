@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import logoCharacter from '/logoCharacter.png';
 import logoTitle from '/logoTitle.png';
+import { Alarm } from './alarm';
 import { MenuList } from './MenuList';
 import { Search } from './search';
 import { BOTTOM_MENU_ITEMS, TOP_MENU_ITEMS } from '@/constants/menuItems';
@@ -11,16 +12,27 @@ import { cn } from '@/utils/cn';
 export const Sidebar = () => {
   const [isHovered, setIsHovered] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const [showAlarm, setShowAlarm] = useState(false);
 
   const ref = useOutsideClick(() => {
     if (showSearch) {
       setShowSearch(false);
     }
+
+    if (showAlarm) {
+      setShowAlarm(false);
+    }
   });
 
   const handleMenuItemClick = (item: MenuSection) => {
     if (item.text === '검색') {
-      setShowSearch((prev) => !prev);
+      setShowSearch(true);
+      setShowAlarm(false);
+    }
+
+    if (item.text === '알림') {
+      setShowSearch(false);
+      setShowAlarm(true);
     }
   };
 
@@ -68,6 +80,7 @@ export const Sidebar = () => {
         )}
       >
         {showSearch && <Search className="h-screen" />}
+        {showAlarm && <Alarm className="h-screen" />}
       </div>
     </div>
   );
