@@ -5,6 +5,7 @@ export type TR_ID =
   | 'HHKDB669107C0'
   | 'FHKST01010100'
   | 'FHPUP02100000'
+  | 'FHKST03030100'
   | 'CTPF1002R';
 
 export const TR_IDS: Record<string, TR_ID> = {
@@ -14,4 +15,5 @@ export const TR_IDS: Record<string, TR_ID> = {
   PRODUCTION_DETAIL: 'CTPF1002R',
   LIVE_DATA: 'FHKST01010100',
   INDEX_DATA: 'FHPUP02100000',
+  RATE_DATA: 'FHKST03030100',
 };
