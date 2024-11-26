@@ -3,8 +3,10 @@ import { useParams } from 'react-router-dom';
 import { RadioButton } from './components/RadioButton';
 import { useChart } from './hooks/useChart';
 import { useChartResize } from './hooks/useChartResize';
-import { StockTimeSeriesRequest } from '@/apis/queries/stocks';
-import { useGetStocksPriceSeries } from '@/apis/queries/stocks/useGetStocksPriceSeries';
+import {
+  StockTimeSeriesRequest,
+  useGetStocksPriceSeries,
+} from '@/apis/queries/stocks';
 import { TIME_UNIT } from '@/constants/timeUnit';
 import { ChartTheme, lightTheme } from '@/styles/theme';
 
