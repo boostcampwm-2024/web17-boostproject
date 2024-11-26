@@ -8,7 +8,8 @@ import { get } from '@/apis/utils/get';
 const getSearchStocks = (name: string) =>
   get<SearchResultsResponse>({
     schema: SearchResultsResponseSchema,
-    url: `/api/stock?name=${name}`,
+    url: `/api/stock`,
+    params: { name },
   });
 
 export const useGetSearchStocks = (name: string) => {

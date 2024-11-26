@@ -9,12 +9,13 @@ import { get } from '@/apis/utils/get';
 const getOwnership = ({ stockId }: GetStockRequest) =>
   get<GetStockOwnershipResponse>({
     schema: GetStockOwnershipResponseSchema,
-    url: `/api/stock/user/ownership?stockId=${stockId}`,
+    url: `/api/stock/user/ownership`,
+    params: { stockId },
   });
 
 export const useGetOwnership = ({ stockId }: GetStockRequest) => {
   return useQuery({
-    queryKey: ['stockDetail'],
+    queryKey: ['stockOwnership'],
     queryFn: () => getOwnership({ stockId }),
     enabled: !!stockId,
   });

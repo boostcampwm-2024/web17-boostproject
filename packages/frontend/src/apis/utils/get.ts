@@ -1,22 +1,20 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { AxiosRequestConfig } from 'axios';
 import { z } from 'zod';
 import { instance } from '../config';
 import { formatZodError } from './formatZodError';
 
 interface GetParams {
+  params?: AxiosRequestConfig['params'];
   schema: z.ZodType;
   url: string;
-  payload?: Record<string, any>;
 }
 
 export const get = async <T>({
+  params,
   schema,
   url,
-  payload,
 }: GetParams): Promise<T> => {
-  const { data } = await instance.get(url, {
-    params: payload,
-  });
+  const { data } = await instance.get(url, { params });
   const result = schema.safeParse(data);
 
   if (!result.success) {

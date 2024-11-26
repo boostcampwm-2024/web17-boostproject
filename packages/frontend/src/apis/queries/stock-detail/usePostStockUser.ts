@@ -15,7 +15,7 @@ const postStockUser = ({ stockId }: PostStockRequest) =>
 
 export const usePostStockUser = () => {
   return useMutation({
-    mutationKey: ['stockView'],
+    mutationKey: ['addStock'],
     mutationFn: ({ stockId }: PostStockRequest) => postStockUser({ stockId }),
   });
 };
