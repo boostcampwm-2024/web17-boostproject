@@ -1,5 +1,4 @@
 import { Injectable, Inject, NotFoundException } from '@nestjs/common';
-import { plainToInstance } from 'class-transformer';
 import { DataSource } from 'typeorm';
 import { Logger } from 'winston';
 import { StockDetail } from './domain/stockDetail.entity';
@@ -25,11 +24,20 @@ export class StockDetailService {
         );
       }
 
-      const stockDetail = await manager.findBy(StockDetail, {
-        stock: { id: stockId },
-      });
+      const result = await this.datasource.manager
+        .getRepository(StockDetail)
+        .createQueryBuilder('stockDetail')
+        .leftJoinAndSelect('stockDetail.stock', 'stock')
+        .where('stockDetail.stock_id = :stockId', { stockId })
+        .getOne();
 
-      return plainToInstance(StockDetailResponse, stockDetail[0]);
+      if (!result) {
+        throw new NotFoundException(
+          `stock detail not found (stockId: ${stockId}`,
+        );
+      }
+
+      return new StockDetailResponse(result);
     });
   }
 }

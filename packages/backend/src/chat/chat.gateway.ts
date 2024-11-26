@@ -7,14 +7,19 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
+import { MemoryStore } from 'express-session';
 import { Server, Socket } from 'socket.io';
 import { Logger } from 'winston';
 import {
   SessionSocket,
   WebSocketSessionGuard,
-} from '@/auth/session/webSocketSession.guard.';
+} from '@/auth/session/webSocketSession.guard';
+import { WebsocketSessionService } from '@/auth/session/websocketSession.service';
+import { MEMORY_STORE } from '@/auth/session.module';
 import { ChatService } from '@/chat/chat.service';
 import { Chat } from '@/chat/domain/chat.entity';
+import { ChatScrollQuery, isChatScrollQuery } from '@/chat/dto/chat.request';
+import { LikeResponse } from '@/chat/dto/like.response';
 import { WebSocketExceptionFilter } from '@/middlewares/filter/webSocketException.filter';
 import { StockService } from '@/stock/stock.service';
 
@@ -30,16 +35,21 @@ interface chatResponse {
   createdAt: Date;
 }
 
-@WebSocketGateway({ namespace: 'chat' })
+@WebSocketGateway({ namespace: '/api/chat/realtime' })
 @UseFilters(WebSocketExceptionFilter)
 export class ChatGateway implements OnGatewayConnection {
   @WebSocketServer()
   server: Server;
+  websocketSessionService: WebsocketSessionService;
+
   constructor(
     @Inject('winston') private readonly logger: Logger,
     private readonly stockService: StockService,
     private readonly chatService: ChatService,
-  ) {}
+    @Inject(MEMORY_STORE) sessionStore: MemoryStore,
+  ) {
+    this.websocketSessionService = new WebsocketSessionService(sessionStore);
+  }
 
   @UseGuards(WebSocketSessionGuard)
   @SubscribeMessage('chat')
@@ -65,25 +75,50 @@ export class ChatGateway implements OnGatewayConnection {
     this.server.to(room).emit('chat', this.toResponse(savedChat));
   }
 
-  async handleConnection(client: Socket) {
-    const room = client.handshake.query.stockId;
-    if (
-      !this.isString(room) ||
-      !(await this.stockService.checkStockExist(room))
-    ) {
-      client.emit('error', 'Invalid stockId');
-      this.logger.warn(`client connected with invalid stockId: ${room}`);
-      client.disconnect();
-      return;
-    }
-    client.join(room);
-    const messages = await this.chatService.scrollFirstChat(room);
-    this.logger.info(`client joined room ${room}`);
-    client.emit('chat', messages);
+  async broadcastLike(response: LikeResponse) {
+    this.server.to(response.stockId).emit('like', response);
   }
 
-  private isString(value: string | string[] | undefined): value is string {
-    return typeof value === 'string';
+  async handleConnection(client: Socket) {
+    try {
+      const user =
+        await this.websocketSessionService.getAuthenticatedUser(client);
+      const { stockId, pageSize } = await this.getChatScrollQuery(client);
+      await this.validateExistStock(stockId);
+      client.join(stockId);
+      const messages = await this.chatService.scrollChat(
+        {
+          stockId,
+          pageSize,
+        },
+        user?.id,
+      );
+      this.logger.info(`client joined room ${stockId}`);
+      client.emit('chat', messages);
+    } catch (e) {
+      const error = e as Error;
+      this.logger.warn(error.message);
+      client.emit('error', error.message);
+      client.disconnect();
+    }
+  }
+
+  private async validateExistStock(stockId: string): Promise<void> {
+    if (!(await this.stockService.checkStockExist(stockId))) {
+      throw new Error(`Stock does not exist: ${stockId}`);
+    }
+  }
+
+  private async getChatScrollQuery(client: Socket): Promise<ChatScrollQuery> {
+    const query = client.handshake.query;
+    if (!isChatScrollQuery(query)) {
+      throw new Error('Invalid chat scroll query');
+    }
+    return {
+      stockId: query.stockId,
+      latestChatId: query.latestChatId ? Number(query.latestChatId) : undefined,
+      pageSize: query.pageSize ? Number(query.pageSize) : undefined,
+    };
   }
 
   private toResponse(chat: Chat): chatResponse {

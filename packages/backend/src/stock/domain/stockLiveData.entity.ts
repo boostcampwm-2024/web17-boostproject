@@ -31,9 +31,6 @@ export class StockLiveData {
   @Column({ type: 'decimal', precision: 15, scale: 2 })
   open: number;
 
-  @Column({ type: 'decimal', precision: 15, scale: 2 })
-  previousClose: number;
-
   @UpdateDateColumn()
   @Column({ type: 'timestamp' })
   updatedAt: Date;

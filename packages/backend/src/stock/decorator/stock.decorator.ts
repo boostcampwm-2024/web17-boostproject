@@ -1,12 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import {
-  Query,
-  ParseIntPipe,
-  DefaultValuePipe,
-  applyDecorators,
-} from '@nestjs/common';
-import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
-import { StocksResponse } from '../dto/stock.Response';
+import { applyDecorators, DefaultValuePipe, ParseIntPipe, Query } from "@nestjs/common";
+import { ApiOperation, ApiQuery, ApiResponse } from "@nestjs/swagger";
+import { StocksResponse } from "../dto/stock.response";
 
 export function LimitQuery(defaultValue = 5): ParameterDecorator {
   return Query('limit', new DefaultValuePipe(defaultValue), ParseIntPipe);

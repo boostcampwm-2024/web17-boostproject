@@ -15,7 +15,7 @@ export function createDataSourceMock(
   };
 
   return {
-    getRepository: managerMock.getRepository,
+    getRepository: managerMock?.getRepository,
     transaction: jest.fn().mockImplementation(async (work) => {
       return work({ ...defaultManagerMock, ...managerMock });
     }),

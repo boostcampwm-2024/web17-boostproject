@@ -25,8 +25,9 @@ export type ItemChartPriceQuery = {
   fid_org_adj_prc: number;
 };
 
-export const isChartData = (data: any) => {
+export const isChartData = (data?: any) => {
   return (
+    data &&
     typeof data.stck_bsop_date === 'string' &&
     typeof data.stck_clpr === 'string' &&
     typeof data.stck_oprc === 'string' &&
