@@ -32,13 +32,13 @@ const DATE_TO_ENTITY = {
 };
 
 const DATE_TO_MONTH = {
-  D: 3,
+  D: 1,
   W: 6,
-  M: 12,
-  Y: 24,
+  M: 24,
+  Y: 120,
 };
 
-const INTERVALS = 4000;
+const INTERVALS = 10000;
 
 @Injectable()
 export class OpenapiPeriodData {
@@ -49,7 +49,7 @@ export class OpenapiPeriodData {
     private readonly openApiToken: OpenapiTokenApi,
     @Inject('winston') private readonly logger: Logger,
   ) {
-    //this.getItemChartPriceCheck();
+    this.getItemChartPriceCheck();
   }
 
   @Cron('0 1 * * 1-5')
@@ -60,20 +60,15 @@ export class OpenapiPeriodData {
         isTrading: true,
       },
     });
-    const configCount = this.openApiToken.configs.length;
-    const chunkSize = Math.ceil(stocks.length / configCount);
 
-    for (let i = 0; i < configCount; i++) {
-      const chunk = stocks.slice(i * chunkSize, (i + 1) * chunkSize);
-      this.getChartData(chunk, 'D');
-      setTimeout(() => this.getChartData(chunk, 'W'), INTERVALS);
-      setTimeout(() => this.getChartData(chunk, 'M'), INTERVALS * 2);
-      setTimeout(() => this.getChartData(chunk, 'Y'), INTERVALS * 3);
-    }
+    this.getChartData(stocks, 'D');
+    this.getChartData(stocks, 'W');
+    this.getChartData(stocks, 'M');
+    this.getChartData(stocks, 'Y');
   }
 
   private async getChartData(chunk: Stock[], period: Period) {
-    const baseTime = INTERVALS * 4;
+    const baseTime = INTERVALS;
     const entity = DATE_TO_ENTITY[period];
 
     let time = 0;
@@ -92,7 +87,7 @@ export class OpenapiPeriodData {
     const manager = this.datasource.manager;
     let configIdx = 0;
     let end = getTodayDate();
-    let start = getPreviousDate(end, 3);
+    let start = getPreviousDate(end, DATE_TO_MONTH[period]);
     let isFail = false;
 
     while (!isFail) {
@@ -108,7 +103,11 @@ export class OpenapiPeriodData {
 
       if (output) {
         await this.saveChartData(entity, stock.id!, output);
-        ({ endDate: end, startDate: start } = this.updateDates(start, period));
+        ({ endDate: end, startDate: start } = this.updateDates(
+          start,
+          end,
+          period,
+        ));
       } else isFail = true;
     }
   }
@@ -137,15 +136,17 @@ export class OpenapiPeriodData {
       return response.output2 as ChartData[];
     } catch (error) {
       this.logger.warn(error);
+      setTimeout(() => this.fetchChartData(query, configIdx), INTERVALS);
     }
   }
 
   private updateDates(
     startDate: string,
+    endDate: string,
     period: Period,
   ): { endDate: string; startDate: string } {
-    const endDate = getPreviousDate(startDate, DATE_TO_MONTH[period]);
-    startDate = getPreviousDate(endDate, DATE_TO_MONTH[period]);
+    endDate = getPreviousDate(endDate, DATE_TO_MONTH[period]);
+    startDate = getPreviousDate(startDate, DATE_TO_MONTH[period]);
     return { endDate, startDate };
   }
 
