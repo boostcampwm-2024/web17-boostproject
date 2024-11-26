@@ -1,5 +1,5 @@
 import { GetLoginStatus } from '@/apis/queries/auth/schema';
-import { Alarm, AlarmProps } from '@/components/ui/Alarm';
+import { Alarm, AlarmProps } from '@/components/ui/alarm';
 import mock from '@/mocks/alarm.json';
 
 interface AlarmInfoProps {
