@@ -36,6 +36,7 @@ export class OpenapiTokenApi {
   }
 
   async configs() {
+    this.logger.info('config called');
     await this.init();
     return this.config;
   }

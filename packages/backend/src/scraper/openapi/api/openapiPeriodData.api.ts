@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { DataSource, EntityManager } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { Logger } from 'winston';
 import {
   ChartData,
@@ -35,7 +35,7 @@ const DATE_TO_MONTH = {
   D: 1,
   W: 6,
   M: 24,
-  Y: 120,
+  Y: 360,
 };
 
 const INTERVALS = 10000;
@@ -67,7 +67,6 @@ export class OpenapiPeriodData {
     this.getChartData(stocks, 'Y');
   }
 
-  @Cron('0 2 * * 1-5')
   private async getChartData(chunk: Stock[], period: Period) {
     const baseTime = INTERVALS;
     const entity = DATE_TO_ENTITY[period];
@@ -94,7 +93,9 @@ export class OpenapiPeriodData {
       configIdx = (configIdx + 1) % (await this.openApiToken.configs()).length;
       this.setStockPeriod(stockPeriod, stock.id!, end);
 
-      if (await this.existsChartData(stockPeriod, entity)) return;
+      //console.log(`id : ${stock.id}, start : ${start} end : ${end}`);
+
+      //if (await this.existsChartData(stockPeriod, entity)) return;
 
       const query = this.getItemChartPriceQuery(stock.id!, start, end, period);
 
@@ -139,8 +140,8 @@ export class OpenapiPeriodData {
     endDate: string,
     period: Period,
   ): { endDate: string; startDate: string } {
-    const startDate = endDate;
     endDate = getPreviousDate(endDate, DATE_TO_MONTH[period]);
+    const startDate = getPreviousDate(endDate, DATE_TO_MONTH[period]);
     return { endDate, startDate };
   }
 
