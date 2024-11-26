@@ -3,7 +3,11 @@ import { plainToInstance } from 'class-transformer';
 import { DataSource, EntityManager } from 'typeorm';
 import { Logger } from 'winston';
 import { Stock } from './domain/stock.entity';
-import { StockSearchResponse, StocksResponse } from './dto/stock.response';
+import {
+  StockRankResponses,
+  StockSearchResponse,
+  StocksResponse,
+} from './dto/stock.response';
 import { UserStock } from '@/stock/domain/userStock.entity';
 
 @Injectable()
@@ -94,7 +98,7 @@ export class StockService {
   }
 
   async getTopStocksByViews(limit: number) {
-    const rawData = await this.StocksQuery()
+    const rawData = await this.getStocksQuery()
       .orderBy('stock.views', 'DESC')
       .limit(limit)
       .getRawMany();
@@ -103,21 +107,17 @@ export class StockService {
   }
 
   async getTopStocksByGainers(limit: number) {
-    const rawData = await this.StocksQuery()
-      .orderBy('stockLiveData.changeRate', 'DESC')
-      .limit(limit)
-      .getRawMany();
+    const rawData = await this.getStockRankQuery(true).take(limit).getRawMany();
 
-    return plainToInstance(StocksResponse, rawData);
+    return new StockRankResponses(rawData);
   }
 
   async getTopStocksByLosers(limit: number) {
-    const rawData = await this.StocksQuery()
-      .orderBy('stockLiveData.changeRate', 'ASC')
-      .limit(limit)
+    const rawData = await this.getStockRankQuery(false)
+      .take(limit)
       .getRawMany();
 
-    return plainToInstance(StocksResponse, rawData);
+    return new StockRankResponses(rawData);
   }
 
   private async validateStockExists(stockId: string, manager: EntityManager) {
@@ -153,7 +153,7 @@ export class StockService {
     return await manager.exists(Stock, { where: { id: stockId } });
   }
 
-  private StocksQuery() {
+  private getStocksQuery() {
     return this.datasource
       .getRepository(Stock)
       .createQueryBuilder('stock')
@@ -175,5 +175,16 @@ export class StockService {
         'stockLiveData.volume AS volume',
         'stockDetail.marketCap AS marketCap',
       ]);
+  }
+
+  private getStockRankQuery(isRising: boolean) {
+    return this.getStocksQuery()
+      .innerJoinAndSelect('stock.fluctuationRankStocks', 'FluctuationRankStock')
+      .addSelect([
+        'fluctuationRankStock.rank AS stockRank',
+        'fluctuationRankStock.isRising AS isRising',
+        'fluctuationRankStock.fluctuation_rate AS fluctuationRate',
+      ])
+      .where('FluctuationRankStock.isRising = :isRising', { isRising });
   }
 }
