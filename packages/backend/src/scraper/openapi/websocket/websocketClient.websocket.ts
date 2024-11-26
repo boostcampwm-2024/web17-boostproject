@@ -12,23 +12,11 @@ export class WebsocketClient {
   constructor(@Inject('winston') private readonly logger: Logger) {}
 
   subscribe(message: string) {
-    this.logger.info(`Subscribe : ${message}`);
     this.sendMessage(message);
   }
 
   discribe(message: string) {
-    this.logger.info(`Discribe : ${message}`);
     this.sendMessage(message);
-  }
-
-  // TODO : 분리
-  private initDisconnect(
-    initCloseCallback: () => void,
-    initErrorCallback: (error: unknown) => void,
-  ) {
-    this.client.on('close', initCloseCallback);
-
-    this.client.on('error', initErrorCallback);
   }
 
   private initOpen(fn: () => void) {
@@ -39,6 +27,14 @@ export class WebsocketClient {
     this.client.on('message', fn);
   }
 
+  private initDisconnect(initCloseCallback: () => void) {
+    this.client.on('close', initCloseCallback);
+  }
+
+  private initError(initErrorCallback: (error: unknown) => void) {
+    this.client.on('error', initErrorCallback);
+  }
+
   connectPacade(
     initOpenCallback: (fn: (message: string) => void) => () => void,
     initMessageCallback: (client: WebSocket) => (data: RawData) => void,
@@ -47,7 +43,8 @@ export class WebsocketClient {
   ) {
     this.initOpen(initOpenCallback(this.sendMessage));
     this.initMessage(initMessageCallback(this.client));
-    this.initDisconnect(initCloseCallback, initErrorCallback);
+    this.initDisconnect(initCloseCallback);
+    this.initError(initErrorCallback);
   }
 
   private sendMessage(message: string) {
