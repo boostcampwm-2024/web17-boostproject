@@ -39,13 +39,13 @@ export class OpenapiDetailData {
     if (process.env.NODE_ENV !== 'production') return;
     const entityManager = this.datasource.manager;
     const stocks = await entityManager.find(Stock);
-    const configCount = this.openApiToken.configs.length;
+    const configCount = (await this.openApiToken.configs()).length;
     const chunkSize = Math.ceil(stocks.length / configCount);
 
     for (let i = 0; i < configCount; i++) {
-      this.logger.info(this.openApiToken.configs[i]);
+      this.logger.info((await this.openApiToken.configs())[i]);
       const chunk = stocks.slice(i * chunkSize, (i + 1) * chunkSize);
-      this.getDetailDataChunk(chunk, this.openApiToken.configs[i]);
+      this.getDetailDataChunk(chunk, (await this.openApiToken.configs())[i]);
     }
   }
 

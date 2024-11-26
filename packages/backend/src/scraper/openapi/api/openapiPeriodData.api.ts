@@ -96,7 +96,7 @@ export class OpenapiPeriodData {
     let isFail = false;
 
     while (!isFail) {
-      configIdx = (configIdx + 1) % this.openApiToken.configs.length;
+      configIdx = (configIdx + 1) % (await this.openApiToken.configs()).length;
       this.setStockPeriod(stockPeriod, stock.id!, end);
 
       // chart 데이터가 있는 지 확인 -> 리턴
@@ -130,7 +130,7 @@ export class OpenapiPeriodData {
     try {
       const response = await getOpenApi(
         this.url,
-        this.openApiToken.configs[configIdx],
+        (await this.openApiToken.configs())[configIdx],
         query,
         TR_IDS.ITEM_CHART_PRICE,
       );
