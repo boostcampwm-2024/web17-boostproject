@@ -31,9 +31,9 @@ export class UserService {
     });
   }
 
-  async searchUserByNicknameAndSubName(nickname: string, subName: string) {
+  async searchUserByNicknameAndSubName(nickname: string, subName?: string) {
     const users = await this.dataSource.manager.find(User, {
-      where: { nickname: Like(`%${nickname}%`), subName },
+      where: { nickname: Like(`%${nickname}%`), subName: Like(`${subName}%`) },
       take: 10,
     });
     return new UserSearchResult(users);
