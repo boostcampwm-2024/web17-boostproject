@@ -2,13 +2,13 @@ import { Inject, Injectable } from '@nestjs/common';
 import { DataSource, EntityManager } from 'typeorm';
 import { Logger } from 'winston';
 import { OpenapiTokenApi } from '@/scraper/openapi/api/openapiToken.api';
-import { getOpenApi } from '@/scraper/openapi/util/openapiUtil.api';
-import { TR_IDS } from '@/scraper/openapi/type/openapiUtil.type';
-import { FluctuationRankStock } from '@/stock/domain/FluctuationRankStock.entity';
 import {
   DECREASE_STOCK_QUERY,
   INCREASE_STOCK_QUERY,
 } from '@/scraper/openapi/constants/query';
+import { getOpenApi } from '@/scraper/openapi/util/openapiUtil.api';
+import { TR_IDS } from '@/scraper/openapi/type/openapiUtil.type';
+import { FluctuationRankStock } from '@/stock/domain/FluctuationRankStock.entity';
 import { Cron } from '@nestjs/schedule';
 
 @Injectable()
