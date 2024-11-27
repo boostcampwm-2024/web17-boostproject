@@ -6,16 +6,9 @@ interface ModalProps {
   children: string;
   onClose: () => void;
   onConfirm: () => void;
-  isShowButton: boolean;
 }
 
-export const Modal = ({
-  title,
-  children,
-  onClose,
-  onConfirm,
-  isShowButton,
-}: ModalProps) => {
+export const Modal = ({ title, children, onClose, onConfirm }: ModalProps) => {
   const ref = useOutsideClick(onClose);
 
   return (
@@ -28,18 +21,16 @@ export const Modal = ({
           <h2 className="display-bold20">{title}</h2>
           <p>{children}</p>
         </section>
-        {isShowButton && (
-          <section className="flex gap-3">
-            <Button onClick={onClose}>취소</Button>
-            <Button
-              backgroundColor="orange"
-              textColor="white"
-              onClick={onConfirm}
-            >
-              확인
-            </Button>
-          </section>
-        )}
+        <section className="flex gap-3">
+          <Button onClick={onClose}>취소</Button>
+          <Button
+            backgroundColor="orange"
+            textColor="white"
+            onClick={onConfirm}
+          >
+            확인
+          </Button>
+        </section>
       </div>
     </div>
   );

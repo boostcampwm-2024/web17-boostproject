@@ -1,12 +1,11 @@
 import { useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useGetLoginStatus } from '@/apis/queries/auth';
+import { useNavigate } from 'react-router-dom';
+import { GetLoginStatus } from '@/apis/queries/auth/schema';
 import {
   useDeleteStockUser,
-  useGetOwnership,
   usePostStockUser,
 } from '@/apis/queries/stock-detail';
-import Plus from '@/assets/plus.svg?react';
 import { Button } from '@/components/ui/button';
 import { Modal } from '@/components/ui/modal';
 import { modalMessage, ModalMessage } from '@/constants/modalMessage';
@@ -14,23 +13,26 @@ import { modalMessage, ModalMessage } from '@/constants/modalMessage';
 interface StockDetailHeaderProps {
   stockId: string;
   stockName: string;
+  loginStatus: GetLoginStatus['message'];
+  isOwnerStock: boolean;
 }
 
 export const StockDetailHeader = ({
   stockId,
   stockName,
+  loginStatus,
+  isOwnerStock,
 }: StockDetailHeaderProps) => {
+  const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
-  const { data: loginStatus } = useGetLoginStatus();
-  const { data: userOwnerStock } = useGetOwnership({ stockId: stockId ?? '' });
 
   const userStatus: ModalMessage = useMemo(() => {
-    if (loginStatus?.message === 'Not Authenticated') {
+    if (loginStatus === 'Not Authenticated') {
       return 'NOT_AUTHENTICATED';
     }
 
-    return userOwnerStock?.isOwner ? 'OWNERSHIP' : 'NOT_OWNERSHIP';
-  }, [loginStatus?.message, userOwnerStock?.isOwner]);
+    return isOwnerStock ? 'OWNERSHIP' : 'NOT_OWNERSHIP';
+  }, [loginStatus, isOwnerStock]);
 
   const { mutate: postStockUser, isSuccess: isSuccessPost } =
     usePostStockUser();
@@ -39,11 +41,15 @@ export const StockDetailHeader = ({
 
   const handleModalConfirm = () => {
     if (userStatus === 'NOT_OWNERSHIP') {
-      postStockUser({ stockId: stockId ?? '' });
+      postStockUser({ stockId });
     }
 
     if (userStatus === 'OWNERSHIP') {
-      deleteStockUser({ userStockId: stockId ?? '' });
+      deleteStockUser({ stockId });
+    }
+
+    if (userStatus === 'NOT_AUTHENTICATED') {
+      navigate('/login');
     }
 
     if (isSuccessPost || isSuccessDelete) {
@@ -60,7 +66,7 @@ export const StockDetailHeader = ({
           setShowModal(true);
         }}
       >
-        <Plus /> {modalMessage[userStatus].label}
+        {modalMessage[userStatus].label}
       </Button>
       {showModal &&
         createPortal(
@@ -68,7 +74,6 @@ export const StockDetailHeader = ({
             title="주식 소유"
             onClose={() => setShowModal(false)}
             onConfirm={handleModalConfirm}
-            isShowButton={modalMessage[userStatus].button}
           >
             {modalMessage[userStatus].message}
           </Modal>,
