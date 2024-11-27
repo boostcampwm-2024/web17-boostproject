@@ -12,12 +12,12 @@ export const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <Home />,
-      },
-      {
-        path: '/stocks',
         element: <Stocks />,
       },
+      // {
+      //   path: '/stocks',
+      //   element: <Stocks />,
+      // },
       {
         path: 'stocks/:stockId',
         element: <StockDetail />,
