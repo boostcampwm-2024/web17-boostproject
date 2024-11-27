@@ -1,6 +1,6 @@
 import { type FormEvent, useState } from 'react';
 import { SearchResults } from './SearchResults';
-import { useGetSearchStocks } from '@/apis/queries/stocks/useGetSearchStocks';
+import { useGetSearchStocks } from '@/apis/queries/stocks';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/utils/cn';

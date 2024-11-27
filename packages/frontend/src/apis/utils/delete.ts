@@ -3,18 +3,18 @@ import { z } from 'zod';
 import { instance } from '../config';
 import { formatZodError } from './formatZodError';
 
-interface GetParams {
-  params?: AxiosRequestConfig['params'];
+interface DeleteParams {
+  params: AxiosRequestConfig['params'];
   schema: z.ZodType;
   url: string;
 }
 
-export const get = async <T>({
+export const deleteRequest = async <T>({
   params,
   schema,
   url,
-}: GetParams): Promise<T> => {
-  const { data } = await instance.get(url, { params });
+}: DeleteParams): Promise<T> => {
+  const { data } = await instance.delete(url, { params });
   const result = schema.safeParse(data);
 
   if (!result.success) {

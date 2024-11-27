@@ -9,13 +9,15 @@ import { get } from '@/apis/utils/get';
 const getTopGainers = ({ limit }: Partial<GetStockListRequest>) =>
   get<GetStockListResponse[]>({
     schema: GetStockListResponseSchema,
-    url: `/api/stock/topGainers?limit=${limit}`,
+    url: `/api/stock/topGainers`,
+    params: { limit },
   });
 
 const getTopLosers = ({ limit }: Partial<GetStockListRequest>) =>
   get<GetStockListResponse[]>({
     schema: GetStockListResponseSchema,
-    url: `/api/stock/topLosers?limit=${limit}`,
+    url: `/api/stock/topLosers`,
+    params: { limit },
   });
 
 export const useGetStocksByPrice = ({

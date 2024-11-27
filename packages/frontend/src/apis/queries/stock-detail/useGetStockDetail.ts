@@ -14,7 +14,7 @@ const getStockDetail = ({ stockId }: GetStockRequest) =>
 
 export const useGetStockDetail = ({ stockId }: GetStockRequest) => {
   return useQuery({
-    queryKey: ['stockDetail'],
+    queryKey: ['stockDetail', stockId],
     queryFn: () => getStockDetail({ stockId }),
     enabled: !!stockId,
   });

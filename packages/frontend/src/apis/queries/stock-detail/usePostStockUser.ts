@@ -6,16 +6,16 @@ import {
 } from './schema';
 import { post } from '@/apis/utils/post';
 
-const postStockView = ({ stockId }: PostStockRequest) =>
+const postStockUser = ({ stockId }: PostStockRequest) =>
   post<PostStockResponse>({
     params: stockId,
     schema: PostStockResponseSchema,
-    url: 'api/stock/view',
+    url: 'api/stock/user',
   });
 
-export const usePostStockView = () => {
+export const usePostStockUser = () => {
   return useMutation({
-    mutationKey: ['stockView'],
-    mutationFn: ({ stockId }: PostStockRequest) => postStockView({ stockId }),
+    mutationKey: ['addStock'],
+    mutationFn: ({ stockId }: PostStockRequest) => postStockUser({ stockId }),
   });
 };

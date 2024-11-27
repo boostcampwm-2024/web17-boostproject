@@ -5,6 +5,7 @@ interface StockInfoCardProps {
   currentPrice: number;
   changeRate: number;
   index: number;
+  onClick: () => void;
 }
 
 export const StockInfoCard = ({
@@ -12,6 +13,7 @@ export const StockInfoCard = ({
   currentPrice,
   changeRate,
   index,
+  onClick,
 }: StockInfoCardProps) => {
   return (
     <div
@@ -19,6 +21,7 @@ export const StockInfoCard = ({
         'flex cursor-pointer flex-col gap-2 rounded-md py-4 pl-5 pr-12 shadow transition-all duration-300 hover:scale-105',
         index === 0 ? 'bg-light-yellow' : 'bg-white',
       )}
+      onClick={onClick}
     >
       <p className="display-bold16 text-dark-gray mb-3 text-ellipsis">{name}</p>
       <div className="flex items-center gap-5">
