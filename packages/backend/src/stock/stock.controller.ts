@@ -228,11 +228,12 @@ export class StockController {
 
   @Get('index')
   @ApiOperation({
-    summary: '지표 API',
-    description: '지표의 최고, 최저, 현재, 변동률을 조회합니다.',
+    summary: '지표(코스피, 코스닥, 환율) API',
+    description:
+      '지표(코스피, 코스닥, 환율)의 최고, 최저, 현재, 변동률을 조회합니다.',
   })
   @ApiOkResponse({
-    description: '지표 조회 성공',
+    description: '지표(코스피, 코스닥, 환율) 조회 성공',
     type: [StockIndexRateResponse],
   })
   async getIndexData() {
