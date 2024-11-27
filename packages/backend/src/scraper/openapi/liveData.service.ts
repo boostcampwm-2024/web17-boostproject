@@ -35,7 +35,7 @@ export class LiveData {
         stockId,
       );
       if (stockLiveData) {
-        this.openapiLiveData.saveLiveData([stockLiveData]);
+        this.openapiLiveData.saveLiveData(stockLiveData);
       }
     } catch (error) {
       this.logger.warn(`Subscribe error in open api : ${error}`);
@@ -98,7 +98,7 @@ export class LiveData {
           return;
         }
         const liveData = this.openapiLiveData.convertLiveData(message);
-        await this.openapiLiveData.saveLiveData(liveData);
+        await this.openapiLiveData.saveLiveData(liveData[0]);
       } catch (error) {
         this.logger.warn(error);
       }
