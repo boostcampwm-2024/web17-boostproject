@@ -41,7 +41,6 @@ export class UserService {
 
   async createSubName(nickname: string) {
     return this.dataSource.transaction(async (manager) => {
-      console.log(await this.existsUserByNickname(nickname, manager));
       if (!(await this.existsUserByNickname(nickname, manager))) {
         return '0001';
       }
@@ -51,7 +50,7 @@ export class UserService {
         .select('MAX(user.subName)', 'max')
         .where('user.nickname = :nickname', { nickname })
         .getRawOne();
-      console.log(maxSubName);
+
       return (parseInt(maxSubName.max, 10) + 1).toString().padStart(4, '0');
     });
   }

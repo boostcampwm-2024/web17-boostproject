@@ -153,14 +153,15 @@ export class StockRankResponses {
   result: StockRankResponse[];
 
   constructor(stocks: Record<string, string>[]) {
+    console.log(stocks);
     this.result = stocks.map((stock) => ({
       id: stock.id,
       name: stock.name,
       currentPrice: parseFloat(stock.currentPrice),
       volume: parseInt(stock.volume),
       marketCap: stock.marketCap,
-      changeRate: parseFloat(stock.fluctuationRate),
-      rank: parseInt(stock.stockRank),
+      changeRate: parseFloat(stock.rank_fluctuation_rate),
+      rank: parseInt(stock.rank_rank),
     }));
   }
 }

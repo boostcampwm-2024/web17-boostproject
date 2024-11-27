@@ -27,6 +27,7 @@ export class OpenapiFluctuationData {
   }
 
   @Cron('* 9-15 * * 1-5')
+  @Cron('*/1 9-15 * * 1-5')
   async getFluctuationRankStocks() {
     await this.getDecreaseRankStocks();
     await this.getIncreaseRankStocks();
