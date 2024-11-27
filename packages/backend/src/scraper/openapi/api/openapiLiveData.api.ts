@@ -18,28 +18,24 @@ export class OpenapiLiveData {
   ) {}
 
   async saveLiveData(data: StockLiveData[]) {
-    const exists = await this.datasource.manager.exists(StockLiveData, {
-      where: {
-        stock: { id: data[0].stock.id },
-      },
-    });
-    if (exists) {
-      await this.datasource.manager
-        .getRepository(StockLiveData)
-        .createQueryBuilder()
-        .update()
-        .set(data[0])
-        .where('stock.id = :stockId', { stockId: data[0].stock.id })
-        .execute();
-    } else {
-      await this.datasource.manager
-        .getRepository(StockLiveData)
-        .createQueryBuilder()
-        .insert()
-        .into(StockLiveData)
-        .values(data)
-        .execute();
-    }
+    await this.datasource.manager
+      .getRepository(StockLiveData)
+      .createQueryBuilder()
+      .insert()
+      .values(data[0])
+      .orUpdate(
+        [
+          'current_price',
+          'change_rate',
+          'volume',
+          'high',
+          'low',
+          'open',
+          'updatedAt',
+        ],
+        ['stock_id'],
+      )
+      .execute();
   }
 
   // 현재가 체결
