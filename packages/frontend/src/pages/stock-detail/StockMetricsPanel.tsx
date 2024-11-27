@@ -26,9 +26,9 @@ export const StockMetricsPanel = ({
   return (
     <article className="flex flex-col gap-10 rounded-md bg-white p-6 shadow">
       {Object.values(metricsData).map((section) => (
-        <section className="flex flex-col">
+        <section className="flex flex-col" key={section.id}>
           <Title>{section.title}</Title>
-          <section className="grid grid-cols-[repeat(4,100px)] items-center">
+          <section className="grid w-9/12 grid-cols-4 items-center">
             {section.metrics.map((metric) => (
               <MetricItem
                 key={metric.name}

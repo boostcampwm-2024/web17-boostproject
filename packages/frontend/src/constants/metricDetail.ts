@@ -47,6 +47,7 @@ export const METRICS_DATA = ({
 }: StockMetricsPanelProps) => {
   return {
     price: {
+      id: 1,
       title: '가격',
       metrics: [
         {
@@ -68,6 +69,7 @@ export const METRICS_DATA = ({
       ],
     },
     enterpriseValue: {
+      id: 2,
       title: '기업가치',
       metrics: [
         {
