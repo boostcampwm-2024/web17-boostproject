@@ -35,7 +35,7 @@ export class LiveData {
         stockId,
       );
       if (stockLiveData) {
-        this.openapiLiveData.saveLiveData([stockLiveData]);
+        this.openapiLiveData.saveLiveData(stockLiveData);
       }
     } catch (error) {
       this.logger.warn(`Subscribe error in open api : ${error}`);
@@ -89,16 +89,11 @@ export class LiveData {
         if (message.header) {
           if (message.header.tr_id === 'PINGPONG') {
             client.pong(data);
-            this.logger.info('Client ping pong');
-          } else if (message.body) {
-            this.logger.info(
-              `${message.header.tr_key} : ${JSON.stringify(message.body)}`,
-            );
           }
           return;
         }
         const liveData = this.openapiLiveData.convertLiveData(message);
-        await this.openapiLiveData.saveLiveData(liveData);
+        await this.openapiLiveData.saveLiveData(liveData[0]);
       } catch (error) {
         this.logger.warn(error);
       }

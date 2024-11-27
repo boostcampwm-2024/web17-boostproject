@@ -23,6 +23,7 @@ import {
 } from './stockData.service';
 import { StockDetailService } from './stockDetail.service';
 import { StockLiveDataSubscriber } from './stockLiveData.subscriber';
+import { StockRateIndexService } from './stockRateIndex.service';
 import { OpenapiLiveData } from '@/scraper/openapi/api/openapiLiveData.api';
 import { OpenapiTokenApi } from '@/scraper/openapi/api/openapiToken.api';
 import { LiveData } from '@/scraper/openapi/liveData.service';
@@ -57,6 +58,7 @@ import { WebsocketClient } from '@/scraper/openapi/websocket/websocketClient.web
     StockDataYearlyService,
     StockDataMonthlyService,
     StockDetailService,
+    StockRateIndexService,
   ],
   exports: [StockService],
 })

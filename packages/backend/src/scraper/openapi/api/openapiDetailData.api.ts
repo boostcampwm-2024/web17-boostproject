@@ -69,7 +69,7 @@ export class OpenapiDetailData extends Openapi {
     };
   }
 
-  private async save(saveEntity: StockDetail) {
+  protected async save(saveEntity: StockDetail) {
     const entity = StockDetail;
     const manager = this.datasource.manager;
     await manager
