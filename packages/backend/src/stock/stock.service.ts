@@ -134,6 +134,13 @@ export class StockService {
     return new StockRankResponses(rawData);
   }
 
+  async getTopStocksByFluctuation() {
+    const data = await this.getStocksQuery()
+      .innerJoinAndSelect('stock.fluctuationRankStocks', 'rank')
+      .getRawMany();
+    return new StockRankResponses(data);
+  }
+
   private async validateStockExists(stockId: string, manager: EntityManager) {
     if (!(await this.existsStock(stockId, manager))) {
       throw new BadRequestException('not exists stock');
