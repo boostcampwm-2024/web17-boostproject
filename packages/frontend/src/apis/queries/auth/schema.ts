@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 export const GetLoginStatusSchema = z.object({
   message: z.enum(['Authenticated', 'Not Authenticated']),
+  nickname: z.string(),
 });
 
 export type GetLoginStatus = z.infer<typeof GetLoginStatusSchema>;

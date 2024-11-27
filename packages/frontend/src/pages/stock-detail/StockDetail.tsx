@@ -31,10 +31,10 @@ export const StockDetail = () => {
       <StockDetailHeader
         stockId={stockId}
         stockName={name || ''}
-        loginStatus={loginStatus.message}
+        loginStatus={loginStatus}
         isOwnerStock={userOwnerStock.isOwner}
       />
-      <article className="grid flex-1 grid-cols-2 gap-5 [&_section]:gap-5">
+      <article className="grid flex-1 grid-cols-[2.5fr_1fr_1fr] gap-5 [&_section]:gap-5">
         <section className="flex flex-col">
           <div className="relative h-full">
             <TradingChart />
@@ -48,7 +48,7 @@ export const StockDetail = () => {
           />
         </section>
         <ChatPanel
-          loginStatus={loginStatus.message}
+          loginStatus={loginStatus}
           isOwnerStock={userOwnerStock.isOwner}
         />
         <section className="flex flex-col">
