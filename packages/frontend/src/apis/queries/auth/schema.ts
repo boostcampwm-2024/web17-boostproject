@@ -5,3 +5,10 @@ export const GetLoginStatusSchema = z.object({
 });
 
 export type GetLoginStatus = z.infer<typeof GetLoginStatusSchema>;
+
+export const GetTestLoginSchema = z.object({
+  password: z.string(),
+  username: z.string(),
+});
+
+export type GetTestLogin = z.infer<typeof GetTestLoginSchema>;
