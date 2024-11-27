@@ -1,3 +1,4 @@
+import { MouseEventHandler } from 'react';
 import Like from '@/assets/like.svg?react';
 import { cn } from '@/utils/cn';
 
@@ -6,7 +7,8 @@ interface ChatMessageProps {
   contents: string;
   likeCount: number;
   liked: boolean;
-  onClick: () => void;
+  onClick: MouseEventHandler<SVGElement>;
+  writer: string;
 }
 
 export const ChatMessage = ({
@@ -15,13 +17,26 @@ export const ChatMessage = ({
   likeCount,
   liked,
   onClick,
+  writer,
 }: ChatMessageProps) => {
   return (
-    <div className="flex">
-      <p className="display-bold14 text-dark-gray mr-3 w-fit">{name}</p>
-      <div>
+    <div className={cn('flex flex-col', writer === name ? 'items-end' : '')}>
+      <p
+        className={cn(
+          'display-bold14 text-dark-gray w-fit',
+          writer === name && 'text-orange',
+        )}
+      >
+        {name}
+      </p>
+      <div className="flex flex-col gap-2">
         <p className="display-medium14 text-dark-gray">{contents}</p>
-        <div className="flex items-center gap-1">
+        <div
+          className={cn(
+            'flex items-center gap-1',
+            writer === name ? 'justify-end' : '',
+          )}
+        >
           <Like
             className={cn(
               'hover:fill-orange cursor-pointer',
