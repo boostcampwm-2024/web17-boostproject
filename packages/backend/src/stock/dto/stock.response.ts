@@ -153,7 +153,6 @@ export class StockRankResponses {
   result: StockRankResponse[];
 
   constructor(stocks: Record<string, string>[]) {
-    console.log(stocks);
     this.result = stocks.map((stock) => ({
       id: stock.id,
       name: stock.name,

@@ -10,19 +10,13 @@ import {
 } from './dto/stock.response';
 import { UserStock } from '@/stock/domain/userStock.entity';
 import { UserStocksResponse } from '@/stock/dto/userStock.response';
-import { FluctuationRankStock } from '@/stock/domain/FluctuationRankStock.entity';
 
 @Injectable()
 export class StockService {
   constructor(
     private readonly datasource: DataSource,
     @Inject('winston') private readonly logger: Logger,
-  ) {
-    const repository = datasource.getRepository(FluctuationRankStock);
-    const metadata = repository.metadata;
-    const columns = metadata.columns.map((column) => column.propertyName);
-    console.log(columns);
-  }
+  ) {}
 
   async increaseView(stockId: string) {
     await this.datasource.transaction(async (manager) => {
