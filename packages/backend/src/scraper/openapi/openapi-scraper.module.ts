@@ -15,6 +15,8 @@ import {
 } from '@/stock/domain/stockData.entity';
 import { StockDetail } from '@/stock/domain/stockDetail.entity';
 import { StockLiveData } from '@/stock/domain/stockLiveData.entity';
+import { OpenapiFluctuationData } from '@/scraper/openapi/api/openapiFluctuationData.api';
+import { FluctuationRankStock } from '@/stock/domain/FluctuationRankStock.entity';
 
 @Module({
   imports: [
@@ -27,6 +29,7 @@ import { StockLiveData } from '@/stock/domain/stockLiveData.entity';
       StockYearly,
       StockLiveData,
       StockDetail,
+      FluctuationRankStock,
     ]),
   ],
   controllers: [],
@@ -36,7 +39,7 @@ import { StockLiveData } from '@/stock/domain/stockLiveData.entity';
     OpenapiMinuteData,
     OpenapiDetailData,
     OpenapiScraperService,
-    OpenapiTokenApi,
+    OpenapiFluctuationData,
   ],
 })
 export class OpenapiScraperModule {}
