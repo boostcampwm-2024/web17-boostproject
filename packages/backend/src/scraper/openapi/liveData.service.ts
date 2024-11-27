@@ -89,10 +89,6 @@ export class LiveData {
         if (message.header) {
           if (message.header.tr_id === 'PINGPONG') {
             client.pong(data);
-          } else if (message.body) {
-            this.logger.info(
-              `${message.header.tr_key} : ${JSON.stringify(message.body)}`,
-            );
           }
           return;
         }
