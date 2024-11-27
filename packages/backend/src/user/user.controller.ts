@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Param,
   Patch,
+  Post,
   Query,
   Req,
 } from '@nestjs/common';
@@ -48,6 +49,23 @@ export class UserController {
     }
     const user = request.user as User;
     return await this.userService.getUserInfo(user.id);
+  }
+
+  @Post('info')
+  @ApiOperation({
+    summary: '유저 닉네임을 변경한다.',
+    description: '유저 닉네임을 변경한다.',
+  })
+  async updateNickname(
+    @Req() request: Request,
+    @Body('nickname') nickname: string,
+  ) {
+    if (!request.user) {
+      throw new ForbiddenException('Forbidden access to change nickname');
+    }
+    const user = request.user as User;
+    await this.userService.updateNickname(user.id, nickname);
+    return { message: '닉네임 변경 완료', date: new Date() };
   }
 
   @Patch(':id/theme')

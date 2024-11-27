@@ -70,6 +70,20 @@ export class UserService {
     return manager.exists(User, { where: { nickname } });
   }
 
+  async updateNickname(userId: number, nickname: string) {
+    const user = await this.dataSource.manager.findOne(User, {
+      where: { id: userId },
+    });
+    if (!user) {
+      throw new BadRequestException('User not found');
+    } else if (user.nickname === nickname) {
+      throw new BadRequestException('Same nickname');
+    }
+    user.nickname = nickname;
+    user.subName = await this.createSubName(nickname);
+    return await this.dataSource.manager.save(user);
+  }
+
   async registerTester() {
     return this.register({
       nickname: this.generateRandomNickname(),
