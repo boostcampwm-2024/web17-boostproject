@@ -120,7 +120,6 @@ export class ChatService {
     size: number,
     userId?: number,
   ) {
-    console.log('stockId', stockId);
     return this.dataSource
       .createQueryBuilder(Chat, 'chat')
       .leftJoinAndSelect('chat.likes', 'like', 'like.user_id = :userId', {
