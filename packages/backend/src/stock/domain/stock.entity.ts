@@ -10,6 +10,7 @@ import {
 import { StockLiveData } from './stockLiveData.entity';
 import { Like } from '@/chat/domain/like.entity';
 import { DateEmbedded } from '@/common/dateEmbedded.entity';
+import { FluctuationRankStock } from '@/stock/domain/FluctuationRankStock.entity';
 import { UserStock } from '@/stock/domain/userStock.entity';
 
 @Entity()
@@ -58,4 +59,10 @@ export class Stock {
 
   @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
   kospiStock?: KospiStock;
+
+  @OneToMany(
+    () => FluctuationRankStock,
+    (fluctuationRankStock) => fluctuationRankStock.stock,
+  )
+  fluctuationRankStocks?: FluctuationRankStock[];
 }
