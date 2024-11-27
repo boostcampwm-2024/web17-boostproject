@@ -13,14 +13,14 @@ import { User } from '@/user/domain/user.entity';
 @Entity()
 export class UserStock {
   @PrimaryGeneratedColumn()
-  id?: number;
+  id: number;
 
   @ManyToOne(() => User)
-  user?: User;
+  user: User;
 
   @ManyToOne(() => Stock)
-  stock?: Stock;
+  stock: Stock;
 
   @Column(() => DateEmbedded, { prefix: '' })
-  date?: DateEmbedded;
+  date: DateEmbedded;
 }

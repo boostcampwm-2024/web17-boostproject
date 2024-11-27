@@ -62,7 +62,14 @@ export class OpenapiDetailData extends Openapi {
     return result;
   }
 
-  protected async save(saveEntity: StockDetail) {
+  protected query(stockId: string, code: 'J' = 'J') {
+    return {
+      fid_cond_mrkt_div_code: code,
+      fid_input_iscd: stockId,
+    };
+  }
+
+  private async save(saveEntity: StockDetail) {
     const entity = StockDetail;
     const manager = this.datasource.manager;
     await manager
@@ -75,12 +82,5 @@ export class OpenapiDetailData extends Openapi {
         ['stock_id'],
       )
       .execute();
-  }
-
-  protected query(stockId: string, code: 'J' = 'J') {
-    return {
-      fid_cond_mrkt_div_code: code,
-      fid_input_iscd: stockId,
-    };
   }
 }

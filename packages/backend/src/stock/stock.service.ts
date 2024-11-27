@@ -9,6 +9,7 @@ import {
   StocksResponse,
 } from './dto/stock.response';
 import { UserStock } from '@/stock/domain/userStock.entity';
+import { UserStocksResponse } from '@/stock/dto/userStock.response';
 
 @Injectable()
 export class StockService {
@@ -53,22 +54,35 @@ export class StockService {
     });
   }
 
+  async getUserStocks(userId?: number) {
+    if (!userId) {
+      return new UserStocksResponse([]);
+    }
+    const result = await this.datasource.manager.find(UserStock, {
+      where: { user: { id: userId } },
+      relations: ['stock'],
+    });
+    return new UserStocksResponse(result);
+  }
+
   async checkStockExist(stockId: string) {
     return await this.datasource.manager.exists(Stock, {
       where: { id: stockId },
     });
   }
 
-  async deleteUserStock(userId: number, userStockId: number) {
+  async deleteUserStock(userId: number, stockId: string) {
     await this.datasource.transaction(async (manager) => {
       const userStock = await manager.findOne(UserStock, {
-        where: { id: userStockId },
+        where: { user: { id: userId }, stock: { id: stockId } },
         relations: ['user'],
       });
       this.validateUserStock(userId, userStock);
-      await manager.delete(UserStock, {
-        id: userStockId,
-      });
+      if (userStock) {
+        await manager.delete(UserStock, {
+          id: userStock.id,
+        });
+      }
     });
   }
 
