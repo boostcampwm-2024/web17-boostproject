@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 import { DataSource, EntityManager } from 'typeorm';
 import { Logger } from 'winston';
 import { OpenapiTokenApi } from '@/scraper/openapi/api/openapiToken.api';
@@ -6,10 +7,9 @@ import {
   DECREASE_STOCK_QUERY,
   INCREASE_STOCK_QUERY,
 } from '@/scraper/openapi/constants/query';
-import { getOpenApi } from '@/scraper/openapi/util/openapiUtil.api';
 import { TR_IDS } from '@/scraper/openapi/type/openapiUtil.type';
+import { getOpenApi } from '@/scraper/openapi/util/openapiUtil.api';
 import { FluctuationRankStock } from '@/stock/domain/FluctuationRankStock.entity';
-import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class OpenapiFluctuationData {
@@ -80,7 +80,7 @@ export class OpenapiFluctuationData {
     const query = isRising ? INCREASE_STOCK_QUERY : DECREASE_STOCK_QUERY;
     const result = await getOpenApi(
       this.fluctuationUrl,
-      this.openApiToken.configs[0],
+      (await this.openApiToken.configs())[0],
       query,
       TR_IDS.FLUCTUATION_DATA,
     );
