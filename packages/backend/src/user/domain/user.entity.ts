@@ -7,11 +7,13 @@ import {
 } from 'typeorm';
 import { Alarm } from '@/alarm/domain/alarm.entity';
 import { PushSubscription } from '@/alarm/domain/subscription.entity';
+import { Mention } from '@/chat/domain/mention.entity';
 import { DateEmbedded } from '@/common/dateEmbedded.entity';
 import { UserStock } from '@/stock/domain/userStock.entity';
 import { OauthType } from '@/user/domain/ouathType';
 import { Role } from '@/user/domain/role';
 
+@Index('nickname_sub_name', ['nickname', 'subName'], { unique: true })
 @Index('type_oauth_id', ['type', 'oauthId'], { unique: true })
 @Entity({ name: 'users' })
 export class User {
@@ -20,6 +22,9 @@ export class User {
 
   @Column({ length: 50 })
   nickname: string;
+
+  @Column({ length: 10, default: '0001' })
+  subName: string;
 
   @Column({ length: 50 })
   email: string;
@@ -47,4 +52,7 @@ export class User {
 
   @OneToMany(() => PushSubscription, (subscription) => subscription.user)
   subscriptions: PushSubscription[];
+
+  @OneToMany(() => Mention, (mention) => mention.user)
+  mentions: Mention[];
 }

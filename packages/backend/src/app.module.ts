@@ -10,7 +10,7 @@ import { ChatModule } from '@/chat/chat.module';
 import {
   typeormDevelopConfig,
   typeormProductConfig,
-} from '@/configs/devTypeormConfig';
+} from '@/configs/typeormConfig';
 import { logger } from '@/configs/logger.config';
 import { StockModule } from '@/stock/stock.module';
 import { UserModule } from '@/user/user.module';

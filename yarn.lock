@@ -1287,10 +1287,10 @@
     multer "1.4.4-lts.1"
     tslib "2.7.0"
 
-"@nestjs/platform-socket.io@^10.4.7":
-  version "10.4.7"
-  resolved "https://registry.yarnpkg.com/@nestjs/platform-socket.io/-/platform-socket.io-10.4.7.tgz#0c22c204e72aba83dff5b517dcd4802fc0f17594"
-  integrity sha512-CpmrqswpD/O4SyF/IUzKj14BUf0eTLyDja9svPCRIJX8AdF47mKCMbz5vtU6vpJtxVnq1e1Xd+xcdZ6FIf6HtQ==
+"@nestjs/platform-socket.io@^10.4.8":
+  version "10.4.8"
+  resolved "https://registry.yarnpkg.com/@nestjs/platform-socket.io/-/platform-socket.io-10.4.8.tgz#cf483794f3b1831d804a3ac3a3f7b999664489d4"
+  integrity sha512-KzCL+P037HiaW3iODueJ/vw5a8bSr6uIturgGSuRz6c8WR+SfqKC6jNXw0JTW5NVqEqX8tOunEVXoI3MFnWz/w==
   dependencies:
     socket.io "4.8.0"
     tslib "2.7.0"
@@ -1340,10 +1340,10 @@
   dependencies:
     uuid "9.0.1"
 
-"@nestjs/websockets@^10.4.7":
-  version "10.4.7"
-  resolved "https://registry.yarnpkg.com/@nestjs/websockets/-/websockets-10.4.7.tgz#20d4da5e38a1f1dff866f780e694c907eaa23b8f"
-  integrity sha512-ajuoptYLYm+l3+KtaA9Ed+cO9yB34PtBE8UObavRT8Euh/f7QfeJiKcrU3+BQSAiTWM3nF2qfuV4CfEkP9uKuw==
+"@nestjs/websockets@^10.4.8":
+  version "10.4.8"
+  resolved "https://registry.yarnpkg.com/@nestjs/websockets/-/websockets-10.4.8.tgz#9c2b982059e850a56999f56c87ac3a88acbce4ea"
+  integrity sha512-IpObWsZvjjUxmBuIF/AkcyXrFFzwNYNsw2reZXHy7C31wJsYAjwr6rHMSRGyqsxfqTA2DqjCczorewM6BAEXig==
   dependencies:
     iterare "1.2.1"
     object-hash "3.0.0"
@@ -2156,6 +2156,15 @@
     "@types/passport" "*"
     "@types/passport-oauth2" "*"
 
+"@types/passport-local@^1.0.38":
+  version "1.0.38"
+  resolved "https://registry.yarnpkg.com/@types/passport-local/-/passport-local-1.0.38.tgz#8073758188645dde3515808999b1c218a6fe7141"
+  integrity sha512-nsrW4A963lYE7lNTv9cr5WmiUD1ibYJvWrpE13oxApFsRt77b0RdtZvKbCdNIY4v/QZ6TRQWaDDEwV1kCTmcXg==
+  dependencies:
+    "@types/express" "*"
+    "@types/passport" "*"
+    "@types/passport-strategy" "*"
+
 "@types/passport-oauth2@*":
   version "1.4.17"
   resolved "https://registry.yarnpkg.com/@types/passport-oauth2/-/passport-oauth2-1.4.17.tgz#d5d54339d44f6883d03e69dc0cc0e2114067abb4"
@@ -2163,6 +2172,14 @@
   dependencies:
     "@types/express" "*"
     "@types/oauth" "*"
+    "@types/passport" "*"
+
+"@types/passport-strategy@*":
+  version "0.2.38"
+  resolved "https://registry.yarnpkg.com/@types/passport-strategy/-/passport-strategy-0.2.38.tgz#482abba0b165cd4553ec8b748f30b022bd6c04d3"
+  integrity sha512-GC6eMqqojOooq993Tmnmp7AUTbbQSgilyvpCYQjT+H6JfG/g6RGc7nXEniZlp0zyKJ0WUdOiZWLBZft9Yug1uA==
+  dependencies:
+    "@types/express" "*"
     "@types/passport" "*"
 
 "@types/passport@*":
@@ -2273,6 +2290,12 @@
   version "3.6.4"
   resolved "https://registry.yarnpkg.com/@types/web-push/-/web-push-3.6.4.tgz#4c6e10d3963ba51e7b4b8fff185f43612c0d1346"
   integrity sha512-GnJmSr40H3RAnj0s34FNTcJi1hmWFV5KXugE0mYWnYhgTAHLJ/dJKAwDmvPJYMke0RplY2XE9LnM4hqSqKIjhQ==
+  dependencies:
+    "@types/node" "*"
+"@types/ws@^8.5.13":
+  version "8.5.13"
+  resolved "https://registry.yarnpkg.com/@types/ws/-/ws-8.5.13.tgz#6414c280875e2691d0d1e080b05addbf5cb91e20"
+  integrity sha512-osM/gWBTPKgHV8XkTunnegTRIsvF6owmf5w+JtAfOw472dptdm0dlGv4xCt6GwQRcC2XVOvvRE/0bAoQcL2QkA==
   dependencies:
     "@types/node" "*"
 
@@ -7115,6 +7138,13 @@ passport-google-oauth20@^2.0.0:
   dependencies:
     passport-oauth2 "1.x.x"
 
+passport-local@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/passport-local/-/passport-local-1.0.0.tgz#1fe63268c92e75606626437e3b906662c15ba6ee"
+  integrity sha512-9wCE6qKznvf9mQYYbgJ3sVOHmCWoUNMVFoZzNoznmISbhnNNPhN9xfY3sLmScHMetEJeoY7CXwfhCe7argfQow==
+  dependencies:
+    passport-strategy "1.x.x"
+
 passport-oauth2@1.x.x:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/passport-oauth2/-/passport-oauth2-1.8.0.tgz#55725771d160f09bbb191828d5e3d559eee079c8"
@@ -9058,7 +9088,7 @@ write-file-atomic@^4.0.2:
     imurmurhash "^0.1.4"
     signal-exit "^3.0.7"
 
-ws@^8.2.3:
+ws@^8.18.0, ws@^8.2.3:
   version "8.18.0"
   resolved "https://registry.yarnpkg.com/ws/-/ws-8.18.0.tgz#0d7505a6eafe2b0e712d232b42279f53bc289bbc"
   integrity sha512-8VbfWfHLbbwu3+N6OKsOMpBdT4kXPDDB9cJk2bJ6mh9ucxdlnNvH1e+roYkKmN9Nxw2yjz7VzeO9oOz2zJ04Pw==

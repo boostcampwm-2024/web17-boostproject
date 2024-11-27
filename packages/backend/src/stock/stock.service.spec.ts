@@ -15,7 +15,6 @@ const logger: Logger = {
 describe('StockService 테스트', () => {
   const stockId = 'A005930';
   const userId = 1;
-  const userStockId = 1;
 
   test('주식의 조회수를 증가시킨다.', async () => {
     const managerMock = {
@@ -91,7 +90,7 @@ describe('StockService 테스트', () => {
     const dataSource = createDataSourceMock(managerMock);
     const stockService = new StockService(dataSource as DataSource, logger);
 
-    await stockService.deleteUserStock(userId, userStockId);
+    await stockService.deleteUserStock(userId, stockId);
 
     expect(managerMock.findOne).toHaveBeenCalled();
     expect(managerMock.delete).toHaveBeenCalled();
@@ -104,7 +103,7 @@ describe('StockService 테스트', () => {
     const dataSource = createDataSourceMock(managerMock);
     const stockService = new StockService(dataSource as DataSource, logger);
 
-    await expect(() => stockService.deleteUserStock(userId, 2)).rejects.toThrow(
+    await expect(() => stockService.deleteUserStock(userId, "13")).rejects.toThrow(
       'user stock not found',
     );
   });
@@ -118,7 +117,7 @@ describe('StockService 테스트', () => {
     const stockService = new StockService(dataSource as DataSource, logger);
 
     await expect(() =>
-      stockService.deleteUserStock(notOwnerUserId, userStockId),
+      stockService.deleteUserStock(notOwnerUserId, stockId),
     ).rejects.toThrow('you are not owner of user stock');
   });
 

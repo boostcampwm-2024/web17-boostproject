@@ -3,8 +3,13 @@ import { plainToInstance } from 'class-transformer';
 import { DataSource, EntityManager } from 'typeorm';
 import { Logger } from 'winston';
 import { Stock } from './domain/stock.entity';
-import { StockSearchResponse, StocksResponse } from './dto/stock.response';
+import {
+  StockRankResponses,
+  StockSearchResponse,
+  StocksResponse,
+} from './dto/stock.response';
 import { UserStock } from '@/stock/domain/userStock.entity';
+import { UserStocksResponse } from '@/stock/dto/userStock.response';
 
 @Injectable()
 export class StockService {
@@ -49,31 +54,43 @@ export class StockService {
     });
   }
 
+  async getUserStocks(userId?: number) {
+    if (!userId) {
+      return new UserStocksResponse([]);
+    }
+    const result = await this.datasource.manager.find(UserStock, {
+      where: { user: { id: userId } },
+      relations: ['stock'],
+    });
+    return new UserStocksResponse(result);
+  }
+
   async checkStockExist(stockId: string) {
     return await this.datasource.manager.exists(Stock, {
       where: { id: stockId },
     });
   }
 
-  async deleteUserStock(userId: number, userStockId: number) {
+  async deleteUserStock(userId: number, stockId: string) {
     await this.datasource.transaction(async (manager) => {
       const userStock = await manager.findOne(UserStock, {
-        where: { id: userStockId },
+        where: { user: { id: userId }, stock: { id: stockId } },
         relations: ['user'],
       });
       this.validateUserStock(userId, userStock);
-      await manager.delete(UserStock, {
-        id: userStockId,
-      });
+      if (userStock) {
+        await manager.delete(UserStock, {
+          id: userStock.id,
+        });
+      }
     });
   }
 
   async searchStock(stockName: string) {
-    const queryBuilder = this.datasource
+    const result = await this.datasource
       .getRepository(Stock)
-      .createQueryBuilder();
-    const result = await queryBuilder
-      .where('stock.stock_name LIKE :name', {
+      .createQueryBuilder('stock')
+      .where('stock.is_trading = :isTrading and stock.stock_name LIKE :name', {
         isTrading: true,
         name: `%${stockName}%`,
       })
@@ -92,6 +109,29 @@ export class StockService {
     if (userStock.user.id !== userId) {
       throw new BadRequestException('you are not owner of user stock');
     }
+  }
+
+  async getTopStocksByViews(limit: number) {
+    const rawData = await this.getStocksQuery()
+      .orderBy('stock.views', 'DESC')
+      .limit(limit)
+      .getRawMany();
+
+    return plainToInstance(StocksResponse, rawData);
+  }
+
+  async getTopStocksByGainers(limit: number) {
+    const rawData = await this.getStockRankQuery(true).take(limit).getRawMany();
+
+    return new StockRankResponses(rawData);
+  }
+
+  async getTopStocksByLosers(limit: number) {
+    const rawData = await this.getStockRankQuery(false)
+      .take(limit)
+      .getRawMany();
+
+    return new StockRankResponses(rawData);
   }
 
   private async validateStockExists(stockId: string, manager: EntityManager) {
@@ -127,7 +167,7 @@ export class StockService {
     return await manager.exists(Stock, { where: { id: stockId } });
   }
 
-  private StocksQuery() {
+  private getStocksQuery() {
     return this.datasource
       .getRepository(Stock)
       .createQueryBuilder('stock')
@@ -151,30 +191,9 @@ export class StockService {
       ]);
   }
 
-  async getTopStocksByViews(limit: number) {
-    const rawData = await this.StocksQuery()
-      .orderBy('stock.views', 'DESC')
-      .limit(limit)
-      .getRawMany();
-
-    return plainToInstance(StocksResponse, rawData);
-  }
-
-  async getTopStocksByGainers(limit: number) {
-    const rawData = await this.StocksQuery()
-      .orderBy('stockLiveData.changeRate', 'DESC')
-      .limit(limit)
-      .getRawMany();
-
-    return plainToInstance(StocksResponse, rawData);
-  }
-
-  async getTopStocksByLosers(limit: number) {
-    const rawData = await this.StocksQuery()
-      .orderBy('stockLiveData.changeRate', 'ASC')
-      .limit(limit)
-      .getRawMany();
-
-    return plainToInstance(StocksResponse, rawData);
+  private getStockRankQuery(isRising: boolean) {
+    return this.getStocksQuery()
+      .innerJoinAndSelect('stock.fluctuationRankStocks', 'rank')
+      .where('rank.isRising = :isRising', { isRising });
   }
 }

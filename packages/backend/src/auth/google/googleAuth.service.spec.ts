@@ -15,7 +15,7 @@ describe('GoogleAuthService 테스트', () => {
   };
 
   test('oauthId와 type에 맞는 유저가 있으면 해당 객체를 반환한다.', async () => {
-    const user: User = {
+    const user: Partial<User> = {
       id: 1,
       role: Role.USER,
       type: OauthType.GOOGLE,

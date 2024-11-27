@@ -20,6 +20,7 @@ import { Request } from 'express';
 import { ApiGetStocks, LimitQuery } from './decorator/stock.decorator';
 import { ApiGetStockData } from './decorator/stockData.decorator';
 import { StockDetailResponse } from './dto/stockDetail.response';
+import { StockIndexRateResponse } from './dto/stockIndexRate.response';
 import { StockService } from './stock.service';
 import {
   StockDataDailyService,
@@ -29,9 +30,11 @@ import {
   StockDataYearlyService,
 } from './stockData.service';
 import { StockDetailService } from './stockDetail.service';
+import { StockRateIndexService } from './stockRateIndex.service';
 import SessionGuard from '@/auth/session/session.guard';
 import { GetUser } from '@/common/decorator/user.decorator';
 import { sessionConfig } from '@/configs/session.config';
+import { StockSearchRequest } from '@/stock/dto/stock.request';
 import {
   StockSearchResponse,
   StockViewsResponse,
@@ -44,9 +47,19 @@ import {
 import {
   UserStockOwnerResponse,
   UserStockResponse,
+  UserStocksResponse,
 } from '@/stock/dto/userStock.response';
 import { User } from '@/user/domain/user.entity';
-import { StockSearchRequest } from '@/stock/dto/stock.request';
+
+const TIME_UNIT = {
+  MINUTE: 'minute',
+  DAY: 'day',
+  WEEK: 'week',
+  MONTH: 'month',
+  YEAR: 'year',
+} as const;
+
+type TIME_UNIT = (typeof TIME_UNIT)[keyof typeof TIME_UNIT];
 
 @Controller('stock')
 export class StockController {
@@ -58,6 +71,7 @@ export class StockController {
     private readonly stockDataMonthlyService: StockDataMonthlyService,
     private readonly stockDataYearlyService: StockDataYearlyService,
     private readonly stockDetailService: StockDetailService,
+    private readonly stockRateIndexService: StockRateIndexService,
   ) {}
 
   @HttpCode(200)
@@ -95,12 +109,9 @@ export class StockController {
     @Body() requestBody: UserStockRequest,
     @GetUser() user: User,
   ): Promise<UserStockResponse> {
-    const stock = await this.stockService.createUserStock(
-      user.id,
-      requestBody.stockId,
-    );
+    await this.stockService.createUserStock(user.id, requestBody.stockId);
     return new UserStockResponse(
-      Number(stock.identifiers[0].id),
+      requestBody.stockId,
       '사용자 소유 주식을 추가했습니다.',
     );
   }
@@ -123,9 +134,9 @@ export class StockController {
     @Body() request: UserStockDeleteRequest,
     @GetUser() user: User,
   ): Promise<UserStockResponse> {
-    await this.stockService.deleteUserStock(user.id, request.userStockId);
+    await this.stockService.deleteUserStock(user.id, request.stockId);
     return new UserStockResponse(
-      request.userStockId,
+      request.stockId,
       '사용자 소유 주식을 삭제했습니다.',
     );
   }
@@ -140,7 +151,7 @@ export class StockController {
   })
   @Get('user/ownership')
   async checkOwnership(
-    @Body() body: UserStockRequest,
+    @Query() body: UserStockRequest,
     @Req() request: Request,
   ) {
     const user = request.user as User;
@@ -154,6 +165,20 @@ export class StockController {
     return new UserStockOwnerResponse(result);
   }
 
+  @Get('/user')
+  @ApiOperation({
+    summary: '유저 주식 조회 API',
+    description: '유저 주식을 조회',
+  })
+  @ApiOkResponse({
+    description: '유저 주식 조회 성공',
+    type: UserStocksResponse,
+  })
+  async getUserStocks(@Req() request: Request) {
+    const user = request.user as User;
+    return await this.stockService.getUserStocks(user?.id);
+  }
+
   @ApiOperation({
     summary: '주식 검색 API',
     description: '주식 이름에 매칭되는 주식을 검색',
@@ -164,81 +189,7 @@ export class StockController {
   })
   @Get()
   async searchStock(@Query() request: StockSearchRequest) {
-    console.log(request.name);
     return await this.stockService.searchStock(request.name);
-  }
-
-  @Get(':stockId/minutely')
-  @ApiGetStockData('주식 분 단위 데이터 조회 API', '분')
-  async getStockDataMinutely(
-    @Param('stockId') stockId: string,
-    @Query('lastStartTime') lastStartTime?: string,
-  ) {
-    return this.stockDataMinutelyService.getStockDataMinutely(
-      stockId,
-      lastStartTime,
-    );
-  }
-
-  @Get(':stockId/daily')
-  @ApiGetStockData('주식 일 단위 데이터 조회 API', '일')
-  async getStockDataDaily(
-    @Param('stockId') stockId: string,
-    @Query('lastStartTime') lastStartTime?: string,
-  ) {
-    return this.stockDataDailyService.getStockDataDaily(stockId, lastStartTime);
-  }
-
-  @Get(':stockId/weekly')
-  @ApiGetStockData('주식 주 단위 데이터 조회 API', '주')
-  async getStockDataWeekly(
-    @Param('stockId') stockId: string,
-    @Query('lastStartTime') lastStartTime?: string,
-  ) {
-    return this.stockDataWeeklyService.getStockDataWeekly(
-      stockId,
-      lastStartTime,
-    );
-  }
-
-  @Get(':stockId/mothly')
-  @ApiGetStockData('주식 월 단위 데이터 조회 API', '월')
-  async getStockDataMonthly(
-    @Param('stockId') stockId: string,
-    @Query('lastStartTime') lastStartTime?: string,
-  ) {
-    return this.stockDataMonthlyService.getStockDataMonthly(
-      stockId,
-      lastStartTime,
-    );
-  }
-
-  @Get(':stockId/yearly')
-  @ApiGetStockData('주식 연 단위 데이터 조회 API', '연')
-  async getStockDataYearly(
-    @Param('stockId') stockId: string,
-    @Query('lastStartTime') lastStartTime?: string,
-  ) {
-    return this.stockDataYearlyService.getStockDataYearly(
-      stockId,
-      lastStartTime,
-    );
-  }
-
-  @ApiOperation({
-    summary: '주식 상세 정보 조회 API',
-    description: '시가 총액, EPS, PER, 52주 최고가, 52주 최저가를 조회합니다',
-  })
-  @ApiOkResponse({
-    description: '주식 상세 정보 조회 성공',
-    type: StockDetailResponse,
-  })
-  @ApiParam({ name: 'stockId', required: true, description: '주식 ID' })
-  @Get(':stockId/detail')
-  async getStockDetail(
-    @Param('stockId') stockId: string,
-  ): Promise<StockDetailResponse> {
-    return await this.stockDetailService.getStockDetailByStockId(stockId);
   }
 
   @Get('topViews')
@@ -257,5 +208,97 @@ export class StockController {
   @ApiGetStocks('가격 하락률 기반 주식 리스트 조회 API')
   async getTopStocksByLosers(@LimitQuery(20) limit: number) {
     return await this.stockService.getTopStocksByLosers(limit);
+  }
+
+  @ApiOperation({
+    summary: '주식 상세 정보 조회 API',
+    description: '시가 총액, EPS, PER, 52주 최고가, 52주 최저가를 조회합니다',
+  })
+  @ApiOkResponse({
+    description: '주식 상세 정보 조회 성공',
+    type: StockDetailResponse,
+  })
+  @ApiParam({ name: 'stockId', required: true, description: '주식 ID' })
+  @Get(':stockId/detail')
+  async getStockDetail(
+    @Param('stockId') stockId: string,
+  ): Promise<StockDetailResponse> {
+    return await this.stockDetailService.getStockDetailByStockId(stockId);
+  }
+
+  @Get('index')
+  @ApiOperation({
+    summary: '지표(코스피, 코스닥, 환율) API',
+    description:
+      '지표(코스피, 코스닥, 환율)의 최고, 최저, 현재, 변동률을 조회합니다.',
+  })
+  @ApiOkResponse({
+    description: '지표(코스피, 코스닥, 환율) 조회 성공',
+    type: [StockIndexRateResponse],
+  })
+  async getIndexData() {
+    return await this.stockRateIndexService.getStockRateIndexDate();
+  }
+
+  @Get('/:stockId')
+  @ApiGetStockData('주식 시간 단위 데이터 조회 API', '일')
+  async getStockDataDaily(
+    @Param('stockId') stockId: string,
+    @Query('lastStartTime') lastStartTime?: string,
+    @Query('timeunit') timeunit: TIME_UNIT = TIME_UNIT.MINUTE,
+  ) {
+    switch (timeunit) {
+      case TIME_UNIT.MINUTE:
+        return this.getMinutelyData(stockId, lastStartTime);
+      case TIME_UNIT.DAY:
+        return this.getDailyData(stockId, lastStartTime);
+      case TIME_UNIT.MONTH:
+        return this.getStockDataMonthly(stockId, lastStartTime);
+      case TIME_UNIT.WEEK:
+        return this.getStockDataWeekly(stockId, lastStartTime);
+      default:
+        return this.getStockDataYearly(stockId, lastStartTime);
+    }
+  }
+
+  private getStockDataYearly(
+    stockId: string,
+    lastStartTime: string | undefined,
+  ) {
+    return this.stockDataYearlyService.getStockDataYearly(
+      stockId,
+      lastStartTime,
+    );
+  }
+
+  private getStockDataWeekly(
+    stockId: string,
+    lastStartTime: string | undefined,
+  ) {
+    return this.stockDataWeeklyService.getStockDataWeekly(
+      stockId,
+      lastStartTime,
+    );
+  }
+
+  private getStockDataMonthly(
+    stockId: string,
+    lastStartTime: string | undefined,
+  ) {
+    return this.stockDataMonthlyService.getStockDataMonthly(
+      stockId,
+      lastStartTime,
+    );
+  }
+
+  private getMinutelyData(stockId: string, lastStartTime?: string) {
+    return this.stockDataMinutelyService.getStockDataMinutely(
+      stockId,
+      lastStartTime,
+    );
+  }
+
+  private getDailyData(stockId: string, lastStartTime?: string) {
+    return this.stockDataDailyService.getStockDataDaily(stockId, lastStartTime);
   }
 }
