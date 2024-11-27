@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { GetLoginStatus } from '@/apis/queries/auth/schema';
@@ -13,7 +13,7 @@ import { modalMessage, ModalMessage } from '@/constants/modalMessage';
 interface StockDetailHeaderProps {
   stockId: string;
   stockName: string;
-  loginStatus: GetLoginStatus['message'];
+  loginStatus: GetLoginStatus;
   isOwnerStock: boolean;
 }
 
@@ -25,36 +25,32 @@ export const StockDetailHeader = ({
 }: StockDetailHeaderProps) => {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
+  const [userStatus, setUserStatus] =
+    useState<ModalMessage>('NOT_AUTHENTICATED');
 
-  const userStatus: ModalMessage = useMemo(() => {
-    if (loginStatus === 'Not Authenticated') {
-      return 'NOT_AUTHENTICATED';
+  useEffect(() => {
+    if (loginStatus.message === 'Not Authenticated') {
+      setUserStatus('NOT_AUTHENTICATED');
+      return;
     }
 
-    return isOwnerStock ? 'OWNERSHIP' : 'NOT_OWNERSHIP';
-  }, [loginStatus, isOwnerStock]);
+    setUserStatus(() => {
+      return isOwnerStock ? 'OWNERSHIP' : 'NOT_OWNERSHIP';
+    });
+  }, [isOwnerStock, loginStatus]);
 
-  const { mutate: postStockUser, isSuccess: isSuccessPost } =
-    usePostStockUser();
-  const { mutate: deleteStockUser, isSuccess: isSuccessDelete } =
-    useDeleteStockUser();
+  const { mutate: postStockUser } = usePostStockUser({
+    onSuccess: () => setUserStatus('OWNERSHIP'),
+  });
 
-  const handleModalConfirm = () => {
-    if (userStatus === 'NOT_OWNERSHIP') {
-      postStockUser({ stockId });
-    }
+  const { mutate: deleteStockUser } = useDeleteStockUser({
+    onSuccess: () => setUserStatus('NOT_OWNERSHIP'),
+  });
 
-    if (userStatus === 'OWNERSHIP') {
-      deleteStockUser({ stockId });
-    }
-
-    if (userStatus === 'NOT_AUTHENTICATED') {
-      navigate('/login');
-    }
-
-    if (isSuccessPost || isSuccessDelete) {
-      setShowModal(false);
-    }
+  const handleModalConfirm = {
+    NOT_OWNERSHIP: () => postStockUser({ stockId }),
+    OWNERSHIP: () => deleteStockUser({ stockId }),
+    NOT_AUTHENTICATED: () => navigate('/login'),
   };
 
   return (
@@ -73,7 +69,10 @@ export const StockDetailHeader = ({
           <Modal
             title="주식 소유"
             onClose={() => setShowModal(false)}
-            onConfirm={handleModalConfirm}
+            onConfirm={() => {
+              handleModalConfirm[userStatus]();
+              setShowModal(false);
+            }}
           >
             {modalMessage[userStatus].message}
           </Modal>,

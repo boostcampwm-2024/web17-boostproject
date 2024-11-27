@@ -10,13 +10,14 @@ const deleteStockUser = ({ stockId }: DeleteStockUserRequest) =>
   deleteRequest<DeleteStockUser>({
     schema: DeleteStockUserSchema,
     url: '/api/stock/user',
-    params: { stockId },
+    data: { stockId },
   });
 
-export const useDeleteStockUser = () => {
+export const useDeleteStockUser = ({ ...options }) => {
   return useMutation({
     mutationKey: ['deleteStockUser'],
     mutationFn: ({ stockId }: DeleteStockUserRequest) =>
       deleteStockUser({ stockId }),
+    ...options,
   });
 };

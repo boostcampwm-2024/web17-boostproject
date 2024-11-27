@@ -13,9 +13,10 @@ const postStockUser = ({ stockId }: PostStockRequest) =>
     url: '/api/stock/user',
   });
 
-export const usePostStockUser = () => {
+export const usePostStockUser = ({ ...options }) => {
   return useMutation({
     mutationKey: ['addStock'],
     mutationFn: ({ stockId }: PostStockRequest) => postStockUser({ stockId }),
+    ...options,
   });
 };

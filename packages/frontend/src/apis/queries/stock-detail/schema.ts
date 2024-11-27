@@ -49,7 +49,7 @@ export type DeleteStockUserRequest = z.infer<
 >;
 
 export const DeleteStockUserSchema = z.object({
-  stockId: z.string(),
+  id: z.string(),
   message: z.string(),
   date: z.string().datetime(),
 });
