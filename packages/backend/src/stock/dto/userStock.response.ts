@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UserStockResponse {
-  @ApiProperty({ description: '사용자 주식 id', example: 1 })
-  id: number;
+  @ApiProperty({ description: '소유 주식 id', example: '005930' })
+  id: string;
 
   @ApiProperty({
     description: '응답 메시지',
@@ -16,7 +16,7 @@ export class UserStockResponse {
   })
   date: Date;
 
-  constructor(id: number, message: string) {
+  constructor(id: string, message: string) {
     this.id = id;
     this.message = message;
     this.date = new Date();

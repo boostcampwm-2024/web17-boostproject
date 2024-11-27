@@ -105,12 +105,9 @@ export class StockController {
     @Body() requestBody: UserStockRequest,
     @GetUser() user: User,
   ): Promise<UserStockResponse> {
-    const stock = await this.stockService.createUserStock(
-      user.id,
-      requestBody.stockId,
-    );
+    await this.stockService.createUserStock(user.id, requestBody.stockId);
     return new UserStockResponse(
-      Number(stock.identifiers[0].id),
+      requestBody.stockId,
       '사용자 소유 주식을 추가했습니다.',
     );
   }
@@ -133,9 +130,9 @@ export class StockController {
     @Body() request: UserStockDeleteRequest,
     @GetUser() user: User,
   ): Promise<UserStockResponse> {
-    await this.stockService.deleteUserStock(user.id, request.userStockId);
+    await this.stockService.deleteUserStock(user.id, request.stockId);
     return new UserStockResponse(
-      request.userStockId,
+      request.stockId,
       '사용자 소유 주식을 삭제했습니다.',
     );
   }

@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
-import { IsInt, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class UserStockRequest {
   @ApiProperty({
@@ -13,10 +12,9 @@ export class UserStockRequest {
 
 export class UserStockDeleteRequest {
   @ApiProperty({
-    example: 1,
-    description: '유저 소유 주식 id',
+    example: '005390',
+    description: '종목 id',
   })
-  @IsInt()
-  @Transform(({ value }) => parseInt(value))
-  userStockId: number;
+  @IsString()
+  stockId: string;
 }

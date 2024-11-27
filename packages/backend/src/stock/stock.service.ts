@@ -59,16 +59,18 @@ export class StockService {
     });
   }
 
-  async deleteUserStock(userId: number, userStockId: number) {
+  async deleteUserStock(userId: number, stockId: string) {
     await this.datasource.transaction(async (manager) => {
       const userStock = await manager.findOne(UserStock, {
-        where: { id: userStockId },
+        where: { user: { id: userId }, stock: { id: stockId } },
         relations: ['user'],
       });
       this.validateUserStock(userId, userStock);
-      await manager.delete(UserStock, {
-        id: userStockId,
-      });
+      if (userStock) {
+        await manager.delete(UserStock, {
+          id: userStock.id,
+        });
+      }
     });
   }
 
