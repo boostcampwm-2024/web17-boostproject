@@ -9,24 +9,24 @@ import { get } from '@/apis/utils/get';
 const getStocksPriceSeries = ({
   stockId,
   lastStartTime,
-  timeUnit,
+  timeunit,
 }: StockTimeSeriesRequest) =>
   get<StockTimeSeriesResponse>({
     schema: StockTimeSeriesResponseSchema,
     url: `/api/stock/${stockId}`,
     params: {
       lastStartTime,
-      timeUnit,
+      timeunit,
     },
   });
 
 export const useGetStocksPriceSeries = ({
   stockId,
   lastStartTime,
-  timeUnit,
+  timeunit,
 }: StockTimeSeriesRequest) => {
   return useQuery({
-    queryKey: ['stocksTimeSeries', stockId, lastStartTime, timeUnit],
-    queryFn: () => getStocksPriceSeries({ stockId, lastStartTime, timeUnit }),
+    queryKey: ['stocksTimeSeries', stockId, lastStartTime, timeunit],
+    queryFn: () => getStocksPriceSeries({ stockId, lastStartTime, timeunit }),
   });
 };

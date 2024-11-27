@@ -12,6 +12,7 @@ import { useGetStockDetail } from '@/apis/queries/stock-detail';
 export const StockDetail = () => {
   const { stockId } = useParams();
   const { data: stockDetail } = useGetStockDetail({ stockId: stockId ?? '' });
+  const { eps, high52w, low52w, marketCap, per } = stockDetail || {};
 
   return (
     <div className="flex h-full flex-col gap-7">
@@ -24,7 +25,13 @@ export const StockDetail = () => {
           <div className="relative h-full">
             <TradingChart />
           </div>
-          <StockMetricsPanel />
+          <StockMetricsPanel
+            eps={eps}
+            high52w={high52w}
+            low52w={low52w}
+            marketCap={marketCap}
+            per={per}
+          />
         </section>
         <ChatPanel />
         <section className="flex flex-col">

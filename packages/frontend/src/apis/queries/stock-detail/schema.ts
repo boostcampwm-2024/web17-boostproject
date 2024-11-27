@@ -10,7 +10,7 @@ export const GetStockResponseSchema = z.object({
   marketCap: z.number(),
   name: z.string(),
   eps: z.number(),
-  per: z.number(),
+  per: z.string(),
   high52w: z.number(),
   low52w: z.number(),
 });
