@@ -11,11 +11,18 @@ import {
   Query,
   Req,
 } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { UpdateUserThemeResponse } from './dto/userTheme.response';
 import { UserService } from './user.service';
 import { Request } from 'express';
 import { User } from '@/user/domain/user.entity';
+import { ChangeNicknameRequest } from '@/user/dto/user.request';
 
 @Controller('user')
 export class UserController {
@@ -56,15 +63,19 @@ export class UserController {
     summary: '유저 닉네임을 변경한다.',
     description: '유저 닉네임을 변경한다.',
   })
+  @ApiOkResponse({
+    description: '닉네임 변경 완료',
+    example: { message: '닉네임 변경 완료', date: new Date() },
+  })
   async updateNickname(
     @Req() request: Request,
-    @Body('nickname') nickname: string,
+    @Body() body: ChangeNicknameRequest,
   ) {
     if (!request.user) {
       throw new ForbiddenException('Forbidden access to change nickname');
     }
     const user = request.user as User;
-    await this.userService.updateNickname(user.id, nickname);
+    await this.userService.updateNickname(user.id, body.nickname);
     return { message: '닉네임 변경 완료', date: new Date() };
   }
 
