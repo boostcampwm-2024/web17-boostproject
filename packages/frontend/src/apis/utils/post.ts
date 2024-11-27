@@ -14,7 +14,7 @@ export const post = async <T>({
   schema,
   url,
 }: PostParams): Promise<T> => {
-  const { data } = await instance.post(url, { params });
+  const { data } = await instance.post(url, params);
   const result = schema.safeParse(data);
 
   if (!result.success) {

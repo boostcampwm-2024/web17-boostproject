@@ -7,7 +7,7 @@ import {
 import { get } from '@/apis/utils/get';
 
 const getTopViews = ({ limit }: Partial<GetStockListRequest>) =>
-  get<GetStockListResponse[]>({
+  get<GetStockListResponse>({
     schema: GetStockListResponseSchema,
     url: `/api/stock/topViews`,
     params: { limit },

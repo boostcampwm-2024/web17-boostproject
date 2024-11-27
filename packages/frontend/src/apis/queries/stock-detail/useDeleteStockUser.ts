@@ -6,17 +6,17 @@ import {
 } from './schema';
 import { deleteRequest } from '@/apis/utils/delete';
 
-const deleteStockUser = ({ userStockId }: DeleteStockUserRequest) =>
+const deleteStockUser = ({ stockId }: DeleteStockUserRequest) =>
   deleteRequest<DeleteStockUser>({
     schema: DeleteStockUserSchema,
-    url: 'api/stock/user',
-    params: { userStockId },
+    url: '/api/stock/user',
+    params: { stockId },
   });
 
 export const useDeleteStockUser = () => {
   return useMutation({
     mutationKey: ['deleteStockUser'],
-    mutationFn: ({ userStockId }: DeleteStockUserRequest) =>
-      deleteStockUser({ userStockId }),
+    mutationFn: ({ stockId }: DeleteStockUserRequest) =>
+      deleteStockUser({ stockId }),
   });
 };

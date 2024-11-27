@@ -7,13 +7,18 @@ export const GetStockListRequestSchema = z.object({
 
 export type GetStockListRequest = z.infer<typeof GetStockListRequestSchema>;
 
-export const GetStockListResponseSchema = z.object({
+export const GetStockSchema = z.object({
   id: z.string(),
   name: z.string(),
   currentPrice: z.number(),
   changeRate: z.number(),
   volume: z.number(),
   marketCap: z.string(),
+  rank: z.number(),
+});
+
+export const GetStockListResponseSchema = z.object({
+  result: z.array(GetStockSchema),
 });
 
 export type GetStockListResponse = z.infer<typeof GetStockListResponseSchema>;

@@ -41,7 +41,7 @@ export type GetStockOwnershipResponse = z.infer<
 >;
 
 export const DeleteStockUserRequestSchema = z.object({
-  userStockId: z.string(),
+  stockId: z.string(),
 });
 
 export type DeleteStockUserRequest = z.infer<
@@ -49,7 +49,7 @@ export type DeleteStockUserRequest = z.infer<
 >;
 
 export const DeleteStockUserSchema = z.object({
-  userStockId: z.string(),
+  stockId: z.string(),
   message: z.string(),
   date: z.string().datetime(),
 });
