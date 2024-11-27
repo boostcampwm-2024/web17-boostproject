@@ -2,7 +2,7 @@ import { StockTimeSeriesRequest } from '@/apis/queries/stocks';
 
 export const TIME_UNIT: Array<{
   id: number;
-  time: StockTimeSeriesRequest['timeUnit'];
+  time: StockTimeSeriesRequest['timeunit'];
   label: string;
 }> = [
   { id: 1, time: 'day', label: '일' },
