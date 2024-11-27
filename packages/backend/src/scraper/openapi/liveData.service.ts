@@ -49,14 +49,13 @@ export class LiveData {
       // TODO : 하나의 config만 사용중.
       this.clientStock.add(stockId);
       const message = this.convertObjectToMessage(
-        (await this.openApiToken.configs())[0],
+        (await this.openApiToken.configs())[1],
         stockId,
         '1',
       );
       this.webSocketClient.subscribe(message);
     }
   }
-  
 
   async discribe(stockId: string) {
     if (this.clientStock.has(stockId)) {
@@ -90,6 +89,11 @@ export class LiveData {
         if (message.header) {
           if (message.header.tr_id === 'PINGPONG') {
             client.pong(data);
+            this.logger.info('Client ping pong');
+          } else if (message.body) {
+            this.logger.info(
+              `${message.header.tr_key} : ${JSON.stringify(message.body)}`,
+            );
           }
           return;
         }
@@ -155,6 +159,7 @@ export class LiveData {
     return JSON.stringify(message);
   }
 
+  //TODO : type narrowing 필요
   private parseMessage(data: RawData) {
     if (typeof data === 'object' && !(data instanceof Buffer)) {
       return data;
