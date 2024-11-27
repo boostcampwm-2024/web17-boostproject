@@ -21,6 +21,8 @@ export const GetStockListResponseSchema = z.object({
   result: z.array(GetStockSchema),
 });
 
+export type GetStockTopViewsResponse = z.infer<typeof GetStockSchema>;
+
 export type GetStockListResponse = z.infer<typeof GetStockListResponseSchema>;
 
 export const StockTimeSeriesRequestSchema = z.object({

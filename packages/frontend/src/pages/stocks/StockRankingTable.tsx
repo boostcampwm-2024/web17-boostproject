@@ -17,6 +17,13 @@ export const StockRankingTable = () => {
   const { data } = useGetStocksByPrice({ limit: LIMIT, sortType });
   const { mutate } = usePostStockView();
 
+  const handleSortType = () => {
+    setSortType((prev) => {
+      if (prev === 'increase') return 'decrease';
+      return 'increase';
+    });
+  };
+
   return (
     <div className="rounded-md bg-white px-6 shadow">
       <table className="w-full border-collapse">
@@ -38,12 +45,7 @@ export const StockRankingTable = () => {
                   'cursor-pointer',
                   sortType === 'increase' ? 'rotate-0' : 'rotate-180',
                 )}
-                onClick={() =>
-                  setSortType((prev) => {
-                    if (prev === 'increase') return 'decrease';
-                    return 'increase';
-                  })
-                }
+                onClick={handleSortType}
               />
             </th>
             <th className="text-right">거래대금</th>
@@ -51,7 +53,7 @@ export const StockRankingTable = () => {
           </tr>
         </thead>
         <tbody>
-          {data?.map((stock, index) => (
+          {data?.result.map((stock, index) => (
             <tr
               key={stock.id}
               className="display-medium14 text-dark-gray text-right [&>*]:p-4"
@@ -59,7 +61,7 @@ export const StockRankingTable = () => {
               <td className="flex gap-6 text-left">
                 <span className="text-gray w-3 flex-shrink-0">{index + 1}</span>
                 <Link
-                  to={`${stock.id}`}
+                  to={`/stocks/${stock.id}`}
                   onClick={() => mutate({ stockId: stock.id })}
                   className="display-bold14 hover:text-orange cursor-pointer text-ellipsis hover:underline"
                   aria-label={stock.name}

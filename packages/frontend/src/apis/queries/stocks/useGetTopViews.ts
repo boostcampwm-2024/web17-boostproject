@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import {
   GetStockListResponseSchema,
+  GetStockTopViewsResponse,
   type GetStockListRequest,
-  type GetStockListResponse,
 } from './schema';
 import { get } from '@/apis/utils/get';
 
 const getTopViews = ({ limit }: Partial<GetStockListRequest>) =>
-  get<GetStockListResponse>({
+  get<GetStockTopViewsResponse[]>({
     schema: GetStockListResponseSchema,
     url: `/api/stock/topViews`,
     params: { limit },
