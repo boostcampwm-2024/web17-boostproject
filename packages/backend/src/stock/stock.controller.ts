@@ -20,6 +20,10 @@ import { Request } from 'express';
 import { ApiGetStocks, LimitQuery } from './decorator/stock.decorator';
 import { ApiGetStockData } from './decorator/stockData.decorator';
 import { StockDetailResponse } from './dto/stockDetail.response';
+import {
+  StockIndexResponse,
+  StockRateResponse,
+} from './dto/stockIndexRate.response';
 import { StockService } from './stock.service';
 import {
   StockDataDailyService,
@@ -29,6 +33,7 @@ import {
   StockDataYearlyService,
 } from './stockData.service';
 import { StockDetailService } from './stockDetail.service';
+import { StockRateIndexService } from './stockRateIndex.service';
 import SessionGuard from '@/auth/session/session.guard';
 import { GetUser } from '@/common/decorator/user.decorator';
 import { sessionConfig } from '@/configs/session.config';
@@ -68,6 +73,7 @@ export class StockController {
     private readonly stockDataMonthlyService: StockDataMonthlyService,
     private readonly stockDataYearlyService: StockDataYearlyService,
     private readonly stockDetailService: StockDetailService,
+    private readonly stockRateIndexService: StockRateIndexService,
   ) {}
 
   @HttpCode(200)
@@ -209,6 +215,33 @@ export class StockController {
     @Param('stockId') stockId: string,
   ): Promise<StockDetailResponse> {
     return await this.stockDetailService.getStockDetailByStockId(stockId);
+  }
+
+  @Get('rate')
+  @ApiOperation({
+    summary: '환율 지표 API',
+    description: '원화 기준 환율의 최고, 최저, 현재, 변동률을 조회합니다.',
+  })
+  @ApiOkResponse({
+    description: '환율 지표 조회 성공',
+    type: [StockRateResponse],
+  })
+  async getRateData() {
+    return await this.stockRateIndexService.getStockRateData();
+  }
+
+  @Get('index')
+  @ApiOperation({
+    summary: '주가 지표 API',
+    description:
+      '한국 주가 지표(코스피, 코스닥)의 최고, 최저, 현재, 변동률을 조회합니다.',
+  })
+  @ApiOkResponse({
+    description: '주가 지표 조회 성공',
+    type: [StockIndexResponse],
+  })
+  async getIndexData() {
+    return await this.stockRateIndexService.getStockIndexData();
   }
 
   @Get('/:stockId')
