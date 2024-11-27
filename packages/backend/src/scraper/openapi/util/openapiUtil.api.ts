@@ -6,10 +6,10 @@ import { openApiConfig } from '../config/openapi.config';
 import { TR_ID } from '../type/openapiUtil.type';
 import { OpenapiException } from './openapiCustom.error';
 
-const throwOpenapiException = (error: any) => {
+const throwOpenapiException = (error: any, url: string) => {
   if (error.message && error.response && error.response.status) {
     throw new OpenapiException(
-      `Request failed: ${error.message}`,
+      `${url} : ${error.message} `,
       error.response.status,
       error,
     );
@@ -31,7 +31,7 @@ const postOpenApi = async (
     const response = await axios.post(config.STOCK_URL + url, body);
     return response.data;
   } catch (error) {
-    throwOpenapiException(error);
+    throwOpenapiException(error, url);
   }
 };
 
@@ -54,7 +54,7 @@ const getOpenApi = async (
     });
     return response.data;
   } catch (error) {
-    throwOpenapiException(error);
+    throwOpenapiException(error, url);
   }
 };
 

@@ -1,6 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable max-lines-per-function */
 
+export type IndexRateId = '0001' | '1001' | 'FX@KRW';
+
+export const IndexRateStockId: { [key: string]: IndexRateId } = {
+  kospi: '0001',
+  kosdaq: '1001',
+  usd_krw: 'FX@KRW',
+};
+
+export type IndexRateGroupCode = 'INX' | 'RATE';
+export const IndexRateGroupCodeStock: { [key: string]: IndexRateGroupCode } = {
+  kospi: 'INX',
+  kosdaq: 'INX',
+  usd_krw: 'RATE',
+};
+
 export type ExchangeRateQuery = {
   fid_cond_mrkt_div_code: string;
   fid_input_date_1: string;
@@ -11,25 +26,38 @@ export type ExchangeRateQuery = {
 
 export type ExchangeRate = {
   acml_vol: string;
-  mod_yn: string;
-  ovrs_nmix_hgpr: string;
-  ovrs_nmix_lwpr: string;
-  ovrs_nmix_oprc: string;
   ovrs_nmix_prpr: string;
-  stck_bsop_date: string;
+  ovrs_nmix_prdy_vrss: string;
+  prdy_vrss_sign: string;
+  prdy_ctrt: string;
+  ovrs_nmix_prdy_clpr: string;
+  hts_kor_isnm: string;
+  stck_shrn_iscd: string;
+  ovrs_prod_oprc: string;
+  ovrs_prod_hgpr: string;
+  ovrs_prod_lwpr: string;
 };
 
 export function isExchangeRate(data: any): data is ExchangeRate {
   return (
     typeof data.acml_vol === 'string' &&
-    typeof data.mod_yn === 'string' &&
-    typeof data.ovrs_nmix_hgpr === 'string' &&
-    typeof data.ovrs_nmix_lwpr === 'string' &&
-    typeof data.ovrs_nmix_oprc === 'string' &&
     typeof data.ovrs_nmix_prpr === 'string' &&
-    typeof data.stck_bsop_date === 'string'
+    typeof data.ovrs_nmix_prdy_vrss === 'string' &&
+    typeof data.prdy_vrss_sign === 'string' &&
+    typeof data.prdy_ctrt === 'string' &&
+    typeof data.ovrs_nmix_prdy_clpr === 'string' &&
+    typeof data.hts_kor_isnm === 'string' &&
+    typeof data.stck_shrn_iscd === 'string' &&
+    typeof data.ovrs_prod_oprc === 'string' &&
+    typeof data.ovrs_prod_hgpr === 'string' &&
+    typeof data.ovrs_prod_lwpr === 'string'
   );
 }
+
+export type StockIndexQuery = {
+  fid_cond_mrkt_div_code: string;
+  fid_input_iscd: string;
+};
 
 export type StockIndex = {
   bstp_nmix_prpr: string;

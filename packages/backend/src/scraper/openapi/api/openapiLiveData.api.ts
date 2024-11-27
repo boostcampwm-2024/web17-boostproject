@@ -17,12 +17,12 @@ export class OpenapiLiveData {
     @Inject('winston') private readonly logger: Logger,
   ) {}
 
-  async saveLiveData(data: StockLiveData[]) {
+  async saveLiveData(data: StockLiveData) {
     await this.datasource.manager
       .getRepository(StockLiveData)
       .createQueryBuilder()
       .insert()
-      .values(data[0])
+      .values(data)
       .orUpdate(
         [
           'current_price',
