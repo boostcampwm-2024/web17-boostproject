@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
 import { DataSource } from 'typeorm';
 import { Logger } from 'winston';
 import { openApiConfig } from '../config/openapi.config';
@@ -33,7 +32,6 @@ export class OpenapiMinuteData {
     //this.getStockData();
   }
 
-  @Cron('0 1 * * 1-5')
   async getStockData() {
     if (process.env.NODE_ENV !== 'production') return;
     const stock = await this.datasource.manager.findBy(Stock, {
