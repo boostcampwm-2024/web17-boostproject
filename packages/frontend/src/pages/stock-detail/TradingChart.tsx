@@ -16,13 +16,13 @@ interface TradingChartProps {
 
 export const TradingChart = ({ theme = lightTheme }: TradingChartProps) => {
   const { stockId } = useParams();
-  const [timeUnit, setTimeUnit] =
-    useState<StockTimeSeriesRequest['timeUnit']>('day');
+  const [timeunit, setTimeunit] =
+    useState<StockTimeSeriesRequest['timeunit']>('day');
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { data } = useGetStocksPriceSeries({
     stockId: stockId ?? '',
-    timeUnit,
+    timeunit,
   });
 
   const chart = useChart({
@@ -41,9 +41,9 @@ export const TradingChart = ({ theme = lightTheme }: TradingChartProps) => {
           <RadioButton
             key={option.id}
             id={option.time}
-            name="timeUnit"
-            selected={timeUnit === option.time}
-            onChange={() => setTimeUnit(option.time)}
+            name="timeunit"
+            selected={timeunit === option.time}
+            onChange={() => setTimeunit(option.time)}
           >
             {option.label}
           </RadioButton>
