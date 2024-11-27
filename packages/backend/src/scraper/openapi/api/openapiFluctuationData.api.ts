@@ -10,8 +10,8 @@ import {
 import { TR_IDS } from '@/scraper/openapi/type/openapiUtil.type';
 import { getOpenApi } from '@/scraper/openapi/util/openapiUtil.api';
 import { FluctuationRankStock } from '@/stock/domain/FluctuationRankStock.entity';
-import { StockLiveData } from '@/stock/domain/stockLiveData.entity';
 import { Stock } from '@/stock/domain/stock.entity';
+import { StockLiveData } from '@/stock/domain/stockLiveData.entity';
 
 @Injectable()
 export class OpenapiFluctuationData {
@@ -26,7 +26,7 @@ export class OpenapiFluctuationData {
     setTimeout(() => this.getFluctuationRankStocks(), 1000);
   }
 
-  @Cron('*/1 9-16 * * 1-5')
+  @Cron('* 9-15 * * 1-5')
   async getFluctuationRankStocks() {
     await this.getDecreaseRankStocks();
     await this.getIncreaseRankStocks();

@@ -125,7 +125,6 @@ export class OpenapiMinuteData {
     }
   }
 
-  //@Cron(`*/${STOCK_CUT} 9-15 * * 1-5`)
   async getMinuteData() {
     if (process.env.NODE_ENV !== 'production') return;
     const configCount = (await this.openApiToken.configs()).length;
