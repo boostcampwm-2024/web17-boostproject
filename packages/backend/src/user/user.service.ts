@@ -7,7 +7,10 @@ import { DataSource, EntityManager, Like } from 'typeorm';
 import { OauthType } from './domain/ouathType';
 import { User } from './domain/user.entity';
 import { status, subject } from '@/user/constants/randomNickname';
-import { UserSearchResult } from '@/user/dto/User.response';
+import {
+  UserInformationResponse,
+  UserSearchResult,
+} from '@/user/dto/user.response';
 
 type RegisterRequest = Required<
   Pick<User, 'email' | 'nickname' | 'type' | 'oauthId'>
@@ -53,6 +56,14 @@ export class UserService {
 
       return (parseInt(maxSubName.max, 10) + 1).toString().padStart(4, '0');
     });
+  }
+
+  async getUserInfo(id: number) {
+    const user = await this.dataSource.manager.findOne(User, { where: { id } });
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+    return new UserInformationResponse(user);
   }
 
   existsUserByNickname(nickname: string, manager: EntityManager) {
