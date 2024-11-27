@@ -94,16 +94,6 @@ const decryptAES256 = (
   return decrypted;
 };
 
-const bufferToObject = (buffer: Buffer): any => {
-  try {
-    const jsonString = buffer.toString('utf-8');
-    return JSON.parse(jsonString);
-  } catch (error) {
-    console.error('Failed to convert buffer to object:', error);
-    throw error;
-  }
-};
-
 export {
   postOpenApi,
   getOpenApi,
@@ -111,5 +101,4 @@ export {
   getPreviousDate,
   getCurrentTime,
   decryptAES256,
-  bufferToObject,
 };
