@@ -24,7 +24,6 @@ export class LiveData {
     @Inject('winston') private readonly logger: Logger,
   ) {
     this.connect();
-    this.subscribe('005930');
   }
 
   private async openapiSubscribe(stockId: string) {
