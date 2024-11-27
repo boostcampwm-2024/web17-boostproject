@@ -5,11 +5,11 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Mention } from '@/chat/domain/mention.entity';
 import { DateEmbedded } from '@/common/dateEmbedded.entity';
 import { UserStock } from '@/stock/domain/userStock.entity';
 import { OauthType } from '@/user/domain/ouathType';
 import { Role } from '@/user/domain/role';
-import { Mention } from '@/chat/domain/mention.entity';
 
 @Index('nickname_sub_name', ['nickname', 'subName'], { unique: true })
 @Index('type_oauth_id', ['type', 'oauthId'], { unique: true })
