@@ -45,6 +45,7 @@ import {
 import {
   UserStockOwnerResponse,
   UserStockResponse,
+  UserStocksResponse,
 } from '@/stock/dto/userStock.response';
 import { User } from '@/user/domain/user.entity';
 
@@ -159,6 +160,20 @@ export class StockController {
       user.id,
     );
     return new UserStockOwnerResponse(result);
+  }
+
+  @Get('/user')
+  @ApiOperation({
+    summary: '유저 주식 조회 API',
+    description: '유저 주식을 조회',
+  })
+  @ApiOkResponse({
+    description: '유저 주식 조회 성공',
+    type: UserStocksResponse,
+  })
+  async getUserStocks(@Req() request: Request) {
+    const user = request.user as User;
+    return await this.stockService.getUserStocks(user?.id);
   }
 
   @ApiOperation({

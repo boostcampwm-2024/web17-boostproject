@@ -9,6 +9,7 @@ import {
   StocksResponse,
 } from './dto/stock.response';
 import { UserStock } from '@/stock/domain/userStock.entity';
+import { UserStocksResponse } from '@/stock/dto/userStock.response';
 
 @Injectable()
 export class StockService {
@@ -51,6 +52,17 @@ export class StockService {
         },
       });
     });
+  }
+
+  async getUserStocks(userId?: number) {
+    if (!userId) {
+      return new UserStocksResponse([]);
+    }
+    const result = await this.datasource.manager.find(UserStock, {
+      where: { user: { id: userId } },
+      relations: ['stock'],
+    });
+    return new UserStocksResponse(result);
   }
 
   async checkStockExist(stockId: string) {
