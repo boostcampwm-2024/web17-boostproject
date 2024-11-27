@@ -6,6 +6,10 @@ import { Openapi } from '../api/openapi.abstract';
 import { OpenapiTokenApi } from '../api/openapiToken.api';
 import { TR_ID } from '../type/openapiUtil.type';
 
+/**
+ * 국내 업종 현재 지수 - 코스피, 코스닥
+ * 해외주식 종목/지수/환율기간별시세 - 환율
+ */
 export class OpenapiIndex extends Openapi {
   private readonly TR_ID_INDEX: TR_ID = 'FHPUP02100000';
   private readonly TR_ID_RATE: TR_ID = 'FHKST03030100';
@@ -28,7 +32,7 @@ export class OpenapiIndex extends Openapi {
   @Cron('30 8 * * 1-5')
   async init() {}
 
-  //kospi, kosdaq의 경우 여러번 업데이트 가능8
+  //kospi, kosdaq의 경우 여러번 업데이트 가능
   @Cron('* 9-14 * * 1-5')
   @Cron('0-30 15 * * 1-5')
   async start() {}
@@ -41,7 +45,26 @@ export class OpenapiIndex extends Openapi {
 
   protected async save() {}
 
-  protected indexQuery() {}
+  protected indexQuery(iscd: string, code: 'U' = 'U') {
+    return {
+      FID_COND_MRKT_DIV_CODE: code,
+      FID_INPUT_ISCD: iscd,
+    };
+  }
 
-  protected rateQuery() {}
+  protected rateQuery(
+    startDate: Date,
+    endDate: Date,
+    iscd: string,
+    period: 'D' | 'W' | 'M' | 'Y' = 'D',
+    code: 'N' | 'X' | 'I' | 'S' = 'X',
+  ) {
+    return {
+      FID_COND_MRKT_DIV_CODE: code,
+      FID_INPUT_ISCD: iscd,
+      FID_INPUT_DATE_1: startDate,
+      FID_INPUT_DATE_2: endDate,
+      FID_PERIOD_DIV_CODE: period,
+    };
+  }
 }
