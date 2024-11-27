@@ -1,6 +1,16 @@
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { MetricItem, Title } from './components';
 import { METRICS_DATA } from '@/constants/metricDetail';
+import { socketStock } from '@/sockets/config';
+import { useWebsocket } from '@/sockets/useWebsocket';
 import { type StockMetricsPanelProps } from '@/types/metrics';
+
+interface RealTimeStockData {
+  price: number;
+  change: number;
+  volume: number;
+}
 
 export const StockMetricsPanel = ({
   eps,
@@ -8,10 +18,32 @@ export const StockMetricsPanel = ({
   low52w,
   marketCap,
   per,
-  price,
-  change,
-  volume,
-}: StockMetricsPanelProps) => {
+}: Partial<StockMetricsPanelProps>) => {
+  const { stockId } = useParams();
+  const { isConnected } = useWebsocket(socketStock);
+  const [realTimeData, setRealTimeData] = useState<RealTimeStockData>({
+    price: 0,
+    change: 0,
+    volume: 0,
+  });
+
+  useEffect(() => {
+    if (!isConnected || !stockId) return;
+
+    const handleStockUpdate = (data: RealTimeStockData) => {
+      setRealTimeData(data);
+    };
+
+    socketStock.emit('connectStock', stockId);
+    socketStock.on('updateStock', handleStockUpdate);
+
+    return () => {
+      socketStock.off('updateStock', handleStockUpdate);
+    };
+  }, [isConnected, stockId]);
+
+  const { price, change, volume } = realTimeData;
+
   const metricsData = METRICS_DATA({
     eps,
     high52w,
