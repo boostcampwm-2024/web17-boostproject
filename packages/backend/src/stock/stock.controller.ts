@@ -20,10 +20,7 @@ import { Request } from 'express';
 import { ApiGetStocks, LimitQuery } from './decorator/stock.decorator';
 import { ApiGetStockData } from './decorator/stockData.decorator';
 import { StockDetailResponse } from './dto/stockDetail.response';
-import {
-  StockIndexResponse,
-  StockRateResponse,
-} from './dto/stockIndexRate.response';
+import { StockIndexRateResponse } from './dto/stockIndexRate.response';
 import { StockService } from './stock.service';
 import {
   StockDataDailyService,
@@ -217,31 +214,17 @@ export class StockController {
     return await this.stockDetailService.getStockDetailByStockId(stockId);
   }
 
-  @Get('rate')
-  @ApiOperation({
-    summary: '환율 지표 API',
-    description: '원화 기준 환율의 최고, 최저, 현재, 변동률을 조회합니다.',
-  })
-  @ApiOkResponse({
-    description: '환율 지표 조회 성공',
-    type: [StockRateResponse],
-  })
-  async getRateData() {
-    return await this.stockRateIndexService.getStockRateData();
-  }
-
   @Get('index')
   @ApiOperation({
-    summary: '주가 지표 API',
-    description:
-      '한국 주가 지표(코스피, 코스닥)의 최고, 최저, 현재, 변동률을 조회합니다.',
+    summary: '지표 API',
+    description: '지표의 최고, 최저, 현재, 변동률을 조회합니다.',
   })
   @ApiOkResponse({
-    description: '주가 지표 조회 성공',
-    type: [StockIndexResponse],
+    description: '지표 조회 성공',
+    type: [StockIndexRateResponse],
   })
   async getIndexData() {
-    return await this.stockRateIndexService.getStockIndexData();
+    return await this.stockRateIndexService.getStockRateIndexDate();
   }
 
   @Get('/:stockId')

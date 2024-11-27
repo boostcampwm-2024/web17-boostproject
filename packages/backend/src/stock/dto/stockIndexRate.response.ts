@@ -1,11 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { StockLiveData } from '../domain/stockLiveData.entity';
-
-class StockIndexRateResponse {
+export class StockIndexRateResponse {
+  @ApiProperty({ description: '지표 이름', example: '원 달러 환율' })
   name: string;
 
+  @ApiProperty({ description: '현재 가격', example: 1400 })
   currentPrice: number;
 
+  @ApiProperty({ description: '거래량', example: 0 })
   changeRate: number;
 
   @ApiProperty({ description: '거래량', example: 10000 })
@@ -35,35 +37,5 @@ class StockIndexRateResponse {
     this.low = stockLiveData.low;
     this.open = stockLiveData.open;
     this.updatedAt = stockLiveData.updatedAt;
-  }
-}
-
-export class StockIndexResponse extends StockIndexRateResponse {
-  @ApiProperty({ description: '주가 지표 이름', example: '코스피' })
-  name: string;
-
-  @ApiProperty({ description: '현재 지수', example: 2500 })
-  currentPrice: number;
-
-  @ApiProperty({ description: '거래량', example: 0 })
-  changeRate: number;
-
-  constructor(stockLiveData: StockLiveData) {
-    super(stockLiveData);
-  }
-}
-
-export class StockRateResponse extends StockIndexRateResponse {
-  @ApiProperty({ description: '환율 지표 이름', example: '원 달러 환율' })
-  name: string;
-
-  @ApiProperty({ description: '현재 환율', example: 1400 })
-  currentPrice: number;
-
-  @ApiProperty({ description: '거래량', example: 0 })
-  changeRate: number;
-
-  constructor(stockLiveData: StockLiveData) {
-    super(stockLiveData);
   }
 }
