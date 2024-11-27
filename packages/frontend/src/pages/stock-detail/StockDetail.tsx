@@ -7,20 +7,34 @@ import {
   StockMetricsPanel,
   TradingChart,
 } from '.';
-import { useGetStockDetail } from '@/apis/queries/stock-detail';
+import { useGetLoginStatus } from '@/apis/queries/auth';
+import {
+  useGetOwnership,
+  useGetStockDetail,
+} from '@/apis/queries/stock-detail';
 
 export const StockDetail = () => {
-  const { stockId } = useParams();
-  const { data: stockDetail } = useGetStockDetail({ stockId: stockId ?? '' });
-  const { eps, high52w, low52w, marketCap, per } = stockDetail || {};
+  const { stockId = '' } = useParams();
+
+  const { data: stockDetail } = useGetStockDetail({ stockId });
+  const { eps, high52w, low52w, marketCap, per, name } = stockDetail || {};
+
+  const { data: loginStatus } = useGetLoginStatus();
+  const { data: userOwnerStock } = useGetOwnership({ stockId });
+
+  if (!stockDetail || !loginStatus || !userOwnerStock) {
+    return <div>데이터가 없습니다.</div>;
+  }
 
   return (
     <div className="flex h-full flex-col gap-7">
       <StockDetailHeader
-        stockId={stockId ?? ''}
-        stockName={stockDetail?.name ?? ''}
+        stockId={stockId}
+        stockName={name || ''}
+        loginStatus={loginStatus.message}
+        isOwnerStock={userOwnerStock.isOwner}
       />
-      <article className="grid flex-1 grid-cols-[2.5fr_1fr_1fr] gap-5 [&_section]:gap-5">
+      <article className="grid flex-1 grid-cols-2 gap-5 [&_section]:gap-5">
         <section className="flex flex-col">
           <div className="relative h-full">
             <TradingChart />
@@ -33,7 +47,10 @@ export const StockDetail = () => {
             per={per}
           />
         </section>
-        <ChatPanel />
+        <ChatPanel
+          loginStatus={loginStatus.message}
+          isOwnerStock={userOwnerStock.isOwner}
+        />
         <section className="flex flex-col">
           <NotificationPanel className="h-1/2" />
           <AddAlarmForm className="h-1/2" />

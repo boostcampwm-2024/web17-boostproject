@@ -6,6 +6,7 @@ interface ChatMessageProps {
   contents: string;
   likeCount: number;
   liked: boolean;
+  onClick: () => void;
 }
 
 export const ChatMessage = ({
@@ -13,20 +14,20 @@ export const ChatMessage = ({
   contents,
   likeCount,
   liked,
+  onClick,
 }: ChatMessageProps) => {
   return (
     <div className="flex">
-      <p className="display-bold12 text-dark-gray mr-3 w-12 flex-shrink-0">
-        {name}
-      </p>
+      <p className="display-bold14 text-dark-gray mr-3 w-fit">{name}</p>
       <div>
-        <p className="display-medium12 text-dark-gray">{contents}</p>
+        <p className="display-medium14 text-dark-gray">{contents}</p>
         <div className="flex items-center gap-1">
           <Like
-            className={
-              (cn('hover:fill-orange cursor-pointer'),
-              liked ? 'fill-orange' : 'fill-gray')
-            }
+            className={cn(
+              'hover:fill-orange cursor-pointer',
+              liked ? 'fill-orange' : 'fill-gray',
+            )}
+            onClick={onClick}
           />
           <span className="display-medium12 text-gray">{likeCount}</span>
         </div>
