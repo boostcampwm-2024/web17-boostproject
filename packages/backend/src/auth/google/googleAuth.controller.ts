@@ -21,7 +21,7 @@ export class GoogleAuthController {
   @Get('/redirect')
   @UseGuards(GoogleAuthGuard)
   async handleRedirect(@Res() response: Response) {
-    response.redirect('http://localhost:5173');
+    response.redirect('/');
   }
 
   @ApiOperation({
