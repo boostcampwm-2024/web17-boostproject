@@ -1,4 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { GetLoginStatus } from '@/apis/queries/auth/schema';
 import { useGetUserStock } from '@/apis/queries/auth/useGetUserStock';
 import { useDeleteStockUser } from '@/apis/queries/stock-detail';
@@ -10,6 +11,7 @@ interface StockInfoProps {
 
 export const StockInfo = ({ loginStatus }: StockInfoProps) => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { data } = useGetUserStock();
   const { mutate } = useDeleteStockUser({
@@ -29,7 +31,10 @@ export const StockInfo = ({ loginStatus }: StockInfoProps) => {
         ) : (
           <article className="grid grid-cols-2 gap-5">
             {data?.userStocks.map((stock) => (
-              <section className="display-bold14 text-dark-gray flex justify-between rounded bg-[#FAFAFA] p-10">
+              <section
+                className="display-bold14 text-dark-gray flex cursor-pointer justify-between rounded bg-[#FAFAFA] p-10 transition-all duration-300 hover:scale-105"
+                onClick={() => navigate(`/stocks/${stock.stockId}`)}
+              >
                 <p>{stock.name}</p>
                 <Button
                   size="sm"
