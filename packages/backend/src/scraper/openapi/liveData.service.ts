@@ -12,7 +12,7 @@ type TR_IDS = '0' | '1';
 
 @Injectable()
 export class LiveData {
-  private readonly clientStock: Set<string> = new Set();
+  private readonly clientStock: Set<string>[];
   private readonly reconnectInterval = 60 * 1000 * 1000;
 
   private readonly startTime: Date = new Date(2024, 0, 1, 9, 0, 0, 0);
@@ -24,6 +24,7 @@ export class LiveData {
     @Inject('winston') private readonly logger: Logger,
   ) {
     this.connect();
+    
   }
 
   private async openapiSubscribe(stockId: string) {
