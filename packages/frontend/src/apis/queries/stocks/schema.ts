@@ -2,7 +2,6 @@ import { z } from 'zod';
 
 export const GetStockListRequestSchema = z.object({
   limit: z.number(),
-  sortType: z.enum(['increase', 'decrease']),
 });
 
 export type GetStockListRequest = z.infer<typeof GetStockListRequestSchema>;

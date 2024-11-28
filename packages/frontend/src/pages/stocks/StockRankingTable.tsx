@@ -1,20 +1,16 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { usePostStockView } from '@/apis/queries/stock-detail';
-import {
-  type GetStockListRequest,
-  useGetStocksByPrice,
-} from '@/apis/queries/stocks';
+import { useGetStocksByPrice } from '@/apis/queries/stocks';
 import DownArrow from '@/assets/down-arrow.svg?react';
 import { cn } from '@/utils/cn';
 
 const LIMIT = 20;
 
 export const StockRankingTable = () => {
-  const [sortType, setSortType] =
-    useState<GetStockListRequest['sortType']>('increase');
+  const [sortType, setSortType] = useState<'increase' | 'decrease'>('increase');
 
-  const { data } = useGetStocksByPrice({ limit: LIMIT, sortType });
+  const { data } = useGetStocksByPrice({ limit: LIMIT });
   const { mutate } = usePostStockView();
 
   const handleSortType = () => {
