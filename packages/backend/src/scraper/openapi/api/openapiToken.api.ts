@@ -1,4 +1,4 @@
-import { Global, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { DataSource } from 'typeorm';
 import { Logger } from 'winston';
@@ -7,7 +7,6 @@ import { openApiConfig } from '../config/openapi.config';
 import { OpenapiException } from '../util/openapiCustom.error';
 import { postOpenApi } from '../util/openapiUtil.api';
 
-@Global()
 @Injectable()
 export class OpenapiTokenApi {
   private config: (typeof openApiConfig)[] = [];
