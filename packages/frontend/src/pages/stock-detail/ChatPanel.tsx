@@ -133,10 +133,9 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
             </span>
           </div>
         )}
-
         <section
           className={cn(
-            'flex h-[40rem] flex-col gap-8 overflow-auto p-3',
+            'flex h-[40rem] flex-col gap-8 overflow-auto break-words break-all p-3',
             isOwnerStock ? 'overflow-auto' : 'overflow-hidden',
           )}
         >
