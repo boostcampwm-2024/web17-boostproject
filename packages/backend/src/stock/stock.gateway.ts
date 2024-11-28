@@ -39,6 +39,7 @@ export class StockGateway {
   ) {
     client.leave(stockId);
 
+    //TODO : disconnect 시 discribe
     client.emit('disconnectionSuccess', {
       message: `Successfully disconnected to stock room: ${stockId}`,
       stockId,
