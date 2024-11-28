@@ -5,11 +5,22 @@ import { RawData, WebSocket } from 'ws';
 
 @Injectable()
 export class WebsocketClient {
-  private readonly url =
-    process.env.WS_URL ?? 'ws://ops.koreainvestment.com:21000';
-  private client: WebSocket = new WebSocket(this.url);
+  static url = process.env.WS_URL ?? 'ws://ops.koreainvestment.com:21000';
+  //현재 factory 패턴을 이용해 할당하면 socket이 열리기 전에 message가 가는 문제가 있음.
+  //이를 외부에서 받는 방식으로 변환
+  // 소켓이 열리고 나서 open 이벤트가 먼저 발생해서
 
-  constructor(@Inject('winston') private readonly logger: Logger) {}
+  constructor(
+    @Inject('winston') private readonly logger: Logger,
+    private readonly client: WebSocket,
+  ) {}
+
+  static websocketFactory(logger: Logger) {
+    const socket = new WebSocket(WebsocketClient.url);
+    const websocket = new WebsocketClient(logger, socket);
+
+    return websocket;
+  }
 
   subscribe(message: string) {
     this.sendMessage(message);
@@ -20,7 +31,9 @@ export class WebsocketClient {
   }
 
   private initOpen(fn: () => void) {
+    console.log(this.client);
     this.client.on('open', fn);
+    //콜백 함수 문제 예상됨.
   }
 
   private initMessage(fn: (data: RawData) => void) {
@@ -48,11 +61,17 @@ export class WebsocketClient {
   }
 
   private sendMessage(message: string) {
-    if (this.client.readyState === WebSocket.OPEN) {
+    //비동기 관련 한번 확인하고 시작
+    if (
+      this.client &&
+      this.client.readyState &&
+      this.client.readyState === WebSocket.OPEN
+    ) {
       this.client.send(message);
       this.logger.info(`Sent message: ${message}`);
     } else {
-      this.logger.warn('WebSocket is not open. Message not sent.');
+      this.logger.warn('WebSocket is not open. Message not sent. ');
+      setTimeout(() => this.client.send(message), 1000);
     }
   }
 }

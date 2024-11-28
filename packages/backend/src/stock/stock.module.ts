@@ -27,7 +27,6 @@ import { StockRateIndexService } from './stockRateIndex.service';
 import { OpenapiLiveData } from '@/scraper/openapi/api/openapiLiveData.api';
 import { OpenapiTokenApi } from '@/scraper/openapi/api/openapiToken.api';
 import { LiveData } from '@/scraper/openapi/liveData.service';
-import { WebsocketClient } from '@/scraper/openapi/websocket/websocketClient.websocket';
 
 @Module({
   imports: [
@@ -45,7 +44,6 @@ import { WebsocketClient } from '@/scraper/openapi/websocket/websocketClient.web
   controllers: [StockController],
   providers: [
     StockService,
-    WebsocketClient,
     OpenapiTokenApi,
     OpenapiLiveData,
     LiveData,
