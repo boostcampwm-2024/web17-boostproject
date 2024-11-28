@@ -9,7 +9,6 @@ export const Layout = () => {
         <div className="h-full overflow-auto px-48 py-16">
           <Outlet />
         </div>
-      </main>
     </div>
   );
 };
