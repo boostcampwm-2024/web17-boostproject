@@ -41,6 +41,7 @@ export class OpenapiQueue {
 export class OpenapiConsumer {
   private readonly REQUEST_COUNT_PER_SECOND = 20;
   private isProcessing: boolean = false;
+  private currentTokenIndex = 0;
 
   constructor(
     private readonly queue: OpenapiQueue,
@@ -58,9 +59,11 @@ export class OpenapiConsumer {
     if (this.isProcessing) {
       return;
     }
+    const maxTokenIndex = (await this.openapiTokenApi.configs()).length;
     while (!this.queue.isEmpty()) {
       this.isProcessing = true;
       await this.processRequest();
+      this.currentTokenIndex = (this.currentTokenIndex + 1) % maxTokenIndex;
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
     this.isProcessing = false;
@@ -75,7 +78,7 @@ export class OpenapiConsumer {
       try {
         const data = await getOpenApi(
           node.url,
-          (await this.openapiTokenApi.configs())[0],
+          (await this.openapiTokenApi.configs())[this.currentTokenIndex],
           node.query,
           node.trId,
         );
