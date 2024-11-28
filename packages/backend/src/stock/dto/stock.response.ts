@@ -147,9 +147,19 @@ export class StockRankResponse {
     example: 1,
   })
   rank: number;
+
+  @ApiProperty({
+    description: '상승 하락 여부',
+    example: true,
+  })
+  isRising: boolean;
 }
 
 export class StockRankResponses {
+  @ApiProperty({
+    description: '주식 랭킹 결과',
+    type: [StockRankResponse],
+  })
   result: StockRankResponse[];
 
   constructor(stocks: Record<string, string>[]) {
@@ -161,6 +171,7 @@ export class StockRankResponses {
       marketCap: stock.marketCap,
       changeRate: parseFloat(stock.rank_fluctuation_rate),
       rank: parseInt(stock.rank_rank),
+      isRising: Number(stock.rank_isRising) === 1,
     }));
   }
 }

@@ -7,6 +7,7 @@ import { TR_IDS } from '../type/openapiUtil.type';
 import { getOpenApi } from '../util/openapiUtil.api';
 import { Stock } from '@/stock/domain/stock.entity';
 import { StockLiveData } from '@/stock/domain/stockLiveData.entity';
+import { Json } from '@/scraper/openapi/queue/openapi.queue';
 
 @Injectable()
 export class OpenapiLiveData {
@@ -53,7 +54,6 @@ export class OpenapiLiveData {
       stockLiveData.low = parseFloat(data.stck_lwpr);
       stockLiveData.open = parseFloat(data.stck_oprc);
       stockLiveData.updatedAt = new Date();
-
       return stockLiveData;
     }
   };
@@ -92,10 +92,56 @@ export class OpenapiLiveData {
     }
   }
 
+  getLiveDataSaveCallback(stockId: string) {
+    return async (data: Json) => {
+      if (Array.isArray(data.output)) return;
+      const stockLiveData = this.convertToStockLiveData(data.output, stockId);
+      await this.saveIndividualLiveData(stockLiveData);
+    };
+  }
+
   private makeLiveDataQuery(stockId: string, code: 'J' = 'J') {
     return {
       fid_cond_mrkt_div_code: code,
       fid_input_iscd: stockId,
     };
+  }
+
+  private convertToStockLiveData(
+    stockData: Record<string, string>,
+    stockId: string,
+  ): StockLiveData {
+    const stockLiveData = new StockLiveData();
+    stockLiveData.stock = { id: stockId } as Stock;
+    stockLiveData.currentPrice = parseFloat(stockData.stck_prpr);
+    stockLiveData.changeRate = parseFloat(stockData.prdy_ctrt);
+    stockLiveData.volume = parseInt(stockData.acml_vol);
+    stockLiveData.high = parseFloat(stockData.stck_hgpr);
+    stockLiveData.low = parseFloat(stockData.stck_lwpr);
+    stockLiveData.open = parseFloat(stockData.stck_oprc);
+    stockLiveData.updatedAt = new Date();
+    return stockLiveData;
+  }
+
+  private async saveIndividualLiveData(data: StockLiveData) {
+    return await this.datasource.manager
+      .getRepository(StockLiveData)
+      .createQueryBuilder()
+      .insert()
+      .into(StockLiveData)
+      .values(data)
+      .orUpdate(
+        [
+          'current_price',
+          'change_rate',
+          'volume',
+          'high',
+          'low',
+          'open',
+          'updatedAt',
+        ],
+        ['stock_id'],
+      )
+      .execute();
   }
 }
