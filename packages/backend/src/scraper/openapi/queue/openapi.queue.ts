@@ -59,17 +59,27 @@ export class OpenapiConsumer {
     if (this.isProcessing) {
       return;
     }
-    const maxTokenIndex = (await this.openapiTokenApi.configs()).length;
+
     while (!this.queue.isEmpty()) {
       this.isProcessing = true;
-      await this.processRequest();
-      this.currentTokenIndex = (this.currentTokenIndex + 1) % maxTokenIndex;
+      await this.processQueueRequest();
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
     this.isProcessing = false;
   }
 
-  private async processRequest() {
+  private async processQueueRequest() {
+    const tokenCount = (await this.openapiTokenApi.configs()).length;
+    for (let i = 0; i < tokenCount; i++) {
+      await this.processIndividualTokenRequest(this.currentTokenIndex);
+      if (!this.isProcessing) {
+        return;
+      }
+      this.currentTokenIndex = (this.currentTokenIndex + 1) % tokenCount;
+    }
+  }
+
+  private async processIndividualTokenRequest(index: number) {
     for (let i = 0; i < this.REQUEST_COUNT_PER_SECOND; i++) {
       const node = this.queue.dequeue();
       if (!node) {
@@ -78,7 +88,7 @@ export class OpenapiConsumer {
       try {
         const data = await getOpenApi(
           node.url,
-          (await this.openapiTokenApi.configs())[this.currentTokenIndex],
+          (await this.openapiTokenApi.configs())[index],
           node.query,
           node.trId,
         );
