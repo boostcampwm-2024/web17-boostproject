@@ -30,3 +30,9 @@ export const PostUserNicknameSchema = z.object({
 });
 
 export type PostUserNickname = z.infer<typeof PostUserNicknameSchema>;
+
+export const PostLogoutSchema = z.object({
+  message: z.string(),
+});
+
+export type PostLogout = z.infer<typeof PostLogoutSchema>;

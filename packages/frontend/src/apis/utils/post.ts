@@ -4,7 +4,7 @@ import { instance } from '../config';
 import { formatZodError } from './formatZodError';
 
 interface PostParams {
-  params: AxiosRequestConfig['params'];
+  params?: AxiosRequestConfig['params'];
   schema: z.ZodType;
   url: string;
 }
