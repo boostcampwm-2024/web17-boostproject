@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
@@ -23,7 +24,9 @@ export const StockDetailHeader = ({
   loginStatus,
   isOwnerStock,
 }: StockDetailHeaderProps) => {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
+
   const [showModal, setShowModal] = useState(false);
   const [userStatus, setUserStatus] =
     useState<ModalMessage>('NOT_AUTHENTICATED');
@@ -40,11 +43,21 @@ export const StockDetailHeader = ({
   }, [isOwnerStock, loginStatus]);
 
   const { mutate: postStockUser } = usePostStockUser({
-    onSuccess: () => setUserStatus('OWNERSHIP'),
+    onSuccess: () => {
+      setUserStatus('OWNERSHIP');
+      queryClient.invalidateQueries({
+        queryKey: ['loginStatus', 'stockOwnership', stockId],
+      });
+    },
   });
 
   const { mutate: deleteStockUser } = useDeleteStockUser({
-    onSuccess: () => setUserStatus('NOT_OWNERSHIP'),
+    onSuccess: () => {
+      setUserStatus('NOT_OWNERSHIP');
+      queryClient.invalidateQueries({
+        queryKey: ['loginStatus', 'stockOwnership', stockId],
+      });
+    },
   });
 
   const handleModalConfirm = {

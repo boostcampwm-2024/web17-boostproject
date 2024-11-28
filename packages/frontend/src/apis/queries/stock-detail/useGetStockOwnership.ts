@@ -15,7 +15,7 @@ const getOwnership = ({ stockId }: GetStockRequest) =>
 
 export const useGetOwnership = ({ stockId }: GetStockRequest) => {
   return useQuery({
-    queryKey: ['stockOwnership'],
+    queryKey: ['stockOwnership', stockId],
     queryFn: () => getOwnership({ stockId }),
     enabled: !!stockId,
   });
