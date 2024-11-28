@@ -36,3 +36,20 @@ export const PostLogoutSchema = z.object({
 });
 
 export type PostLogout = z.infer<typeof PostLogoutSchema>;
+
+export const GetUserStockSchema = z.object({
+  id: z.number(),
+  stockId: z.string(),
+  name: z.string(),
+  isTrading: z.boolean(),
+  groupCode: z.string(),
+  createdAt: z.string().datetime(),
+});
+
+export type GetUserStock = z.infer<typeof GetUserStockSchema>;
+
+export const GetUserStockResponseSchema = z.object({
+  userStocks: z.array(GetUserStockSchema),
+});
+
+export type GetUserStockResponse = z.infer<typeof GetUserStockResponseSchema>;
