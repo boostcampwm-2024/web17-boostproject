@@ -39,12 +39,19 @@ export const ChatMessage = ({
         >
           <Like
             className={cn(
-              'hover:fill-orange cursor-pointer',
+              'hover:fill-orange active:fill-orange cursor-pointer',
               liked ? 'fill-orange' : 'fill-gray',
             )}
             onClick={onClick}
           />
-          <span className="display-medium12 text-gray">{likeCount}</span>
+          <span
+            className={cn(
+              'display-medium12',
+              liked ? 'text-orange' : 'text-gray',
+            )}
+          >
+            {likeCount}
+          </span>
         </div>
       </div>
     </div>
