@@ -100,6 +100,7 @@ export type StockIndex = {
 
 export function isStockIndex(data: any): data is StockIndex {
   return (
+    data &&
     typeof data.bstp_nmix_prpr === 'string' &&
     typeof data.bstp_nmix_prdy_vrss === 'string' &&
     typeof data.prdy_vrss_sign === 'string' &&

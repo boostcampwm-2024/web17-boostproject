@@ -2,13 +2,14 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Chat } from '@/chat/domain/chat.entity';
 import { ChatType } from '@/chat/domain/chatType.enum';
 
-interface ChatResponse {
+export interface ChatResponse {
   id: number;
   likeCount: number;
   message: string;
   type: string;
   liked: boolean;
   nickname: string;
+  subName: string;
   mentioned: boolean;
   createdAt: Date;
 }
@@ -31,6 +32,8 @@ export class ChatScrollResponse {
         type: ChatType.NORMAL,
         isLiked: true,
         createdAt: new Date(),
+        mentioned: false,
+        subName: '0001',
       },
     ],
   })
@@ -46,6 +49,7 @@ export class ChatScrollResponse {
       liked: !!(chat.likes && chat.likes.length > 0),
       mentioned: chat.mentions && chat.mentions.length > 0,
       nickname: chat.user.nickname,
+      subName: chat.user.subName,
     }));
     this.hasMore = hasMore;
   }

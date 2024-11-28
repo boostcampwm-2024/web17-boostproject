@@ -121,17 +121,27 @@ export class StockService {
   }
 
   async getTopStocksByGainers(limit: number) {
-    const rawData = await this.getStockRankQuery(true).take(limit).getRawMany();
+    const rawData = await this.getStockRankQuery(true)
+      .orderBy('rank.rank', 'ASC')
+      .limit(limit)
+      .getRawMany();
 
     return new StockRankResponses(rawData);
   }
 
   async getTopStocksByLosers(limit: number) {
     const rawData = await this.getStockRankQuery(false)
-      .take(limit)
+      .orderBy('rank.rank', 'ASC')
+      .limit(limit)
       .getRawMany();
-
     return new StockRankResponses(rawData);
+  }
+
+  async getTopStocksByFluctuation() {
+    const data = await this.getStocksQuery()
+      .innerJoinAndSelect('stock.fluctuationRankStocks', 'rank')
+      .getRawMany();
+    return new StockRankResponses(data);
   }
 
   private async validateStockExists(stockId: string, manager: EntityManager) {

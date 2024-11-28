@@ -15,6 +15,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { Request } from 'express';
 import { ApiGetStocks, LimitQuery } from './decorator/stock.decorator';
@@ -36,6 +37,7 @@ import { GetUser } from '@/common/decorator/user.decorator';
 import { sessionConfig } from '@/configs/session.config';
 import { StockSearchRequest } from '@/stock/dto/stock.request';
 import {
+  StockRankResponses,
   StockSearchResponse,
   StockViewsResponse,
 } from '@/stock/dto/stock.response';
@@ -60,6 +62,15 @@ const TIME_UNIT = {
 } as const;
 
 type TIME_UNIT = (typeof TIME_UNIT)[keyof typeof TIME_UNIT];
+
+const FLUCTUATION_TYPE = {
+  INCREASE: 'increase',
+  DECREASE: 'decrease',
+  ALL: 'all',
+} as const;
+
+type FLUCTUATION_TYPE =
+  (typeof FLUCTUATION_TYPE)[keyof typeof FLUCTUATION_TYPE];
 
 @Controller('stock')
 export class StockController {
@@ -208,6 +219,39 @@ export class StockController {
   @ApiGetStocks('가격 하락률 기반 주식 리스트 조회 API')
   async getTopStocksByLosers(@LimitQuery(20) limit: number) {
     return await this.stockService.getTopStocksByLosers(limit);
+  }
+
+  @Get('fluctuation')
+  @ApiOperation({
+    summary: '등가, 등락률 기반 주식 리스트 조회 API',
+    description: '등가, 등락률 기반 주식 리스트를 조회합니다',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description:
+      '조회할 리스트 수(기본값: 20, 등가, 등락 모두 받으면 모든 데이터 전송)',
+  })
+  @ApiQuery({
+    name: 'type',
+    required: false,
+    description: '데이터 타입(기본값: increase, all, increase, decrease)',
+    enum: ['increase', 'decrease', 'all'],
+  })
+  @ApiOkResponse({
+    description: '',
+    type: [StockRankResponses],
+  })
+  async getTopStocksByFluctuation(
+    @LimitQuery(20) limit: number,
+    @Query('type') type: FLUCTUATION_TYPE,
+  ) {
+    if (type === FLUCTUATION_TYPE.DECREASE) {
+      return await this.stockService.getTopStocksByLosers(limit);
+    } else if (type === FLUCTUATION_TYPE.ALL) {
+      return await this.stockService.getTopStocksByFluctuation();
+    }
+    return await this.stockService.getTopStocksByGainers(limit);
   }
 
   @ApiOperation({
