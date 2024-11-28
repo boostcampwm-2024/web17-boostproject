@@ -13,7 +13,7 @@ type TR_IDS = '0' | '1';
 @Injectable()
 export class LiveData {
   private readonly startTime: Date = new Date(2024, 0, 1, 9, 0, 0, 0);
-  private readonly endTime: Date = new Date(2024, 0, 1, 15, 30, 0, 0);
+  private readonly endTime: Date = new Date(2024, 0, 1, 17, 30, 0, 0);
 
   private readonly reconnectInterval = 60 * 1000;
   private readonly clientStock: Map<string, number> = new Map();
@@ -21,7 +21,7 @@ export class LiveData {
   private readonly SOCKET_LIMITS: number = 40;
 
   private websocketClient: WebsocketClient[] = [];
-  private subscribeConfig: number[] = [];
+  private configSubscribeSize: number[] = [];
   constructor(
     private readonly openApiToken: OpenapiTokenApi,
     private readonly openapiLiveData: OpenapiLiveData,
@@ -33,101 +33,9 @@ export class LiveData {
         this.websocketClient.push(
           WebsocketClient.websocketFactory(this.logger),
         );
-        this.subscribeConfig.push(0);
+        this.configSubscribeSize.push(0);
       }
       this.connect();
-      const stockIds = [
-        '000100',
-        '000105',
-        '000120',
-        '000140',
-        '000145',
-        '000150',
-        '000155',
-        '000157',
-        '000180',
-        '000210',
-        '000215',
-        '000220',
-        '000225',
-        '000227',
-        '000230',
-        '000240',
-        '000250',
-        '000270',
-        '000300',
-        '000320',
-        '000325',
-        '000370',
-        '000390',
-        '000400',
-        '000430',
-        '000440',
-        '000480',
-        '000490',
-        '000500',
-        '000520',
-        '000540',
-        '000545',
-        '000590',
-        '000640',
-        '000650',
-        '000660',
-        '000670',
-        '000680',
-        '000700',
-        '000720',
-        '000725',
-        '000760',
-        '000810',
-        '000815',
-        '000850',
-        '000860',
-        '000880',
-        '000885',
-        '00088K',
-        '000890',
-        '000910',
-        '000950',
-        '000970',
-        '000990',
-        '001000',
-        '001020',
-        '001040',
-        '001045',
-        '00104K',
-        '001060',
-        '001065',
-        '001067',
-        '001070',
-        '001080',
-        '001120',
-        '001130',
-        '001140',
-        '001200',
-        '001210',
-        '001230',
-        '001250',
-        '001260',
-        '001270',
-        '001275',
-        '001290',
-        '001340',
-        '001360',
-        '001380',
-        '001390',
-        '001420',
-        '001430',
-        '001440',
-        '001450',
-        '001460',
-        '001465',
-        '001470',
-        '001500',
-        '001510',
-        '001515',
-      ];
-      stockIds.forEach((val) => this.subscribe(val));
     });
   }
 
@@ -148,11 +56,11 @@ export class LiveData {
   }
 
   async subscribe(stockId: string) {
-    if (this.isCloseTime(new Date(), this.startTime, this.endTime)) {
-      await this.openapiSubscribe(stockId);
-    } else {
-      for (const [idx, size] of this.subscribeConfig.entries()) {
+    await this.openapiSubscribe(stockId);
+    if (!this.isCloseTime(new Date(), this.startTime, this.endTime)) {
+      for (const [idx, size] of this.configSubscribeSize.entries()) {
         if (size >= this.SOCKET_LIMITS) continue;
+        this.configSubscribeSize[idx]++;
         this.clientStock.set(stockId, idx);
         const message = this.convertObjectToMessage(
           (await this.openApiToken.configs())[idx],
@@ -170,8 +78,9 @@ export class LiveData {
     if (this.clientStock.has(stockId)) {
       const idx = this.clientStock.get(stockId);
       this.clientStock.delete(stockId);
-      if (idx) this.subscribeConfig[idx]--;
-      else {
+      if (idx) {
+        this.configSubscribeSize[idx]--;
+      } else {
         this.logger.warn(`Websocket error : ${stockId} has invalid idx`);
         return;
       }
@@ -185,11 +94,11 @@ export class LiveData {
   }
 
   private initOpenCallback =
-    (sendMessage: (message: string) => void) => async () => {
+    (idx: number) => (sendMessage: (message: string) => void) => async () => {
       this.logger.info('WebSocket connection established');
       for (const stockId of this.clientStock.keys()) {
         const message = this.convertObjectToMessage(
-          (await this.openApiToken.configs())[0],
+          (await this.openApiToken.configs())[idx],
           stockId,
           '1',
         );
@@ -239,9 +148,9 @@ export class LiveData {
 
   @Cron('0 2 * * 1-5')
   connect() {
-    this.websocketClient.forEach((socket) => {
+    this.websocketClient.forEach((socket, idx) => {
       socket.connectFacade(
-        this.initOpenCallback,
+        this.initOpenCallback(idx),
         this.initMessageCallback,
         this.initCloseCallback,
         this.initErrorCallback,
