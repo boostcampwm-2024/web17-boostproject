@@ -35,7 +35,7 @@ export class WebsocketClient {
     this.client.on('error', initErrorCallback);
   }
 
-  connectPacade(
+  connectFacade(
     initOpenCallback: (fn: (message: string) => void) => () => void,
     initMessageCallback: (client: WebSocket) => (data: RawData) => void,
     initCloseCallback: () => void,

@@ -1,0 +1,1173 @@
+yarn workspace v1.22.22
+yarn run v1.22.22
+$ nest start --watch
+[2J[3J[H[[90m11:55:22 AM[0m] Starting compilation in watch mode...
+
+[[90m11:55:25 AM[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +66ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScraperModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSessionModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWinstonModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScheduleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmCoreModule dependencies initialized[39m[38;5;3m +194ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mKoreaStockInfoModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUserModule dependencies initialized[39m[38;5;3m +10ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOpenapiScraperModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mChatModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mStockModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mStockGateway subscribed to the "connectStock" message[39m[38;5;3m +12ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mChatGateway subscribed to the "chat" message[39m[38;5;3m +1ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mStockController {/api/stock}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/view, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user/ownership, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topViews, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topGainers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topLosers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/:stockId/detail, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/index, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/:stockId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUserController {/api/user}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/info, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/info, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/:id/theme, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/:id/theme, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mGoogleAuthController {/api/auth/google}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/google/login, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/google/redirect, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTesterAuthController {/api/auth/tester}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/tester/login, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/tester/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/logout, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mChatController {/api/chat}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat/like, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat/like, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 42109  - [39m11/28/2024, 11:55:27 AM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +10ms[39m
+{"output":{"iscd_stat_cls_code":"57","marg_rate":"100.00","rprs_mrkt_kor_name":"ETN","bstp_kor_isnm":"ETN(주식)","temp_stop_yn":"N","oprc_rang_cont_yn":"N","clpr_rang_cont_yn":"N","crdt_able_yn":"N","grmn_rate_cls_code":" ","elw_pblc_yn":"N","stck_prpr":"11575","prdy_vrss":"-225","prdy_vrss_sign":"5","prdy_ctrt":"-1.91","acml_tr_pbmn":"1796275","acml_vol":"153","prdy_vrss_vol_rate":"15300.00","stck_oprc":"11800","stck_hgpr":"11810","stck_lwpr":"11575","stck_mxpr":"15340","stck_llam":"8260","stck_sdpr":"11800","wghn_avrg_stck_prc":"11740.36","hts_frgn_ehrt":"0.00","frgn_ntby_qty":"0","pgtr_ntby_qty":"0","pvt_scnd_dmrs_prc":"11800","pvt_frst_dmrs_prc":"11800","pvt_pont_val":"11800","pvt_frst_dmsp_prc":"11800","pvt_scnd_dmsp_prc":"11800","dmrs_val":"11800","dmsp_val":"11800","cpfn":"0","rstc_wdth_prc":"3540","stck_fcam":"0","stck_sspr":"7480","aspr_unit":"5","hts_deal_qty_unit_val":"1","lstn_stcn":"700000","hts_avls":"81","per":"0.00","pbr":"0.00","vol_tnrt":"0.02","eps":"0.00","bps":"0.00","d250_hgpr":"11915","d250_hgpr_date":"20241125","d250_hgpr_vrss_prpr_rate":"-2.85","d250_lwpr":"10640","d250_lwpr_date":"20241113","d250_lwpr_vrss_prpr_rate":"8.79","stck_dryy_hgpr":"11915","dryy_hgpr_vrss_prpr_rate":"-2.85","dryy_hgpr_date":"20241125","stck_dryy_lwpr":"10640","dryy_lwpr_vrss_prpr_rate":"8.79","dryy_lwpr_date":"20241113","w52_hgpr":"11915","w52_hgpr_vrss_prpr_ctrt":"-2.85","w52_hgpr_date":"20241125","w52_lwpr":"10640","w52_lwpr_vrss_prpr_ctrt":"8.79","w52_lwpr_date":"20241113","whol_loan_rmnd_rate":"0.00","ssts_yn":"N","stck_shrn_iscd":"Q760017","fcam_cnnm":"0","cpfn_cnnm":"0 억","frgn_hldn_qty":"0","vi_cls_code":"N","ovtm_vi_cls_code":"N","last_ssts_cntg_qty":"0","invt_caful_yn":"N","mrkt_warn_cls_code":"00","short_over_yn":"N","sltr_yn":"N"},"rt_cd":"0","msg_cd":"MCA00000","msg1":"정상처리 되었습니다."}
+[2J[3J[H[[90m11:57:45 AM[0m] File change detected. Starting incremental compilation...
+
+[[90m11:57:46 AM[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +79ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScraperModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSessionModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWinstonModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScheduleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmCoreModule dependencies initialized[39m[38;5;3m +198ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mKoreaStockInfoModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUserModule dependencies initialized[39m[38;5;3m +3ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOpenapiScraperModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mChatModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mStockModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mStockGateway subscribed to the "connectStock" message[39m[38;5;3m +13ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mChatGateway subscribed to the "chat" message[39m[38;5;3m +1ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mStockController {/api/stock}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/view, POST} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user/ownership, GET} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topViews, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topGainers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topLosers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/:stockId/detail, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/index, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/:stockId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUserController {/api/user}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/info, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/info, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/:id/theme, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/:id/theme, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mGoogleAuthController {/api/auth/google}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/google/login, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/google/redirect, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTesterAuthController {/api/auth/tester}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/tester/login, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/tester/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/logout, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mChatController {/api/chat}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat/like, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat/like, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43401  - [39m11/28/2024, 11:57:47 AM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +10ms[39m
+[2J[3J[H[[90m11:57:59 AM[0m] File change detected. Starting incremental compilation...
+
+[[90m11:57:59 AM[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +69ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScraperModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +3ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSessionModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWinstonModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScheduleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmCoreModule dependencies initialized[39m[38;5;3m +140ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mKoreaStockInfoModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUserModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOpenapiScraperModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mChatModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mStockModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mStockGateway subscribed to the "connectStock" message[39m[38;5;3m +13ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mChatGateway subscribed to the "chat" message[39m[38;5;3m +1ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mStockController {/api/stock}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/view, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user/ownership, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topViews, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topGainers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topLosers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/:stockId/detail, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/index, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/:stockId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUserController {/api/user}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/info, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/info, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/:id/theme, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/:id/theme, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mGoogleAuthController {/api/auth/google}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/google/login, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/google/redirect, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTesterAuthController {/api/auth/tester}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/tester/login, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/tester/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/logout, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mChatController {/api/chat}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat/like, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat/like, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 43689  - [39m11/28/2024, 11:58:01 AM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +9ms[39m
+[2J[3J[H[[90m11:58:03 AM[0m] File change detected. Starting incremental compilation...
+
+[96msrc/scraper/openapi/api/openapiLiveData.api.ts[0m:[93m20[0m:[93m3[0m - [91merror[0m[90m TS1003: [0mIdentifier expected.
+
+[7m20[0m   }
+[7m  [0m [91m  ~[0m
+
+[[90m11:58:03 AM[0m] Found 1 error. Watching for file changes.
+
+[2J[3J[H[[90m11:58:09 AM[0m] File change detected. Starting incremental compilation...
+
+[[90m11:58:09 AM[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:10 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:10 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +61ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:10 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScraperModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:10 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:10 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:10 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSessionModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:10 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:10 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWinstonModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:10 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:10 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:10 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScheduleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:10 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmCoreModule dependencies initialized[39m[38;5;3m +173ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:10 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mKoreaStockInfoModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:10 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:10 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:10 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:10 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUserModule dependencies initialized[39m[38;5;3m +15ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOpenapiScraperModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mChatModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mStockModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mStockGateway subscribed to the "connectStock" message[39m[38;5;3m +13ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mChatGateway subscribed to the "chat" message[39m[38;5;3m +1ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mStockController {/api/stock}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/view, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user/ownership, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topViews, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topGainers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topLosers, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/:stockId/detail, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/index, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/:stockId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUserController {/api/user}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/info, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/info, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/:id/theme, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/:id/theme, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mGoogleAuthController {/api/auth/google}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/google/login, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/google/redirect, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTesterAuthController {/api/auth/tester}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/tester/login, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/tester/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/logout, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mChatController {/api/chat}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat/like, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat/like, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44008  - [39m11/28/2024, 11:58:11 AM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +9ms[39m
+[2J[3J[H[[90m11:58:15 AM[0m] File change detected. Starting incremental compilation...
+
+[[90m11:58:15 AM[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:16 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:16 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +56ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:16 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScraperModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:16 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:16 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:16 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSessionModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:16 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:16 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWinstonModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:16 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:16 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:16 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScheduleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmCoreModule dependencies initialized[39m[38;5;3m +168ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mKoreaStockInfoModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUserModule dependencies initialized[39m[38;5;3m +3ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOpenapiScraperModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mChatModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mStockModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mStockGateway subscribed to the "connectStock" message[39m[38;5;3m +12ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mChatGateway subscribed to the "chat" message[39m[38;5;3m +1ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mStockController {/api/stock}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/view, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user/ownership, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topViews, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topGainers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topLosers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/:stockId/detail, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/index, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/:stockId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUserController {/api/user}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/info, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/info, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/:id/theme, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/:id/theme, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mGoogleAuthController {/api/auth/google}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/google/login, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/google/redirect, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTesterAuthController {/api/auth/tester}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/tester/login, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/tester/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/logout, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mChatController {/api/chat}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat/like, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat/like, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 44182  - [39m11/28/2024, 11:58:17 AM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +9ms[39m
+[2J[3J[H[[90m12:52:29 PM[0m] File change detected. Starting incremental compilation...
+
+[[90m12:52:30 PM[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:31 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +68ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScraperModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSessionModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWinstonModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScheduleModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmCoreModule dependencies initialized[39m[38;5;3m +171ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mKoreaStockInfoModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUserModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOpenapiScraperModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mChatModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mStockModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mStockGateway subscribed to the "connectStock" message[39m[38;5;3m +15ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mChatGateway subscribed to the "chat" message[39m[38;5;3m +1ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mStockController {/api/stock}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/view, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user/ownership, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topViews, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topGainers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topLosers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/fluctuation, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/:stockId/detail, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/index, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/:stockId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUserController {/api/user}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/info, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/info, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/:id/theme, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/:id/theme, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mGoogleAuthController {/api/auth/google}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/google/login, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/google/redirect, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTesterAuthController {/api/auth/tester}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/tester/login, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/tester/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/logout, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mChatController {/api/chat}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat/like, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat/like, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 58949  - [39m11/28/2024, 12:52:32 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +12ms[39m
+[2J[3J[H[[90m12:52:50 PM[0m] File change detected. Starting incremental compilation...
+
+[96msrc/alarm/push.service.ts[0m:[93m3[0m:[93m26[0m - [91merror[0m[90m TS2307: [0mCannot find module 'web-push' or its corresponding type declarations.
+
+[7m3[0m import * as webPush from 'web-push';
+[7m [0m [91m                         ~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m57[0m:[93m4[0m - [91merror[0m[90m TS2304: [0mCannot find name 'OneToOne'.
+
+[7m57[0m   @OneToOne(() => StockLiveData, (stockLiveData) => stockLiveData.stock)
+[7m  [0m [91m   ~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m57[0m:[93m35[0m - [91merror[0m[90m TS7006: [0mParameter 'stockLiveData' implicitly has an 'any' type.
+
+[7m57[0m   @OneToOne(() => StockLiveData, (stockLiveData) => stockLiveData.stock)
+[7m  [0m [91m                                  ~~~~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m60[0m:[93m4[0m - [91merror[0m[90m TS2304: [0mCannot find name 'OneToOne'.
+
+[7m60[0m   @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
+[7m  [0m [91m   ~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m60[0m:[93m19[0m - [91merror[0m[90m TS2304: [0mCannot find name 'KospiStock'.
+
+[7m60[0m   @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
+[7m  [0m [91m                  ~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m60[0m:[93m32[0m - [91merror[0m[90m TS7006: [0mParameter 'kospiStock' implicitly has an 'any' type.
+
+[7m60[0m   @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
+[7m  [0m [91m                               ~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m61[0m:[93m16[0m - [91merror[0m[90m TS2304: [0mCannot find name 'KospiStock'.
+
+[7m61[0m   kospiStock?: KospiStock;
+[7m  [0m [91m               ~~~~~~~~~~[0m
+
+[[90m12:52:52 PM[0m] Found 7 errors. Watching for file changes.
+
+[2J[3J[H[[90m12:53:08 PM[0m] File change detected. Starting incremental compilation...
+
+[96msrc/alarm/push.service.ts[0m:[93m3[0m:[93m26[0m - [91merror[0m[90m TS2307: [0mCannot find module 'web-push' or its corresponding type declarations.
+
+[7m3[0m import * as webPush from 'web-push';
+[7m [0m [91m                         ~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m57[0m:[93m4[0m - [91merror[0m[90m TS2304: [0mCannot find name 'OneToOne'.
+
+[7m57[0m   @OneToOne(() => StockLiveData, (stockLiveData) => stockLiveData.stock)
+[7m  [0m [91m   ~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m57[0m:[93m35[0m - [91merror[0m[90m TS7006: [0mParameter 'stockLiveData' implicitly has an 'any' type.
+
+[7m57[0m   @OneToOne(() => StockLiveData, (stockLiveData) => stockLiveData.stock)
+[7m  [0m [91m                                  ~~~~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m60[0m:[93m4[0m - [91merror[0m[90m TS2304: [0mCannot find name 'OneToOne'.
+
+[7m60[0m   @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
+[7m  [0m [91m   ~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m60[0m:[93m19[0m - [91merror[0m[90m TS2304: [0mCannot find name 'KospiStock'.
+
+[7m60[0m   @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
+[7m  [0m [91m                  ~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m60[0m:[93m32[0m - [91merror[0m[90m TS7006: [0mParameter 'kospiStock' implicitly has an 'any' type.
+
+[7m60[0m   @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
+[7m  [0m [91m                               ~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m61[0m:[93m16[0m - [91merror[0m[90m TS2304: [0mCannot find name 'KospiStock'.
+
+[7m61[0m   kospiStock?: KospiStock;
+[7m  [0m [91m               ~~~~~~~~~~[0m
+
+[[90m12:53:08 PM[0m] Found 7 errors. Watching for file changes.
+
+[2J[3J[H[[90m12:53:08 PM[0m] File change detected. Starting incremental compilation...
+
+[96msrc/alarm/push.service.ts[0m:[93m3[0m:[93m26[0m - [91merror[0m[90m TS2307: [0mCannot find module 'web-push' or its corresponding type declarations.
+
+[7m3[0m import * as webPush from 'web-push';
+[7m [0m [91m                         ~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m57[0m:[93m4[0m - [91merror[0m[90m TS2304: [0mCannot find name 'OneToOne'.
+
+[7m57[0m   @OneToOne(() => StockLiveData, (stockLiveData) => stockLiveData.stock)
+[7m  [0m [91m   ~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m57[0m:[93m35[0m - [91merror[0m[90m TS7006: [0mParameter 'stockLiveData' implicitly has an 'any' type.
+
+[7m57[0m   @OneToOne(() => StockLiveData, (stockLiveData) => stockLiveData.stock)
+[7m  [0m [91m                                  ~~~~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m60[0m:[93m4[0m - [91merror[0m[90m TS2304: [0mCannot find name 'OneToOne'.
+
+[7m60[0m   @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
+[7m  [0m [91m   ~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m60[0m:[93m19[0m - [91merror[0m[90m TS2304: [0mCannot find name 'KospiStock'.
+
+[7m60[0m   @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
+[7m  [0m [91m                  ~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m60[0m:[93m32[0m - [91merror[0m[90m TS7006: [0mParameter 'kospiStock' implicitly has an 'any' type.
+
+[7m60[0m   @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
+[7m  [0m [91m                               ~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m61[0m:[93m16[0m - [91merror[0m[90m TS2304: [0mCannot find name 'KospiStock'.
+
+[7m61[0m   kospiStock?: KospiStock;
+[7m  [0m [91m               ~~~~~~~~~~[0m
+
+[[90m12:53:09 PM[0m] Found 7 errors. Watching for file changes.
+
+[2J[3J[H[[90m12:53:09 PM[0m] File change detected. Starting incremental compilation...
+
+[96msrc/alarm/push.service.ts[0m:[93m3[0m:[93m26[0m - [91merror[0m[90m TS2307: [0mCannot find module 'web-push' or its corresponding type declarations.
+
+[7m3[0m import * as webPush from 'web-push';
+[7m [0m [91m                         ~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m57[0m:[93m4[0m - [91merror[0m[90m TS2304: [0mCannot find name 'OneToOne'.
+
+[7m57[0m   @OneToOne(() => StockLiveData, (stockLiveData) => stockLiveData.stock)
+[7m  [0m [91m   ~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m57[0m:[93m35[0m - [91merror[0m[90m TS7006: [0mParameter 'stockLiveData' implicitly has an 'any' type.
+
+[7m57[0m   @OneToOne(() => StockLiveData, (stockLiveData) => stockLiveData.stock)
+[7m  [0m [91m                                  ~~~~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m60[0m:[93m4[0m - [91merror[0m[90m TS2304: [0mCannot find name 'OneToOne'.
+
+[7m60[0m   @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
+[7m  [0m [91m   ~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m60[0m:[93m19[0m - [91merror[0m[90m TS2304: [0mCannot find name 'KospiStock'.
+
+[7m60[0m   @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
+[7m  [0m [91m                  ~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m60[0m:[93m32[0m - [91merror[0m[90m TS7006: [0mParameter 'kospiStock' implicitly has an 'any' type.
+
+[7m60[0m   @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
+[7m  [0m [91m                               ~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m61[0m:[93m16[0m - [91merror[0m[90m TS2304: [0mCannot find name 'KospiStock'.
+
+[7m61[0m   kospiStock?: KospiStock;
+[7m  [0m [91m               ~~~~~~~~~~[0m
+
+[[90m12:53:09 PM[0m] Found 7 errors. Watching for file changes.
+
+[2J[3J[H[[90m12:53:10 PM[0m] File change detected. Starting incremental compilation...
+
+[96msrc/alarm/push.service.ts[0m:[93m3[0m:[93m26[0m - [91merror[0m[90m TS2307: [0mCannot find module 'web-push' or its corresponding type declarations.
+
+[7m3[0m import * as webPush from 'web-push';
+[7m [0m [91m                         ~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m57[0m:[93m4[0m - [91merror[0m[90m TS2304: [0mCannot find name 'OneToOne'.
+
+[7m57[0m   @OneToOne(() => StockLiveData, (stockLiveData) => stockLiveData.stock)
+[7m  [0m [91m   ~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m57[0m:[93m35[0m - [91merror[0m[90m TS7006: [0mParameter 'stockLiveData' implicitly has an 'any' type.
+
+[7m57[0m   @OneToOne(() => StockLiveData, (stockLiveData) => stockLiveData.stock)
+[7m  [0m [91m                                  ~~~~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m60[0m:[93m4[0m - [91merror[0m[90m TS2304: [0mCannot find name 'OneToOne'.
+
+[7m60[0m   @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
+[7m  [0m [91m   ~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m60[0m:[93m19[0m - [91merror[0m[90m TS2304: [0mCannot find name 'KospiStock'.
+
+[7m60[0m   @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
+[7m  [0m [91m                  ~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m60[0m:[93m32[0m - [91merror[0m[90m TS7006: [0mParameter 'kospiStock' implicitly has an 'any' type.
+
+[7m60[0m   @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
+[7m  [0m [91m                               ~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m61[0m:[93m16[0m - [91merror[0m[90m TS2304: [0mCannot find name 'KospiStock'.
+
+[7m61[0m   kospiStock?: KospiStock;
+[7m  [0m [91m               ~~~~~~~~~~[0m
+
+[[90m12:53:10 PM[0m] Found 7 errors. Watching for file changes.
+
+[2J[3J[H[[90m12:54:38 PM[0m] File change detected. Starting incremental compilation...
+
+[91merror[0m[90m TS2688: [0mCannot find type definition file for 'web-push'.
+  The file is in the program because:
+    Entry point for implicit type library 'web-push'
+
+[[90m12:54:38 PM[0m] Found 1 error. Watching for file changes.
+
+[2J[3J[H[[90m12:54:40 PM[0m] File change detected. Starting incremental compilation...
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m57[0m:[93m4[0m - [91merror[0m[90m TS2304: [0mCannot find name 'OneToOne'.
+
+[7m57[0m   @OneToOne(() => StockLiveData, (stockLiveData) => stockLiveData.stock)
+[7m  [0m [91m   ~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m57[0m:[93m35[0m - [91merror[0m[90m TS7006: [0mParameter 'stockLiveData' implicitly has an 'any' type.
+
+[7m57[0m   @OneToOne(() => StockLiveData, (stockLiveData) => stockLiveData.stock)
+[7m  [0m [91m                                  ~~~~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m60[0m:[93m4[0m - [91merror[0m[90m TS2304: [0mCannot find name 'OneToOne'.
+
+[7m60[0m   @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
+[7m  [0m [91m   ~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m60[0m:[93m19[0m - [91merror[0m[90m TS2304: [0mCannot find name 'KospiStock'.
+
+[7m60[0m   @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
+[7m  [0m [91m                  ~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m60[0m:[93m32[0m - [91merror[0m[90m TS7006: [0mParameter 'kospiStock' implicitly has an 'any' type.
+
+[7m60[0m   @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
+[7m  [0m [91m                               ~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m61[0m:[93m16[0m - [91merror[0m[90m TS2304: [0mCannot find name 'KospiStock'.
+
+[7m61[0m   kospiStock?: KospiStock;
+[7m  [0m [91m               ~~~~~~~~~~[0m
+
+[[90m12:54:40 PM[0m] Found 6 errors. Watching for file changes.
+
+[2J[3J[H[[90m12:54:41 PM[0m] File change detected. Starting incremental compilation...
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m57[0m:[93m4[0m - [91merror[0m[90m TS2304: [0mCannot find name 'OneToOne'.
+
+[7m57[0m   @OneToOne(() => StockLiveData, (stockLiveData) => stockLiveData.stock)
+[7m  [0m [91m   ~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m57[0m:[93m35[0m - [91merror[0m[90m TS7006: [0mParameter 'stockLiveData' implicitly has an 'any' type.
+
+[7m57[0m   @OneToOne(() => StockLiveData, (stockLiveData) => stockLiveData.stock)
+[7m  [0m [91m                                  ~~~~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m60[0m:[93m4[0m - [91merror[0m[90m TS2304: [0mCannot find name 'OneToOne'.
+
+[7m60[0m   @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
+[7m  [0m [91m   ~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m60[0m:[93m19[0m - [91merror[0m[90m TS2304: [0mCannot find name 'KospiStock'.
+
+[7m60[0m   @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
+[7m  [0m [91m                  ~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m60[0m:[93m32[0m - [91merror[0m[90m TS7006: [0mParameter 'kospiStock' implicitly has an 'any' type.
+
+[7m60[0m   @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
+[7m  [0m [91m                               ~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m61[0m:[93m16[0m - [91merror[0m[90m TS2304: [0mCannot find name 'KospiStock'.
+
+[7m61[0m   kospiStock?: KospiStock;
+[7m  [0m [91m               ~~~~~~~~~~[0m
+
+[[90m12:54:41 PM[0m] Found 6 errors. Watching for file changes.
+
+[2J[3J[H[[90m12:57:36 PM[0m] File change detected. Starting incremental compilation...
+
+[[90m12:57:37 PM[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:38 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:38 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +65ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:38 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScraperModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:38 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +5ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:38 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:38 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSessionModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:38 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:38 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWinstonModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:38 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:38 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:38 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScheduleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmCoreModule dependencies initialized[39m[38;5;3m +442ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mKoreaStockInfoModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUserModule dependencies initialized[39m[38;5;3m +6ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOpenapiScraperModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mChatModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mStockModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mStockGateway subscribed to the "connectStock" message[39m[38;5;3m +19ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mChatGateway subscribed to the "chat" message[39m[38;5;3m +1ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mStockController {/api/stock}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/view, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user/ownership, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topViews, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topGainers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topLosers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/fluctuation, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/:stockId/detail, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/index, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/:stockId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUserController {/api/user}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/info, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/info, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/:id/theme, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/:id/theme, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mGoogleAuthController {/api/auth/google}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/google/login, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/google/redirect, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTesterAuthController {/api/auth/tester}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/tester/login, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/tester/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/logout, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mChatController {/api/chat}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat/like, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat/like, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 62310  - [39m11/28/2024, 12:57:39 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +14ms[39m
+[2J[3J[H[[90m12:57:46 PM[0m] File change detected. Starting incremental compilation...
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m57[0m:[93m4[0m - [91merror[0m[90m TS2304: [0mCannot find name 'OneToOne'.
+
+[7m57[0m   @OneToOne(() => StockLiveData, (stockLiveData) => stockLiveData.stock)
+[7m  [0m [91m   ~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m57[0m:[93m35[0m - [91merror[0m[90m TS7006: [0mParameter 'stockLiveData' implicitly has an 'any' type.
+
+[7m57[0m   @OneToOne(() => StockLiveData, (stockLiveData) => stockLiveData.stock)
+[7m  [0m [91m                                  ~~~~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m60[0m:[93m4[0m - [91merror[0m[90m TS2304: [0mCannot find name 'OneToOne'.
+
+[7m60[0m   @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
+[7m  [0m [91m   ~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m60[0m:[93m19[0m - [91merror[0m[90m TS2304: [0mCannot find name 'KospiStock'.
+
+[7m60[0m   @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
+[7m  [0m [91m                  ~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m60[0m:[93m32[0m - [91merror[0m[90m TS7006: [0mParameter 'kospiStock' implicitly has an 'any' type.
+
+[7m60[0m   @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
+[7m  [0m [91m                               ~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m61[0m:[93m16[0m - [91merror[0m[90m TS2304: [0mCannot find name 'KospiStock'.
+
+[7m61[0m   kospiStock?: KospiStock;
+[7m  [0m [91m               ~~~~~~~~~~[0m
+
+[[90m12:57:47 PM[0m] Found 6 errors. Watching for file changes.
+
+[2J[3J[H[[90m1:01:54 PM[0m] File change detected. Starting incremental compilation...
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m57[0m:[93m4[0m - [91merror[0m[90m TS2304: [0mCannot find name 'OneToOne'.
+
+[7m57[0m   @OneToOne(() => StockLiveData, (stockLiveData) => stockLiveData.stock)
+[7m  [0m [91m   ~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m57[0m:[93m35[0m - [91merror[0m[90m TS7006: [0mParameter 'stockLiveData' implicitly has an 'any' type.
+
+[7m57[0m   @OneToOne(() => StockLiveData, (stockLiveData) => stockLiveData.stock)
+[7m  [0m [91m                                  ~~~~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m60[0m:[93m4[0m - [91merror[0m[90m TS2304: [0mCannot find name 'OneToOne'.
+
+[7m60[0m   @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
+[7m  [0m [91m   ~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m60[0m:[93m19[0m - [91merror[0m[90m TS2304: [0mCannot find name 'KospiStock'.
+
+[7m60[0m   @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
+[7m  [0m [91m                  ~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m60[0m:[93m32[0m - [91merror[0m[90m TS7006: [0mParameter 'kospiStock' implicitly has an 'any' type.
+
+[7m60[0m   @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
+[7m  [0m [91m                               ~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m61[0m:[93m16[0m - [91merror[0m[90m TS2304: [0mCannot find name 'KospiStock'.
+
+[7m61[0m   kospiStock?: KospiStock;
+[7m  [0m [91m               ~~~~~~~~~~[0m
+
+[[90m1:01:54 PM[0m] Found 6 errors. Watching for file changes.
+
+[2J[3J[H[[90m1:03:07 PM[0m] File change detected. Starting incremental compilation...
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m57[0m:[93m4[0m - [91merror[0m[90m TS2304: [0mCannot find name 'OneToOne'.
+
+[7m57[0m   @OneToOne(() => StockLiveData, (stockLiveData) => stockLiveData.stock)
+[7m  [0m [91m   ~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m57[0m:[93m35[0m - [91merror[0m[90m TS7006: [0mParameter 'stockLiveData' implicitly has an 'any' type.
+
+[7m57[0m   @OneToOne(() => StockLiveData, (stockLiveData) => stockLiveData.stock)
+[7m  [0m [91m                                  ~~~~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m60[0m:[93m4[0m - [91merror[0m[90m TS2304: [0mCannot find name 'OneToOne'.
+
+[7m60[0m   @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
+[7m  [0m [91m   ~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m60[0m:[93m19[0m - [91merror[0m[90m TS2304: [0mCannot find name 'KospiStock'.
+
+[7m60[0m   @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
+[7m  [0m [91m                  ~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m60[0m:[93m32[0m - [91merror[0m[90m TS7006: [0mParameter 'kospiStock' implicitly has an 'any' type.
+
+[7m60[0m   @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
+[7m  [0m [91m                               ~~~~~~~~~~[0m
+
+[96msrc/stock/domain/stock.entity.ts[0m:[93m61[0m:[93m16[0m - [91merror[0m[90m TS2304: [0mCannot find name 'KospiStock'.
+
+[7m61[0m   kospiStock?: KospiStock;
+[7m  [0m [91m               ~~~~~~~~~~[0m
+
+[[90m1:03:09 PM[0m] Found 6 errors. Watching for file changes.
+
+[2J[3J[H[[90m1:03:27 PM[0m] File change detected. Starting incremental compilation...
+
+[[90m1:03:28 PM[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:29 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:29 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +57ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:29 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScraperModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:29 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:29 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:29 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSessionModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:29 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:29 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWinstonModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:29 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:29 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:29 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScheduleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmCoreModule dependencies initialized[39m[38;5;3m +200ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mKoreaStockInfoModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUserModule dependencies initialized[39m[38;5;3m +3ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOpenapiScraperModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mChatModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mStockModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mStockGateway subscribed to the "connectStock" message[39m[38;5;3m +11ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mChatGateway subscribed to the "chat" message[39m[38;5;3m +1ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mStockController {/api/stock}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/view, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user/ownership, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topViews, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topGainers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topLosers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/fluctuation, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/:stockId/detail, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/index, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/:stockId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUserController {/api/user}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/info, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/info, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/:id/theme, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/:id/theme, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mGoogleAuthController {/api/auth/google}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/google/login, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/google/redirect, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTesterAuthController {/api/auth/tester}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/tester/login, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/tester/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/logout, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mChatController {/api/chat}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat/like, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat/like, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 64909  - [39m11/28/2024, 1:03:30 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +9ms[39m
+[2J[3J[H[[90m1:06:25 PM[0m] File change detected. Starting incremental compilation...
+
+[[90m1:06:25 PM[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +92ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScraperModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSessionModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWinstonModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScheduleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmCoreModule dependencies initialized[39m[38;5;3m +154ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mKoreaStockInfoModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUserModule dependencies initialized[39m[38;5;3m +3ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOpenapiScraperModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mChatModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mStockModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mStockGateway subscribed to the "connectStock" message[39m[38;5;3m +13ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mChatGateway subscribed to the "chat" message[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mStockController {/api/stock}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/view, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user/ownership, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topViews, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topGainers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topLosers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/fluctuation, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/:stockId/detail, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/index, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/:stockId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUserController {/api/user}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/info, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/info, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/:id/theme, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/:id/theme, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mGoogleAuthController {/api/auth/google}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/google/login, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/google/redirect, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTesterAuthController {/api/auth/tester}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/tester/login, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/tester/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/logout, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mChatController {/api/chat}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat/like, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat/like, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66132  - [39m11/28/2024, 1:06:27 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +11ms[39m
+[2J[3J[H[[90m1:06:30 PM[0m] File change detected. Starting incremental compilation...
+
+[[90m1:06:30 PM[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:31 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:31 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +55ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:31 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScraperModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:31 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:31 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:31 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSessionModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:31 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:31 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWinstonModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:31 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:31 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:31 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScheduleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmCoreModule dependencies initialized[39m[38;5;3m +184ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mKoreaStockInfoModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUserModule dependencies initialized[39m[38;5;3m +3ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOpenapiScraperModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mChatModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mStockModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mStockGateway subscribed to the "connectStock" message[39m[38;5;3m +12ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mChatGateway subscribed to the "chat" message[39m[38;5;3m +1ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mStockController {/api/stock}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/view, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user/ownership, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topViews, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topGainers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topLosers, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/fluctuation, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/:stockId/detail, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/index, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/:stockId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUserController {/api/user}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/info, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/info, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/:id/theme, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/:id/theme, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mGoogleAuthController {/api/auth/google}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/google/login, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/google/redirect, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTesterAuthController {/api/auth/tester}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/tester/login, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/tester/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/logout, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mChatController {/api/chat}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat/like, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat/like, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66310  - [39m11/28/2024, 1:06:32 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +10ms[39m
+[2J[3J[H[[90m1:07:08 PM[0m] File change detected. Starting incremental compilation...
+
+[[90m1:07:09 PM[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +63ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScraperModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSessionModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWinstonModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScheduleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmCoreModule dependencies initialized[39m[38;5;3m +186ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mKoreaStockInfoModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUserModule dependencies initialized[39m[38;5;3m +4ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOpenapiScraperModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mChatModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mStockModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mStockGateway subscribed to the "connectStock" message[39m[38;5;3m +13ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mChatGateway subscribed to the "chat" message[39m[38;5;3m +1ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mStockController {/api/stock}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/view, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user/ownership, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topViews, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topGainers, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topLosers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/fluctuation, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/:stockId/detail, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/index, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/:stockId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUserController {/api/user}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/info, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/info, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/:id/theme, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/:id/theme, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mGoogleAuthController {/api/auth/google}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/google/login, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/google/redirect, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTesterAuthController {/api/auth/tester}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/tester/login, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/tester/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/logout, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mChatController {/api/chat}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat/like, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat/like, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 66624  - [39m11/28/2024, 1:07:10 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +11ms[39m
+[2J[3J[H[[90m1:07:11 PM[0m] File change detected. Starting incremental compilation...
+
+[96msrc/scraper/openapi/liveData.service.ts[0m:[93m50[0m:[93m24[0m - [91merror[0m[90m TS2339: [0mProperty 'add' does not exist on type 'Set<string>[]'.
+
+[7m50[0m       this.clientStock.add(stockId);
+[7m  [0m [91m                       ~~~[0m
+
+[96msrc/scraper/openapi/liveData.service.ts[0m:[93m61[0m:[93m26[0m - [91merror[0m[90m TS2339: [0mProperty 'has' does not exist on type 'Set<string>[]'.
+
+[7m61[0m     if (this.clientStock.has(stockId)) {
+[7m  [0m [91m                         ~~~[0m
+
+[96msrc/scraper/openapi/liveData.service.ts[0m:[93m62[0m:[93m24[0m - [91merror[0m[90m TS2339: [0mProperty 'delete' does not exist on type 'Set<string>[]'.
+
+[7m62[0m       this.clientStock.delete(stockId);
+[7m  [0m [91m                       ~~~~~~[0m
+
+[96msrc/scraper/openapi/liveData.service.ts[0m:[93m78[0m:[93m11[0m - [91merror[0m[90m TS2345: [0mArgument of type 'number' is not assignable to parameter of type 'string'.
+
+[7m78[0m           stockId,
+[7m  [0m [91m          ~~~~~~~[0m
+
+[[90m1:07:11 PM[0m] Found 4 errors. Watching for file changes.
+
+[2J[3J[H[[90m1:07:15 PM[0m] File change detected. Starting incremental compilation...
+
+[96msrc/scraper/openapi/liveData.service.ts[0m:[93m51[0m:[93m24[0m - [91merror[0m[90m TS2339: [0mProperty 'add' does not exist on type 'Set<string>[]'.
+
+[7m51[0m       this.clientStock.add(stockId);
+[7m  [0m [91m                       ~~~[0m
+
+[96msrc/scraper/openapi/liveData.service.ts[0m:[93m62[0m:[93m26[0m - [91merror[0m[90m TS2339: [0mProperty 'has' does not exist on type 'Set<string>[]'.
+
+[7m62[0m     if (this.clientStock.has(stockId)) {
+[7m  [0m [91m                         ~~~[0m
+
+[96msrc/scraper/openapi/liveData.service.ts[0m:[93m63[0m:[93m24[0m - [91merror[0m[90m TS2339: [0mProperty 'delete' does not exist on type 'Set<string>[]'.
+
+[7m63[0m       this.clientStock.delete(stockId);
+[7m  [0m [91m                       ~~~~~~[0m
+
+[96msrc/scraper/openapi/liveData.service.ts[0m:[93m79[0m:[93m11[0m - [91merror[0m[90m TS2345: [0mArgument of type 'number' is not assignable to parameter of type 'string'.
+
+[7m79[0m           stockId,
+[7m  [0m [91m          ~~~~~~~[0m
+
+[[90m1:07:15 PM[0m] Found 4 errors. Watching for file changes.
+
+[2J[3J[H[[90m1:07:18 PM[0m] File change detected. Starting incremental compilation...
+
+[[90m1:07:18 PM[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +48ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScraperModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSessionModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWinstonModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScheduleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmCoreModule dependencies initialized[39m[38;5;3m +205ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mKoreaStockInfoModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUserModule dependencies initialized[39m[38;5;3m +3ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOpenapiScraperModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mChatModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mStockModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mStockGateway subscribed to the "connectStock" message[39m[38;5;3m +12ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mChatGateway subscribed to the "chat" message[39m[38;5;3m +1ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mStockController {/api/stock}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/view, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user/ownership, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/user, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topViews, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topGainers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/topLosers, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/fluctuation, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/:stockId/detail, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/index, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/stock/:stockId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUserController {/api/user}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/info, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/info, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/:id/theme, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/user/:id/theme, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mGoogleAuthController {/api/auth/google}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/google/login, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/google/redirect, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTesterAuthController {/api/auth/tester}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/tester/login, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/tester/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/logout, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mChatController {/api/chat}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat/like, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/chat/like, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 67066  - [39m11/28/2024, 1:07:19 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +9ms[39m

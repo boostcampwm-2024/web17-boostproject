@@ -124,7 +124,7 @@ export class LiveData {
 
   @Cron('0 2 * * 1-5')
   connect() {
-    this.webSocketClient.connectPacade(
+    this.webSocketClient.connectFacade(
       this.initOpenCallback,
       this.initMessageCallback,
       this.initCloseCallback,
