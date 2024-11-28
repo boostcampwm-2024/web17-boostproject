@@ -1,22 +1,21 @@
 import { useMutation } from '@tanstack/react-query';
 import {
-  PostViewResponseSchema,
-  type PostStockViewRequest,
-  type PostViewResponse,
+  PostStockResponseSchema,
+  type PostStockRequest,
+  type PostStockResponse,
 } from './schema';
 import { post } from '@/apis/utils/post';
 
-const postStockView = async ({ stockId }: PostStockViewRequest) =>
-  post<PostViewResponse>({
-    params: stockId,
-    schema: PostViewResponseSchema,
-    url: 'api/stock/view',
+const postStockView = ({ stockId }: PostStockRequest) =>
+  post<PostStockResponse>({
+    params: { stockId },
+    schema: PostStockResponseSchema,
+    url: '/api/stock/view',
   });
 
 export const usePostStockView = () => {
   return useMutation({
     mutationKey: ['stockView'],
-    mutationFn: ({ stockId }: PostStockViewRequest) =>
-      postStockView({ stockId }),
+    mutationFn: ({ stockId }: PostStockRequest) => postStockView({ stockId }),
   });
 };

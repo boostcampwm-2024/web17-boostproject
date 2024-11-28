@@ -1,15 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
+import { z } from 'zod';
 import {
   GetStockListResponseSchema,
+  GetStockTopViewsResponse,
   type GetStockListRequest,
-  type GetStockListResponse,
 } from './schema';
 import { get } from '@/apis/utils/get';
 
 const getTopViews = ({ limit }: Partial<GetStockListRequest>) =>
-  get<GetStockListResponse[]>({
-    schema: GetStockListResponseSchema,
-    url: `/api/stock/topViews?limit=${limit}`,
+  get<Partial<GetStockTopViewsResponse>[]>({
+    schema: z.array(GetStockListResponseSchema.partial()),
+    url: `/api/stock/topViews`,
+    params: { limit },
   });
 
 export const useGetTopViews = ({ limit }: Partial<GetStockListRequest>) => {

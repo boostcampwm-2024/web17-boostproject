@@ -5,7 +5,7 @@ import { get } from '@/apis/utils/get';
 const getLoginStatus = () =>
   get<GetLoginStatus>({
     schema: GetLoginStatusSchema,
-    url: '/api/auth/google/status',
+    url: '/api/auth/status',
   });
 
 export const useGetLoginStatus = () => {

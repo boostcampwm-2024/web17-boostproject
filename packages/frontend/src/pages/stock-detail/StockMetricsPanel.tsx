@@ -1,26 +1,77 @@
-import { MetricSection } from './components';
-import { METRIC_DETAILS } from '@/constants/METRIC_DETAILS';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { MetricItem, Title } from './components';
+import { METRICS_DATA } from '@/constants/metricDetail';
+import { socketStock } from '@/sockets/config';
+import { useWebsocket } from '@/sockets/useWebsocket';
+import { type StockMetricsPanelProps } from '@/types/metrics';
 
-export const StockMetricsPanel = () => {
+interface RealTimeStockData {
+  price: number;
+  change: number;
+  volume: number;
+}
+
+export const StockMetricsPanel = ({
+  eps,
+  high52w,
+  low52w,
+  marketCap,
+  per,
+}: Partial<StockMetricsPanelProps>) => {
+  const { stockId } = useParams();
+  const { isConnected } = useWebsocket(socketStock);
+  const [realTimeData, setRealTimeData] = useState<RealTimeStockData>({
+    price: 0,
+    change: 0,
+    volume: 0,
+  });
+
+  useEffect(() => {
+    if (!isConnected || !stockId) return;
+
+    const handleStockUpdate = (data: RealTimeStockData) => {
+      setRealTimeData(data);
+    };
+
+    socketStock.emit('connectStock', stockId);
+    socketStock.on('updateStock', handleStockUpdate);
+
+    return () => {
+      socketStock.off('updateStock', handleStockUpdate);
+    };
+  }, [isConnected, stockId]);
+
+  const { price, change, volume } = realTimeData;
+
+  const metricsData = METRICS_DATA({
+    eps,
+    high52w,
+    low52w,
+    marketCap,
+    per,
+    price,
+    change,
+    volume,
+  });
+
   return (
     <article className="flex flex-col gap-10 rounded-md bg-white p-6 shadow">
-      <section className="group flex items-center gap-10">
-        <div className="group relative">
-          <Tooltip className="absolute bottom-full mb-6">
-            {METRIC_DETAILS.tradingVolume.message}
-          </Tooltip>
-          <Title>{METRIC_DETAILS.tradingVolume.name}</Title>
-        </div>
-        <span className="display-medium14 text-dark-gray">00.000</span>
-      </section>
-      <MetricSection
-        title="가격"
-        metricInfo={Object.values(METRIC_DETAILS.price)}
-      />
-      <MetricSection
-        title="기업가치"
-        metricInfo={Object.values(METRIC_DETAILS.enterpriseValue)}
-      />
+      {Object.values(metricsData).map((section) => (
+        <section className="flex flex-col" key={section.id}>
+          <Title>{section.title}</Title>
+          <section className="grid w-9/12 grid-cols-4 items-center">
+            {section.metrics.map((metric) => (
+              <MetricItem
+                key={metric.name}
+                label={metric.name}
+                value={metric.value}
+                tooltip={metric.message}
+              />
+            ))}
+          </section>
+        </section>
+      ))}
     </article>
   );
 };

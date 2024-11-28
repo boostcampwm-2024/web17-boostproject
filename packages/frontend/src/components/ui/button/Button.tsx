@@ -3,7 +3,7 @@ import { cva, VariantProps } from 'class-variance-authority';
 import { cn } from '@/utils/cn';
 
 export const ButtonVariants = cva(
-  `display-bold12 border rounded shadow-black py-1`,
+  `display-bold12 border rounded shadow-black py-1 border-orange`,
   {
     variants: {
       backgroundColor: {
@@ -18,6 +18,9 @@ export const ButtonVariants = cva(
       size: {
         default: 'w-24',
         sm: 'w-14',
+      },
+      border: {
+        gray: 'border-gray',
       },
     },
     defaultVariants: {

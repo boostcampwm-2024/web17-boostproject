@@ -6,27 +6,16 @@ import {
 } from './schema';
 import { get } from '@/apis/utils/get';
 
-const getTopGainers = ({ limit }: Partial<GetStockListRequest>) =>
-  get<GetStockListResponse[]>({
+const getStockByPrice = ({ limit }: Partial<GetStockListRequest>) =>
+  get<GetStockListResponse>({
     schema: GetStockListResponseSchema,
-    url: `/api/stock/topGainers?limit=${limit}`,
+    url: `/api/stock/fluctuation`,
+    params: { limit },
   });
 
-const getTopLosers = ({ limit }: Partial<GetStockListRequest>) =>
-  get<GetStockListResponse[]>({
-    schema: GetStockListResponseSchema,
-    url: `/api/stock/topLosers?limit=${limit}`,
-  });
-
-export const useGetStocksByPrice = ({
-  limit,
-  sortType,
-}: GetStockListRequest) => {
+export const useGetStocksByPrice = ({ limit }: GetStockListRequest) => {
   return useQuery({
-    queryKey: ['stocks', sortType],
-    queryFn:
-      sortType === 'increase'
-        ? () => getTopGainers({ limit })
-        : () => getTopLosers({ limit }),
+    queryKey: ['stocks', limit],
+    queryFn: () => getStockByPrice({ limit }),
   });
 };

@@ -1,19 +1,19 @@
+import { useNavigate } from 'react-router-dom';
 import { StockIndexCard } from './components/StockIndexCard';
 import { StockInfoCard } from './components/StockInfoCard';
 import { StockRankingTable } from './StockRankingTable';
+import { usePostStockView } from '@/apis/queries/stock-detail';
 import { useGetTopViews } from '@/apis/queries/stocks';
-import marketData from '@/mocks/market.json';
+import { useGetStockIndex } from '@/apis/queries/stocks/useGetStockIndex';
 
 const LIMIT = 5;
 
 export const Stocks = () => {
-  const kospi = marketData.data.filter((value) => value.name === '코스피')[0];
-  const kosdaq = marketData.data.filter((value) => value.name === '코스닥')[0];
-  const rateOfExchange = marketData.data.filter(
-    (value) => value.name === '달러환율',
-  )[0];
+  const navigate = useNavigate();
 
+  const { data: stockIndex } = useGetStockIndex();
   const { data: topViews } = useGetTopViews({ limit: LIMIT });
+  const { mutate } = usePostStockView();
 
   return (
     <main className="flex flex-col gap-16">
@@ -22,44 +22,45 @@ export const Stocks = () => {
         <h2 className="display-bold16 text-dark-gray mb-5">
           지금 시장, 이렇게 움직이고 있어요.
         </h2>
-        <div className="grid w-fit grid-cols-3 gap-5">
-          <StockIndexCard
-            price={kospi.price}
-            change={kospi.change}
-            changePercent={kospi.changePercent}
-          >
-            코스피
-          </StockIndexCard>
-          <StockIndexCard
-            price={kosdaq.price}
-            change={kosdaq.change}
-            changePercent={kosdaq.changePercent}
-          >
-            코스닥
-          </StockIndexCard>
-          <StockIndexCard
-            price={rateOfExchange.price}
-            change={rateOfExchange.change}
-            changePercent={rateOfExchange.changePercent}
-          >
-            달러환율
-          </StockIndexCard>
-        </div>
+        {stockIndex ? (
+          <div className="grid w-fit grid-cols-3 gap-5">
+            {stockIndex?.map((info) => (
+              <StockIndexCard
+                name={info.name}
+                currentPrice={info.currentPrice}
+                changeRate={info.changeRate}
+                high={info.high}
+                low={info.low}
+                open={info.open}
+              />
+            ))}
+          </div>
+        ) : (
+          <p>지수 정보를 불러오는 데 실패했어요.</p>
+        )}
       </article>
       <article>
         <h2 className="display-bold16 text-dark-gray mb-5">
           이 종목은 어떠신가요?
         </h2>
         <div className="grid w-fit grid-cols-5 gap-5">
-          {topViews?.map((stock, index) => (
-            <StockInfoCard
-              key={stock.id}
-              index={index}
-              name={stock.name}
-              currentPrice={stock.currentPrice}
-              changeRate={stock.changeRate}
-            />
-          ))}
+          {topViews ? (
+            topViews.map((stock, index) => (
+              <StockInfoCard
+                key={stock.id}
+                index={index}
+                name={stock.name || ''}
+                currentPrice={stock.currentPrice || 0}
+                changeRate={stock.changeRate || 0}
+                onClick={() => {
+                  mutate({ stockId: stock.id ?? '' });
+                  navigate(`/stocks/${stock.id}`);
+                }}
+              />
+            ))
+          ) : (
+            <p>종목 정보를 불러오는데 실패했어요.</p>
+          )}
         </div>
       </article>
       <article>

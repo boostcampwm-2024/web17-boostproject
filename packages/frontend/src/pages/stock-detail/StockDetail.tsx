@@ -1,4 +1,5 @@
 import { useParams } from 'react-router-dom';
+import { StockDetailHeader } from './components';
 import {
   AddAlarmForm,
   ChatPanel,
@@ -6,33 +7,53 @@ import {
   StockMetricsPanel,
   TradingChart,
 } from '.';
-import { useGetStockDetail } from '@/apis/queries/stock-detail';
-import Plus from '@/assets/plus.svg?react';
-import { Button } from '@/components/ui/button';
+import { useGetLoginStatus } from '@/apis/queries/auth';
+import {
+  useGetOwnership,
+  useGetStockDetail,
+} from '@/apis/queries/stock-detail';
 
 export const StockDetail = () => {
-  const { stockId } = useParams();
-  const { data } = useGetStockDetail({ stockId: stockId ?? '' });
+  const { stockId = '' } = useParams();
+
+  const { data: stockDetail } = useGetStockDetail({ stockId });
+  const { eps, high52w, low52w, marketCap, per, name } = stockDetail || {};
+
+  const { data: loginStatus } = useGetLoginStatus();
+  const { data: userOwnerStock } = useGetOwnership({ stockId });
+
+  if (!stockDetail || !loginStatus || !userOwnerStock) {
+    return <div>데이터가 없습니다.</div>;
+  }
 
   return (
     <div className="flex h-full flex-col gap-7">
-      <header className="flex gap-7">
-        <h1 className="display-bold24">{data?.name}</h1>
-        <Button className="flex items-center justify-center gap-1">
-          <Plus /> 내 주식 추가
-        </Button>
-      </header>
-      <article className="grid flex-1 grid-cols-[2.5fr_1fr_1fr] gap-5 [&_section]:gap-5">
+      <StockDetailHeader
+        stockId={stockId}
+        stockName={name || ''}
+        loginStatus={loginStatus}
+        isOwnerStock={userOwnerStock.isOwner}
+      />
+      <article className="grid flex-1 grid-cols-1 gap-5 lg:grid-cols-2 xl:grid-cols-[2.5fr_1fr_1fr] [&_section]:gap-5">
         <section className="flex flex-col">
           <div className="relative h-full">
             <TradingChart />
           </div>
-          <StockMetricsPanel />
+          <StockMetricsPanel
+            eps={eps}
+            high52w={high52w}
+            low52w={low52w}
+            marketCap={marketCap}
+            per={per}
+          />
         </section>
-        <ChatPanel />
-        <section className="flex flex-col">
-          <NotificationPanel className="h-1/2" />
-          <AddAlarmForm className="h-1/2" />
+        <ChatPanel
+          loginStatus={loginStatus}
+          isOwnerStock={userOwnerStock.isOwner}
+        />
+        <section className="flex flex-row flex-wrap gap-5 lg:flex-col xl:flex-nowrap">
+          <NotificationPanel className="h-full w-full xl:h-1/2" />
+          <AddAlarmForm className="h-full w-full xl:h-1/2" />
         </section>
       </article>
     </div>
