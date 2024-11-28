@@ -5,7 +5,7 @@ import { useGetStocksByPrice } from '@/apis/queries/stocks';
 import DownArrow from '@/assets/down-arrow.svg?react';
 import { cn } from '@/utils/cn';
 
-const LIMIT = 20;
+const LIMIT = 10;
 
 export const StockRankingTable = () => {
   const [sortType, setSortType] = useState<'increase' | 'decrease'>('increase');
@@ -49,35 +49,41 @@ export const StockRankingTable = () => {
           </tr>
         </thead>
         <tbody>
-          {data?.result.map((stock, index) => (
-            <tr
-              key={stock.id}
-              className="display-medium14 text-dark-gray text-right [&>*]:p-4"
-            >
-              <td className="flex gap-6 text-left">
-                <span className="text-gray w-3 flex-shrink-0">{index + 1}</span>
-                <Link
-                  to={`/stocks/${stock.id}`}
-                  onClick={() => mutate({ stockId: stock.id })}
-                  className="display-bold14 hover:text-orange cursor-pointer text-ellipsis hover:underline"
-                  aria-label={stock.name}
-                >
-                  {stock.name}
-                </Link>
-              </td>
-              <td>{stock.currentPrice?.toLocaleString()}원</td>
-              <td
-                className={cn(
-                  +stock.changeRate >= 0 ? 'text-red' : 'text-blue',
-                )}
+          {data ? (
+            data.result.map((stock, index) => (
+              <tr
+                key={stock.id}
+                className="display-medium14 text-dark-gray text-right [&>*]:p-4"
               >
-                {stock.changeRate >= 0 && '+'}
-                {stock.changeRate}%
-              </td>
-              <td>{stock.volume?.toLocaleString()}원</td>
-              <td>{stock.marketCap?.toLocaleString()}주</td>
-            </tr>
-          ))}
+                <td className="flex gap-6 text-left">
+                  <span className="text-gray w-3 flex-shrink-0">
+                    {index + 1}
+                  </span>
+                  <Link
+                    to={`/stocks/${stock.id}`}
+                    onClick={() => mutate({ stockId: stock.id })}
+                    className="display-bold14 hover:text-orange cursor-pointer text-ellipsis hover:underline"
+                    aria-label={stock.name}
+                  >
+                    {stock.name}
+                  </Link>
+                </td>
+                <td>{stock.currentPrice?.toLocaleString()}원</td>
+                <td
+                  className={cn(
+                    +stock.changeRate >= 0 ? 'text-red' : 'text-blue',
+                  )}
+                >
+                  {stock.changeRate >= 0 && '+'}
+                  {stock.changeRate}%
+                </td>
+                <td>{stock.volume?.toLocaleString()}원</td>
+                <td>{stock.marketCap?.toLocaleString()}주</td>
+              </tr>
+            ))
+          ) : (
+            <p className="py-3">종목 정보를 불러오는데 실패했어요.</p>
+          )}
         </tbody>
       </table>
     </div>
