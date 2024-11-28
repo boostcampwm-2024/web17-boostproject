@@ -5,9 +5,9 @@ import { openApiConfig } from '../config/openapi.config';
 import { isOpenapiLiveData } from '../type/openapiLiveData.type';
 import { TR_IDS } from '../type/openapiUtil.type';
 import { getOpenApi } from '../util/openapiUtil.api';
+import { Json } from '@/scraper/openapi/queue/openapi.queue';
 import { Stock } from '@/stock/domain/stock.entity';
 import { StockLiveData } from '@/stock/domain/stockLiveData.entity';
-import { Json } from '@/scraper/openapi/queue/openapi.queue';
 
 @Injectable()
 export class OpenapiLiveData {
