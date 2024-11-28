@@ -54,7 +54,6 @@ export class OpenapiLiveData {
       stockLiveData.low = parseFloat(data.stck_lwpr);
       stockLiveData.open = parseFloat(data.stck_oprc);
       stockLiveData.updatedAt = new Date();
-
       return stockLiveData;
     }
   };
