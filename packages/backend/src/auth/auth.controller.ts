@@ -43,8 +43,12 @@ export class AuthController {
   async user(@Req() request: Request) {
     if (request.user) {
       const user = request.user as User;
-      return { message: 'Authenticated', nickname: user.nickname };
+      return {
+        message: 'Authenticated',
+        nickname: user.nickname,
+        subName: user.subName,
+      };
     }
-    return { message: 'Not Authenticated', nickname: null };
+    return { message: 'Not Authenticated', nickname: null, subName: null };
   }
 }
