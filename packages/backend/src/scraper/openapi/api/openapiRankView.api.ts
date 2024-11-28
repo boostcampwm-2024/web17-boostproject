@@ -45,6 +45,7 @@ export class OpenapiRankViewApi {
       const callback: <T extends Json>(value: T) => Promise<void> = async (
         liveResult: Json,
       ) => {
+        if (Array.isArray(liveResult.output)) return;
         const data = this.convertToStockLiveData(liveResult.output, stock.id);
         await this.saveIndividualLiveData(data, this.datasource.manager);
       };

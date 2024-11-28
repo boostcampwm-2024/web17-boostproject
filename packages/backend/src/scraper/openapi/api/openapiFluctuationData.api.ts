@@ -12,6 +12,7 @@ import { getOpenApi } from '@/scraper/openapi/util/openapiUtil.api';
 import { FluctuationRankStock } from '@/stock/domain/FluctuationRankStock.entity';
 import { Stock } from '@/stock/domain/stock.entity';
 import { StockLiveData } from '@/stock/domain/stockLiveData.entity';
+import { Json, OpenapiQueue } from '@/scraper/openapi/queue/openapi.queue';
 
 @Injectable()
 export class OpenapiFluctuationData {
@@ -21,6 +22,7 @@ export class OpenapiFluctuationData {
   constructor(
     private readonly openApiToken: OpenapiTokenApi,
     private readonly datasource: DataSource,
+    private readonly openApiQueue: OpenapiQueue,
     @Inject('winston') private readonly logger: Logger,
   ) {
     setTimeout(() => this.getFluctuationRankStocks(), 1000);
@@ -29,8 +31,8 @@ export class OpenapiFluctuationData {
   @Cron('* 9-15 * * 1-5')
   @Cron('*/1 9-15 * * 1-5')
   async getFluctuationRankStocks() {
-    await this.getDecreaseRankStocks();
-    await this.getIncreaseRankStocks();
+    await this.getFluctuationRankFromApi(true);
+    await this.getFluctuationRankFromApi(false);
   }
 
   async getDecreaseRankStocks(count = 5) {
@@ -75,8 +77,59 @@ export class OpenapiFluctuationData {
     }
   }
 
+  private async getFluctuationRankFromApi(isRising: boolean) {
+    const query = isRising ? INCREASE_STOCK_QUERY : DECREASE_STOCK_QUERY;
+    const callback: <T extends Json>(value: T) => Promise<void> = async (
+      data: Json,
+    ) => {
+      if (!Array.isArray(data.output)) return;
+      const save = data.output
+        .slice(0, 20)
+        .map((result: Record<string, string>) => ({
+          rank: Number(result.data_rank),
+          fluctuationRate: result.prdy_ctrt,
+          stock: { id: result.stck_shrn_iscd } as Stock,
+          isRising,
+        }));
+      await this.saveFluctuationRankStocks(save, this.datasource.manager);
+
+      save.forEach((data) => {
+        const stockId = data.stock.id;
+        const callback: <T extends Json>(value: T) => Promise<void> = async (
+          data: Json,
+        ) => {
+          if (Array.isArray(data.output)) return;
+          const stockLiveData = this.convertToStockLiveData(
+            data.output,
+            stockId,
+          );
+          await this.saveIndividualLiveData(
+            stockLiveData,
+            this.datasource.manager,
+          );
+        };
+        this.openApiQueue.enqueue({
+          url: this.liveUrl,
+          query: {
+            fid_cond_mrkt_div_code: 'J',
+            fid_input_iscd: stockId,
+          },
+          trId: TR_IDS.LIVE_DATA,
+          callback,
+        });
+      });
+    };
+
+    this.openApiQueue.enqueue({
+      url: this.fluctuationUrl,
+      query,
+      trId: TR_IDS.FLUCTUATION_DATA,
+      callback,
+    });
+  }
+
   private async saveFluctuationRankStocks(
-    result: FluctuationRankStock[],
+    result: Omit<FluctuationRankStock, 'id' | 'createdAt'>[],
     manager: EntityManager,
   ) {
     await manager
@@ -157,5 +210,30 @@ export class OpenapiFluctuationData {
     stockLiveData.open = parseFloat(stockData.stck_oprc);
     stockLiveData.updatedAt = new Date();
     return stockLiveData;
+  }
+
+  private async saveIndividualLiveData(
+    data: StockLiveData,
+    manager: EntityManager,
+  ) {
+    return await manager
+      .getRepository(StockLiveData)
+      .createQueryBuilder()
+      .insert()
+      .into(StockLiveData)
+      .values(data)
+      .orUpdate(
+        [
+          'current_price',
+          'change_rate',
+          'volume',
+          'high',
+          'low',
+          'open',
+          'updatedAt',
+        ],
+        ['stock_id'],
+      )
+      .execute();
   }
 }

@@ -5,9 +5,9 @@ import { TR_ID } from '@/scraper/openapi/type/openapiUtil.type';
 import { getOpenApi } from '@/scraper/openapi/util/openapiUtil.api';
 import { PriorityQueue } from '@/scraper/openapi/util/priorityQueue';
 
-export type Json = {
-  output: Record<string, string>;
-};
+export interface Json {
+  output: Record<string, string> | Record<string, string>[];
+}
 
 export interface OpenapiQueueNodeValue {
   url: string;
