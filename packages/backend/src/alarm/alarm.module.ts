@@ -10,5 +10,6 @@ import { PushService } from './push.service';
   imports: [TypeOrmModule.forFeature([Alarm, PushSubscription])],
   controllers: [AlarmController],
   providers: [AlarmService, PushService],
+  exports: [AlarmService],
 })
 export class AlarmModule {}

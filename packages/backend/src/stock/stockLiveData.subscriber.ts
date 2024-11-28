@@ -23,7 +23,6 @@ export class StockLiveDataSubscriber
     return StockLiveData;
   }
 
-  // eslint-disable-next-line max-lines-per-function
   async afterUpdate(event: UpdateEvent<StockLiveData>) {
     try {
       const updatedStockLiveData =

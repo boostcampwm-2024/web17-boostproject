@@ -24,6 +24,8 @@ import {
 import { StockDetailService } from './stockDetail.service';
 import { StockLiveDataSubscriber } from './stockLiveData.subscriber';
 import { StockRateIndexService } from './stockRateIndex.service';
+import { AlarmModule } from '@/alarm/alarm.module';
+import { Alarm } from '@/alarm/domain/alarm.entity';
 import { OpenapiLiveData } from '@/scraper/openapi/api/openapiLiveData.api';
 import { OpenapiTokenApi } from '@/scraper/openapi/api/openapiToken.api';
 import { LiveData } from '@/scraper/openapi/liveData.service';
@@ -40,7 +42,9 @@ import { WebsocketClient } from '@/scraper/openapi/websocket/websocketClient.web
       StockYearly,
       StockLiveData,
       StockDetail,
+      Alarm,
     ]),
+    AlarmModule,
   ],
   controllers: [StockController],
   providers: [
