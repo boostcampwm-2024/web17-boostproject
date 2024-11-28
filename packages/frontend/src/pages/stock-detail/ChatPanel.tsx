@@ -101,11 +101,11 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
       mutate({ chatId });
       return;
     }
-    alert('주주 소유자만 가능합니다.');
+    alert('주식 소유자만 가능합니다.');
   };
 
   return (
-    <article className="flex min-w-80 flex-col gap-5 rounded-md bg-white p-7">
+    <article className="flex min-w-80 flex-col gap-5 rounded-md bg-white p-7 shadow">
       <h2 className="display-bold20 text-center font-bold">채팅</h2>
       <TextArea
         onSend={handleSendMessage}
@@ -128,7 +128,7 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
             )}
           >
             <span>
-              주주 소유자만
+              주식 소유자만
               <br /> 확인할 수 있습니다.
             </span>
           </div>
