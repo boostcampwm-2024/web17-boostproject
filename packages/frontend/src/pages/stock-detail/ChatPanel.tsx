@@ -94,6 +94,14 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
     };
   }, [stockId, socket, handleChat]);
 
+  const handleLikeClick = (chatId: number) => {
+    if (isOwnerStock) {
+      mutate({ chatId });
+      return;
+    }
+    alert('주주 소유자만 가능합니다.');
+  };
+
   return (
     <article className="flex min-w-80 flex-col gap-5 rounded-md bg-white p-7">
       <h2 className="display-bold20 text-center font-bold">채팅</h2>
@@ -111,7 +119,12 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
       </div>
       <article className="relative">
         {!isOwnerStock && (
-          <div className="display-bold16 absolute top-64 flex h-[calc(100%-16rem)] w-full items-center justify-center bg-black/5 text-center backdrop-blur-sm">
+          <div
+            className={cn(
+              'display-bold16 absolute top-64 flex h-[calc(100%-16rem)] w-full items-center justify-center bg-black/5 text-center backdrop-blur-sm',
+              chatData.length < 3 && 'top-0 h-full',
+            )}
+          >
             <span>
               주주 소유자만
               <br /> 확인할 수 있습니다.
@@ -134,7 +147,7 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
                 likeCount={chat.likeCount}
                 liked={chat.liked}
                 writer={nickname || ''}
-                onClick={() => mutate({ chatId: chat.id })}
+                onClick={() => handleLikeClick(chat.id)}
               />
             ))
           ) : (

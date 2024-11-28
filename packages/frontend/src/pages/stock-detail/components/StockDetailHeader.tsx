@@ -45,18 +45,16 @@ export const StockDetailHeader = ({
   const { mutate: postStockUser } = usePostStockUser({
     onSuccess: () => {
       setUserStatus('OWNERSHIP');
-      queryClient.invalidateQueries({
-        queryKey: ['loginStatus', 'stockOwnership', stockId],
-      });
+      queryClient.invalidateQueries({ queryKey: ['loginStatus'] });
+      queryClient.invalidateQueries({ queryKey: ['stockOwnership', stockId] });
     },
   });
 
   const { mutate: deleteStockUser } = useDeleteStockUser({
     onSuccess: () => {
       setUserStatus('NOT_OWNERSHIP');
-      queryClient.invalidateQueries({
-        queryKey: ['loginStatus', 'stockOwnership', stockId],
-      });
+      queryClient.invalidateQueries({ queryKey: ['loginStatus'] });
+      queryClient.invalidateQueries({ queryKey: ['stockOwnership', stockId] });
     },
   });
 
