@@ -54,7 +54,7 @@ export const Stocks = () => {
                 changeRate={stock.changeRate || 0}
                 onClick={() => {
                   mutate({ stockId: stock.id ?? '' });
-                  navigate(`stocks/${stock.id}`);
+                  navigate(`/stocks/${stock.id}`);
                 }}
               />
             ))
