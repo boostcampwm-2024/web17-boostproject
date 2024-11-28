@@ -35,7 +35,7 @@ export const Login = () => {
 
 export const LoginButton = ({ to, src, alt, onClick }: LoginButtonProps) => {
   return (
-    <Link to={to} className="w-72" onClick={onClick}>
+    <Link to={to} className="w-72" onClick={onClick} reloadDocument>
       <img src={src} alt={alt} />
     </Link>
   );
