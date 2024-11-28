@@ -7,6 +7,10 @@ import { OpenapiTokenApi } from './api/openapiToken.api';
 import { OpenapiScraperService } from './openapi-scraper.service';
 import { OpenapiFluctuationData } from '@/scraper/openapi/api/openapiFluctuationData.api';
 import { OpenapiRankViewApi } from '@/scraper/openapi/api/openapiRankView.api';
+import {
+  OpenapiConsumer,
+  OpenapiQueue,
+} from '@/scraper/openapi/queue/openapi.queue';
 import { FluctuationRankStock } from '@/stock/domain/FluctuationRankStock.entity';
 import { Stock } from '@/stock/domain/stock.entity';
 import {
@@ -42,6 +46,8 @@ import { StockLiveData } from '@/stock/domain/stockLiveData.entity';
     OpenapiScraperService,
     OpenapiFluctuationData,
     OpenapiRankViewApi,
+    OpenapiQueue,
+    OpenapiConsumer,
   ],
 })
 export class OpenapiScraperModule {}

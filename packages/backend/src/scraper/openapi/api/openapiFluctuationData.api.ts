@@ -47,7 +47,9 @@ export class OpenapiFluctuationData {
       });
     } catch (error) {
       this.logger.warn(error);
-      this.getDecreaseRankStocks(--count);
+      await new Promise((resolve) =>
+        setTimeout(() => resolve(this.getDecreaseRankStocks(--count)), 2000),
+      );
     }
   }
 
@@ -66,7 +68,9 @@ export class OpenapiFluctuationData {
       });
     } catch (error) {
       this.logger.warn(error);
-      this.getIncreaseRankStocks(--count);
+      await new Promise((resolve) =>
+        setTimeout(() => resolve(this.getIncreaseRankStocks(--count)), 3000),
+      );
     }
   }
 

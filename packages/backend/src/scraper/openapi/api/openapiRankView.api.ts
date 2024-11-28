@@ -3,36 +3,31 @@ import { Cron } from '@nestjs/schedule';
 import { DataSource, EntityManager } from 'typeorm';
 import { Logger } from 'winston';
 import { OpenapiTokenApi } from '@/scraper/openapi/api/openapiToken.api';
+import { Json, OpenapiQueue } from '@/scraper/openapi/queue/openapi.queue';
 import { TR_IDS } from '@/scraper/openapi/type/openapiUtil.type';
 import { getOpenApi } from '@/scraper/openapi/util/openapiUtil.api';
-import { FluctuationRankStock } from '@/stock/domain/FluctuationRankStock.entity';
 import { Stock } from '@/stock/domain/stock.entity';
 import { StockLiveData } from '@/stock/domain/stockLiveData.entity';
 
 @Injectable()
 export class OpenapiRankViewApi {
   private readonly liveUrl = '/uapi/domestic-stock/v1/quotations/inquire-price';
+
   constructor(
     private readonly datasource: DataSource,
     private readonly openApiToken: OpenapiTokenApi,
+    private readonly openApiQueue: OpenapiQueue,
     @Inject('winston') private readonly logger: Logger,
   ) {
-    setTimeout(() => this.getTopViewsStockLiveData(), 1000);
+    setTimeout(() => this.getTopViewsStockLiveData(), 6000);
   }
 
   @Cron('* 9-15 * * 1-5')
   async getTopViewsStockLiveData(count = 5) {
     try {
       if (count === 0) return;
-      const topViewsStocks = await this.getTopViewsStocks();
-      const liveResult = await this.getFluctuationRankApiLive(topViewsStocks);
-      await this.datasource.transaction(async (manager) => {
-        await this.datasource.manager.delete(FluctuationRankStock, {
-          isRising: false,
-        });
-        await this.saveLiveData(liveResult, manager);
-        this.logger.info('decrease rank stocks updated');
-      });
+      await this.getTopViewsStocks();
+      // const liveResult = await this.getFluctuationRankApiLive(topViewsStocks);
     } catch (error) {
       this.logger.warn(error);
       this.getTopViewsStockLiveData(--count);
@@ -40,15 +35,33 @@ export class OpenapiRankViewApi {
   }
 
   private async getTopViewsStocks() {
-    return await this.datasource.manager
+    const date = await this.datasource.manager
       .getRepository(Stock)
       .createQueryBuilder('stock')
       .orderBy('stock.views', 'DESC')
       .limit(10)
       .getMany();
+    date.forEach((stock) => {
+      const callback: <T extends Json>(value: T) => Promise<void> = async (
+        liveResult: Json,
+      ) => {
+        const data = this.convertToStockLiveData(liveResult.output, stock.id);
+        await this.saveIndividualLiveData(data, this.datasource.manager);
+      };
+      this.openApiQueue.enqueue({
+        url: this.liveUrl,
+        query: {
+          fid_cond_mrkt_div_code: 'J',
+          fid_input_iscd: stock.id,
+        },
+        trId: TR_IDS.LIVE_DATA,
+        callback,
+      });
+    });
+    return date.slice(0, 10);
   }
 
-  private async getFluctuationRankApiLive(data: Stock[]) {
+  private async getViewsRankApiLive(data: Stock[]) {
     const result: StockLiveData[] = [];
     for (let i = 0; i < 20; ++i) {
       if (i >= data.length) break;
@@ -70,6 +83,23 @@ export class OpenapiRankViewApi {
   }
 
   private async saveLiveData(data: StockLiveData[], manager: EntityManager) {
+    return await manager
+      .getRepository(StockLiveData)
+      .createQueryBuilder()
+      .insert()
+      .into(StockLiveData)
+      .values(data)
+      .orUpdate(
+        ['current_price', 'change_rate', 'volume', 'high', 'low', 'open'],
+        ['stock_id'],
+      )
+      .execute();
+  }
+
+  private async saveIndividualLiveData(
+    data: StockLiveData,
+    manager: EntityManager,
+  ) {
     return await manager
       .getRepository(StockLiveData)
       .createQueryBuilder()
