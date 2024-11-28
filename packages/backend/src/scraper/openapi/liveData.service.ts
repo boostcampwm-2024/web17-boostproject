@@ -35,7 +35,7 @@ export class LiveData {
         stockId,
       );
       if (stockLiveData) {
-        this.openapiLiveData.saveLiveData([stockLiveData]);
+        this.openapiLiveData.saveLiveData(stockLiveData);
       }
     } catch (error) {
       this.logger.warn(`Subscribe error in open api : ${error}`);
@@ -49,14 +49,13 @@ export class LiveData {
       // TODO : 하나의 config만 사용중.
       this.clientStock.add(stockId);
       const message = this.convertObjectToMessage(
-        (await this.openApiToken.configs())[0],
+        (await this.openApiToken.configs())[1],
         stockId,
         '1',
       );
       this.webSocketClient.subscribe(message);
     }
   }
-  
 
   async discribe(stockId: string) {
     if (this.clientStock.has(stockId)) {
@@ -94,7 +93,7 @@ export class LiveData {
           return;
         }
         const liveData = this.openapiLiveData.convertLiveData(message);
-        await this.openapiLiveData.saveLiveData(liveData);
+        await this.openapiLiveData.saveLiveData(liveData[0]);
       } catch (error) {
         this.logger.warn(error);
       }
@@ -155,6 +154,7 @@ export class LiveData {
     return JSON.stringify(message);
   }
 
+  //TODO : type narrowing 필요
   private parseMessage(data: RawData) {
     if (typeof data === 'object' && !(data instanceof Buffer)) {
       return data;

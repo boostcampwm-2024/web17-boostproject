@@ -19,30 +19,14 @@ export class OpenapiDetailData extends Openapi {
   constructor(
     @Inject('winston') private readonly logger: Logger,
     protected readonly datasource: DataSource,
-    private readonly config: OpenapiTokenApi,
+    protected readonly config: OpenapiTokenApi,
   ) {
-    super(datasource);
+    super(datasource, config, 100);
   }
 
   @Cron('35 0 * * 1-5')
   async start() {
-    const stock = await this.getStockId();
-    const len = (await this.config.configs()).length;
-    const stockSize = Math.ceil(stock.length / len);
-    let i = 0;
-    while (i < len) {
-      this.interval(i, stock.slice(i * stockSize, (i + 1) * stockSize));
-      i++;
-    }
-  }
-
-  protected async interval(idx: number, stocks: Stock[]) {
-    const interval = 100;
-    let time = 0;
-    for (const stock of stocks) {
-      setTimeout(() => this.step(idx, stock), time);
-      time += interval;
-    }
+    super.start();
   }
 
   protected async step(idx: number, stock: Stock) {
@@ -78,16 +62,6 @@ export class OpenapiDetailData extends Openapi {
     return result;
   }
 
-  //private async getStockId() {
-  //  const entity = Stock;
-  //  const manager = this.datasource.manager;
-  //  const result = await manager.find(entity, {
-  //    select: { id: true },
-  //    where: { isTrading: true },
-  //  });
-  //  return result;
-  //}
-
   protected query(stockId: string, code: 'J' = 'J') {
     return {
       fid_cond_mrkt_div_code: code,
@@ -95,7 +69,7 @@ export class OpenapiDetailData extends Openapi {
     };
   }
 
-  private async save(saveEntity: StockDetail) {
+  protected async save(saveEntity: StockDetail) {
     const entity = StockDetail;
     const manager = this.datasource.manager;
     await manager
