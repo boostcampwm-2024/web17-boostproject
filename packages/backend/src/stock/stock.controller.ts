@@ -210,6 +210,12 @@ export class StockController {
     return await this.stockService.getTopStocksByLosers(limit);
   }
 
+  @Get('fluctuation')
+  @ApiGetStocks('가격 상승률, 하락률 기반 주식 리스트 조회 API')
+  async getTopStocksByFluctuation() {
+    return await this.stockService.getTopStocksByFluctuation();
+  }
+
   @ApiOperation({
     summary: '주식 상세 정보 조회 API',
     description: '시가 총액, EPS, PER, 52주 최고가, 52주 최저가를 조회합니다',
