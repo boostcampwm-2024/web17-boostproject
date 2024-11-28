@@ -122,7 +122,7 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
           <div
             className={cn(
               'display-bold16 absolute top-64 flex h-[calc(100%-16rem)] w-full items-center justify-center bg-black/5 text-center backdrop-blur-sm',
-              chatData.length < 3 && 'top-0 h-full',
+              chatData.length < 4 && 'top-0 h-full',
             )}
           >
             <span>
