@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
 import { DataSource, EntityManager } from 'typeorm';
 import { Logger } from 'winston';
 import { OpenapiTokenApi } from '@/scraper/openapi/api/openapiToken.api';
@@ -23,11 +22,11 @@ export class OpenapiFluctuationData {
     private readonly datasource: DataSource,
     @Inject('winston') private readonly logger: Logger,
   ) {
-    setTimeout(() => this.getFluctuationRankStocks(), 1000);
+    // setTimeout(() => this.getFluctuationRankStocks(), 1000);
   }
 
-  @Cron('* 9-15 * * 1-5')
-  @Cron('*/1 9-15 * * 1-5')
+  // @Cron('* 9-15 * * 1-5')
+  // @Cron('*/1 9-15 * * 1-5')
   async getFluctuationRankStocks() {
     await this.getDecreaseRankStocks();
     await this.getIncreaseRankStocks();
@@ -104,6 +103,7 @@ export class OpenapiFluctuationData {
 
   private async getFluctuationRankApiStocks(isRising: boolean) {
     const query = isRising ? INCREASE_STOCK_QUERY : DECREASE_STOCK_QUERY;
+
     const result = await getOpenApi(
       this.fluctuationUrl,
       (await this.openApiToken.configs())[0],
@@ -126,7 +126,7 @@ export class OpenapiFluctuationData {
     for (let i = 0; i < 20; ++i) {
       if (i >= data.length) break;
       else if (i == 10)
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1500));
       const stockId = data[i].stock.id;
       const stockData = await getOpenApi(
         this.liveUrl,

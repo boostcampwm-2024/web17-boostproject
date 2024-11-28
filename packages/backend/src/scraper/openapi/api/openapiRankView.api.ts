@@ -90,7 +90,15 @@ export class OpenapiRankViewApi {
       .into(StockLiveData)
       .values(data)
       .orUpdate(
-        ['current_price', 'change_rate', 'volume', 'high', 'low', 'open'],
+        [
+          'current_price',
+          'change_rate',
+          'volume',
+          'high',
+          'low',
+          'open',
+          'updated_at',
+        ],
         ['stock_id'],
       )
       .execute();
@@ -107,7 +115,15 @@ export class OpenapiRankViewApi {
       .into(StockLiveData)
       .values(data)
       .orUpdate(
-        ['current_price', 'change_rate', 'volume', 'high', 'low', 'open'],
+        [
+          'current_price',
+          'change_rate',
+          'volume',
+          'high',
+          'low',
+          'open',
+          'updatedAt',
+        ],
         ['stock_id'],
       )
       .execute();
