@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MemoryStore } from 'express-session';
 
-export const MEMORY_STORE = 'memoryStore';
+export const MEMORY_STORE = Symbol('memoryStore');
 
 @Module({
   providers: [

@@ -1,28 +1,32 @@
 import {
+  ConnectedSocket,
+  MessageBody,
+  SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
-  SubscribeMessage,
-  MessageBody,
-  ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { LiveData } from '@/scraper/openapi/liveData.service';
 
 @WebSocketGateway({
-  namespace: '/stock/realtime',
+  namespace: '/api/stock/realtime',
 })
 export class StockGateway {
   @WebSocketServer()
   server: Server;
 
-  constructor() {}
+  constructor(private readonly liveData: LiveData) {}
 
   @SubscribeMessage('connectStock')
-  handleConnectStock(
+  async handleConnectStock(
     @MessageBody() stockId: string,
     @ConnectedSocket() client: Socket,
   ) {
     client.join(stockId);
 
+    if ((await this.server.in(stockId).fetchSockets()).length === 0) {
+      this.liveData.subscribe(stockId);
+    }
     client.emit('connectionSuccess', {
       message: `Successfully connected to stock room: ${stockId}`,
       stockId,

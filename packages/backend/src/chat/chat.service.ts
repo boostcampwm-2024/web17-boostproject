@@ -1,12 +1,22 @@
-import { Injectable } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { WsException } from '@nestjs/websockets';
+import { DataSource, EntityManager, SelectQueryBuilder } from 'typeorm';
 import { Chat } from '@/chat/domain/chat.entity';
+import { ChatScrollQuery } from '@/chat/dto/chat.request';
 import { ChatScrollResponse } from '@/chat/dto/chat.response';
+import { UserStock } from '@/stock/domain/userStock.entity';
 
 export interface ChatMessage {
   message: string;
   stockId: string;
 }
+
+const ORDER = {
+  LIKE: 'like',
+  LATEST: 'latest',
+} as const;
+
+export type Order = (typeof ORDER)[keyof typeof ORDER];
 
 const DEFAULT_PAGE_SIZE = 20;
 
@@ -15,25 +25,56 @@ export class ChatService {
   constructor(private readonly dataSource: DataSource) {}
 
   async saveChat(userId: number, chatMessage: ChatMessage) {
-    return this.dataSource.manager.save(Chat, {
-      user: { id: userId },
-      stock: { id: chatMessage.stockId },
-      message: chatMessage.message,
+    return this.dataSource.transaction(async (manager) => {
+      if (!(await this.hasStock(userId, chatMessage.stockId, manager))) {
+        throw new WsException('not have stock');
+      }
+      return manager.save(Chat, {
+        user: { id: userId },
+        stock: { id: chatMessage.stockId },
+        message: chatMessage.message,
+      });
     });
   }
 
-  async scrollFirstChat(stockId: string, scrollSize?: number) {
-    const result = await this.findFirstChatScroll(stockId, scrollSize);
-    return await this.toScrollResponse(result, scrollSize);
+  async scrollChat(chatScrollQuery: ChatScrollQuery, userId?: number) {
+    this.validatePageSize(chatScrollQuery);
+    const result = await this.findChatScroll(chatScrollQuery, userId);
+    return await this.toScrollResponse(result, chatScrollQuery.pageSize);
   }
 
-  async scrollNextChat(
-    stockId: string,
-    latestChatId?: number,
-    pageSize?: number,
+  async scrollChatByLike(chatScrollQuery: ChatScrollQuery, userId?: number) {
+    this.validatePageSize(chatScrollQuery);
+    const result = await this.findChatScrollOrderByLike(
+      chatScrollQuery,
+      userId,
+    );
+    return await this.toScrollResponse(result, chatScrollQuery.pageSize);
+  }
+
+  async findChatScrollOrderByLike(
+    chatScrollQuery: ChatScrollQuery,
+    userId?: number,
   ) {
-    const result = await this.findChatScroll(stockId, latestChatId, pageSize);
-    return await this.toScrollResponse(result, pageSize);
+    const queryBuilder = await this.buildChatScrollQuery(
+      chatScrollQuery,
+      userId,
+      ORDER.LIKE,
+    );
+    return queryBuilder.getMany();
+  }
+
+  private hasStock(userId: number, stockId: string, manager: EntityManager) {
+    return manager.exists(UserStock, {
+      where: { user: { id: userId }, stock: { id: stockId } },
+    });
+  }
+
+  private validatePageSize(chatScrollQuery: ChatScrollQuery) {
+    const { pageSize } = chatScrollQuery;
+    if (pageSize && pageSize > 100) {
+      throw new BadRequestException('pageSize should be less than 100');
+    }
   }
 
   private async toScrollResponse(result: Chat[], pageSize: number | undefined) {
@@ -46,45 +87,91 @@ export class ChatService {
   }
 
   private async findChatScroll(
-    stockId: string,
-    latestChatId?: number,
-    pageSize?: number,
+    chatScrollQuery: ChatScrollQuery,
+    userId?: number,
   ) {
-    if (!latestChatId) {
-      return await this.findFirstChatScroll(stockId, pageSize);
-    } else {
-      return await this.findNextChatScroll(stockId, latestChatId, pageSize);
-    }
+    const queryBuilder = await this.buildChatScrollQuery(
+      chatScrollQuery,
+      userId,
+    );
+    return queryBuilder.getMany();
   }
 
-  private async findFirstChatScroll(stockId: string, pageSize?: number) {
-    const queryBuilder = this.dataSource.createQueryBuilder(Chat, 'chat');
-    if (!pageSize) {
-      pageSize = DEFAULT_PAGE_SIZE;
+  private async buildChatScrollQuery(
+    chatScrollQuery: ChatScrollQuery,
+    userId?: number,
+    order: Order = ORDER.LATEST,
+  ) {
+    const { stockId, latestChatId, pageSize } = chatScrollQuery;
+    const size = pageSize ? pageSize : DEFAULT_PAGE_SIZE;
+    const queryBuilder = await this.buildInitialChatScrollQuery(
+      stockId,
+      size,
+      userId,
+    );
+    if (order === ORDER.LIKE) {
+      return this.buildLikeCountQuery(queryBuilder, latestChatId);
     }
-    return queryBuilder
-      .where('chat.stock_id = :stockId', { stockId })
-      .orderBy('chat.id', 'DESC')
-      .limit(pageSize + 1)
-      .getMany();
+    return this.buildLatestChatIdQuery(queryBuilder, latestChatId);
   }
 
-  private async findNextChatScroll(
+  private async buildInitialChatScrollQuery(
     stockId: string,
-    latestChatId: number,
-    pageSize?: number,
+    size: number,
+    userId?: number,
   ) {
-    const queryBuilder = this.dataSource.createQueryBuilder(Chat, 'chat');
-    if (!pageSize) {
-      pageSize = DEFAULT_PAGE_SIZE;
-    }
-    return queryBuilder
-      .where('chat.stock_id = :stockId and chat.id < :latestChatId', {
-        stockId,
-        latestChatId,
+    return this.dataSource
+      .createQueryBuilder(Chat, 'chat')
+      .leftJoinAndSelect('chat.likes', 'like', 'like.user_id = :userId', {
+        userId,
       })
-      .orderBy('chat.id', 'DESC')
-      .limit(pageSize + 1)
-      .getMany();
+      .leftJoinAndSelect(
+        'chat.mentions',
+        'mention',
+        'mention.user_id = :userId',
+        {
+          userId,
+        },
+      )
+      .leftJoinAndSelect('chat.user', 'user')
+      .where('chat.stock_id = :stockId', { stockId })
+      .take(size + 1);
+  }
+
+  private async buildLikeCountQuery(
+    queryBuilder: SelectQueryBuilder<Chat>,
+    latestChatId?: number,
+  ) {
+    queryBuilder
+      .orderBy('chat.likeCount', 'DESC')
+      .addOrderBy('chat.id', 'DESC');
+    if (latestChatId) {
+      const chat = await this.dataSource.manager.findOne(Chat, {
+        where: { id: latestChatId },
+        select: ['likeCount'],
+      });
+      if (chat) {
+        queryBuilder.andWhere(
+          'chat.likeCount < :likeCount or' +
+            ' (chat.likeCount = :likeCount and chat.id < :latestChatId)',
+          {
+            likeCount: chat.likeCount,
+            latestChatId,
+          },
+        );
+      }
+    }
+    return queryBuilder;
+  }
+
+  private async buildLatestChatIdQuery(
+    queryBuilder: SelectQueryBuilder<Chat>,
+    latestChatId?: number,
+  ) {
+    queryBuilder.orderBy('chat.id', 'DESC');
+    if (latestChatId) {
+      queryBuilder.andWhere('chat.id < :latestChatId', { latestChatId });
+    }
+    return queryBuilder;
   }
 }
