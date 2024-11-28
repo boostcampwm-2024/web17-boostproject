@@ -55,12 +55,12 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
       const validatedSingleChat = ChatDataSchema.partial().parse(message);
       if (validatedSingleChat) {
         setChatData((prev) => [
-          { nickname, ...validatedSingleChat } as ChatData,
+          { ...validatedSingleChat } as ChatData,
           ...prev,
         ]);
       }
     },
-    [nickname],
+    [],
   );
 
   const handleSendMessage = (message: string) => {
