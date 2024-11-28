@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { Column, Entity, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
 import {
   StockDaily,
   StockMinutely,
@@ -7,11 +7,11 @@ import {
   StockYearly,
 } from './stockData.entity';
 import { StockLiveData } from './stockLiveData.entity';
+import { Alarm } from '@/alarm/domain/alarm.entity';
 import { Like } from '@/chat/domain/like.entity';
 import { DateEmbedded } from '@/common/dateEmbedded.entity';
 import { FluctuationRankStock } from '@/stock/domain/FluctuationRankStock.entity';
 import { UserStock } from '@/stock/domain/userStock.entity';
-import { Alarm } from '@/alarm/domain/alarm.entity';
 
 @Entity()
 export class Stock {
@@ -56,9 +56,6 @@ export class Stock {
 
   @OneToOne(() => StockLiveData, (stockLiveData) => stockLiveData.stock)
   stockLive?: StockLiveData;
-
-  @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
-  kospiStock?: KospiStock;
 
   @OneToMany(
     () => FluctuationRankStock,
