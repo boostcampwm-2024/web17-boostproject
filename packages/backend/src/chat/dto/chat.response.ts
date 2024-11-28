@@ -2,13 +2,14 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Chat } from '@/chat/domain/chat.entity';
 import { ChatType } from '@/chat/domain/chatType.enum';
 
-interface ChatResponse {
+export interface ChatResponse {
   id: number;
   likeCount: number;
   message: string;
   type: string;
   liked: boolean;
   nickname: string;
+  subName: string;
   mentioned: boolean;
   createdAt: Date;
 }

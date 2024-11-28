@@ -23,20 +23,12 @@ import {
   ChatScrollQuery,
   isChatScrollQuery,
 } from '@/chat/dto/chat.request';
+import { ChatResponse } from '@/chat/dto/chat.response';
 import { LikeResponse } from '@/chat/dto/like.response';
 import { MentionService } from '@/chat/mention.service';
 import { WebSocketExceptionFilter } from '@/middlewares/filter/webSocketException.filter';
 import { StockService } from '@/stock/stock.service';
 import { User } from '@/user/domain/user.entity';
-
-interface chatResponse {
-  id: number;
-  likeCount: number;
-  message: string;
-  type: string;
-  mentioned: boolean;
-  createdAt: Date;
-}
 
 @WebSocketGateway({ namespace: '/api/chat/realtime' })
 @UseFilters(WebSocketExceptionFilter)
@@ -81,14 +73,16 @@ export class ChatGateway implements OnGatewayConnection {
       await this.mentionService.createMention(savedChat.id, mention);
       const mentionedSocket = this.users.get(Number(mention));
       if (mentionedSocket) {
-        const chatResponse = this.toResponse(savedChat);
+        const chatResponse = this.toResponse(savedChat, client.session);
         this.server.to(room).except(mentionedSocket).emit('chat', chatResponse);
         chatResponse.mentioned = true;
         this.server.to(mentionedSocket).emit('chat', chatResponse);
         return;
       }
     }
-    this.server.to(room).emit('chat', this.toResponse(savedChat));
+    this.server
+      .to(room)
+      .emit('chat', this.toResponse(savedChat, client.session));
   }
 
   async broadcastLike(response: LikeResponse) {
@@ -148,13 +142,16 @@ export class ChatGateway implements OnGatewayConnection {
     };
   }
 
-  private toResponse(chat: Chat): chatResponse {
+  private toResponse(chat: Chat, user: User): ChatResponse {
     return {
       id: chat.id,
       likeCount: chat.likeCount,
       message: chat.message,
       type: chat.type,
       mentioned: false,
+      nickname: user.nickname,
+      subName: user.subName,
+      liked: false,
       createdAt: chat.date?.createdAt || new Date(),
     };
   }
