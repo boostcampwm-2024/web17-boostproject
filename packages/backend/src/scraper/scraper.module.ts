@@ -6,5 +6,6 @@ import { OpenapiScraperModule } from './openapi/openapi-scraper.module';
   imports: [KoreaStockInfoModule, OpenapiScraperModule],
   controllers: [],
   providers: [],
+  exports: [OpenapiScraperModule],
 })
 export class ScraperModule {}
