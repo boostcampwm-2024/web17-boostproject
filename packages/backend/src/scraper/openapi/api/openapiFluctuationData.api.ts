@@ -48,7 +48,9 @@ export class OpenapiFluctuationData {
       });
     } catch (error) {
       this.logger.warn(error);
-      this.getDecreaseRankStocks(--count);
+      await new Promise((resolve) =>
+        setTimeout(() => resolve(this.getDecreaseRankStocks(--count)), 2000),
+      );
     }
   }
 
@@ -67,7 +69,9 @@ export class OpenapiFluctuationData {
       });
     } catch (error) {
       this.logger.warn(error);
-      this.getIncreaseRankStocks(--count);
+      await new Promise((resolve) =>
+        setTimeout(() => resolve(this.getIncreaseRankStocks(--count)), 3000),
+      );
     }
   }
 
@@ -100,6 +104,7 @@ export class OpenapiFluctuationData {
 
   private async getFluctuationRankApiStocks(isRising: boolean) {
     const query = isRising ? INCREASE_STOCK_QUERY : DECREASE_STOCK_QUERY;
+
     const result = await getOpenApi(
       this.fluctuationUrl,
       (await this.openApiToken.configs())[0],
@@ -122,7 +127,7 @@ export class OpenapiFluctuationData {
     for (let i = 0; i < 20; ++i) {
       if (i >= data.length) break;
       else if (i == 10)
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1500));
       const stockId = data[i].stock.id;
       const stockData = await getOpenApi(
         this.liveUrl,

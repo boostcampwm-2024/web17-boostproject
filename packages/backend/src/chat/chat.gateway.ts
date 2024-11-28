@@ -30,6 +30,7 @@ import { StockService } from '@/stock/stock.service';
 import { User } from '@/user/domain/user.entity';
 
 interface chatResponse {
+  id: number;
   likeCount: number;
   message: string;
   type: string;
@@ -149,6 +150,7 @@ export class ChatGateway implements OnGatewayConnection {
 
   private toResponse(chat: Chat): chatResponse {
     return {
+      id: chat.id,
       likeCount: chat.likeCount,
       message: chat.message,
       type: chat.type,

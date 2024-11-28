@@ -5,6 +5,35 @@ export class PriorityQueue<T> {
     this.heap = [];
   }
 
+  enqueue(value: T, priority: number) {
+    this.heap.push({ value, priority });
+    this.heapifyUp();
+  }
+
+  dequeue(): T | undefined {
+    if (this.isEmpty()) {
+      return undefined;
+    }
+
+    const root = this.heap[0];
+    const last = this.heap.pop();
+
+    if (this.heap.length > 0 && last) {
+      this.heap[0] = last;
+      this.heapifyDown();
+    }
+
+    return root.value;
+  }
+
+  peek(): T | undefined {
+    return this.heap.length > 0 ? this.heap[0].value : undefined;
+  }
+
+  isEmpty(): boolean {
+    return this.heap.length === 0;
+  }
+
   private getParentIndex(index: number): number {
     return Math.floor((index - 1) / 2);
   }
@@ -53,34 +82,5 @@ export class PriorityQueue<T> {
       this.swap(index, smallerChildIndex);
       index = smallerChildIndex;
     }
-  }
-
-  enqueue(value: T, priority: number) {
-    this.heap.push({ value, priority });
-    this.heapifyUp();
-  }
-
-  dequeue(): T | undefined {
-    if (this.isEmpty()) {
-      return undefined;
-    }
-
-    const root = this.heap[0];
-    const last = this.heap.pop();
-
-    if (this.heap.length > 0 && last) {
-      this.heap[0] = last;
-      this.heapifyDown();
-    }
-
-    return root.value;
-  }
-
-  peek(): T | undefined {
-    return this.heap.length > 0 ? this.heap[0].value : undefined;
-  }
-
-  isEmpty(): boolean {
-    return this.heap.length === 0;
   }
 }
