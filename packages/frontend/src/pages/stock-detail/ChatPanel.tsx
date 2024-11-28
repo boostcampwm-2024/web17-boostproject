@@ -16,6 +16,7 @@ import {
   type ChatDataResponse,
 } from '@/sockets/schema';
 import { useWebsocket } from '@/sockets/useWebsocket';
+import { cn } from '@/utils/cn';
 
 interface ChatPanelProps {
   loginStatus: GetLoginStatus;
@@ -27,17 +28,19 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
   const [chatData, setChatData] = useState<ChatData[]>([]);
   const { mutate } = usePostChatLike();
 
+  const { message, nickname } = loginStatus;
+
   const socket = useMemo(() => socketChat({ stockId }), [stockId]);
 
   const { isConnected } = useWebsocket(socket);
 
   const userStatus: ChatPlaceholder = useMemo(() => {
-    if (loginStatus.message === 'Not Authenticated') {
+    if (message === 'Not Authenticated') {
       return 'NOT_AUTHENTICATED';
     }
 
     return isOwnerStock ? 'OWNERSHIP' : 'NOT_OWNERSHIP';
-  }, [loginStatus, isOwnerStock]);
+  }, [message, isOwnerStock]);
 
   const handleChat = useCallback(
     (message: ChatDataResponse | Partial<ChatData>) => {
@@ -52,15 +55,12 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
       const validatedSingleChat = ChatDataSchema.partial().parse(message);
       if (validatedSingleChat) {
         setChatData((prev) => [
-          {
-            nickname: loginStatus?.nickname,
-            ...validatedSingleChat,
-          } as ChatData,
+          { nickname, ...validatedSingleChat } as ChatData,
           ...prev,
         ]);
       }
     },
-    [loginStatus],
+    [nickname],
   );
 
   const handleSendMessage = (message: string) => {
@@ -109,23 +109,39 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
           <DownArrow className="cursor-pointer" />
         </div>
       </div>
-      <section className="flex h-[40rem] flex-col gap-8 overflow-auto p-3">
-        {chatData ? (
-          chatData.map((chat, index) => (
-            <ChatMessage
-              key={index}
-              name={chat.nickname}
-              contents={chat.message}
-              likeCount={chat.likeCount}
-              liked={chat.liked}
-              writer={loginStatus?.nickname || ''}
-              onClick={() => mutate({ chatId: chat.id })}
-            />
-          ))
-        ) : (
-          <p className="text-center">채팅이 없어요.</p>
+      <article className="relative">
+        {!isOwnerStock && (
+          <div className="display-bold16 absolute top-64 flex h-[calc(100%-16rem)] w-full items-center justify-center bg-black/5 text-center backdrop-blur-sm">
+            <span>
+              주주 소유자만
+              <br /> 확인할 수 있습니다.
+            </span>
+          </div>
         )}
-      </section>
+
+        <section
+          className={cn(
+            'flex h-[40rem] flex-col gap-8 overflow-auto p-3',
+            isOwnerStock ? 'overflow-auto' : 'overflow-hidden',
+          )}
+        >
+          {chatData ? (
+            chatData.map((chat) => (
+              <ChatMessage
+                key={chat.id}
+                name={chat.nickname}
+                contents={chat.message}
+                likeCount={chat.likeCount}
+                liked={chat.liked}
+                writer={nickname || ''}
+                onClick={() => mutate({ chatId: chat.id })}
+              />
+            ))
+          ) : (
+            <p className="text-center">채팅이 없어요.</p>
+          )}
+        </section>
+      </article>
     </article>
   );
 };
