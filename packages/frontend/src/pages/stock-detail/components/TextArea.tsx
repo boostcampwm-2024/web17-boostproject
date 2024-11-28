@@ -20,7 +20,7 @@ export const TextArea = ({ disabled, onSend, placeholder }: TextAreaProps) => {
   };
 
   return (
-    <>
+    <div className="flex flex-col">
       <form className="relative w-full" onSubmit={handleSubmit}>
         <textarea
           maxLength={100}
@@ -48,6 +48,6 @@ export const TextArea = ({ disabled, onSend, placeholder }: TextAreaProps) => {
       <span className={cn('display-medium12', inputCount > 100 && 'text-red')}>
         {inputCount}자/100자
       </span>
-    </>
+    </div>
   );
 };
