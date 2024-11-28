@@ -35,6 +35,7 @@ export class OpenapiFluctuationData {
 
   async getFluctuationRankFromApi(isRising: boolean) {
     const query = isRising ? INCREASE_STOCK_QUERY : DECREASE_STOCK_QUERY;
+    await this.datasource.manager.delete(FluctuationRankStock, { isRising });
     this.openApiQueue.enqueue({
       url: this.fluctuationUrl,
       query,
