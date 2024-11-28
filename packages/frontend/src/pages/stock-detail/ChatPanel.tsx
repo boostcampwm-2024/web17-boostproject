@@ -64,6 +64,8 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
   );
 
   const handleSendMessage = (message: string) => {
+    if (!message) return;
+
     socket.emit('chat', {
       room: stockId,
       content: message,
