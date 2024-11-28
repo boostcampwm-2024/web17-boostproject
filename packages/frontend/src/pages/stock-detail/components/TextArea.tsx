@@ -27,6 +27,7 @@ export const TextArea = ({ disabled, onSend, placeholder }: TextAreaProps) => {
           value={chatText}
           placeholder={placeholder}
           disabled={disabled}
+          autoFocus
           className={cn(
             'display-medium12 border-light-yellow h-20 w-full resize-none rounded-md border-4 p-3 pr-10 focus:outline-none',
             disabled && 'bg-light-gray/40 cursor-not-allowed',

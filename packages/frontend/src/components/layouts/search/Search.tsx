@@ -28,6 +28,7 @@ export const Search = ({ className }: SearchProps) => {
         <Input
           placeholder="검색어"
           onChange={(e) => setStockName(e.target.value)}
+          autoFocus
         />
         <Button type="submit" size="sm">
           검색
