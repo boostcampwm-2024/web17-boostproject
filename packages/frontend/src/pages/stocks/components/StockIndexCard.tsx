@@ -13,7 +13,7 @@ export const StockIndexCard = ({
     <div className="flex w-full cursor-pointer flex-col gap-2 rounded-md bg-white py-4 pl-5 pr-20 shadow transition-all duration-300 hover:scale-105">
       <p className="display-bold16 text-dark-gray">{name}</p>
       <div className="flex items-center gap-3">
-        <span className="display-bold24 text-dark-gray">{currentPrice}</span>
+        <span className="display-bold20 text-dark-gray">{currentPrice}</span>
         <span
           className={cn(
             'display-medium14',

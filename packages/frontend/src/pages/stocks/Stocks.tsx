@@ -36,7 +36,7 @@ export const Stocks = () => {
             ))}
           </div>
         ) : (
-          <p>지수 정보를 불러오는 데 실패했습니다.</p>
+          <p>지수 정보를 불러오는 데 실패했어요.</p>
         )}
       </article>
       <article>
@@ -44,19 +44,23 @@ export const Stocks = () => {
           이 종목은 어떠신가요?
         </h2>
         <div className="grid w-fit grid-cols-5 gap-5">
-          {topViews?.map((stock, index) => (
-            <StockInfoCard
-              key={stock.id}
-              index={index}
-              name={stock.name}
-              currentPrice={stock.currentPrice}
-              changeRate={stock.changeRate}
-              onClick={() => {
-                mutate({ stockId: stock.id });
-                navigate(stock.id);
-              }}
-            />
-          ))}
+          {topViews ? (
+            topViews.map((stock, index) => (
+              <StockInfoCard
+                key={stock.id}
+                index={index}
+                name={stock.name || ''}
+                currentPrice={stock.currentPrice || 0}
+                changeRate={stock.changeRate || 0}
+                onClick={() => {
+                  mutate({ stockId: stock.id ?? '' });
+                  navigate(`stocks/${stock.id}`);
+                }}
+              />
+            ))
+          ) : (
+            <p>종목 정보를 불러오는데 실패했어요.</p>
+          )}
         </div>
       </article>
       <article>
