@@ -4,18 +4,14 @@ import { StockInfoCard } from './components/StockInfoCard';
 import { StockRankingTable } from './StockRankingTable';
 import { usePostStockView } from '@/apis/queries/stock-detail';
 import { useGetTopViews } from '@/apis/queries/stocks';
-import marketData from '@/mocks/market.json';
+import { useGetStockIndex } from '@/apis/queries/stocks/useGetStockIndex';
 
 const LIMIT = 5;
 
 export const Stocks = () => {
   const navigate = useNavigate();
-  const kospi = marketData.data.filter((value) => value.name === '코스피')[0];
-  const kosdaq = marketData.data.filter((value) => value.name === '코스닥')[0];
-  const rateOfExchange = marketData.data.filter(
-    (value) => value.name === '달러환율',
-  )[0];
 
+  const { data: stockIndex } = useGetStockIndex();
   const { data: topViews } = useGetTopViews({ limit: LIMIT });
   const { mutate } = usePostStockView();
 
@@ -26,29 +22,23 @@ export const Stocks = () => {
         <h2 className="display-bold16 text-dark-gray mb-5">
           지금 시장, 이렇게 움직이고 있어요.
         </h2>
-        <div className="grid w-fit grid-cols-3 gap-5">
-          <StockIndexCard
-            price={kospi.price}
-            change={kospi.change}
-            changePercent={kospi.changePercent}
-          >
-            코스피
-          </StockIndexCard>
-          <StockIndexCard
-            price={kosdaq.price}
-            change={kosdaq.change}
-            changePercent={kosdaq.changePercent}
-          >
-            코스닥
-          </StockIndexCard>
-          <StockIndexCard
-            price={rateOfExchange.price}
-            change={rateOfExchange.change}
-            changePercent={rateOfExchange.changePercent}
-          >
-            달러환율
-          </StockIndexCard>
-        </div>
+        {stockIndex ? (
+          <div className="grid w-fit grid-cols-3 gap-5">
+            {stockIndex?.map((info) => (
+              <StockIndexCard
+                name={info.name}
+                currentPrice={info.currentPrice}
+                changeRate={info.changeRate}
+                volume={info.volume}
+                high={info.high}
+                low={info.low}
+                open={info.open}
+              />
+            ))}
+          </div>
+        ) : (
+          <p>지수 정보를 불러오는 데 실패했습니다.</p>
+        )}
       </article>
       <article>
         <h2 className="display-bold16 text-dark-gray mb-5">

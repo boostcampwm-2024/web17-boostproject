@@ -67,3 +67,16 @@ export const SearchResultsResponseSchema = z.object({
 });
 
 export type SearchResultsResponse = z.infer<typeof SearchResultsResponseSchema>;
+
+export const StockIndexSchema = z.object({
+  name: z.string(),
+  currentPrice: z.string(),
+  changeRate: z.string(),
+  volume: z.number(),
+  high: z.string(),
+  low: z.string(),
+  open: z.string(),
+  updatedAt: z.string().datetime(),
+});
+
+export type StockIndexResponse = z.infer<typeof StockIndexSchema>;
