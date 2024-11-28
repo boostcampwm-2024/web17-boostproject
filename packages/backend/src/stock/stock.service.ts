@@ -121,16 +121,19 @@ export class StockService {
   }
 
   async getTopStocksByGainers(limit: number) {
-    const rawData = await this.getStockRankQuery(true).take(limit).getRawMany();
+    const rawData = await this.getStockRankQuery(true)
+      .orderBy('rank.rank', 'ASC')
+      .limit(limit)
+      .getRawMany();
 
     return new StockRankResponses(rawData);
   }
 
   async getTopStocksByLosers(limit: number) {
     const rawData = await this.getStockRankQuery(false)
-      .take(limit)
+      .orderBy('rank.rank', 'ASC')
+      .limit(limit)
       .getRawMany();
-
     return new StockRankResponses(rawData);
   }
 
