@@ -13,7 +13,7 @@ type TR_IDS = '0' | '1';
 @Injectable()
 export class LiveData {
   private readonly startTime: Date = new Date(2024, 0, 1, 9, 0, 0, 0);
-  private readonly endTime: Date = new Date(2024, 0, 1, 17, 30, 0, 0);
+  private readonly endTime: Date = new Date(2024, 0, 1, 15, 30, 0, 0);
 
   private readonly reconnectInterval = 60 * 1000;
   private readonly clientStock: Map<string, number> = new Map();
