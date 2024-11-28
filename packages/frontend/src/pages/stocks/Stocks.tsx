@@ -29,7 +29,6 @@ export const Stocks = () => {
                 name={info.name}
                 currentPrice={info.currentPrice}
                 changeRate={info.changeRate}
-                volume={info.volume}
                 high={info.high}
                 low={info.low}
                 open={info.open}

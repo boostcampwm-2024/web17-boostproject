@@ -5,7 +5,6 @@ export const StockIndexCard = ({
   name,
   currentPrice,
   changeRate,
-  volume,
   high,
   low,
   open,
@@ -28,10 +27,6 @@ export const StockIndexCard = ({
         <div>
           <span className="display-bold14">시가</span>
           <span className="display-medium14">{open?.toLocaleString()}</span>
-        </div>
-        <div>
-          <span className="display-bold14">거래량</span>
-          <span className="display-medium14">{volume?.toLocaleString()}</span>
         </div>
         <div>
           <span className="display-bold14">고가</span>
