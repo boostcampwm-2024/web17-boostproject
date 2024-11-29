@@ -2,15 +2,15 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { DataSource, EntityManager } from 'typeorm';
 import { Logger } from 'winston';
+import { OpenapiLiveData } from '@/scraper/openapi/api/openapiLiveData.api';
 import {
   DECREASE_STOCK_QUERY,
   INCREASE_STOCK_QUERY,
 } from '@/scraper/openapi/constants/query';
+import { Json, OpenapiQueue } from '@/scraper/openapi/queue/openapi.queue';
 import { TR_IDS } from '@/scraper/openapi/type/openapiUtil.type';
 import { FluctuationRankStock } from '@/stock/domain/FluctuationRankStock.entity';
 import { Stock } from '@/stock/domain/stock.entity';
-import { Json, OpenapiQueue } from '@/scraper/openapi/queue/openapi.queue';
-import { OpenapiLiveData } from '@/scraper/openapi/api/openapiLiveData.api';
 
 @Injectable()
 export class OpenapiFluctuationData {

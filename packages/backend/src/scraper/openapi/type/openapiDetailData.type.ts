@@ -85,6 +85,8 @@ export type DetailData = {
 
 export function isDetailData(data: any): data is DetailData {
   return (
+    data &&
+    typeof data === 'object' &&
     typeof data.iscd_stat_cls_code === 'string' &&
     typeof data.marg_rate === 'string' &&
     typeof data.rprs_mrkt_kor_name === 'string' &&

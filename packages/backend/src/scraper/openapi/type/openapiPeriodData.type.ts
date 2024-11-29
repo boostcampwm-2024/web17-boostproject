@@ -28,6 +28,7 @@ export type ItemChartPriceQuery = {
 export const isChartData = (data?: any) => {
   return (
     data &&
+    typeof data === 'object' &&
     typeof data.stck_bsop_date === 'string' &&
     typeof data.stck_clpr === 'string' &&
     typeof data.stck_oprc === 'string' &&
