@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useGetTestLogin } from '@/apis/queries/auth/useGetTestLogin';
 import google from '@/assets/google.png';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,7 @@ interface LoginButtonProps {
 }
 
 export const Login = () => {
+  const navigate = useNavigate();
   const googleLoginUrl = '/api/auth/google/login';
   const { refetch } = useGetTestLogin({ password: 'test', username: 'test' });
 
@@ -24,7 +25,13 @@ export const Login = () => {
         </section>
         <section className="relative z-10 flex flex-col gap-4">
           <LoginButton to={googleLoginUrl} src={google} alt="구글 로그인" />
-          <Button onClick={() => refetch()} className="h-10 w-full">
+          <Button
+            onClick={() => {
+              refetch();
+              navigate('/');
+            }}
+            className="h-10 w-full"
+          >
             게스트로 로그인
           </Button>
         </section>

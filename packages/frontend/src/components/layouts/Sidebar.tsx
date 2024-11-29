@@ -40,7 +40,7 @@ export const Sidebar = () => {
     <div ref={ref}>
       <nav
         className={cn(
-          'fixed left-0 top-0 z-10 h-full cursor-pointer bg-white px-1 py-4 shadow-md',
+          'fixed left-0 top-0 z-20 h-full cursor-pointer bg-white px-1 py-4 shadow-md',
           'transition-all duration-300 ease-in-out',
           isHovered ? 'w-60' : 'w-24',
         )}

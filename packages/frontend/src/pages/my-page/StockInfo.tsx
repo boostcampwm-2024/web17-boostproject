@@ -38,7 +38,10 @@ export const StockInfo = ({ loginStatus }: StockInfoProps) => {
                 <p>{stock.name}</p>
                 <Button
                   size="sm"
-                  onClick={() => mutate({ stockId: stock.stockId })}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    mutate({ stockId: stock.stockId });
+                  }}
                 >
                   삭제
                 </Button>

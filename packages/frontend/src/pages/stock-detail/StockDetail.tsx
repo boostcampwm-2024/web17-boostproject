@@ -34,7 +34,7 @@ export const StockDetail = () => {
         loginStatus={loginStatus}
         isOwnerStock={userOwnerStock.isOwner}
       />
-      <article className="grid flex-1 grid-cols-1 gap-5 lg:grid-cols-2 xl:grid-cols-[2.5fr_1fr_1fr] [&_section]:gap-5">
+      <article className="grid flex-1 grid-cols-1 gap-5 xl:grid-cols-[2fr_1fr] 2xl:grid-cols-[2.5fr_1fr_1fr] [&_section]:gap-5">
         <section className="flex flex-col">
           <div className="relative h-full">
             <TradingChart />
@@ -51,9 +51,13 @@ export const StockDetail = () => {
           loginStatus={loginStatus}
           isOwnerStock={userOwnerStock.isOwner}
         />
-        <section className="flex flex-row flex-wrap gap-5 lg:flex-col xl:flex-nowrap">
-          <NotificationPanel className="h-full w-full xl:h-1/2" />
-          <AddAlarmForm className="h-full w-full xl:h-1/2" />
+        <section className="flex flex-wrap gap-5 2xl:flex-col 2xl:flex-nowrap">
+          <div className="flex-1">
+            <NotificationPanel className="h-full w-full" />
+          </div>
+          <div className="flex-1">
+            <AddAlarmForm className="h-full w-full" />
+          </div>
         </section>
       </article>
     </div>

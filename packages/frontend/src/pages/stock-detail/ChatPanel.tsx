@@ -101,11 +101,11 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
       mutate({ chatId });
       return;
     }
-    alert('주주 소유자만 가능합니다.');
+    alert('주식 소유자만 가능합니다.');
   };
 
   return (
-    <article className="flex min-w-80 flex-col gap-5 rounded-md bg-white p-7">
+    <article className="flex min-w-80 flex-col gap-5 rounded-md bg-white p-7 shadow">
       <h2 className="display-bold20 text-center font-bold">채팅</h2>
       <TextArea
         onSend={handleSendMessage}
@@ -119,28 +119,15 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
           <DownArrow className="cursor-pointer" />
         </div>
       </div>
-      <article className="relative">
-        {!isOwnerStock && (
-          <div
-            className={cn(
-              'display-bold16 absolute top-64 flex h-[calc(100%-16rem)] w-full items-center justify-center bg-black/5 text-center backdrop-blur-sm',
-              chatData.length < 4 && 'top-0 h-full',
-            )}
-          >
-            <span>
-              주주 소유자만
-              <br /> 확인할 수 있습니다.
-            </span>
-          </div>
+      <section
+        className={cn(
+          'flex h-[40rem] flex-col gap-8 overflow-auto break-words break-all p-3',
+          isOwnerStock ? 'overflow-auto' : 'overflow-hidden',
         )}
-        <section
-          className={cn(
-            'flex h-[40rem] flex-col gap-8 overflow-auto break-words break-all p-3',
-            isOwnerStock ? 'overflow-auto' : 'overflow-hidden',
-          )}
-        >
-          {chatData ? (
-            chatData.map((chat) => (
+      >
+        {chatData ? (
+          <>
+            {chatData.slice(0, 3).map((chat) => (
               <ChatMessage
                 key={chat.id}
                 name={chat.nickname}
@@ -150,12 +137,34 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
                 writer={nickname || ''}
                 onClick={() => handleLikeClick(chat.id)}
               />
-            ))
-          ) : (
-            <p className="text-center">채팅이 없어요.</p>
-          )}
-        </section>
-      </article>
+            ))}
+            {chatData.slice(3).map((chat, index) => (
+              <div className="relative" key={chat.id}>
+                {!isOwnerStock && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/5 text-center backdrop-blur-sm">
+                    {index === 0 && (
+                      <p>
+                        주식 소유자만 <br />
+                        확인할 수 있습니다.
+                      </p>
+                    )}
+                  </div>
+                )}
+                <ChatMessage
+                  name={chat.nickname}
+                  contents={isOwnerStock ? chat.message : '로그인 후 이용 가능'}
+                  likeCount={chat.likeCount}
+                  liked={chat.liked}
+                  writer={nickname || ''}
+                  onClick={() => handleLikeClick(chat.id)}
+                />
+              </div>
+            ))}
+          </>
+        ) : (
+          <p className="text-center">채팅이 없어요.</p>
+        )}
+      </section>
     </article>
   );
 };

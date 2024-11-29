@@ -35,7 +35,7 @@ export const TradingChart = ({ theme = lightTheme }: TradingChartProps) => {
   useChartResize({ containerRef, chart });
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-[30rem] flex-col xl:h-full">
       <section className="flex justify-end">
         {TIME_UNIT.map((option) => (
           <RadioButton
@@ -49,7 +49,7 @@ export const TradingChart = ({ theme = lightTheme }: TradingChartProps) => {
           </RadioButton>
         ))}
       </section>
-      <div ref={containerRef} className="w-full flex-grow" />
+      <div ref={containerRef} className="h-0 w-full flex-grow" />
     </div>
   );
 };
