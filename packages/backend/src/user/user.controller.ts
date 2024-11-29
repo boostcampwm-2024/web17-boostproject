@@ -18,9 +18,9 @@ import {
   ApiParam,
   ApiResponse,
 } from '@nestjs/swagger';
+import { Request } from 'express';
 import { UpdateUserThemeResponse } from './dto/userTheme.response';
 import { UserService } from './user.service';
-import { Request } from 'express';
 import { User } from '@/user/domain/user.entity';
 import { ChangeNicknameRequest } from '@/user/dto/user.request';
 
