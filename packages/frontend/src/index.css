@@ -13,6 +13,9 @@
 @layer base {
   html {
     font-family: 'Pretendard-Regular';
+  }
+
+  body {
     color: var(--black);
   }
 }
