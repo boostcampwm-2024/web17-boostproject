@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { DataSource } from 'typeorm';
+import { OpenapiLiveData } from '@/scraper/openapi/api/openapiLiveData.api';
 import { OpenapiQueue } from '@/scraper/openapi/queue/openapi.queue';
 import { TR_IDS } from '@/scraper/openapi/type/openapiUtil.type';
 import { Stock } from '@/stock/domain/stock.entity';
-import { OpenapiLiveData } from '@/scraper/openapi/api/openapiLiveData.api';
 
 @Injectable()
 export class OpenapiRankViewApi {

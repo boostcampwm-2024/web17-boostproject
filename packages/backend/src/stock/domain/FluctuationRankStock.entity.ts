@@ -17,9 +17,6 @@ export class FluctuationRankStock {
   @JoinColumn({ name: 'stock_id' })
   stock: Stock;
 
-  @Column({ name: 'fluctuation_rate', type: 'decimal', precision: 5, scale: 2 })
-  fluctuationRate: string;
-
   @Column()
   isRising: boolean;
 
