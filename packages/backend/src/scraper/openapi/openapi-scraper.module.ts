@@ -43,6 +43,7 @@ import { StockLiveData } from '@/stock/domain/stockLiveData.entity';
   ],
   controllers: [],
   providers: [
+    LiveData,
     OpenapiLiveData,
     OpenapiTokenApi,
     OpenapiPeriodData,

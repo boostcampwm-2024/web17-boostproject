@@ -21,6 +21,8 @@ export type UpdateStockQuery = {
 
 export const isMinuteData = (data: any) => {
   return (
+    data &&
+    typeof data === 'object' &&
     typeof data.stck_bsop_date === 'string' &&
     typeof data.stck_cntg_hour === 'string' &&
     typeof data.stck_prpr === 'string' &&

@@ -169,7 +169,7 @@ export class StockRankResponses {
       currentPrice: parseFloat(stock.currentPrice),
       volume: parseInt(stock.volume),
       marketCap: stock.marketCap,
-      changeRate: parseFloat(stock.rank_fluctuation_rate),
+      changeRate: parseFloat(stock.changeRate),
       rank: parseInt(stock.rank_rank),
       isRising: Number(stock.rank_isRising) === 1,
     }));
