@@ -8,7 +8,7 @@ import { openApiConfig } from './config/openapi.config';
 import { parseMessage } from './parse/openapi.parser';
 import { WebsocketClient } from './websocket/websocketClient.websocket';
 
-type TR_IDS = '0' | '1';
+type TR_IDS = '1' | '2';
 
 @Injectable()
 export class LiveData {
@@ -18,7 +18,7 @@ export class LiveData {
   private readonly reconnectInterval = 60 * 1000;
   private readonly subscribeStocks: Map<string, number> = new Map();
 
-  private readonly SOCKET_LIMITS: number = 40;
+  private readonly SOCKET_LIMITS: number = 41;
 
   private websocketClient: WebsocketClient[] = [];
   private configSubscribeSize: number[] = [];
@@ -95,7 +95,7 @@ export class LiveData {
       const message = this.convertObjectToMessage(
         (await this.openApiToken.configs())[idx],
         stockId,
-        '0',
+        '2',
       );
 
       this.websocketClient[idx].discribe(message);
