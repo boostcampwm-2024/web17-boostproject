@@ -16,11 +16,12 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiResponse,
 } from '@nestjs/swagger';
+import { Request } from 'express';
 import { UpdateUserThemeResponse } from './dto/userTheme.response';
 import { UserService } from './user.service';
-import { Request } from 'express';
 import { User } from '@/user/domain/user.entity';
 import { ChangeNicknameRequest } from '@/user/dto/user.request';
 
@@ -33,8 +34,13 @@ export class UserController {
     summary: '유저 닉네임과 서브 닉네임으로 유저 조회 API',
     description: '유저 닉네임과 서브 닉네임으로 유저를 조회합니다.',
   })
-  @ApiParam({ name: 'nickname', type: 'string', description: '유저 닉네임' })
-  @ApiParam({ name: 'subName', type: 'string', description: '유저 서브네임' })
+  @ApiQuery({ name: 'nickname', type: 'string', description: '유저 닉네임' })
+  @ApiQuery({
+    name: 'subName',
+    type: 'string',
+    description: '유저 서브네임',
+    required: false,
+  })
   async searchUser(
     @Query('nickname') nickname: string,
     @Query('subName') subName: string,
