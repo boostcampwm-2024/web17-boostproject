@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
@@ -5,15 +6,18 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
+import { Mutex } from 'async-mutex';
 import { Server, Socket } from 'socket.io';
 import { LiveData } from '@/scraper/openapi/liveData.service';
 
 @WebSocketGateway({
   namespace: '/api/stock/realtime',
 })
+@Injectable()
 export class StockGateway {
   @WebSocketServer()
   server: Server;
+  private readonly mutex = new Mutex();
 
   constructor(private readonly liveData: LiveData) {}
 
@@ -24,11 +28,13 @@ export class StockGateway {
   ) {
     client.join(stockId);
 
-    const connectedSockets = await this.server.in(stockId).fetchSockets();
+    await this.mutex.runExclusive(async () => {
+      const connectedSockets = await this.server.in(stockId).fetchSockets();
 
-    if (connectedSockets.length > 0 && !this.liveData.isSubscribe(stockId)) {
-      this.liveData.subscribe(stockId);
-    }
+      if (connectedSockets.length > 0 && !this.liveData.isSubscribe(stockId)) {
+        this.liveData.subscribe(stockId);
+      }
+    });
 
     client.emit('connectionSuccess', {
       message: `Successfully connected to stock room: ${stockId}`,
@@ -42,11 +48,13 @@ export class StockGateway {
   ) {
     client.leave(stockId);
 
-    const connectedSockets = await this.server.in(stockId).fetchSockets();
+    await this.mutex.runExclusive(async () => {
+      const connectedSockets = await this.server.in(stockId).fetchSockets();
 
-    if (connectedSockets.length === 0) {
-      this.liveData.unsubscribe(stockId);
-    }
+      if (connectedSockets.length === 0) {
+        this.liveData.unsubscribe(stockId);
+      }
+    });
 
     client.emit('disconnectionSuccess', {
       message: `Successfully disconnected to stock room: ${stockId}`,
