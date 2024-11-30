@@ -1,7 +1,7 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { SubscriptionData } from './dto/subscribe.request';
 import { SubscribeResponse } from './dto/subscribe.response';
-import { SubscriptionData } from './dto/subscription.request';
 import { PushService } from './push.service';
 import SessionGuard from '@/auth/session/session.guard';
 import { GetUser } from '@/common/decorator/user.decorator';
@@ -13,12 +13,12 @@ export class PushController {
 
   @Post('subscribe')
   @ApiOperation({
-    summary: '알림 서비스 등록',
+    summary: '알림 서비스 초기 설정',
     description: '유저가 생성될 때 알림을 받을 수 있게 초기설정한다.',
   })
   @ApiResponse({
     status: 201,
-    description: '아이디와 동일한 알림 업데이트',
+    description: '알림 초기설정',
     type: SubscribeResponse,
   })
   @UseGuards(SessionGuard)

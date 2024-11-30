@@ -4,8 +4,8 @@ import { DataSource } from 'typeorm';
 import * as webPush from 'web-push';
 import { Logger } from 'winston';
 import { PushSubscription } from './domain/subscription.entity';
+import { SubscriptionData } from './dto/subscribe.request';
 import { SubscribeResponse } from './dto/subscribe.response';
-import { SubscriptionData } from './dto/subscription.request';
 
 @ApiTags('Push Notifications')
 @Injectable()
