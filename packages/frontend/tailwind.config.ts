@@ -1,24 +1,26 @@
-import type { Config } from 'tailwindcss'
+import type { Config } from 'tailwindcss';
 
 const config: Config = {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  darkMode: 'selector',
   theme: {
     extend: {},
     colors: {
-      'light-gray': '#d9d9d9',
-      gray: '#8c8c8c',
-      'dark-gray': '#4f4f4f',
-      black: '#000000',
-      white: '#ffffff',
-      'light-yellow': '#ffdcac',
-      'light-orange': '#ffcfac',
-      orange: '#ffa868',
-      red: '#ff4d4d',
-      green: '#7eeb7e',
-      blue: '#1a75ff',
+      'extra-light-gray': 'var(--extra-light-gray)',
+      'light-gray': 'var(--light-gray)',
+      gray: 'var(--gray)',
+      'dark-gray': 'var(--dark-gray)',
+      black: 'var(--black)',
+      white: 'var(--white)',
+      'light-yellow': 'var(--light-yellow)',
+      'light-orange': 'var(--light-orange)',
+      orange: 'var(--orange)',
+      red: 'var(--red)',
+      green: 'var(--green)',
+      blue: 'var(--blue)',
     },
   },
   plugins: [],
-}
+};
 
-export default config
+export default config;
