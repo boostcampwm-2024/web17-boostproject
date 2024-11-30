@@ -13,7 +13,42 @@
 @layer base {
   html {
     font-family: 'Pretendard-Regular';
-    background-color: #f0f0f0;
+  }
+
+  body {
+    color: var(--black);
+  }
+}
+
+@layer base {
+  :root {
+    --extra-light-gray: #f0f0f0;
+    --light-gray: #d9d9d9;
+    --gray: #8c8c8c;
+    --dark-gray: #4f4f4f;
+    --black: #000000;
+    --white: #ffffff;
+    --light-yellow: #ffdcac;
+    --light-orange: #ffcfac;
+    --orange: #ffa868;
+    --red: #ff4d4d;
+    --green: #7eeb7e;
+    --blue: #1a75ff;
+  }
+
+  .dark {
+    --extra-light-gray: #1f1f1f;
+    --light-gray: #4f4f4f;
+    --gray: #8c8c8c;
+    --dark-gray: #d9d9d9;
+    --black: #ffffff;
+    --white: #121212;
+    --light-yellow: #7c4818;
+    --light-orange: #ecb172;
+    --orange: #ff9137;
+    --red: #ff6b6b;
+    --green: #4caf50;
+    --blue: #4d9eff;
   }
 }
 

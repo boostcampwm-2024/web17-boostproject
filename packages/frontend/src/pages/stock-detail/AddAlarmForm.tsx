@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { ALARM_OPTIONS } from '@/constants/alarmOptions';
 import { cn } from '@/utils/cn';
 
@@ -25,28 +26,34 @@ export const AddAlarmForm = ({ className }: AddAlarmFormProps) => {
           <article className="flex flex-col gap-2">
             <p className="display-bold16">언제 알림을 보낼까요?</p>
             <section className="flex">
-              <select className="display-medium14 focus:outline-none">
+              <select className="display-medium14 bg-white focus:outline-none">
                 {ALARM_OPTIONS.map((option) => (
                   <option key={option.id} value={option.label}>
                     {option.label}
                   </option>
                 ))}
               </select>
-              <input
+              <Input
                 type="number"
                 placeholder="1,000"
-                className="border-gray border-b-[1px] text-right focus:outline-none"
+                className="w-full text-right"
               />
             </section>
           </article>
           <article className="flex flex-col gap-2">
             <p className="display-bold16">어떻게 알림을 보낼까요?</p>
             <section className="flex items-center">
-              <input type="radio" name="method" id="push" checked />
+              <Input
+                type="radio"
+                name="method"
+                id="push"
+                checked
+                className="w-fit"
+              />
               <label htmlFor="push" className="display-medium14">
                 웹 푸시
               </label>
-              <input type="radio" name="method" id="email" />
+              <Input type="radio" name="method" id="email" className="w-fit" />
               <label htmlFor="email" className="display-medium14">
                 이메일
               </label>
@@ -54,10 +61,7 @@ export const AddAlarmForm = ({ className }: AddAlarmFormProps) => {
           </article>
           <article className="flex flex-col gap-2">
             <p className="display-bold16">언제까지 알림을 보낼까요?</p>
-            <input
-              type="date"
-              className="display-medium14 focus:outline-none"
-            />
+            <Input type="date" className="display-medium14" />
           </article>
         </div>
         <Button>알림 추가하기</Button>

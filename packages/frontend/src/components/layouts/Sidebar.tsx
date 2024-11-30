@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import logoCharacter from '/logoCharacter.png';
 import logoTitle from '/logoTitle.png';
 import { Alarm } from './alarm';
@@ -9,30 +10,41 @@ import { useOutsideClick } from '@/hooks/useOutsideClick';
 import { type MenuSection } from '@/types/menu';
 import { cn } from '@/utils/cn';
 
+type TabKey = 'search' | 'alarm';
+
 export const Sidebar = () => {
+  const navigate = useNavigate();
   const [isHovered, setIsHovered] = useState(false);
-  const [showSearch, setShowSearch] = useState(false);
-  const [showAlarm, setShowAlarm] = useState(false);
+  const [showTabs, setShowTabs] = useState<Record<TabKey, boolean>>({
+    search: false,
+    alarm: false,
+  });
 
   const ref = useOutsideClick(() => {
-    if (showSearch) {
-      setShowSearch(false);
-    }
-
-    if (showAlarm) {
-      setShowAlarm(false);
-    }
+    setShowTabs({ search: false, alarm: false });
   });
 
   const handleMenuItemClick = (item: MenuSection) => {
-    if (item.text === '검색') {
-      setShowSearch(true);
-      setShowAlarm(false);
+    const tab: Record<string, TabKey> = {
+      검색: 'search',
+      알림: 'alarm',
+    };
+
+    const tabKey = tab[item.text];
+    if (tabKey) {
+      setShowTabs((prev) =>
+        Object.keys(prev).reduce(
+          (acc, key) => ({
+            ...acc,
+            [key]: key === tabKey,
+          }),
+          {} as Record<TabKey, boolean>,
+        ),
+      );
     }
 
-    if (item.text === '알림') {
-      setShowSearch(false);
-      setShowAlarm(true);
+    if (item.text === '다크모드') {
+      document.body.classList.toggle('dark');
     }
   };
 
@@ -48,7 +60,10 @@ export const Sidebar = () => {
         onMouseLeave={() => setIsHovered(false)}
       >
         <section className="flex flex-col justify-center gap-8">
-          <header className="flex items-center gap-4">
+          <header
+            className="flex items-center gap-4"
+            onClick={() => navigate('/')}
+          >
             <img src={logoCharacter} alt="로고 캐릭터" className="w-20" />
             <img
               src={logoTitle}
@@ -68,7 +83,11 @@ export const Sidebar = () => {
                 isHovered={isHovered}
                 onItemClick={handleMenuItemClick}
               />
-              <MenuList items={BOTTOM_MENU_ITEMS} isHovered={isHovered} />
+              <MenuList
+                items={BOTTOM_MENU_ITEMS}
+                isHovered={isHovered}
+                onItemClick={handleMenuItemClick}
+              />
             </div>
           </div>
         </section>
@@ -79,8 +98,8 @@ export const Sidebar = () => {
           isHovered ? 'left-60' : 'left-24',
         )}
       >
-        {showSearch && <Search className="h-screen" />}
-        {showAlarm && <Alarm className="h-screen" />}
+        {showTabs.search && <Search className="h-screen" />}
+        {showTabs.alarm && <Alarm className="h-screen" />}
       </div>
     </div>
   );

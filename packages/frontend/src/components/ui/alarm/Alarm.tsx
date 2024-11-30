@@ -10,7 +10,7 @@ export interface AlarmProps {
 
 export const Alarm = ({ goalPrice, method, date }: AlarmProps) => {
   return (
-    <article className="display-medium14 text-dark-gray flex flex-col gap-2 rounded-md bg-[#f6f6f6] p-4">
+    <article className="display-medium14 text-dark-gray bg-extra-light-gray flex flex-col gap-2 rounded-md p-4">
       <span className="flex items-center gap-2">
         <Flag />
         목표가: {goalPrice?.toLocaleString()}원
