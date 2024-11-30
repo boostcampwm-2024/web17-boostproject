@@ -1,11 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { DataSource } from 'typeorm';
 import * as webPush from 'web-push';
 import { Logger } from 'winston';
 import { PushSubscription } from './domain/subscription.entity';
-import { SubscriptionData } from './dto/subscription';
-import { User } from '@/user/domain/user.entity';
+import { SubscribeResponse } from './dto/subscribe.response';
+import { SubscriptionData } from './dto/subscription.request';
 
+@ApiTags('Push Notifications')
 @Injectable()
 export class PushService {
   constructor(
@@ -13,7 +15,7 @@ export class PushService {
     private readonly dataSource: DataSource,
   ) {
     webPush.setVapidDetails(
-      'mailto:admin@juchum.info',
+      'mailto:noreply@juchum.info',
       process.env.VAPID_PUBLIC_KEY!,
       process.env.VAPID_PRIVATE_KEY!,
     );
@@ -38,7 +40,7 @@ export class PushService {
       );
     } catch (error) {
       this.logger.warn(
-        `Failed to send push notification to ${subscription.endpoint}`,
+        `Fail to send message user id [${subscription.user.id}] : ${pushPayload}`,
         error,
       );
     }
@@ -47,19 +49,19 @@ export class PushService {
   async createSubscription(
     userId: number,
     subscriptionData: SubscriptionData,
-  ): Promise<PushSubscription> {
-    return await this.dataSource.transaction(async (manager) => {
-      const user = new User();
-      user.id = userId;
-
-      const newSubscription = manager.create(PushSubscription, {
-        user: user,
-        endpoint: subscriptionData.endpoint,
-        p256dh: subscriptionData.keys.p256dh,
-        auth: subscriptionData.keys.auth,
-      });
-
-      return await manager.save(newSubscription);
+  ): Promise<SubscribeResponse> {
+    const newSubscription = this.dataSource.manager.create(PushSubscription, {
+      user: { id: userId },
+      endpoint: subscriptionData.endpoint,
+      p256dh: subscriptionData.keys.p256dh,
+      auth: subscriptionData.keys.auth,
     });
+
+    await this.dataSource.manager.save(newSubscription);
+    const result: SubscribeResponse = {
+      userId,
+      message: 'Push subscription success',
+    };
+    return result;
   }
 }
