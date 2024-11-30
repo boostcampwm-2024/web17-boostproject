@@ -16,7 +16,7 @@ export class LiveData {
   private readonly endTime: Date = new Date(2024, 0, 1, 15, 30, 0, 0);
 
   private readonly reconnectInterval = 60 * 1000;
-  private readonly clientStock: Map<string, number> = new Map();
+  private readonly subscribeStocks: Map<string, number> = new Map();
 
   private readonly SOCKET_LIMITS: number = 40;
 
@@ -36,7 +36,6 @@ export class LiveData {
         this.configSubscribeSize.push(0);
       }
       this.connect();
-      this.subscribe('005930');
     });
   }
 
@@ -56,13 +55,20 @@ export class LiveData {
     }
   }
 
+  // TODO : 동시성 제어 필요
+  isSubscribe(stockId: string) {
+    return Object.keys(this.subscribeStocks).some((val) => val === stockId);
+  }
+
   async subscribe(stockId: string) {
     await this.openapiSubscribe(stockId);
+
     if (!this.isCloseTime(new Date(), this.startTime, this.endTime)) {
       for (const [idx, size] of this.configSubscribeSize.entries()) {
         if (size >= this.SOCKET_LIMITS) continue;
+
         this.configSubscribeSize[idx]++;
-        this.clientStock.set(stockId, idx);
+        this.subscribeStocks.set(stockId, idx);
         const message = this.convertObjectToMessage(
           (await this.openApiToken.configs())[idx],
           stockId,
@@ -75,21 +81,24 @@ export class LiveData {
     }
   }
 
-  async discribe(stockId: string) {
-    if (this.clientStock.has(stockId)) {
-      const idx = this.clientStock.get(stockId);
-      this.clientStock.delete(stockId);
+  async unsubscribe(stockId: string) {
+    if (this.subscribeStocks.has(stockId)) {
+      const idx = this.subscribeStocks.get(stockId);
+      this.subscribeStocks.delete(stockId);
+
       if (idx) {
         this.configSubscribeSize[idx]--;
       } else {
         this.logger.warn(`Websocket error : ${stockId} has invalid idx`);
         return;
       }
+
       const message = this.convertObjectToMessage(
         (await this.openApiToken.configs())[idx],
         stockId,
         '0',
       );
+
       this.websocketClient[idx].discribe(message);
     }
   }
@@ -97,7 +106,7 @@ export class LiveData {
   private initOpenCallback =
     (idx: number) => (sendMessage: (message: string) => void) => async () => {
       this.logger.info('WebSocket connection established');
-      for (const stockId of this.clientStock.keys()) {
+      for (const stockId of this.subscribeStocks.keys()) {
         const message = this.convertObjectToMessage(
           (await this.openApiToken.configs())[idx],
           stockId,

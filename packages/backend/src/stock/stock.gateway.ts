@@ -24,20 +24,29 @@ export class StockGateway {
   ) {
     client.join(stockId);
 
-    if ((await this.server.in(stockId).fetchSockets()).length === 0) {
+    const connectedSockets = await this.server.in(stockId).fetchSockets();
+
+    if (connectedSockets.length > 0 && !this.liveData.isSubscribe(stockId)) {
       this.liveData.subscribe(stockId);
     }
+
     client.emit('connectionSuccess', {
       message: `Successfully connected to stock room: ${stockId}`,
       stockId,
     });
   }
 
-  handleDisconnectStock(
+  async handleDisconnectStock(
     @MessageBody() stockId: string,
     @ConnectedSocket() client: Socket,
   ) {
     client.leave(stockId);
+
+    const connectedSockets = await this.server.in(stockId).fetchSockets();
+
+    if (connectedSockets.length === 0) {
+      this.liveData.unsubscribe(stockId);
+    }
 
     client.emit('disconnectionSuccess', {
       message: `Successfully disconnected to stock room: ${stockId}`,
