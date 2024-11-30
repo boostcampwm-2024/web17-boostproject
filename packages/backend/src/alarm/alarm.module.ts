@@ -4,11 +4,12 @@ import { AlarmController } from './alarm.controller';
 import { AlarmService } from './alarm.service';
 import { Alarm } from './domain/alarm.entity';
 import { PushSubscription } from './domain/subscription.entity';
+import { PushController } from './push.controller';
 import { PushService } from './push.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Alarm, PushSubscription])],
-  controllers: [AlarmController],
+  controllers: [AlarmController, PushController],
   providers: [AlarmService, PushService],
   exports: [AlarmService],
 })

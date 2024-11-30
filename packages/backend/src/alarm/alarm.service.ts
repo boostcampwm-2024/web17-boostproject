@@ -38,16 +38,18 @@ export class AlarmService {
   }
 
   async findOne(id: number) {
-    return await this.alarmRepository.findOne({
+    const result = await this.alarmRepository.findOne({
       where: { id },
       relations: ['user', 'stock'],
     });
+    if (result) return result;
+    else throw new NotFoundException('등록된 알림을 찾을 수 없습니다.');
   }
 
   async update(id: number, updateData: AlarmRequest) {
     const alarm = await this.alarmRepository.findOne({ where: { id } });
     if (!alarm) {
-      throw new NotFoundException(`Alarm with ID ${id} not found`);
+      throw new NotFoundException('등록된 알림을 찾을 수 없습니다.');
     }
 
     await this.alarmRepository.update(id, updateData);
@@ -55,13 +57,17 @@ export class AlarmService {
       where: { id },
       relations: ['user', 'stock'],
     });
-    return updatedAlarm!;
+    if (updatedAlarm) return updatedAlarm;
+    else
+      throw new NotFoundException(
+        `${id} : 업데이트할 알림을 찾을 수 없습니다.`,
+      );
   }
 
   async delete(id: number) {
     const alarm = await this.alarmRepository.findOne({ where: { id } });
     if (!alarm) {
-      throw new NotFoundException(`Alarm with ID ${id} not found`);
+      throw new NotFoundException(`${id} : 삭제할 알림을 찾을 수 없습니다.`);
     }
 
     await this.alarmRepository.delete(id);
