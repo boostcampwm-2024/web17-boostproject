@@ -33,3 +33,9 @@ export const PostUserNicknameSchema = z.object({
 });
 
 export type PostUserNickname = z.infer<typeof PostUserNicknameSchema>;
+
+export const GetUserThemeSchema = z.object({
+  theme: z.enum(['light', 'dark']),
+});
+
+export type GetUserTheme = z.infer<typeof GetUserThemeSchema>;
