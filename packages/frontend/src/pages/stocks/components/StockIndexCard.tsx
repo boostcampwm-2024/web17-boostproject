@@ -26,15 +26,15 @@ export const StockIndexCard = ({
       <div className="text-gray grid grid-cols-2 grid-rows-2 gap-3 [&_div]:flex [&_div]:gap-4">
         <div>
           <span className="display-bold14">시가</span>
-          <span className="display-medium14">{open?.toLocaleString()}</span>
+          <span className="display-medium14">{open?.toLocaleString()}원</span>
         </div>
         <div>
           <span className="display-bold14">고가</span>
-          <span className="display-medium14">{high?.toLocaleString()}</span>
+          <span className="display-medium14">{high?.toLocaleString()}원</span>
         </div>
         <div>
           <span className="display-bold14">저가</span>
-          <span className="display-medium14">{low?.toLocaleString()}</span>
+          <span className="display-medium14">{low?.toLocaleString()}원</span>
         </div>
       </div>
     </div>
