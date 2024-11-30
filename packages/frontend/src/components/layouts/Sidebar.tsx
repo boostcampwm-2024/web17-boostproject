@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import logoCharacter from '/logoCharacter.png';
 import logoTitle from '/logoTitle.png';
 import { Alarm } from './alarm';
@@ -12,6 +13,7 @@ import { cn } from '@/utils/cn';
 type TabKey = 'search' | 'alarm';
 
 export const Sidebar = () => {
+  const navigate = useNavigate();
   const [isHovered, setIsHovered] = useState(false);
   const [showTabs, setShowTabs] = useState<Record<TabKey, boolean>>({
     search: false,
@@ -58,7 +60,10 @@ export const Sidebar = () => {
         onMouseLeave={() => setIsHovered(false)}
       >
         <section className="flex flex-col justify-center gap-8">
-          <header className="flex items-center gap-4">
+          <header
+            className="flex items-center gap-4"
+            onClick={() => navigate('/')}
+          >
             <img src={logoCharacter} alt="로고 캐릭터" className="w-20" />
             <img
               src={logoTitle}
