@@ -61,14 +61,12 @@ export class OpenapiFluctuationData {
       return [
         {
           rank: Number(data.output.data_rank),
-          fluctuationRate: data.output.prdy_ctrt,
           stock: { id: data.output.stck_shrn_iscd } as Stock,
           isRising,
         },
       ];
     return data.output.slice(0, 20).map((result: Record<string, string>) => ({
       rank: Number(result.data_rank),
-      fluctuationRate: result.prdy_ctrt,
       stock: { id: result.stck_shrn_iscd } as Stock,
       isRising,
     }));
