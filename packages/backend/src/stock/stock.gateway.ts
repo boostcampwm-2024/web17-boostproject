@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
@@ -8,6 +8,7 @@ import {
 } from '@nestjs/websockets';
 import { Mutex } from 'async-mutex';
 import { Server, Socket } from 'socket.io';
+import { Logger } from 'winston';
 import { LiveData } from '@/scraper/openapi/liveData.service';
 
 @WebSocketGateway({
@@ -19,7 +20,10 @@ export class StockGateway {
   server: Server;
   private readonly mutex = new Mutex();
 
-  constructor(private readonly liveData: LiveData) {}
+  constructor(
+    private readonly liveData: LiveData,
+    @Inject('winston') private readonly logger: Logger,
+  ) {}
 
   @SubscribeMessage('connectStock')
   async handleConnectStock(
@@ -32,7 +36,8 @@ export class StockGateway {
       const connectedSockets = await this.server.in(stockId).fetchSockets();
 
       if (connectedSockets.length > 0 && !this.liveData.isSubscribe(stockId)) {
-        this.liveData.subscribe(stockId);
+        await this.liveData.subscribe(stockId);
+        this.logger.info(`${stockId} is subscribed`);
       }
     });
 
@@ -52,7 +57,8 @@ export class StockGateway {
       const connectedSockets = await this.server.in(stockId).fetchSockets();
 
       if (connectedSockets.length === 0) {
-        this.liveData.unsubscribe(stockId);
+        await this.liveData.unsubscribe(stockId);
+        this.logger.info(`${stockId} is unsubscribed`);
       }
     });
 
