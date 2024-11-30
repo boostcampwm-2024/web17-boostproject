@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { useGetUserInfo } from '@/apis/queries/auth/useGetUserInfo';
 import { usePostLogout } from '@/apis/queries/auth/usePostLogout';
-import { usePostUserNickname } from '@/apis/queries/auth/usePostUserNickname';
+import { useGetUserInfo } from '@/apis/queries/user/useGetUserInfo';
+import { usePostUserNickname } from '@/apis/queries/user/usePostUserNickname';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 

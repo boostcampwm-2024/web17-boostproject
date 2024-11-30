@@ -1,8 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { GetLoginStatus } from '@/apis/queries/auth/schema';
-import { useGetUserStock } from '@/apis/queries/auth/useGetUserStock';
 import { useDeleteStockUser } from '@/apis/queries/stock-detail';
+import { useGetUserStock } from '@/apis/queries/user/useGetUserStock';
 import { Button } from '@/components/ui/button';
 
 interface StockInfoProps {
