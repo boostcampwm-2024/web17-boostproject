@@ -69,4 +69,12 @@ module.exports = {
       },
     ],
   },
+  overrides: [
+    {
+      files: ['**/*.spec.ts'],
+      rules: {
+        'max-lines-per-function': 'off',
+      },
+    },
+  ],
 };
