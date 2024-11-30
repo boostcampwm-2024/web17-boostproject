@@ -1,5 +1,4 @@
 import { Column, Entity, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
-import { KospiStock } from './kospiStock.entity';
 import {
   StockDaily,
   StockMinutely,
@@ -56,9 +55,6 @@ export class Stock {
 
   @OneToOne(() => StockLiveData, (stockLiveData) => stockLiveData.stock)
   stockLive?: StockLiveData;
-
-  @OneToOne(() => KospiStock, (kospiStock) => kospiStock.stock)
-  kospiStock?: KospiStock;
 
   @OneToMany(
     () => FluctuationRankStock,
