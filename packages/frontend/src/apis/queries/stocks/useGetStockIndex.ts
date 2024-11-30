@@ -13,6 +13,5 @@ export const useGetStockIndex = () => {
   return useQuery({
     queryKey: ['stockIndex'],
     queryFn: getStockIndex,
-    staleTime: 1000 * 60,
   });
 };

@@ -17,6 +17,5 @@ export const useGetStocksByPrice = ({ limit, type }: GetStockListRequest) => {
   return useQuery({
     queryKey: ['stocks', limit, type],
     queryFn: () => getStockByPrice({ limit, type }),
-    staleTime: 1000 * 60,
   });
 };
