@@ -6,16 +6,16 @@ import {
 } from './schema';
 import { get } from '@/apis/utils/get';
 
-const getStockByPrice = ({ limit }: Partial<GetStockListRequest>) =>
+const getStockByPrice = ({ limit, type }: GetStockListRequest) =>
   get<GetStockListResponse>({
     schema: GetStockListResponseSchema,
     url: `/api/stock/fluctuation`,
-    params: { limit },
+    params: { limit, type },
   });
 
-export const useGetStocksByPrice = ({ limit }: GetStockListRequest) => {
+export const useGetStocksByPrice = ({ limit, type }: GetStockListRequest) => {
   return useQuery({
-    queryKey: ['stocks', limit],
-    queryFn: () => getStockByPrice({ limit }),
+    queryKey: ['stocks', limit, type],
+    queryFn: () => getStockByPrice({ limit, type }),
   });
 };

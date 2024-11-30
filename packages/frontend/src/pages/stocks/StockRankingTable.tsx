@@ -10,7 +10,7 @@ const LIMIT = 10;
 export const StockRankingTable = () => {
   const [sortType, setSortType] = useState<'increase' | 'decrease'>('increase');
 
-  const { data } = useGetStocksByPrice({ limit: LIMIT });
+  const { data } = useGetStocksByPrice({ limit: LIMIT, type: sortType });
   const { mutate } = usePostStockView();
 
   const handleSortType = () => {
@@ -74,7 +74,6 @@ export const StockRankingTable = () => {
                     +stock.changeRate >= 0 ? 'text-red' : 'text-blue',
                   )}
                 >
-                  {stock.changeRate >= 0 && '+'}
                   {stock.changeRate}%
                 </td>
                 <td>{stock.volume?.toLocaleString()}원</td>
