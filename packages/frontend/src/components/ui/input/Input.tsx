@@ -10,7 +10,7 @@ export const Input = ({ placeholder, className, ...props }: InputProps) => {
     <input
       placeholder={placeholder}
       className={cn(
-        'border-dark-gray w-36 border-b focus:outline-none',
+        'border-dark-gray w-36 border-b bg-white focus:outline-none',
         className,
       )}
       {...props}
