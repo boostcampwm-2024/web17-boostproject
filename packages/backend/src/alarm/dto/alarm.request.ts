@@ -22,8 +22,8 @@ export class AlarmRequest {
   targetVolum?: number;
 
   @ApiProperty({
-    description: '알림 날짜',
-    example: '2023-10-01T00:00:00Z',
+    description: '알림 종료 날짜',
+    example: '2024-12-01T00:00:00Z',
     required: false,
   })
   alarmDate?: Date;
