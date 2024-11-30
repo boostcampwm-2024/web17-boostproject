@@ -8,22 +8,35 @@ import { openApiConfig } from './config/openapi.config';
 import { parseMessage } from './parse/openapi.parser';
 import { WebsocketClient } from './websocket/websocketClient.websocket';
 
-type TR_IDS = '0' | '1';
+type TR_IDS = '1' | '2';
 
 @Injectable()
 export class LiveData {
-  private readonly clientStock: Set<string> = new Set();
-  private readonly reconnectInterval = 60 * 1000 * 1000;
-
   private readonly startTime: Date = new Date(2024, 0, 1, 9, 0, 0, 0);
   private readonly endTime: Date = new Date(2024, 0, 1, 15, 30, 0, 0);
+
+  private readonly reconnectInterval = 60 * 1000;
+  private readonly subscribeStocks: Map<string, number> = new Map();
+
+  private readonly SOCKET_LIMITS: number = 41;
+
+  private websocketClient: WebsocketClient[] = [];
+  private configSubscribeSize: number[] = [];
   constructor(
     private readonly openApiToken: OpenapiTokenApi,
-    private readonly webSocketClient: WebsocketClient,
     private readonly openapiLiveData: OpenapiLiveData,
     @Inject('winston') private readonly logger: Logger,
   ) {
-    this.connect();
+    this.openApiToken.configs().then((config) => {
+      let len = config.length;
+      while (len--) {
+        this.websocketClient.push(
+          WebsocketClient.websocketFactory(this.logger),
+        );
+        this.configSubscribeSize.push(0);
+      }
+      this.connect();
+    });
   }
 
   private async openapiSubscribe(stockId: string) {
@@ -42,39 +55,59 @@ export class LiveData {
     }
   }
 
+  isSubscribe(stockId: string) {
+    return Object.keys(this.subscribeStocks).some((val) => val === stockId);
+  }
+
   async subscribe(stockId: string) {
-    if (this.isCloseTime(new Date(), this.startTime, this.endTime)) {
-      await this.openapiSubscribe(stockId);
-    } else {
-      // TODO : 하나의 config만 사용중.
-      this.clientStock.add(stockId);
-      const message = this.convertObjectToMessage(
-        (await this.openApiToken.configs())[1],
-        stockId,
-        '1',
-      );
-      this.webSocketClient.subscribe(message);
+    await this.openapiSubscribe(stockId);
+
+    if (!this.isCloseTime(new Date(), this.startTime, this.endTime)) {
+      for (const [idx, size] of this.configSubscribeSize.entries()) {
+        if (size >= this.SOCKET_LIMITS) continue;
+
+        this.configSubscribeSize[idx]++;
+        this.subscribeStocks.set(stockId, idx);
+        const message = this.convertObjectToMessage(
+          (await this.openApiToken.configs())[idx],
+          stockId,
+          '1',
+        );
+        this.websocketClient[idx].subscribe(message);
+        return;
+      }
+      this.logger.warn(`Websocket register oversize : ${stockId}`);
     }
   }
 
-  async discribe(stockId: string) {
-    if (this.clientStock.has(stockId)) {
-      this.clientStock.delete(stockId);
+  async unsubscribe(stockId: string) {
+    if (this.subscribeStocks.has(stockId)) {
+      const idx = this.subscribeStocks.get(stockId);
+      this.subscribeStocks.delete(stockId);
+
+      if (idx) {
+        this.configSubscribeSize[idx]--;
+      } else {
+        this.logger.warn(`Websocket error : ${stockId} has invalid idx`);
+        return;
+      }
+
       const message = this.convertObjectToMessage(
-        (await this.openApiToken.configs())[0],
+        (await this.openApiToken.configs())[idx],
         stockId,
-        '0',
+        '2',
       );
-      this.webSocketClient.discribe(message);
+
+      this.websocketClient[idx].discribe(message);
     }
   }
 
   private initOpenCallback =
-    (sendMessage: (message: string) => void) => async () => {
+    (idx: number) => (sendMessage: (message: string) => void) => async () => {
       this.logger.info('WebSocket connection established');
-      for (const stockId of this.clientStock.keys()) {
+      for (const stockId of this.subscribeStocks.keys()) {
         const message = this.convertObjectToMessage(
-          (await this.openApiToken.configs())[0],
+          (await this.openApiToken.configs())[idx],
           stockId,
           '1',
         );
@@ -124,12 +157,14 @@ export class LiveData {
 
   @Cron('0 2 * * 1-5')
   connect() {
-    this.webSocketClient.connectPacade(
-      this.initOpenCallback,
-      this.initMessageCallback,
-      this.initCloseCallback,
-      this.initErrorCallback,
-    );
+    this.websocketClient.forEach((socket, idx) => {
+      socket.connectFacade(
+        this.initOpenCallback(idx),
+        this.initMessageCallback,
+        this.initCloseCallback,
+        this.initErrorCallback,
+      );
+    });
   }
 
   private convertObjectToMessage(

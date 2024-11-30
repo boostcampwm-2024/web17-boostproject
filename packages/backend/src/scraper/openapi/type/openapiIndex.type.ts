@@ -40,6 +40,8 @@ export type ExchangeRate = {
 
 export function isExchangeRate(data: any): data is ExchangeRate {
   return (
+    data &&
+    typeof data === 'object' &&
     typeof data.acml_vol === 'string' &&
     typeof data.ovrs_nmix_prpr === 'string' &&
     typeof data.ovrs_nmix_prdy_vrss === 'string' &&
@@ -101,6 +103,7 @@ export type StockIndex = {
 export function isStockIndex(data: any): data is StockIndex {
   return (
     data &&
+    typeof data === 'object' &&
     typeof data.bstp_nmix_prpr === 'string' &&
     typeof data.bstp_nmix_prdy_vrss === 'string' &&
     typeof data.prdy_vrss_sign === 'string' &&

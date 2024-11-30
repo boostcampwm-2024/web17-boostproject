@@ -6,6 +6,7 @@ import { OpenapiLiveData } from './api/openapiLiveData.api';
 import { OpenapiMinuteData } from './api/openapiMinuteData.api';
 import { OpenapiPeriodData } from './api/openapiPeriodData.api';
 import { OpenapiTokenApi } from './api/openapiToken.api';
+import { LiveData } from './liveData.service';
 import { OpenapiScraperService } from './openapi-scraper.service';
 import { OpenapiFluctuationData } from '@/scraper/openapi/api/openapiFluctuationData.api';
 import { OpenapiRankViewApi } from '@/scraper/openapi/api/openapiRankView.api';
@@ -41,6 +42,7 @@ import { StockLiveData } from '@/stock/domain/stockLiveData.entity';
   ],
   controllers: [],
   providers: [
+    LiveData,
     OpenapiLiveData,
     OpenapiTokenApi,
     OpenapiPeriodData,
@@ -53,5 +55,6 @@ import { StockLiveData } from '@/stock/domain/stockLiveData.entity';
     OpenapiQueue,
     OpenapiConsumer,
   ],
+  exports: [LiveData],
 })
 export class OpenapiScraperModule {}
