@@ -5,7 +5,12 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   className?: string;
 }
 
-export const Input = ({ placeholder, className, ...props }: InputProps) => {
+export const Input = ({
+  placeholder,
+  className,
+  onChange,
+  ...props
+}: InputProps) => {
   return (
     <input
       placeholder={placeholder}
@@ -13,6 +18,7 @@ export const Input = ({ placeholder, className, ...props }: InputProps) => {
         'border-dark-gray w-36 border-b bg-white focus:outline-none',
         className,
       )}
+      onChange={onChange}
       {...props}
     />
   );
