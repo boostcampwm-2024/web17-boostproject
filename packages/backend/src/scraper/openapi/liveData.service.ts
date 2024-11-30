@@ -55,7 +55,6 @@ export class LiveData {
     }
   }
 
-  // TODO : 동시성 제어 필요
   isSubscribe(stockId: string) {
     return Object.keys(this.subscribeStocks).some((val) => val === stockId);
   }
