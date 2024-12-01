@@ -134,6 +134,9 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
     hasMore,
   });
 
+  const checkWriter = (chat: ChatData) =>
+    chat.nickname === nickname && chat.subName === subName;
+
   return (
     <article className="flex min-w-80 flex-col gap-5 rounded-md bg-white p-7 shadow">
       <h2 className="display-bold20 text-center font-bold">채팅</h2>
@@ -164,7 +167,7 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
                 contents={chat.message}
                 likeCount={chat.likeCount}
                 liked={chat.liked}
-                writer={chat.subName === subName}
+                writer={checkWriter(chat)}
                 onClick={() => handleLikeClick(chat.id)}
               />
             ))}
@@ -185,9 +188,7 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
                   contents={isOwnerStock ? chat.message : '로그인 후 이용 가능'}
                   likeCount={chat.likeCount}
                   liked={chat.liked}
-                  writer={
-                    chat.nickname === nickname && chat.subName === subName
-                  }
+                  writer={checkWriter(chat)}
                   onClick={() => handleLikeClick(chat.id)}
                 />
               </div>
