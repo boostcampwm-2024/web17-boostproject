@@ -24,8 +24,9 @@ import {
 import { StockDetailService } from './stockDetail.service';
 import { StockLiveDataSubscriber } from './stockLiveData.subscriber';
 import { StockRateIndexService } from './stockRateIndex.service';
+import { AlarmModule } from '@/alarm/alarm.module';
+import { Alarm } from '@/alarm/domain/alarm.entity';
 import { ScraperModule } from '@/scraper/scraper.module';
-
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -37,7 +38,9 @@ import { ScraperModule } from '@/scraper/scraper.module';
       StockYearly,
       StockLiveData,
       StockDetail,
+      Alarm,
     ]),
+    AlarmModule,
     ScraperModule,
   ],
   controllers: [StockController],

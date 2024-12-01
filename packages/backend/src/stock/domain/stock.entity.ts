@@ -7,6 +7,7 @@ import {
   StockYearly,
 } from './stockData.entity';
 import { StockLiveData } from './stockLiveData.entity';
+import { Alarm } from '@/alarm/domain/alarm.entity';
 import { Like } from '@/chat/domain/like.entity';
 import { DateEmbedded } from '@/common/dateEmbedded.entity';
 import { FluctuationRankStock } from '@/stock/domain/FluctuationRankStock.entity';
@@ -61,4 +62,7 @@ export class Stock {
     (fluctuationRankStock) => fluctuationRankStock.stock,
   )
   fluctuationRankStocks?: FluctuationRankStock[];
+
+  @OneToMany(() => Alarm, (alarm) => alarm.stock)
+  alarms?: Alarm[];
 }

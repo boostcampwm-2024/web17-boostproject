@@ -39,7 +39,9 @@ export class StockLiveDataSubscriber
 
       this.stockGateway.onUpdateStock(stockId, price, change, volume);
     } catch (error) {
-      this.logger.warn(`Failed to handle afterInsert event : ${error}`);
+      this.logger.warn(
+        `Failed to handle stock live data afterInsert event : ${error}`,
+      );
     }
   }
 
@@ -55,6 +57,7 @@ export class StockLiveDataSubscriber
           changeRate: change,
           volume: volume,
         } = updatedStockLiveData;
+
         this.stockGateway.onUpdateStock(stockId, price, change, volume);
       } else {
         this.logger.warn(
@@ -62,7 +65,9 @@ export class StockLiveDataSubscriber
         );
       }
     } catch (error) {
-      this.logger.warn(`Failed to handle afterUpdate event : ${error}`);
+      this.logger.warn(
+        `Failed to handle stock live data afterUpdate event : ${error}`,
+      );
     }
   }
 

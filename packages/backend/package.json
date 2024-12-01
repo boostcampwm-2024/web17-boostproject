@@ -47,6 +47,7 @@
     "socket.io": "^4.8.1",
     "typeorm": "^0.3.20",
     "unzipper": "^0.12.3",
+    "web-push": "^3.6.7",
     "winston": "^3.17.0",
     "winston-daily-rotate-file": "^5.0.0",
     "ws": "^8.18.0"
@@ -63,6 +64,7 @@
     "@types/passport-local": "^1.0.38",
     "@types/supertest": "^6.0.0",
     "@types/unzipper": "^0.10.10",
+    "@types/web-push": "^3.6.4",
     "@types/ws": "^8.5.13",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",

@@ -26,7 +26,6 @@ export class OpenapiFluctuationData {
     setTimeout(() => this.getFluctuationRankStocks(), 1000);
   }
 
-  @Cron('* 9-15 * * 1-5')
   @Cron('*/1 9-15 * * 1-5')
   async getFluctuationRankStocks() {
     await this.getFluctuationRankFromApi(true);

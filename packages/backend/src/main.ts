@@ -15,7 +15,12 @@ const setCors = (app: INestApplication) => {
       'http://localhost:5173',
     ],
     methods: '*',
-    allowedHeaders: '*',
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'X-Requested-With',
+      'Accept',
+    ],
     credentials: true,
   });
 };
