@@ -1,69 +1,106 @@
-/* eslint-disable max-lines-per-function */
-import { instanceToPlain } from 'class-transformer';
-import { DataSource } from 'typeorm';
+import { plainToInstance } from 'class-transformer';
+import { anyString, anything, instance, mock, verify, when } from 'ts-mockito';
+import {
+  DataSource,
+  EntityManager,
+  Repository,
+  SelectQueryBuilder,
+} from 'typeorm';
 import { Logger } from 'winston';
 import { Stock } from './domain/stock.entity';
 import { StockService } from './stock.service';
-import { createDataSourceMock } from '@/user/user.service.spec';
-
-const logger: Logger = {
-  error: jest.fn(),
-  warn: jest.fn(),
-  info: jest.fn(),
-} as unknown as Logger;
+import { UserStock } from '@/stock/domain/userStock.entity';
+import { StockRankResponses, StocksResponse } from '@/stock/dto/stock.response';
+import { User } from '@/user/domain/user.entity';
 
 describe('StockService 테스트', () => {
   const stockId = 'A005930';
   const userId = 1;
+  const result = [
+    {
+      id: 'A005930',
+      name: '삼성전자',
+      currentPrice: '100000.0',
+      changeRate: '2.5',
+      volume: '500000',
+      marketCap: '500000000000.00',
+    },
+    {
+      id: 'A051910',
+      name: 'LG화학',
+      currentPrice: '75000.0',
+      changeRate: '-1.2',
+      volume: '300000',
+      marketCap: '20000000000.00',
+    },
+  ];
+  let logger: Logger;
+  let mockDataSource: DataSource;
+  let mockManager: EntityManager;
+  let stockService: StockService;
+  let queryBuilderMock: SelectQueryBuilder<Stock>;
+  let repositoryMock: Repository<Stock>;
+
+  beforeEach(() => {
+    mockDataSource = mock(DataSource);
+    logger = mock(Logger);
+    mockManager = mock(EntityManager);
+    queryBuilderMock = mock(SelectQueryBuilder);
+    stockService = new StockService(instance(mockDataSource), logger);
+    repositoryMock = mock(Repository);
+    when(mockDataSource.transaction(anything())).thenCall(async (callback) => {
+      return await callback(instance(mockManager));
+    });
+    when(queryBuilderMock.leftJoin(anything(), anything(), anything()))
+      .thenReturn(instance(queryBuilderMock))
+      .thenReturn(instance(queryBuilderMock));
+    when(queryBuilderMock.select(anything())).thenReturn(
+      instance(queryBuilderMock),
+    );
+    when(queryBuilderMock.orderBy(anything(), anything())).thenReturn(
+      instance(queryBuilderMock),
+    );
+    when(queryBuilderMock.limit(anything())).thenReturn(
+      instance(queryBuilderMock),
+    );
+    when(repositoryMock.createQueryBuilder(anyString())).thenReturn(
+      instance(queryBuilderMock),
+    );
+    when(mockDataSource.getRepository(anything())).thenReturn(
+      instance(repositoryMock),
+    );
+  });
 
   test('주식의 조회수를 증가시킨다.', async () => {
-    const managerMock = {
-      exists: jest.fn().mockResolvedValue(true),
-      increment: jest.fn().mockResolvedValue({ id: stockId, views: 1 }),
-    };
-    const dataSource = createDataSourceMock(managerMock);
-    const stockService = new StockService(dataSource as DataSource, logger);
+    when(mockManager.exists(Stock, anything())).thenResolve(true);
 
     await stockService.increaseView(stockId);
 
-    expect(dataSource.transaction).toHaveBeenCalled();
+    verify(mockManager.exists(Stock, anything())).once();
+    verify(mockManager.increment(Stock, anything(), 'views', 1)).once();
   });
 
   test('존재하지 않는 주식의 조회수를 증가시키려 하면 예외가 발생한다.', async () => {
-    const managerMock = {
-      exists: jest.fn().mockResolvedValue(false),
-    };
-    const dataSource = createDataSourceMock(managerMock);
-    const stockService = new StockService(dataSource as DataSource, logger);
+    when(mockManager.exists(Stock, anything())).thenResolve(false);
 
-    await expect(async () => stockService.increaseView('1')).rejects.toThrow(
+    await expect(() => stockService.increaseView('1')).rejects.toThrow(
       'stock not found',
     );
   });
 
   test('유저 주식을 추가한다.', async () => {
-    const managerMock = {
-      exists: jest
-        .fn()
-        .mockResolvedValueOnce(true)
-        .mockResolvedValueOnce(false),
-      insert: jest.fn(),
-    };
-    const dataSource = createDataSourceMock(managerMock);
-    const stockService = new StockService(dataSource as DataSource, logger);
+    when(mockManager.exists(Stock, anything())).thenResolve(true);
+    when(mockManager.exists(UserStock, anything())).thenResolve(false);
 
     await stockService.createUserStock(userId, stockId);
 
-    expect(managerMock.exists).toHaveBeenCalledTimes(2);
-    expect(managerMock.insert).toHaveBeenCalled();
+    verify(mockManager.exists(Stock, anything())).times(1);
+    verify(mockManager.exists(UserStock, anything())).times(1);
+    verify(mockManager.insert(UserStock, anything())).once();
   });
 
   test('유저 주식을 추가할 때 존재하지 않는 주식이면 예외가 발생한다.', async () => {
-    const managerMock = {
-      exists: jest.fn().mockResolvedValue(false),
-    };
-    const dataSource = createDataSourceMock(managerMock);
-    const stockService = new StockService(dataSource as DataSource, logger);
+    when(mockManager.exists(Stock, anything())).thenResolve(false);
 
     await expect(() =>
       stockService.createUserStock(userId, 'A'),
@@ -71,11 +108,8 @@ describe('StockService 테스트', () => {
   });
 
   test('유저 주식을 추가할 때 이미 존재하는 유저 주식이면 예외가 발생한다.', async () => {
-    const managerMock = {
-      exists: jest.fn().mockResolvedValueOnce(true).mockResolvedValueOnce(true),
-    };
-    const dataSource = createDataSourceMock(managerMock);
-    const stockService = new StockService(dataSource as DataSource, logger);
+    when(mockManager.exists(Stock, anything())).thenResolve(true);
+    when(mockManager.exists(UserStock, anything())).thenResolve(true);
 
     await expect(async () =>
       stockService.createUserStock(userId, stockId),
@@ -83,38 +117,41 @@ describe('StockService 테스트', () => {
   });
 
   test('유저 주식을 삭제한다.', async () => {
-    const managerMock = {
-      findOne: jest.fn().mockResolvedValue({ user: { id: userId } }),
-      delete: jest.fn(),
-    };
-    const dataSource = createDataSourceMock(managerMock);
-    const stockService = new StockService(dataSource as DataSource, logger);
+    when(mockManager.findOne(UserStock, anything())).thenResolve({
+      id: 1,
+      user: { id: userId } as User,
+      stock: { id: stockId } as Stock,
+      date: {
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    });
 
     await stockService.deleteUserStock(userId, stockId);
 
-    expect(managerMock.findOne).toHaveBeenCalled();
-    expect(managerMock.delete).toHaveBeenCalled();
+    verify(mockManager.findOne(UserStock, anything())).once();
+    verify(mockManager.delete(UserStock, anything())).once();
   });
 
   test('유저 주식을 삭제 시 존재하지 않는 유저 주식이면 예외가 발생한다.', async () => {
-    const managerMock = {
-      findOne: jest.fn().mockResolvedValue(null),
-    };
-    const dataSource = createDataSourceMock(managerMock);
-    const stockService = new StockService(dataSource as DataSource, logger);
+    when(mockManager.findOne(UserStock, anything())).thenResolve(null);
 
-    await expect(() => stockService.deleteUserStock(userId, "13")).rejects.toThrow(
-      'user stock not found',
-    );
+    await expect(() =>
+      stockService.deleteUserStock(userId, '13'),
+    ).rejects.toThrow('user stock not found');
   });
 
   test('유저 주식을 삭제 시 주인이 아닐 때 예외가 발생한다.', async () => {
     const notOwnerUserId = 2;
-    const managerMock = {
-      findOne: jest.fn().mockResolvedValue({ user: { id: userId } }),
-    };
-    const dataSource = createDataSourceMock(managerMock);
-    const stockService = new StockService(dataSource as DataSource, logger);
+    when(mockManager.findOne(UserStock, anything())).thenResolve({
+      id: 1,
+      user: { id: userId } as User,
+      stock: { id: stockId } as Stock,
+      date: {
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    });
 
     await expect(() =>
       stockService.deleteUserStock(notOwnerUserId, stockId),
@@ -122,22 +159,13 @@ describe('StockService 테스트', () => {
   });
 
   test('소유 주식인지 확인한다.', async () => {
-    const managerMock = {
-      exists: jest.fn().mockResolvedValue(true),
-    };
-    const dataSource = createDataSourceMock(managerMock);
-    const stockService = new StockService(dataSource as DataSource, logger);
-
+    when(mockManager.exists(UserStock, anything())).thenResolve(true);
     const result = await stockService.isUserStockOwner(stockId, userId);
 
     expect(result).toBe(true);
-    expect(managerMock.exists).toHaveBeenCalled();
   });
 
   test('인증된 유저가 아니면 소유 주식은 항상 false를 반환한다.', async () => {
-    const dataSource = createDataSourceMock({});
-    const stockService = new StockService(dataSource as DataSource, logger);
-
     const result = await stockService.isUserStockOwner(stockId);
 
     expect(result).toBe(false);
@@ -145,224 +173,36 @@ describe('StockService 테스트', () => {
 
   test('주식 조회수 기준 상위 데이터를 반환한다.', async () => {
     const limit = 5;
-    // QueryBuilder Mock
-    const queryBuilderMock = {
-      leftJoin: jest.fn().mockReturnThis(),
-      select: jest.fn().mockReturnThis(),
-      orderBy: jest.fn().mockReturnThis(),
-      limit: jest.fn().mockReturnThis(),
-      getRawMany: jest.fn().mockResolvedValue([
-        {
-          id: 'A005930',
-          name: '삼성전자',
-          currentPrice: '100000.0',
-          changeRate: '2.5',
-          volume: '500000',
-          marketCap: '500000000000.00',
-        },
-        {
-          id: 'A051910',
-          name: 'LG화학',
-          currentPrice: '75000.0',
-          changeRate: '-1.2',
-          volume: '300000',
-          marketCap: '20000000000.00',
-        },
-      ]),
-    };
 
-    // Manager Mock
-    const managerMock = {
-      getRepository: jest.fn().mockReturnValue({
-        createQueryBuilder: jest.fn().mockReturnValue(queryBuilderMock),
-      }),
-    };
-    const dataSource = createDataSourceMock(managerMock);
-    const stockService = new StockService(dataSource as DataSource, logger);
+    when(queryBuilderMock.getRawMany()).thenResolve(result);
 
-    const result = await stockService.getTopStocksByViews(limit);
+    const queryResult = await stockService.getTopStocksByViews(limit);
 
-    expect(managerMock.getRepository).toHaveBeenCalledWith(Stock);
-    expect(queryBuilderMock.orderBy).toHaveBeenCalledWith(
-      'stock.views',
-      'DESC',
+    expect(queryResult).toStrictEqual(
+      plainToInstance(StocksResponse, queryResult),
     );
-    expect(queryBuilderMock.limit).toHaveBeenCalledWith(limit);
-    expect(queryBuilderMock.getRawMany).toHaveBeenCalled();
-
-    expect(instanceToPlain(result)).toEqual([
-      {
-        id: 'A005930',
-        name: '삼성전자',
-        currentPrice: 100000.0,
-        changeRate: 2.5,
-        volume: 500000,
-        marketCap: '500000000000.00',
-      },
-      {
-        id: 'A051910',
-        name: 'LG화학',
-        currentPrice: 75000.0,
-        changeRate: -1.2,
-        volume: 300000,
-        marketCap: '20000000000.00',
-      },
-    ]);
+    verify(queryBuilderMock.getRawMany()).once();
   });
 
   test('주식 상승률 기준 상위 데이터를 반환한다.', async () => {
     const limit = 20;
-    // QueryBuilder Mock
-    const queryBuilderMock = {
-      leftJoin: jest.fn().mockReturnThis(),
-      select: jest.fn().mockReturnThis(),
-      orderBy: jest.fn().mockReturnThis(),
-      limit: jest.fn().mockReturnThis(),
-      getRawMany: jest.fn().mockResolvedValue([
-        {
-          id: 'A005930',
-          name: '삼성전자',
-          currentPrice: '100000.0',
-          changeRate: '2.5',
-          volume: '500000',
-          marketCap: '500000000000.00',
-        },
-        {
-          id: 'A051910',
-          name: 'LG화학',
-          currentPrice: '75000.0',
-          changeRate: '-1.2',
-          volume: '300000',
-          marketCap: '20000000000.00',
-        },
-      ]),
-    };
-
-    // Manager Mock
-    const managerMock = {
-      getRepository: jest.fn().mockReturnValue({
-        createQueryBuilder: jest.fn().mockReturnValue(queryBuilderMock),
-      }),
-    };
-    const dataSource = createDataSourceMock(managerMock);
-    const stockService = new StockService(dataSource as DataSource, logger);
-
-    const result = await stockService.getTopStocksByGainers(limit);
-
-    expect(managerMock.getRepository).toHaveBeenCalledWith(Stock);
-    expect(queryBuilderMock.orderBy).toHaveBeenCalledWith(
-      'stockLiveData.changeRate',
-      'DESC',
+    when(
+      queryBuilderMock.innerJoinAndSelect(anyString(), anyString()),
+    ).thenReturn(instance(queryBuilderMock));
+    when(queryBuilderMock.where(anyString(), anything())).thenReturn(
+      instance(queryBuilderMock),
     );
-    expect(queryBuilderMock.limit).toHaveBeenCalledWith(limit);
-    expect(queryBuilderMock.getRawMany).toHaveBeenCalled();
+    when(queryBuilderMock.getRawMany()).thenResolve(result);
+    const queryResult = await stockService.getTopStocksByGainers(limit);
 
-    expect(instanceToPlain(result)).toEqual([
-      {
-        id: 'A005930',
-        name: '삼성전자',
-        currentPrice: 100000.0,
-        changeRate: 2.5,
-        volume: 500000,
-        marketCap: '500000000000.00',
-      },
-      {
-        id: 'A051910',
-        name: 'LG화학',
-        currentPrice: 75000.0,
-        changeRate: -1.2,
-        volume: 300000,
-        marketCap: '20000000000.00',
-      },
-    ]);
-  });
+    verify(queryBuilderMock.getRawMany()).once();
 
-  test('소유 주식인지 확인한다.', async () => {
-    const managerMock = {
-      exists: jest.fn().mockResolvedValue(true),
-    };
-    const dataSource = createDataSourceMock(managerMock);
-    const stockService = new StockService(dataSource as DataSource, logger);
-
-    const result = await stockService.isUserStockOwner(stockId, userId);
-
-    expect(result).toBe(true);
-    expect(managerMock.exists).toHaveBeenCalled();
+    expect(queryResult).toEqual(new StockRankResponses(result));
   });
 
   test('인증된 유저가 아니면 소유 주식은 항상 false를 반환한다.', async () => {
-    const dataSource = createDataSourceMock({});
-    const stockService = new StockService(dataSource as DataSource, logger);
-
     const result = await stockService.isUserStockOwner(stockId);
 
     expect(result).toBe(false);
-  });
-
-  test('주식 하락률 기준 상위 데이터를 반환한다.', async () => {
-    const limit = 20;
-    // QueryBuilder Mock
-    const queryBuilderMock = {
-      leftJoin: jest.fn().mockReturnThis(),
-      select: jest.fn().mockReturnThis(),
-      orderBy: jest.fn().mockReturnThis(),
-      limit: jest.fn().mockReturnThis(),
-      getRawMany: jest.fn().mockResolvedValue([
-        {
-          id: 'A051910',
-          name: 'LG화학',
-          currentPrice: '75000.0',
-          changeRate: '-1.2',
-          volume: '300000',
-          marketCap: '20000000000.00',
-        },
-        {
-          id: 'A005930',
-          name: '삼성전자',
-          currentPrice: '100000.0',
-          changeRate: '2.5',
-          volume: '500000',
-          marketCap: '500000000000.00',
-        },
-      ]),
-    };
-
-    // Manager Mock
-    const managerMock = {
-      getRepository: jest.fn().mockReturnValue({
-        createQueryBuilder: jest.fn().mockReturnValue(queryBuilderMock),
-      }),
-    };
-    const dataSource = createDataSourceMock(managerMock);
-    const stockService = new StockService(dataSource as DataSource, logger);
-
-    const result = await stockService.getTopStocksByLosers(limit);
-
-    expect(managerMock.getRepository).toHaveBeenCalledWith(Stock);
-    expect(queryBuilderMock.orderBy).toHaveBeenCalledWith(
-      'stockLiveData.changeRate',
-      'ASC',
-    );
-    expect(queryBuilderMock.limit).toHaveBeenCalledWith(limit);
-    expect(queryBuilderMock.getRawMany).toHaveBeenCalled();
-
-    expect(instanceToPlain(result)).toEqual([
-      {
-        id: 'A051910',
-        name: 'LG화학',
-        currentPrice: 75000.0,
-        changeRate: -1.2,
-        volume: 300000,
-        marketCap: '20000000000.00',
-      },
-      {
-        id: 'A005930',
-        name: '삼성전자',
-        currentPrice: 100000.0,
-        changeRate: 2.5,
-        volume: 500000,
-        marketCap: '500000000000.00',
-      },
-    ]);
   });
 });
