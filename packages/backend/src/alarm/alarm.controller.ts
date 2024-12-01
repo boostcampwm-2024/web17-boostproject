@@ -45,7 +45,7 @@ export class AlarmController {
     description: '등록된 알림을 알림 아이디를 기준으로 찾을 수 있다.',
   })
   @ApiOkResponse({
-    description: '아이디와 동일한 알림 찾음',
+    description: '알림 아이디와 동일한 알림 찾음',
     type: Alarm,
   })
   @ApiParam({
@@ -68,13 +68,13 @@ export class AlarmController {
     description: '아이디와 동일한 알림 업데이트',
     type: Alarm,
   })
-  @UseGuards(SessionGuard)
   @ApiParam({
     name: 'id',
     type: Number,
     description: '알림 아이디',
     example: 1,
   })
+  @UseGuards(SessionGuard)
   async update(
     @Param('alarmId') alarmId: number,
     @Body() updateData: AlarmRequest,
@@ -90,6 +90,12 @@ export class AlarmController {
   @ApiOkResponse({
     description: '아이디와 동일한 알림 업데이트',
     type: Alarm,
+  })
+  @ApiParam({
+    name: 'id',
+    type: Number,
+    description: '알림 아이디',
+    example: 1,
   })
   @UseGuards(SessionGuard)
   async delete(@Param('alarmId') alarmId: number) {
@@ -122,6 +128,12 @@ export class AlarmController {
     description:
       '주식 아이디에 등록되어 있는 알림 중 유저에 해당하는 알림 조회',
     type: [Alarm],
+  })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: '주식 아이디',
+    example: '005930',
   })
   @UseGuards(SessionGuard)
   async getByStockId(@Param('stockId') stockId: string, @GetUser() user: User) {
