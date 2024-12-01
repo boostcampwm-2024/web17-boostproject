@@ -1,10 +1,10 @@
+import { anything, instance, mock, when } from 'ts-mockito';
 import { DataSource, EntityManager } from 'typeorm';
 import { Chat } from '@/chat/domain/chat.entity';
 import { Like } from '@/chat/domain/like.entity';
 import { LikeService } from '@/chat/like.service';
-import { User } from '@/user/domain/user.entity';
-import { anything, instance, mock, when } from 'ts-mockito';
 import { Stock } from '@/stock/domain/stock.entity';
+import { User } from '@/user/domain/user.entity';
 
 function createChat(): Chat {
   return {
