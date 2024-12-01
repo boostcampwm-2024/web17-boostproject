@@ -45,6 +45,15 @@ export class UserService {
     return new UserSearchResult(users);
   }
 
+  async searchOneUserByNicknameAndSubName(nickname: string, subName?: string) {
+    return await this.dataSource.manager.findOne(User, {
+      where: {
+        nickname,
+        subName,
+      },
+    });
+  }
+
   async createSubName(nickname: string) {
     return this.dataSource.transaction(async (manager) => {
       if (!(await this.existsUserByNickname(nickname, manager))) {

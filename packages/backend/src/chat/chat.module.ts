@@ -10,12 +10,14 @@ import { Mention } from '@/chat/domain/mention.entity';
 import { LikeService } from '@/chat/like.service';
 import { MentionService } from '@/chat/mention.service';
 import { StockModule } from '@/stock/stock.module';
+import { UserModule } from '@/user/user.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Chat, Like, Mention]),
     StockModule,
     SessionModule,
+    UserModule,
   ],
   controllers: [ChatController],
   providers: [ChatGateway, ChatService, LikeService, MentionService],

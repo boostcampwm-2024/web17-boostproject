@@ -1,17 +1,16 @@
-import { Transform } from 'class-transformer';
-import { IsInt, IsString, IsBoolean, IsDateString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { Theme } from '@/user/domain/theme';
 
 export class UpdateUserThemeResponse {
-  @IsInt()
-  id: number;
+  @ApiProperty({
+    description: '유저 테마',
+    example: 'light',
+  })
+  theme: Theme;
 
-  @IsString()
-  nickname: string;
-
-  @IsBoolean()
-  isLight: boolean;
-
-  @IsDateString()
-  @Transform(({ value }) => value.toISOString())
+  @ApiProperty({
+    description: '테마 변경 시간',
+    example: new Date(),
+  })
   updatedAt: Date;
 }
