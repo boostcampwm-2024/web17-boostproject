@@ -5,7 +5,7 @@ export class AlarmRequest {
     description: '주식 아이디',
     example: '005930',
   })
-  stock_id: string;
+  stockId: string;
 
   @ApiProperty({
     description: '목표 가격',
