@@ -37,7 +37,7 @@ export const StockInfoCard = ({
         <div className="flex flex-col items-start gap-2 xl:flex-row xl:items-center xl:gap-5">
           <span className="display-bold12 text-dark-gray">현재가</span>
           <span className="display-medium12 text-dark-gray">
-            {currentPrice?.toLocaleString()}
+            {currentPrice?.toLocaleString()}원
           </span>
         </div>
       </section>
