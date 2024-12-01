@@ -1,10 +1,7 @@
 import { Transform } from 'class-transformer';
-import { IsInt, IsString, IsBoolean, IsDateString } from 'class-validator';
+import { IsBoolean, IsDateString, IsString } from 'class-validator';
 
 export class UpdateUserThemeResponse {
-  @IsInt()
-  id: number;
-
   @IsString()
   nickname: string;
 

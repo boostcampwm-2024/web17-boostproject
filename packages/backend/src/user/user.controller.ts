@@ -5,7 +5,6 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  Param,
   Patch,
   Post,
   Query,
@@ -13,9 +12,9 @@ import {
 } from '@nestjs/common';
 import {
   ApiBody,
+  ApiCookieAuth,
   ApiOkResponse,
   ApiOperation,
-  ApiParam,
   ApiQuery,
   ApiResponse,
 } from '@nestjs/swagger';
@@ -85,13 +84,13 @@ export class UserController {
     return { message: '닉네임 변경 완료', date: new Date() };
   }
 
-  @Patch(':id/theme')
+  @Patch('theme')
   @HttpCode(HttpStatus.OK)
+  @ApiCookieAuth()
   @ApiOperation({
     summary: '유저 테마 변경 API',
     description: '유저 테마를 라이트모드인지 다크모드인지 변경합니다.',
   })
-  @ApiParam({ name: 'id', type: Number, description: 'User ID' })
   @ApiBody({
     schema: {
       type: 'object',
@@ -107,35 +106,41 @@ export class UserController {
   })
   @ApiResponse({ status: 200, description: 'User theme updated successfully' })
   @ApiResponse({ status: 400, description: 'isLight property is required' })
-  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiResponse({ status: 403, description: 'Forbidden access to update theme' })
   async updateTheme(
-    @Param('id') id: number,
+    @Req() request: Request,
     @Body('isLight') isLight?: boolean,
   ): Promise<UpdateUserThemeResponse> {
+    if (!request.user) {
+      throw new ForbiddenException('Forbidden access to update theme');
+    }
+    const id = (request.user as User).id;
     const updatedUser = await this.userService.updateUserTheme(id, isLight);
 
     return {
-      id: updatedUser.id!,
-      isLight: updatedUser.isLight!,
-      nickname: updatedUser.nickname!,
-      updatedAt: updatedUser.date!.updatedAt!,
+      isLight: updatedUser.isLight,
+      nickname: updatedUser.nickname,
+      updatedAt: updatedUser.date.updatedAt,
     };
   }
 
-  @Get(':id/theme')
+  @Get('theme')
   @ApiOperation({
     summary: 'Get user theme mode',
     description:
       'Retrieve the current theme mode (light or dark) for a specific user',
   })
-  @ApiParam({ name: 'id', type: Number, description: 'User ID' })
   @ApiResponse({
     status: 200,
     description: 'User theme retrieved successfully',
     schema: { type: 'boolean' },
   })
   @ApiResponse({ status: 404, description: 'User not found' })
-  async getTheme(@Param('id') id: number) {
+  async getTheme(@Req() request: Request) {
+    if (!request.user) {
+      return { isLight: true };
+    }
+    const id = (request.user as User).id;
     const isLight = await this.userService.getUserTheme(id);
     return { isLight };
   }
