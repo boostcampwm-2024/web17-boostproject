@@ -3,6 +3,7 @@ import {
   ConnectedSocket,
   MessageBody,
   OnGatewayConnection,
+  OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -29,10 +30,11 @@ import { MentionService } from '@/chat/mention.service';
 import { WebSocketExceptionFilter } from '@/middlewares/filter/webSocketException.filter';
 import { StockService } from '@/stock/stock.service';
 import { User } from '@/user/domain/user.entity';
+import { UserService } from '@/user/user.service';
 
 @WebSocketGateway({ namespace: '/api/chat/realtime' })
 @UseFilters(WebSocketExceptionFilter)
-export class ChatGateway implements OnGatewayConnection {
+export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   private server: Server;
   private websocketSessionService: WebsocketSessionService;
@@ -43,6 +45,7 @@ export class ChatGateway implements OnGatewayConnection {
     private readonly stockService: StockService,
     private readonly chatService: ChatService,
     private readonly mentionService: MentionService,
+    private readonly UserService: UserService,
     @Inject(MEMORY_STORE) sessionStore: MemoryStore,
   ) {
     this.websocketSessionService = new WebsocketSessionService(sessionStore);
@@ -50,39 +53,24 @@ export class ChatGateway implements OnGatewayConnection {
 
   @UseGuards(WebSocketSessionGuard)
   @SubscribeMessage('chat')
-  async handleConnectStock(
+  async handleConnectChat(
     @MessageBody() message: ChatMessage,
     @ConnectedSocket() client: SessionSocket,
   ) {
-    const { room, content, mention } = message;
-    if (!client.rooms.has(room)) {
-      client.emit('error', 'You are not in the room');
-      this.logger.warn(`client is not in the room ${room}`);
-      return;
+    const { room, content, nickname, subName } = message;
+    if (!this.isClientInRoom(client, room)) return;
+    if (!this.isValidSession(client)) return;
+    const savedChat = await this.saveChat(client.session.id, room, content);
+    if (nickname && subName) {
+      return await this.mentionUser(
+        nickname,
+        subName,
+        savedChat,
+        client.session,
+        room,
+      );
     }
-    if (!client.session || !client.session.id) {
-      client.emit('error', 'Invalid session');
-      this.logger.warn('client session is invalid');
-      return;
-    }
-    const savedChat = await this.chatService.saveChat(client.session.id, {
-      stockId: room,
-      message: content,
-    });
-    if (mention) {
-      await this.mentionService.createMention(savedChat.id, mention);
-      const mentionedSocket = this.users.get(Number(mention));
-      if (mentionedSocket) {
-        const chatResponse = this.toResponse(savedChat, client.session);
-        this.server.to(room).except(mentionedSocket).emit('chat', chatResponse);
-        chatResponse.mentioned = true;
-        this.server.to(mentionedSocket).emit('chat', chatResponse);
-        return;
-      }
-    }
-    this.server
-      .to(room)
-      .emit('chat', this.toResponse(savedChat, client.session));
+    this.broadcastChat(savedChat, room, client.session);
   }
 
   async broadcastLike(response: LikeResponse) {
@@ -108,6 +96,89 @@ export class ChatGateway implements OnGatewayConnection {
       client.emit('error', error.message);
       client.disconnect();
     }
+  }
+
+  async handleDisconnect(client: Socket) {
+    const user =
+      await this.websocketSessionService.getAuthenticatedUser(client);
+    if (user) {
+      this.users.delete(user.id);
+    }
+  }
+
+  private isValidSession(
+    client: SessionSocket,
+  ): client is SessionSocket & { session: User } {
+    if (!client.session || !client.session.id) {
+      client.emit('error', 'Invalid session');
+      this.logger.warn('client session is invalid');
+      return false;
+    }
+    return true;
+  }
+
+  private isClientInRoom(client: SessionSocket, room: string): boolean {
+    if (!client.rooms.has(room)) {
+      client.emit('error', 'You are not in the room');
+      this.logger.warn(`client is not in the room ${room}`);
+      return false;
+    }
+    return true;
+  }
+
+  private async saveChat(userId: number, room: string, content: string) {
+    return await this.chatService.saveChat(userId, {
+      stockId: room,
+      message: content,
+    });
+  }
+
+  private async broadcastMentionChat(
+    chat: Chat,
+    room: string,
+    mentionedSocket: string,
+    client: User,
+  ) {
+    const chatResponse = this.toResponse(chat, client);
+    this.server.to(room).except(mentionedSocket).emit('chat', chatResponse);
+    chatResponse.mentioned = true;
+    this.server.to(mentionedSocket).emit('chat', chatResponse);
+  }
+
+  private async mentionUser(
+    nickname: string,
+    subName: string,
+    savedChat: Chat,
+    client: User,
+    room: string,
+  ) {
+    const mentionedUser = await this.searchMentionedUser(nickname, subName);
+    if (!mentionedUser) {
+      return this.broadcastChat(savedChat, room, client);
+    }
+    await this.mentionService.createMention(savedChat.id, mentionedUser.id);
+    const mentionedSocket = this.users.get(Number(mentionedUser.id));
+    if (mentionedSocket) {
+      return await this.broadcastMentionChat(
+        savedChat,
+        room,
+        mentionedSocket,
+        client,
+      );
+    }
+  }
+
+  private async searchMentionedUser(nickname: string, subName: string) {
+    return await this.UserService.searchOneUserByNicknameAndSubName(
+      nickname,
+      subName,
+    );
+  }
+
+  private broadcastChat(chat: Chat, room: string, client: User) {
+    const chatResponse = this.toResponse(chat, client);
+    this.server.to(room).emit('chat', chatResponse);
+    return;
   }
 
   private async scrollChat(
