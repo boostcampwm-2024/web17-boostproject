@@ -1,9 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { Alarm } from './domain/alarm.entity';
 import { AlarmRequest } from './dto/alarm.request';
 import { PushService } from './push.service';
+import { User } from '@/user/domain/user.entity';
 
 @Injectable()
 export class AlarmService {
@@ -14,12 +19,18 @@ export class AlarmService {
     private readonly pushService: PushService,
   ) {}
 
-  async create(alarmData: Partial<Alarm>): Promise<Alarm> {
+  async create(alarmData: Partial<Alarm>, userId: number): Promise<Alarm> {
     return await this.dataSource.transaction(async (manager) => {
       const repository = manager.getRepository(Alarm);
-      const newAlarm = repository.create(alarmData);
-      const savedAlarm = await repository.save(newAlarm);
-      return savedAlarm;
+      const user = await manager.findOne(User, { where: { id: userId } });
+      if (!user) {
+        throw new ForbiddenException('User not found');
+      }
+      const newAlarm = repository.create({
+        ...alarmData,
+        user,
+      });
+      return await repository.save(newAlarm);
     });
   }
 
@@ -73,7 +84,7 @@ export class AlarmService {
     await this.alarmRepository.delete(id);
   }
 
-  private async sendPushNotification(alarm: Alarm): Promise<void> {
+  async sendPushNotification(alarm: Alarm): Promise<void> {
     const { user, stock, targetPrice, targetVolume } = alarm;
 
     const payload = {

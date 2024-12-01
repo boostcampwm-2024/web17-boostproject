@@ -8,11 +8,13 @@ import {
   Delete,
   UseGuards,
 } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation, ApiParam } from '@nestjs/swagger';
 import { AlarmService } from './alarm.service';
 import { Alarm } from './domain/alarm.entity';
 import { AlarmRequest } from './dto/alarm.request';
 import SessionGuard from '@/auth/session/session.guard';
+import { GetUser } from '@/common/decorator/user.decorator';
+import { User } from '@/user/domain/user.entity';
 
 @Controller('alarm')
 export class AlarmController {
@@ -28,8 +30,13 @@ export class AlarmController {
     type: Alarm,
   })
   @UseGuards(SessionGuard)
-  async create(@Body() alarmRequest: AlarmRequest): Promise<Alarm> {
-    return await this.alarmService.create(alarmRequest);
+  async create(
+    @Body() alarmRequest: AlarmRequest,
+    @GetUser() user: User,
+  ): Promise<Alarm> {
+    const userId = user.id;
+
+    return await this.alarmService.create(alarmRequest, userId);
   }
 
   @Get(':id')
@@ -40,6 +47,12 @@ export class AlarmController {
   @ApiOkResponse({
     description: '아이디와 동일한 알림 찾음',
     type: Alarm,
+  })
+  @ApiParam({
+    name: 'id',
+    type: Number,
+    description: '알림 아이디',
+    example: 1,
   })
   @UseGuards(SessionGuard)
   async findOne(@Param('alarmId') alarmId: number): Promise<Alarm> {
@@ -56,6 +69,12 @@ export class AlarmController {
     type: Alarm,
   })
   @UseGuards(SessionGuard)
+  @ApiParam({
+    name: 'id',
+    type: Number,
+    description: '알림 아이디',
+    example: 1,
+  })
   async update(
     @Param('alarmId') alarmId: number,
     @Body() updateData: AlarmRequest,
