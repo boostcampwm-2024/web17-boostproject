@@ -9,6 +9,7 @@ import {
 } from '@/apis/queries/stock-detail';
 import { Button } from '@/components/ui/button';
 import { Modal } from '@/components/ui/modal';
+import { UserStatus } from '@/constants/chatStatus';
 import { modalMessage, ModalMessage } from '@/constants/modalMessage';
 
 interface StockDetailHeaderProps {
@@ -28,23 +29,24 @@ export const StockDetailHeader = ({
   const navigate = useNavigate();
 
   const [showModal, setShowModal] = useState(false);
-  const [userStatus, setUserStatus] =
-    useState<ModalMessage>('NOT_AUTHENTICATED');
+  const [userStatus, setUserStatus] = useState<ModalMessage>(
+    UserStatus.NOT_AUTHENTICATED,
+  );
 
   useEffect(() => {
     if (loginStatus.message === 'Not Authenticated') {
-      setUserStatus('NOT_AUTHENTICATED');
+      setUserStatus(UserStatus.NOT_AUTHENTICATED);
       return;
     }
 
     setUserStatus(() => {
-      return isOwnerStock ? 'OWNERSHIP' : 'NOT_OWNERSHIP';
+      return isOwnerStock ? UserStatus.OWNERSHIP : UserStatus.NOT_OWNERSHIP;
     });
   }, [isOwnerStock, loginStatus]);
 
   const { mutate: postStockUser } = usePostStockUser({
     onSuccess: () => {
-      setUserStatus('OWNERSHIP');
+      setUserStatus(UserStatus.OWNERSHIP);
       queryClient.invalidateQueries({ queryKey: ['loginStatus'] });
       queryClient.invalidateQueries({ queryKey: ['stockOwnership', stockId] });
     },
@@ -52,7 +54,7 @@ export const StockDetailHeader = ({
 
   const { mutate: deleteStockUser } = useDeleteStockUser({
     onSuccess: () => {
-      setUserStatus('NOT_OWNERSHIP');
+      setUserStatus(UserStatus.NOT_OWNERSHIP);
       queryClient.invalidateQueries({ queryKey: ['loginStatus'] });
       queryClient.invalidateQueries({ queryKey: ['stockOwnership', stockId] });
     },
