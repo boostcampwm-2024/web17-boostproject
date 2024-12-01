@@ -14,7 +14,7 @@ export class PushController {
   @Post('subscribe')
   @ApiOperation({
     summary: '알림 서비스 초기 설정',
-    description: '유저가 생성될 때 알림을 받을 수 있게 초기설정한다.',
+    description: '유저가 로그인할 때 알림을 받을 수 있게 초기설정한다.',
   })
   @ApiResponse({
     status: 201,

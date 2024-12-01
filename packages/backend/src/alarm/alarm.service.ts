@@ -8,6 +8,7 @@ import { DataSource, Repository } from 'typeorm';
 import { Alarm } from './domain/alarm.entity';
 import { PushSubscription } from './domain/subscription.entity';
 import { AlarmRequest } from './dto/alarm.request';
+import { AlarmResponse } from './dto/alarm.response';
 import { PushService } from './push.service';
 import { User } from '@/user/domain/user.entity';
 
@@ -20,12 +21,12 @@ export class AlarmService {
     private readonly pushService: PushService,
   ) {}
 
-  async create(alarmData: AlarmRequest, userId: number): Promise<Alarm> {
+  async create(alarmData: AlarmRequest, userId: number) {
     return await this.dataSource.transaction(async (manager) => {
       const repository = manager.getRepository(Alarm);
       const user = await manager.findOne(User, { where: { id: userId } });
       if (!user) {
-        throw new ForbiddenException('User not found');
+        throw new ForbiddenException('유저를 찾을 수 없습니다.');
       }
 
       const newAlarm = repository.create({
@@ -33,15 +34,17 @@ export class AlarmService {
         user,
         stock: { id: alarmData.stockId },
       });
-      return await repository.save(newAlarm);
+      const result = await repository.save(newAlarm);
+      return new AlarmResponse(result);
     });
   }
 
-  async findByUserId(userId: number): Promise<Alarm[]> {
-    return await this.alarmRepository.find({
+  async findByUserId(userId: number) {
+    const result = await this.alarmRepository.find({
       where: { user: { id: userId } },
       relations: ['user', 'stock'],
     });
+    return result.map((val) => new AlarmResponse(val));
   }
 
   async findByStockId(stockId: string, userId: number): Promise<Alarm[]> {
@@ -56,7 +59,7 @@ export class AlarmService {
       where: { id },
       relations: ['user', 'stock'],
     });
-    if (result) return result;
+    if (result) return new AlarmResponse(result);
     else throw new NotFoundException('등록된 알림을 찾을 수 없습니다.');
   }
 
@@ -71,7 +74,7 @@ export class AlarmService {
       where: { id },
       relations: ['user', 'stock'],
     });
-    if (updatedAlarm) return updatedAlarm;
+    if (updatedAlarm) return new AlarmResponse(updatedAlarm);
     else
       throw new NotFoundException(
         `${id} : 업데이트할 알림을 찾을 수 없습니다.`,

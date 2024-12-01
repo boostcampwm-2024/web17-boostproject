@@ -12,6 +12,7 @@ import { ApiOkResponse, ApiOperation, ApiParam } from '@nestjs/swagger';
 import { AlarmService } from './alarm.service';
 import { Alarm } from './domain/alarm.entity';
 import { AlarmRequest } from './dto/alarm.request';
+import { AlarmResponse } from './dto/alarm.response';
 import SessionGuard from '@/auth/session/session.guard';
 import { GetUser } from '@/common/decorator/user.decorator';
 import { User } from '@/user/domain/user.entity';
@@ -33,7 +34,7 @@ export class AlarmController {
   async create(
     @Body() alarmRequest: AlarmRequest,
     @GetUser() user: User,
-  ): Promise<Alarm> {
+  ): Promise<AlarmResponse> {
     const userId = user.id;
 
     return await this.alarmService.create(alarmRequest, userId);
@@ -55,7 +56,7 @@ export class AlarmController {
     example: 1,
   })
   @UseGuards(SessionGuard)
-  async findOne(@Param('alarmId') alarmId: number): Promise<Alarm> {
+  async findOne(@Param('alarmId') alarmId: number): Promise<AlarmResponse> {
     return this.alarmService.findOne(alarmId);
   }
 
@@ -78,7 +79,7 @@ export class AlarmController {
   async update(
     @Param('alarmId') alarmId: number,
     @Body() updateData: AlarmRequest,
-  ): Promise<Alarm> {
+  ): Promise<AlarmResponse> {
     return this.alarmService.update(alarmId, updateData);
   }
 

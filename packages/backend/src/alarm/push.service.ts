@@ -59,7 +59,6 @@ export class PushService {
 
     await this.dataSource.manager.save(newSubscription);
     const result: SubscribeResponse = {
-      userId,
       message: 'Push subscription success',
     };
     return result;
