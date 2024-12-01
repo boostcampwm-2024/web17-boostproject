@@ -1,4 +1,4 @@
-import { Injectable, Inject, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { Logger } from 'winston';
 import { StockDetail } from './domain/stockDetail.entity';
@@ -24,7 +24,7 @@ export class StockDetailService {
         );
       }
 
-      const result = await this.datasource.manager
+      const result = await manager
         .getRepository(StockDetail)
         .createQueryBuilder('stockDetail')
         .leftJoinAndSelect('stockDetail.stock', 'stock')
