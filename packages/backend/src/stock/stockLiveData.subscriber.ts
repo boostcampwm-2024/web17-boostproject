@@ -9,7 +9,6 @@ import {
 import { Logger } from 'winston';
 import { StockLiveData } from './domain/stockLiveData.entity';
 import { StockGateway } from './stock.gateway';
-import { AlarmService } from '@/alarm/alarm.service';
 
 @Injectable()
 @EventSubscriber()
@@ -19,7 +18,6 @@ export class StockLiveDataSubscriber
   constructor(
     private readonly datasource: DataSource,
     private readonly stockGateway: StockGateway,
-    private readonly alarmService: AlarmService,
     @Inject('winston') private readonly logger: Logger,
   ) {
     this.datasource.subscribers.push(this);
@@ -41,7 +39,9 @@ export class StockLiveDataSubscriber
 
       this.stockGateway.onUpdateStock(stockId, price, change, volume);
     } catch (error) {
-      this.logger.warn(`Failed to handle afterInsert event : ${error}`);
+      this.logger.warn(
+        `Failed to handle stock live data afterInsert event : ${error}`,
+      );
     }
   }
 
@@ -65,7 +65,9 @@ export class StockLiveDataSubscriber
         );
       }
     } catch (error) {
-      this.logger.warn(`Failed to handle afterUpdate event : ${error}`);
+      this.logger.warn(
+        `Failed to handle stock live data afterUpdate event : ${error}`,
+      );
     }
   }
 
