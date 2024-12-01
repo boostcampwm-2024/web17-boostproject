@@ -8,7 +8,7 @@ interface ChatMessageProps {
   likeCount: number;
   liked: boolean;
   onClick: MouseEventHandler<SVGElement>;
-  writer: string;
+  writer: boolean;
 }
 
 export const ChatMessage = ({
@@ -20,11 +20,11 @@ export const ChatMessage = ({
   writer,
 }: ChatMessageProps) => {
   return (
-    <div className={cn('flex flex-col', writer === name ? 'items-end' : '')}>
+    <div className={cn('flex flex-col', writer ? 'items-end' : '')}>
       <p
         className={cn(
           'display-bold14 text-dark-gray w-fit',
-          writer === name && 'text-orange',
+          writer && 'text-orange',
         )}
       >
         {name}
@@ -32,10 +32,7 @@ export const ChatMessage = ({
       <div className="flex flex-col gap-2">
         <p className="display-medium14 text-dark-gray">{contents}</p>
         <div
-          className={cn(
-            'flex items-center gap-1',
-            writer === name ? 'justify-end' : '',
-          )}
+          className={cn('flex items-center gap-1', writer ? 'justify-end' : '')}
         >
           <Like
             className={cn(

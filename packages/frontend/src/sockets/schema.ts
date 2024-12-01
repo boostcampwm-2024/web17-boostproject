@@ -9,6 +9,7 @@ export const ChatDataSchema = z.object({
   liked: z.boolean(),
   nickname: z.string(),
   mentioned: z.boolean(),
+  subName: z.string(),
 });
 
 export type ChatData = z.infer<typeof ChatDataSchema>;

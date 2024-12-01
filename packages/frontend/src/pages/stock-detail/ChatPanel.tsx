@@ -27,8 +27,7 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
   const { stockId = '' } = useParams();
   const [chatData, setChatData] = useState<ChatData[]>([]);
   const { mutate } = usePostChatLike();
-
-  const { message, nickname } = loginStatus;
+  const { message, nickname, subName } = loginStatus;
 
   const socket = useMemo(() => socketChat({ stockId }), [stockId]);
 
@@ -134,7 +133,7 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
                 contents={chat.message}
                 likeCount={chat.likeCount}
                 liked={chat.liked}
-                writer={nickname || ''}
+                writer={chat.subName === subName}
                 onClick={() => handleLikeClick(chat.id)}
               />
             ))}
