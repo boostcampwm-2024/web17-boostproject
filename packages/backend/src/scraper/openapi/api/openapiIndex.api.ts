@@ -20,6 +20,7 @@ import {
 import { TR_ID } from '../type/openapiUtil.type';
 import { getOpenApi, getTodayDate } from '../util/openapiUtil.api';
 import { OpenapiLiveData } from './openapiLiveData.api';
+import { Json, OpenapiQueue } from '@/scraper/openapi/queue/openapi.queue';
 import { Stock } from '@/stock/domain/stock.entity';
 import { StockLiveData } from '@/stock/domain/stockLiveData.entity';
 
@@ -43,6 +44,7 @@ export class OpenapiIndex extends Openapi {
     protected readonly datasource: DataSource,
     protected readonly config: OpenapiTokenApi,
     private readonly openapiLiveData: OpenapiLiveData,
+    private readonly openapiQueue: OpenapiQueue,
   ) {
     const interval = 1000;
     super(datasource, config, interval);
@@ -53,52 +55,8 @@ export class OpenapiIndex extends Openapi {
   @Cron('* 9-14 * * 1-5')
   @Cron('0-30 15 * * 1-5')
   async start() {
-    await this.step((await this.config.configs()).length - 1);
-  }
-
-  private initKospiData() {
-    const name = '코스피';
-    const initStockData = new Stock();
-    initStockData.id = IndexRateStockId.kospi;
-    initStockData.groupCode = IndexRateGroupCodeStock.kospi;
-    initStockData.name = name;
-    return initStockData;
-  }
-
-  private initKosdaqData() {
-    const name = '코스닥';
-    const initStockData = new Stock();
-    initStockData.id = IndexRateStockId.kosdaq;
-    initStockData.groupCode = IndexRateGroupCodeStock.kosdaq;
-    initStockData.name = name;
-    return initStockData;
-  }
-
-  private initUsdKrwData() {
-    const name = '원 달러 환율';
-    const initStockData = new Stock();
-    initStockData.id = IndexRateStockId.usd_krw;
-    initStockData.groupCode = IndexRateGroupCodeStock.usd_krw;
-    initStockData.name = name;
-    return initStockData;
-  }
-
-  private async initData() {
-    await this.saveStock(this.initKosdaqData());
-    await this.saveStock(this.initKospiData());
-    await this.saveStock(this.initUsdKrwData());
-  }
-
-  private async saveStock(data: Stock) {
-    const target = Stock;
-
-    await this.datasource.manager
-      .getRepository(target)
-      .createQueryBuilder()
-      .insert()
-      .values(data)
-      .orUpdate(['is_trading'], ['id'])
-      .execute();
+    // await this.step((await this.config.configs()).length - 1);
+    await this.getIndexData();
   }
 
   protected async step(idx: number) {
@@ -167,32 +125,6 @@ export class OpenapiIndex extends Openapi {
     }
   }
 
-  private convertResToStockIndex(res: StockIndex, stockId: string) {
-    const result = new StockLiveData();
-    result.currentPrice = parseFloat(res.bstp_nmix_prpr);
-    result.changeRate = parseFloat(res.bstp_nmix_prdy_ctrt);
-    result.high = parseFloat(res.bstp_nmix_hgpr);
-    result.low = parseFloat(res.bstp_nmix_lwpr);
-    result.open = parseFloat(res.bstp_nmix_oprc);
-    result.volume = parseInt(res.acml_vol);
-    result.updatedAt = new Date();
-    result.stock = { id: stockId } as Stock;
-    return result;
-  }
-
-  private convertResToExchangeRate(res: ExchangeRate, stockId: string) {
-    const result = new StockLiveData();
-    result.currentPrice = parseFloat(res.ovrs_nmix_prpr);
-    result.changeRate = parseFloat(res.prdy_ctrt);
-    result.high = parseFloat(res.ovrs_prod_hgpr);
-    result.low = parseFloat(res.ovrs_prod_lwpr);
-    result.open = parseFloat(res.ovrs_prod_oprc);
-    result.volume = parseInt(res.acml_vol);
-    result.updatedAt = new Date();
-    result.stock = { id: stockId } as Stock;
-    return result;
-  }
-
   protected convertResToEntity(
     res: StockIndex | ExchangeRate,
     stockId: string,
@@ -229,5 +161,110 @@ export class OpenapiIndex extends Openapi {
       fid_input_date_2: endDate,
       fid_period_div_code: period,
     };
+  }
+
+  private async getIndexData() {
+    this.openapiQueue.enqueue({
+      url: this.INDEX_URL,
+      query: this.indexQuery(this.KOSPI_ID),
+      trId: this.TR_ID_INDEX,
+      callback: this.getIndexDataCallback(this.KOSPI_ID, true),
+    });
+    this.openapiQueue.enqueue({
+      url: this.INDEX_URL,
+      query: this.indexQuery(this.KOSDAQ_ID),
+      trId: this.TR_ID_INDEX,
+      callback: this.getIndexDataCallback(this.KOSDAQ_ID, true),
+    });
+    this.openapiQueue.enqueue({
+      url: this.INDEX_URL,
+      query: this.indexQuery(this.USD_KRW_RATE),
+      trId: this.TR_ID_INDEX,
+      callback: this.getIndexDataCallback(this.USD_KRW_RATE, true),
+    });
+  }
+
+  private getIndexDataCallback(stockId: string, isStock: boolean) {
+    return async (data: Json) => {
+      if (!data.output) return;
+      if (isStock && isStockIndex(data.output)) {
+        const indexData = this.convertResToEntity(data.output, stockId);
+        await this.save(indexData);
+      } else if (isExchangeRate(data.output)) {
+        const rateData = this.convertResToEntity(data.output, stockId);
+        await this.save(rateData);
+      }
+    };
+  }
+
+  private initKospiData() {
+    const name = '코스피';
+    const initStockData = new Stock();
+    initStockData.id = IndexRateStockId.kospi;
+    initStockData.groupCode = IndexRateGroupCodeStock.kospi;
+    initStockData.name = name;
+    return initStockData;
+  }
+
+  private initKosdaqData() {
+    const name = '코스닥';
+    const initStockData = new Stock();
+    initStockData.id = IndexRateStockId.kosdaq;
+    initStockData.groupCode = IndexRateGroupCodeStock.kosdaq;
+    initStockData.name = name;
+    return initStockData;
+  }
+
+  private initUsdKrwData() {
+    const name = '원 달러 환율';
+    const initStockData = new Stock();
+    initStockData.id = IndexRateStockId.usd_krw;
+    initStockData.groupCode = IndexRateGroupCodeStock.usd_krw;
+    initStockData.name = name;
+    return initStockData;
+  }
+
+  private async initData() {
+    await this.saveStock(this.initKosdaqData());
+    await this.saveStock(this.initKospiData());
+    await this.saveStock(this.initUsdKrwData());
+  }
+
+  private async saveStock(data: Stock) {
+    const target = Stock;
+
+    await this.datasource.manager
+      .getRepository(target)
+      .createQueryBuilder()
+      .insert()
+      .values(data)
+      .orUpdate(['is_trading'], ['id'])
+      .execute();
+  }
+
+  private convertResToStockIndex(res: StockIndex, stockId: string) {
+    const result = new StockLiveData();
+    result.currentPrice = parseFloat(res.bstp_nmix_prpr);
+    result.changeRate = parseFloat(res.bstp_nmix_prdy_ctrt);
+    result.high = parseFloat(res.bstp_nmix_hgpr);
+    result.low = parseFloat(res.bstp_nmix_lwpr);
+    result.open = parseFloat(res.bstp_nmix_oprc);
+    result.volume = parseInt(res.acml_vol);
+    result.updatedAt = new Date();
+    result.stock = { id: stockId } as Stock;
+    return result;
+  }
+
+  private convertResToExchangeRate(res: ExchangeRate, stockId: string) {
+    const result = new StockLiveData();
+    result.currentPrice = parseFloat(res.ovrs_nmix_prpr);
+    result.changeRate = parseFloat(res.prdy_ctrt);
+    result.high = parseFloat(res.ovrs_prod_hgpr);
+    result.low = parseFloat(res.ovrs_prod_lwpr);
+    result.open = parseFloat(res.ovrs_prod_oprc);
+    result.volume = parseInt(res.acml_vol);
+    result.updatedAt = new Date();
+    result.stock = { id: stockId } as Stock;
+    return result;
   }
 }
