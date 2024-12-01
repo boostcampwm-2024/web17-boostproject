@@ -1,4 +1,3 @@
-import type { ChartTheme } from '@/styles/theme';
 import { createChart, type IChartApi } from 'lightweight-charts';
 import { useEffect, useRef, RefObject } from 'react';
 import {
@@ -6,6 +5,8 @@ import {
   StockTimeSeriesResponse,
   VolumeSchema,
 } from '@/apis/queries/stocks';
+import { useGetUserTheme } from '@/apis/queries/user';
+import { darkTheme, lightTheme } from '@/styles/theme';
 import {
   createCandlestickOptions,
   createChartOptions,
@@ -15,7 +16,6 @@ import { getHistogramColorData } from '@/utils/getHistogramColorData';
 
 interface UseChartProps {
   containerRef: RefObject<HTMLDivElement>;
-  theme: ChartTheme;
   priceData: StockTimeSeriesResponse['priceDtoList'];
   volumeData: StockTimeSeriesResponse['volumeDtoList'];
 }
@@ -35,11 +35,13 @@ const TransformVolumeData = VolumeSchema.transform((item) => ({
 
 export const useChart = ({
   containerRef,
-  theme,
   priceData,
   volumeData,
 }: UseChartProps) => {
   const chart = useRef<IChartApi>();
+
+  const { data } = useGetUserTheme();
+  const graphTheme = data?.theme === 'light' ? lightTheme : darkTheme;
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -47,7 +49,7 @@ export const useChart = ({
     chart.current = createChart(containerRef.current, {
       width: containerRef.current.clientWidth,
       height: containerRef.current.clientHeight,
-      ...createChartOptions(theme),
+      ...createChartOptions(graphTheme),
       handleScroll: {
         mouseWheel: false,
         pressedMouseMove: false,
@@ -74,7 +76,7 @@ export const useChart = ({
     volumeSeries.setData(histogramData);
 
     const candleSeries = chart.current.addCandlestickSeries(
-      createCandlestickOptions(theme),
+      createCandlestickOptions(graphTheme),
     );
     const transformedPriceData = priceData.map((item) =>
       TransformPriceData.parse(item),
@@ -84,7 +86,7 @@ export const useChart = ({
     return () => {
       chart.current?.remove();
     };
-  }, [containerRef, theme, priceData, volumeData]);
+  }, [containerRef, graphTheme, priceData, volumeData]);
 
   return chart;
 };
