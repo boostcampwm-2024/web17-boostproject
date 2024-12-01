@@ -15,12 +15,13 @@ import {
   getTodayDate,
 } from '../util/openapiUtil.api';
 import { OpenapiTokenApi } from './openapiToken.api';
+import { Json, OpenapiQueue } from '@/scraper/openapi/queue/openapi.queue';
 import { Stock } from '@/stock/domain/stock.entity';
 import {
-  StockData,
   StockDaily,
-  StockWeekly,
+  StockData,
   StockMonthly,
+  StockWeekly,
   StockYearly,
 } from '@/stock/domain/stockData.entity';
 
@@ -47,8 +48,11 @@ export class OpenapiPeriodData {
   constructor(
     private readonly datasource: DataSource,
     private readonly openApiToken: OpenapiTokenApi,
+    private readonly openApiQueue: OpenapiQueue,
     @Inject('winston') private readonly logger: Logger,
-  ) {}
+  ) {
+    // this.getItemChartPriceCheck();
+  }
 
   @Cron('0 1 * * 1-5')
   async getItemChartPriceCheck() {
@@ -58,22 +62,73 @@ export class OpenapiPeriodData {
         isTrading: true,
       },
     });
-
     await this.getChartData(stocks, 'Y');
     await this.getChartData(stocks, 'M');
     await this.getChartData(stocks, 'W');
     await this.getChartData(stocks, 'D');
   }
 
-  private async getChartData(chunk: Stock[], period: Period) {
-    const baseTime = INTERVALS;
-    const entity = DATE_TO_ENTITY[period];
+  /**
+   * 월, 년의 경우 마지막 데이터를 업데이트 하는 형식으로 변경해야됨
+   */
+  private getLiveDataSaveCallback(
+    stockId: string,
+    entity: typeof StockData,
+    period: Period,
+    end: string,
+  ) {
+    return async (data: Json) => {
+      if (!data.output2 || !Array.isArray(data.output2)) return;
+      // 이거 빈값들어오는 케이스 있음(빈값 필터링 안하면 요청이 매우 많아짐)
+      data.output2 = data.output2.filter(
+        (data) => Object.keys(data).length !== 0,
+      );
+      if (data.output2.length === 0) return;
+      await this.saveChartData(entity, stockId, data.output2 as ChartData[]);
+      const { endDate, startDate } = this.updateDates(end, period);
+      const query = this.getItemChartPriceQuery(
+        stockId,
+        startDate,
+        endDate,
+        period,
+      );
+      this.openApiQueue.enqueue({
+        url: this.url,
+        query,
+        trId: TR_IDS.ITEM_CHART_PRICE,
+        callback: this.getLiveDataSaveCallback(
+          stockId,
+          entity,
+          period,
+          endDate,
+        ),
+      });
+    };
+  }
 
-    let time = 0;
+  private async getChartData(chunk: Stock[], period: Period) {
+    const entity = DATE_TO_ENTITY[period];
     for (const stock of chunk) {
-      time += baseTime;
-      setTimeout(() => this.processStockData(stock, period, entity), time);
+      this.processStockData2(stock, period, entity);
     }
+  }
+
+  private async processStockData2(
+    stock: Stock,
+    period: Period,
+    entity: typeof StockData,
+  ) {
+    const end = getTodayDate();
+    const start = getPreviousDate(end, DATE_TO_MONTH[period]);
+
+    const query = this.getItemChartPriceQuery(stock.id!, start, end, period);
+
+    this.openApiQueue.enqueue({
+      url: this.url,
+      query,
+      trId: TR_IDS.ITEM_CHART_PRICE,
+      callback: this.getLiveDataSaveCallback(stock.id!, entity, period, end),
+    });
   }
 
   private async processStockData(
