@@ -48,5 +48,6 @@ export function isChatScrollQuery(object: unknown): object is ChatScrollQuery {
 export interface ChatMessage {
   room: string;
   content: string;
-  mention?: number;
+  nickname: string;
+  subName: string;
 }

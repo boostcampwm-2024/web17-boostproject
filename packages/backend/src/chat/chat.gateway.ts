@@ -29,6 +29,7 @@ import { MentionService } from '@/chat/mention.service';
 import { WebSocketExceptionFilter } from '@/middlewares/filter/webSocketException.filter';
 import { StockService } from '@/stock/stock.service';
 import { User } from '@/user/domain/user.entity';
+import { UserService } from '@/user/user.service';
 
 @WebSocketGateway({ namespace: '/api/chat/realtime' })
 @UseFilters(WebSocketExceptionFilter)
@@ -43,6 +44,7 @@ export class ChatGateway implements OnGatewayConnection {
     private readonly stockService: StockService,
     private readonly chatService: ChatService,
     private readonly mentionService: MentionService,
+    private readonly UserService: UserService,
     @Inject(MEMORY_STORE) sessionStore: MemoryStore,
   ) {
     this.websocketSessionService = new WebsocketSessionService(sessionStore);
@@ -54,7 +56,7 @@ export class ChatGateway implements OnGatewayConnection {
     @MessageBody() message: ChatMessage,
     @ConnectedSocket() client: SessionSocket,
   ) {
-    const { room, content, mention } = message;
+    const { room, content, nickname, subName } = message;
     if (!client.rooms.has(room)) {
       client.emit('error', 'You are not in the room');
       this.logger.warn(`client is not in the room ${room}`);
@@ -69,9 +71,19 @@ export class ChatGateway implements OnGatewayConnection {
       stockId: room,
       message: content,
     });
-    if (mention) {
-      await this.mentionService.createMention(savedChat.id, mention);
-      const mentionedSocket = this.users.get(Number(mention));
+    if (nickname && subName) {
+      const mentionedUser =
+        await this.UserService.searchOneUserByNicknameAndSubName(
+          nickname,
+          subName,
+        );
+      if (!mentionedUser) {
+        const chatResponse = this.toResponse(savedChat, client.session);
+        this.server.to(room).emit('chat', chatResponse);
+        return;
+      }
+      await this.mentionService.createMention(savedChat.id, mentionedUser.id);
+      const mentionedSocket = this.users.get(Number(mentionedUser.id));
       if (mentionedSocket) {
         const chatResponse = this.toResponse(savedChat, client.session);
         this.server.to(room).except(mentionedSocket).emit('chat', chatResponse);
