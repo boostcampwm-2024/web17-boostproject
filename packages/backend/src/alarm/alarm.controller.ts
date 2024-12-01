@@ -97,17 +97,19 @@ export class AlarmController {
     return { message: '알림이 정상적으로 삭제되었습니다.' };
   }
 
-  @Get('user/:userId')
+  @Get('user')
   @ApiOperation({
     summary: '사용자별 알림 조회',
-    description: '사용자 아이디를 기준으로 알림을 조회한다.',
+    description: '사용자 아이디를 기준으로 모든 알림을 조회한다.',
   })
   @ApiOkResponse({
-    description: '사용자에게 등록되어 있는 알림 조회',
+    description: '사용자에게 등록되어 있는 모든 알림 조회',
     type: [Alarm],
   })
   @UseGuards(SessionGuard)
-  async getByUserId(@Param('userId') userId: number) {
+  async getByUserId(@GetUser() user: User) {
+    const userId = user.id;
+
     return await this.alarmService.findByUserId(userId);
   }
 
@@ -117,11 +119,14 @@ export class AlarmController {
     description: '주식 아이디를 기준으로 알림을 조회한다.',
   })
   @ApiOkResponse({
-    description: '주식 아이디에 등록되어 있는 알림 조회',
+    description:
+      '주식 아이디에 등록되어 있는 알림 중 유저에 해당하는 알림 조회',
     type: [Alarm],
   })
   @UseGuards(SessionGuard)
-  async getByStockId(@Param('stockId') stockId: string) {
-    return await this.alarmService.findByStockId(stockId);
+  async getByStockId(@Param('stockId') stockId: string, @GetUser() user: User) {
+    const userId = user.id;
+
+    return await this.alarmService.findByStockId(stockId, userId);
   }
 }

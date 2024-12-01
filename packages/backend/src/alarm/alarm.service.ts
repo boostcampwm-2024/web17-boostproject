@@ -41,9 +41,9 @@ export class AlarmService {
     });
   }
 
-  async findByStockId(stockId: string): Promise<Alarm[]> {
+  async findByStockId(stockId: string, userId: number): Promise<Alarm[]> {
     return await this.alarmRepository.find({
-      where: { stock: { id: stockId } },
+      where: { stock: { id: stockId }, user: { id: userId } },
       relations: ['user', 'stock'],
     });
   }
