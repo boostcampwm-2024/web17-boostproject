@@ -4,8 +4,15 @@ import { TextArea } from './components';
 import { ChatMessage } from './components/ChatMessage';
 import { GetLoginStatus } from '@/apis/queries/auth/schema';
 import { usePostChatLike } from '@/apis/queries/chat';
+import { useGetChatList } from '@/apis/queries/chat/useGetChatList';
 import DownArrow from '@/assets/down-arrow.svg?react';
-import { ChatPlaceholder, chatPlaceholder } from '@/constants/chatPlaceholder';
+import { Loader } from '@/components/ui/loader';
+import {
+  type ChatStatus,
+  chatPlaceholder,
+  UserStatus,
+} from '@/constants/chatStatus';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { socketChat } from '@/sockets/config';
 import {
   ChatDataResponseSchema,
@@ -26,6 +33,9 @@ interface ChatPanelProps {
 export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
   const { stockId = '' } = useParams();
   const [chatData, setChatData] = useState<ChatData[]>([]);
+  const [latestChatId, setLatestChatId] = useState<number>();
+  const [hasMore, setHasMore] = useState(false);
+
   const { mutate } = usePostChatLike();
   const { message, nickname, subName } = loginStatus;
 
@@ -33,12 +43,12 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
 
   const { isConnected } = useWebsocket(socket);
 
-  const userStatus: ChatPlaceholder = useMemo(() => {
+  const userStatus: ChatStatus = useMemo(() => {
     if (message === 'Not Authenticated') {
-      return 'NOT_AUTHENTICATED';
+      return UserStatus.NOT_AUTHENTICATED;
     }
 
-    return isOwnerStock ? 'OWNERSHIP' : 'NOT_OWNERSHIP';
+    return isOwnerStock ? UserStatus.OWNERSHIP : UserStatus.NOT_OWNERSHIP;
   }, [message, isOwnerStock]);
 
   const handleChat = useCallback(
@@ -47,6 +57,7 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
         const validatedChatData = ChatDataResponseSchema.parse(message);
         if (validatedChatData) {
           setChatData((prev) => [...message.chats, ...prev]);
+          setHasMore(message.hasMore);
         }
         return;
       }
@@ -103,13 +114,33 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
     alert('주식 소유자만 가능합니다.');
   };
 
+  const { fetchNextPage, data, status, isFetchingNextPage } = useGetChatList({
+    stockId,
+    latestChatId,
+  });
+
+  const fetchMoreChats = () => {
+    setLatestChatId(chatData[chatData.length - 1]?.id);
+    fetchNextPage();
+
+    if (status === 'success') {
+      setChatData((prev) => [...prev, ...data.pages[0].chats]);
+      setHasMore(data.pages[0].hasMore);
+    }
+  };
+
+  const { ref } = useInfiniteScroll({
+    onIntersect: fetchMoreChats,
+    hasMore,
+  });
+
   return (
     <article className="flex min-w-80 flex-col gap-5 rounded-md bg-white p-7 shadow">
       <h2 className="display-bold20 text-center font-bold">채팅</h2>
       <TextArea
         onSend={handleSendMessage}
         disabled={!isOwnerStock}
-        placeholder={chatPlaceholder[userStatus].message}
+        placeholder={chatPlaceholder[userStatus]}
       />
       <div className="border-light-gray display-medium12 text-dark-gray flex items-center justify-between gap-1 border-b-2 pb-2">
         <span>{isConnected ? '🟢 접속 중' : '❌ 연결 끊김'}</span>
@@ -124,7 +155,7 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
           isOwnerStock ? 'overflow-auto' : 'overflow-hidden',
         )}
       >
-        {chatData ? (
+        {chatData.length ? (
           <>
             {chatData.slice(0, 3).map((chat) => (
               <ChatMessage
@@ -138,9 +169,9 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
               />
             ))}
             {chatData.slice(3).map((chat, index) => (
-              <div className="relative" key={chat.id}>
+              <div className="relative" key={`${chat.id}-${index}`}>
                 {!isOwnerStock && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/5 text-center backdrop-blur-sm">
+                  <div className="absolute inset-0 flex items-center justify-center text-center backdrop-blur-sm">
                     {index === 0 && (
                       <p>
                         주식 소유자만 <br />
@@ -154,7 +185,9 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
                   contents={isOwnerStock ? chat.message : '로그인 후 이용 가능'}
                   likeCount={chat.likeCount}
                   liked={chat.liked}
-                  writer={nickname || ''}
+                  writer={
+                    chat.nickname === nickname && chat.subName === subName
+                  }
                   onClick={() => handleLikeClick(chat.id)}
                 />
               </div>
@@ -163,6 +196,7 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
         ) : (
           <p className="text-center">채팅이 없어요.</p>
         )}
+        {isFetchingNextPage ? <Loader className="w-44" /> : <div ref={ref} />}
       </section>
     </article>
   );
