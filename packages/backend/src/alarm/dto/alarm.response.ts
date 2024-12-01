@@ -50,4 +50,7 @@ export class AlarmSuccessResponse {
     example: 'success',
   })
   message: string;
+  constructor(message: string) {
+    this.message = message;
+  }
 }
