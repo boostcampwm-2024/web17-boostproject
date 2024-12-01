@@ -167,6 +167,8 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
                 contents={chat.message}
                 likeCount={chat.likeCount}
                 liked={chat.liked}
+                subName={chat.subName}
+                createdAt={chat.createdAt}
                 writer={checkWriter(chat)}
                 onClick={() => handleLikeClick(chat.id)}
               />
@@ -188,6 +190,8 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
                   contents={isOwnerStock ? chat.message : '로그인 후 이용 가능'}
                   likeCount={chat.likeCount}
                   liked={chat.liked}
+                  subName={chat.subName}
+                  createdAt={chat.createdAt}
                   writer={checkWriter(chat)}
                   onClick={() => handleLikeClick(chat.id)}
                 />
