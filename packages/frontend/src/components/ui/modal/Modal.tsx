@@ -12,7 +12,7 @@ export const Modal = ({ title, children, onClose, onConfirm }: ModalProps) => {
   const ref = useOutsideClick(onClose);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/5">
       <div
         className="relative flex flex-col items-center justify-center gap-8 rounded-md bg-white p-10 px-24 shadow"
         ref={ref}

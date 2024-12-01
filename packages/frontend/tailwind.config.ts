@@ -4,7 +4,11 @@ const config: Config = {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   darkMode: 'selector',
   theme: {
-    extend: {},
+    extend: {
+      backgroundColor: {
+        'black/5': 'rgba(0, 0, 0, 0.4)',
+      },
+    },
     colors: {
       'extra-light-gray': 'var(--extra-light-gray)',
       'light-gray': 'var(--light-gray)',
