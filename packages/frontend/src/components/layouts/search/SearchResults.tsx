@@ -1,8 +1,7 @@
-import Lottie from 'react-lottie-player';
 import { Link } from 'react-router-dom';
 import { usePostStockView } from '@/apis/queries/stock-detail';
 import { type SearchResultsResponse } from '@/apis/queries/stocks';
-import loading from '@/components/lottie/loading-animation.json';
+import { Loader } from '@/components/ui/loader';
 
 interface SearchResultsProps {
   data?: SearchResultsResponse;
@@ -18,17 +17,10 @@ export const SearchResults = ({
   const { mutate } = usePostStockView();
 
   if (isLoading) {
-    return (
-      <Lottie
-        className="fill-orange h-52 w-52"
-        animationData={loading}
-        play
-        speed={3}
-      />
-    );
+    return <Loader className="h-52 w-52" />;
   }
 
-  if (isError) {
+  if (isError || data?.searchResults.length === 0) {
     return <p className="text-dark-gray">검색 결과가 없어요.</p>;
   }
 
