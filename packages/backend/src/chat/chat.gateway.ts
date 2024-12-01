@@ -3,6 +3,7 @@ import {
   ConnectedSocket,
   MessageBody,
   OnGatewayConnection,
+  OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -33,7 +34,7 @@ import { UserService } from '@/user/user.service';
 
 @WebSocketGateway({ namespace: '/api/chat/realtime' })
 @UseFilters(WebSocketExceptionFilter)
-export class ChatGateway implements OnGatewayConnection {
+export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   private server: Server;
   private websocketSessionService: WebsocketSessionService;
@@ -119,6 +120,14 @@ export class ChatGateway implements OnGatewayConnection {
       this.logger.warn(error.message);
       client.emit('error', error.message);
       client.disconnect();
+    }
+  }
+
+  async handleDisconnect(client: Socket) {
+    const user =
+      await this.websocketSessionService.getAuthenticatedUser(client);
+    if (user) {
+      this.users.delete(user.id);
     }
   }
 
