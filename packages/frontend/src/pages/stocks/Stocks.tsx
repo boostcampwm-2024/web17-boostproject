@@ -26,6 +26,7 @@ export const Stocks = () => {
           <div className="grid w-fit grid-cols-3 gap-5">
             {stockIndex?.map((info) => (
               <StockIndexCard
+                key={info.name}
                 name={info.name}
                 currentPrice={info.currentPrice}
                 changeRate={info.changeRate}
