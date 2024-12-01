@@ -22,7 +22,11 @@ import { Request } from 'express';
 import { UpdateUserThemeResponse } from './dto/userTheme.response';
 import { UserService } from './user.service';
 import { User } from '@/user/domain/user.entity';
-import { ChangeNicknameRequest } from '@/user/dto/user.request';
+import {
+  ChangeNicknameRequest,
+  ChangeThemeRequest,
+  UserThemeResponse,
+} from '@/user/dto/user.request';
 
 @Controller('user')
 export class UserController {
@@ -92,34 +96,28 @@ export class UserController {
     description: '유저 테마를 라이트모드인지 다크모드인지 변경합니다.',
   })
   @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        isLight: {
-          type: 'boolean',
-          description: 'true: light mode, false: dark mode',
-          example: true,
-        },
-      },
-      required: ['isLight'],
-    },
+    type: ChangeThemeRequest,
   })
-  @ApiResponse({ status: 200, description: 'User theme updated successfully' })
   @ApiResponse({ status: 400, description: 'isLight property is required' })
   @ApiResponse({ status: 403, description: 'Forbidden access to update theme' })
+  @ApiResponse({
+    status: 200,
+    description: 'User theme updated successfully',
+    type: UpdateUserThemeResponse,
+  })
   async updateTheme(
     @Req() request: Request,
-    @Body('isLight') isLight?: boolean,
+    @Body() changeThemeRequest: ChangeThemeRequest,
   ): Promise<UpdateUserThemeResponse> {
     if (!request.user) {
       throw new ForbiddenException('Forbidden access to update theme');
     }
     const id = (request.user as User).id;
+    const isLight = changeThemeRequest.theme === 'light';
     const updatedUser = await this.userService.updateUserTheme(id, isLight);
 
     return {
-      isLight: updatedUser.isLight,
-      nickname: updatedUser.nickname,
+      theme: updatedUser.isLight ? 'light' : 'dark',
       updatedAt: updatedUser.date.updatedAt,
     };
   }
@@ -133,15 +131,15 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: 'User theme retrieved successfully',
-    schema: { type: 'boolean' },
+    type: UserThemeResponse,
   })
   @ApiResponse({ status: 404, description: 'User not found' })
-  async getTheme(@Req() request: Request) {
+  async getTheme(@Req() request: Request): Promise<UserThemeResponse> {
     if (!request.user) {
-      return { isLight: true };
+      return { theme: 'light' };
     }
     const id = (request.user as User).id;
     const isLight = await this.userService.getUserTheme(id);
-    return { isLight };
+    return { theme: isLight ? 'light' : 'dark' };
   }
 }
