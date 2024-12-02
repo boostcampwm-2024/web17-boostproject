@@ -13,5 +13,6 @@ export const useGetUserTheme = () => {
     queryKey: ['userTheme'],
     queryFn: getUserTheme,
     staleTime: 1000 * 60 * 5,
+    select: (data) => data.theme,
   });
 };

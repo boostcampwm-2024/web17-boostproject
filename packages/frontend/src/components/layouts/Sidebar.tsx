@@ -22,16 +22,16 @@ export const Sidebar = () => {
     alarm: false,
   });
 
-  const { data } = useGetUserTheme();
+  const { data: theme } = useGetUserTheme();
   const { mutate } = usePatchUserTheme();
 
   useEffect(() => {
-    if (data?.theme === 'light') {
+    if (theme === 'light') {
       document.body.classList.remove('dark');
       return;
     }
     document.body.classList.add('dark');
-  }, [data]);
+  }, [theme]);
 
   const ref = useOutsideClick(() => {
     setShowTabs({ search: false, alarm: false });
@@ -57,11 +57,10 @@ export const Sidebar = () => {
     }
 
     if (item.text === '다크모드') {
-      if (data?.theme === 'dark') {
+      if (theme === 'dark') {
         mutate({ theme: 'light' });
       }
-
-      if (data?.theme === 'light') {
+      if (theme === 'light') {
         mutate({ theme: 'dark' });
       }
     }
