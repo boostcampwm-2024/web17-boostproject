@@ -64,9 +64,9 @@ export class OpenapiPeriodData {
       },
     });
     await this.getChartData(stocks, 'Y');
-    //await this.getChartData(stocks, 'M');
-    //await this.getChartData(stocks, 'W');
-    //await this.getChartData(stocks, 'D');
+    await this.getChartData(stocks, 'M');
+    await this.getChartData(stocks, 'W');
+    await this.getChartData(stocks, 'D');
   }
 
   /**
@@ -74,7 +74,6 @@ export class OpenapiPeriodData {
    */
   private getLiveDataSaveCallback(stockId: string, period: Period) {
     return async (data: Json) => {
-      console.log(stockId);
       if (!data.output2 || !Array.isArray(data.output2)) return;
       // 이거 빈값들어오는 케이스 있음(빈값 필터링 안하면 요청이 매우 많아짐)
       data.output2 = data.output2.filter(
@@ -195,8 +194,10 @@ export class OpenapiPeriodData {
         .limit(1)
         .orderBy('stock.start_time', 'DESC')
         .execute();
-      await manager.update(entity, pastOneData.id, stock);
-      return;
+      if (pastOneData.length !== 0) {
+        await manager.update(entity, pastOneData.id, stock);
+        return;
+      }
     }
     if (!(await this.existsChartData(stock, entity))) {
       await manager.save(entity, stock);
@@ -230,7 +231,6 @@ export class OpenapiPeriodData {
         continue;
       }
       const stockPeriod = this.convertObjectToStockData(item, stockId);
-      console.log(stockPeriod);
       await this.insertChartData(stockPeriod, period);
     }
   }
