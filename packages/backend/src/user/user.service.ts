@@ -70,6 +70,10 @@ export class UserService {
     });
   }
 
+  async findUserById(id: number) {
+    return await this.dataSource.manager.findOne(User, { where: { id } });
+  }
+
   async getUserInfo(id: number) {
     const user = await this.dataSource.manager.findOne(User, { where: { id } });
     if (!user) {
