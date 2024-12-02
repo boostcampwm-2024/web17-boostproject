@@ -7,6 +7,7 @@ const config: Config = {
     extend: {
       backgroundColor: {
         'black/4': 'rgba(0, 0, 0, 0.4)',
+        'white/4': 'rgba(255,255,255,0.4)',
       },
     },
     colors: {
