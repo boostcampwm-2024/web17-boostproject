@@ -15,6 +15,7 @@ export const GetStockSchema = z.object({
   volume: z.number(),
   marketCap: z.string(),
   rank: z.number(),
+  isRising: z.boolean(),
 });
 
 export const GetStockListResponseSchema = z.object({
