@@ -13,6 +13,8 @@ import { LiveData } from '@/scraper/openapi/liveData.service';
 
 @WebSocketGateway({
   namespace: '/api/stock/realtime',
+  pingInterval: 5000,
+  pingTimeout: 5000,
 })
 @Injectable()
 export class StockGateway {
@@ -33,11 +35,19 @@ export class StockGateway {
     client.join(stockId);
 
     await this.mutex.runExclusive(async () => {
-      const connectedSockets = await this.server.in(stockId).fetchSockets();
+      const connectedSockets = await this.server.to(stockId).fetchSockets();
 
       if (connectedSockets.length > 0 && !this.liveData.isSubscribe(stockId)) {
         await this.liveData.subscribe(stockId);
         this.logger.info(`${stockId} is subscribed`);
+      }
+    });
+
+    client.on('disconnecting', () => {
+      client.rooms.delete(client.id);
+      const stocks = Array.from(client.rooms.values());
+      for (const stock of stocks) {
+        this.handleDisconnectStock(stock);
       }
     });
 
@@ -47,12 +57,7 @@ export class StockGateway {
     });
   }
 
-  async handleDisconnectStock(
-    @MessageBody() stockId: string,
-    @ConnectedSocket() client: Socket,
-  ) {
-    client.leave(stockId);
-
+  async handleDisconnectStock(stockId: string) {
     await this.mutex.runExclusive(async () => {
       const connectedSockets = await this.server.in(stockId).fetchSockets();
 
@@ -60,11 +65,6 @@ export class StockGateway {
         await this.liveData.unsubscribe(stockId);
         this.logger.info(`${stockId} is unsubscribed`);
       }
-    });
-
-    client.emit('disconnectionSuccess', {
-      message: `Successfully disconnected to stock room: ${stockId}`,
-      stockId,
     });
   }
 
