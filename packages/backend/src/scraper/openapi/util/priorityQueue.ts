@@ -34,6 +34,10 @@ export class PriorityQueue<T> {
     return this.heap.length === 0;
   }
 
+  clear() {
+    this.heap = [];
+  }
+
   private getParentIndex(index: number): number {
     return Math.floor((index - 1) / 2);
   }
