@@ -164,6 +164,7 @@ export class OpenapiIndex extends Openapi {
   }
 
   private async getIndexData() {
+    const date = getTodayDate();
     this.openapiQueue.enqueue({
       url: this.INDEX_URL,
       query: this.indexQuery(this.KOSPI_ID),
@@ -177,21 +178,20 @@ export class OpenapiIndex extends Openapi {
       callback: this.getIndexDataCallback(this.KOSDAQ_ID, true),
     });
     this.openapiQueue.enqueue({
-      url: this.INDEX_URL,
-      query: this.indexQuery(this.USD_KRW_RATE),
-      trId: this.TR_ID_INDEX,
+      url: this.RATE_URL,
+      query: this.rateQuery(date, date, this.USD_KRW_RATE),
+      trId: this.TR_ID_RATE,
       callback: this.getIndexDataCallback(this.USD_KRW_RATE, true),
     });
   }
 
   private getIndexDataCallback(stockId: string, isStock: boolean) {
     return async (data: Json) => {
-      if (!data.output) return;
       if (isStock && isStockIndex(data.output)) {
         const indexData = this.convertResToEntity(data.output, stockId);
         await this.save(indexData);
-      } else if (isExchangeRate(data.output)) {
-        const rateData = this.convertResToEntity(data.output, stockId);
+      } else if (isExchangeRate(data.output1)) {
+        const rateData = this.convertResToExchangeRate(data.output1, stockId);
         await this.save(rateData);
       }
     };
