@@ -9,6 +9,7 @@ import {
   Period,
 } from '../type/openapiPeriodData.type';
 import { TR_IDS } from '../type/openapiUtil.type';
+import { NewDate } from '../util/newDate.util';
 import {
   getOpenApi,
   getPreviousDate,
@@ -30,14 +31,14 @@ const DATE_TO_ENTITY = {
   W: StockWeekly,
   M: StockMonthly,
   Y: StockYearly,
-};
+} as const;
 
 const DATE_TO_MONTH = {
   D: 1,
   W: 6,
   M: 24,
   Y: 120,
-};
+} as const;
 
 const INTERVALS = 10000;
 
@@ -51,7 +52,7 @@ export class OpenapiPeriodData {
     private readonly openApiQueue: OpenapiQueue,
     @Inject('winston') private readonly logger: Logger,
   ) {
-    // this.getItemChartPriceCheck();
+    this.getItemChartPriceCheck();
   }
 
   @Cron('0 1 * * 1-5')
@@ -63,33 +64,34 @@ export class OpenapiPeriodData {
       },
     });
     await this.getChartData(stocks, 'Y');
-    await this.getChartData(stocks, 'M');
-    await this.getChartData(stocks, 'W');
-    await this.getChartData(stocks, 'D');
+    //await this.getChartData(stocks, 'M');
+    //await this.getChartData(stocks, 'W');
+    //await this.getChartData(stocks, 'D');
   }
 
   /**
    * 월, 년의 경우 마지막 데이터를 업데이트 하는 형식으로 변경해야됨
    */
-  private getLiveDataSaveCallback(stockId: string, entity: typeof StockData) {
+  private getLiveDataSaveCallback(stockId: string, period: Period) {
     return async (data: Json) => {
+      console.log(stockId);
       if (!data.output2 || !Array.isArray(data.output2)) return;
       // 이거 빈값들어오는 케이스 있음(빈값 필터링 안하면 요청이 매우 많아짐)
       data.output2 = data.output2.filter(
         (data) => Object.keys(data).length !== 0,
       );
       if (data.output2.length === 0) return;
-      await this.saveChartData(entity, stockId, data.output2 as ChartData[]);
+      await this.saveChartData(period, stockId, data.output2 as ChartData[]);
     };
   }
 
   /* eslint-disable-next-line max-lines-per-function */
   private getLiveDataSaveUntilEndCallback(
     stockId: string,
-    entity: typeof StockData,
     period: Period,
     end: string,
   ) {
+    /* eslint-disable-next-line max-lines-per-function */
     return async (data: Json) => {
       if (!data.output2 || !Array.isArray(data.output2)) return;
       // 이거 빈값들어오는 케이스 있음(빈값 필터링 안하면 요청이 매우 많아짐)
@@ -97,7 +99,7 @@ export class OpenapiPeriodData {
         (data) => Object.keys(data).length !== 0,
       );
       if (data.output2.length === 0) return;
-      await this.saveChartData(entity, stockId, data.output2 as ChartData[]);
+      await this.saveChartData(period, stockId, data.output2 as ChartData[]);
       const { endDate, startDate } = this.updateDates(end, period);
       const query = this.getItemChartPriceQuery(
         stockId,
@@ -111,7 +113,6 @@ export class OpenapiPeriodData {
         trId: TR_IDS.ITEM_CHART_PRICE,
         callback: this.getLiveDataSaveUntilEndCallback(
           stockId,
-          entity,
           period,
           endDate,
         ),
@@ -120,17 +121,12 @@ export class OpenapiPeriodData {
   }
 
   private async getChartData(chunk: Stock[], period: Period) {
-    const entity = DATE_TO_ENTITY[period];
     for (const stock of chunk) {
-      this.processStockData(stock, period, entity);
+      await this.processStockData(stock, period);
     }
   }
 
-  private async processStockData(
-    stock: Stock,
-    period: Period,
-    entity: typeof StockData,
-  ) {
+  private async processStockData(stock: Stock, period: Period) {
     const end = getTodayDate();
     const start = getPreviousDate(end, DATE_TO_MONTH[period]);
 
@@ -140,7 +136,7 @@ export class OpenapiPeriodData {
       url: this.url,
       query,
       trId: TR_IDS.ITEM_CHART_PRICE,
-      callback: this.getLiveDataSaveCallback(stock.id!, entity),
+      callback: this.getLiveDataSaveCallback(stock.id!, period),
     });
   }
 
@@ -178,8 +174,30 @@ export class OpenapiPeriodData {
     });
   }
 
-  private async insertChartData(stock: StockData, entity: typeof StockData) {
+  private isSamePeriod(stock: StockData, period: Period) {
+    return (
+      (period === 'W' && new NewDate(stock.startTime).isSameWeek(new Date())) ||
+      (period === 'M' &&
+        new NewDate(stock.startTime).isSameMonth(new Date())) ||
+      (period === 'Y' && new NewDate(stock.startTime).isSameYear(new Date()))
+    );
+  }
+
+  private async insertChartData(stock: StockData, period: Period) {
+    const entity = DATE_TO_ENTITY[period];
     const manager = this.datasource.manager;
+
+    //로직 변경
+    if (this.isSamePeriod(stock, period)) {
+      const pastOneData = await manager
+        .createQueryBuilder()
+        .from(entity, 'stock')
+        .limit(1)
+        .orderBy('stock.start_time', 'DESC')
+        .execute();
+      await manager.update(entity, pastOneData.id, stock);
+      return;
+    }
     if (!(await this.existsChartData(stock, entity))) {
       await manager.save(entity, stock);
     }
@@ -203,7 +221,7 @@ export class OpenapiPeriodData {
   }
 
   private async saveChartData(
-    entity: typeof StockData,
+    period: Period,
     stockId: string,
     data: ChartData[],
   ) {
@@ -212,7 +230,8 @@ export class OpenapiPeriodData {
         continue;
       }
       const stockPeriod = this.convertObjectToStockData(item, stockId);
-      await this.insertChartData(stockPeriod, entity);
+      console.log(stockPeriod);
+      await this.insertChartData(stockPeriod, period);
     }
   }
 
