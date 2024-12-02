@@ -122,11 +122,11 @@ export class OpenapiPeriodData {
   private async getChartData(chunk: Stock[], period: Period) {
     const entity = DATE_TO_ENTITY[period];
     for (const stock of chunk) {
-      this.processStockData2(stock, period, entity);
+      this.processStockData(stock, period, entity);
     }
   }
 
-  private async processStockData2(
+  private async processStockData(
     stock: Stock,
     period: Period,
     entity: typeof StockData,
