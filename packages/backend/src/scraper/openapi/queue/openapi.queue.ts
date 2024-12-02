@@ -85,20 +85,24 @@ export class OpenapiConsumer {
     for (let i = 0; i < this.REQUEST_COUNT_PER_SECOND; i++) {
       const node = this.queue.dequeue();
       if (!node) {
-        return (this.isProcessing = false);
+        return;
       }
-      try {
-        const data = await getOpenApi(
-          node.url,
-          (await this.openapiTokenApi.configs())[index],
-          node.query,
-          node.trId,
-        );
-        await node.callback(data);
-      } catch (error) {
-        this.logger.warn(error);
-        this.queue.enqueue(node, 1);
-      }
+      this.processRequest(node, index);
+    }
+  }
+
+  private async processRequest(node: OpenapiQueueNodeValue, index: number) {
+    try {
+      const data = await getOpenApi(
+        node.url,
+        (await this.openapiTokenApi.configs())[index],
+        node.query,
+        node.trId,
+      );
+      await node.callback(data);
+    } catch (error) {
+      this.logger.warn(error);
+      this.queue.enqueue(node, 1);
     }
   }
 }
