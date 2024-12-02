@@ -4,6 +4,17 @@ export class NewDate extends Date {
     else super();
   }
 
+  //eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static isNewDate(date: any): date is NewDate {
+    return (
+      date &&
+      typeof date.dateToNewDate === 'function' &&
+      typeof date.isSameWeek === 'function' &&
+      typeof date.isSameMonth === 'function' &&
+      typeof date.isSameYear === 'function'
+    );
+  }
+
   private resetTime(): NewDate {
     this.setHours(0, 0, 0, 0);
     return this;
@@ -28,19 +39,39 @@ export class NewDate extends Date {
     return this.getWeek() === 1;
   }
 
-  isSameWeek(dateToCompare: NewDate): boolean {
-    let sameWeek =
-      this.getWeek() === dateToCompare.getWeek() &&
-      this.getFullYear() === dateToCompare.getFullYear();
+  dateToNewDate(date: Date): NewDate {
+    return new NewDate(date);
+  }
 
-    if (
-      !sameWeek &&
-      this.isLastWeekOfTheYear() &&
-      dateToCompare.isFirstWeekOfTheYear()
-    ) {
-      sameWeek = this.getDay() < dateToCompare.getDay();
+  isSameWeek(dateToCompare: NewDate | Date): boolean {
+    const toNewDate = (date: Date | NewDate): date is NewDate => {
+      return (
+        date instanceof NewDate ||
+        ((date = this.dateToNewDate(date)), NewDate.isNewDate(date))
+      );
+    };
+
+    if (toNewDate(dateToCompare)) {
+      let sameWeek =
+        this.getWeek() === dateToCompare.getWeek() &&
+        this.getFullYear() === dateToCompare.getFullYear();
+
+      if (
+        !sameWeek &&
+        this.isLastWeekOfTheYear() &&
+        dateToCompare.isFirstWeekOfTheYear()
+      ) {
+        sameWeek = this.getDay() < dateToCompare.getDay();
+      }
     }
+    return false;
+  }
 
-    return sameWeek;
+  isSameMonth(dateToCompare: NewDate | Date): boolean {
+    return this.getMonth() === dateToCompare.getMonth();
+  }
+
+  isSameYear(dateToCompare: NewDate | Date): boolean {
+    return this.getFullYear() === dateToCompare.getFullYear();
   }
 }
