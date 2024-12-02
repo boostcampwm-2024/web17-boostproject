@@ -1,6 +1,7 @@
 export class NewDate extends Date {
-  constructor(date: Date) {
-    super(date);
+  constructor(date?: Date) {
+    if (date) super(date);
+    else super();
   }
 
   private resetTime(): NewDate {
