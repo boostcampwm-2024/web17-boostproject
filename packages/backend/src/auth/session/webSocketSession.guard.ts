@@ -10,25 +10,31 @@ import { Socket } from 'socket.io';
 import { websocketCookieParse } from '@/auth/session/cookieParser';
 import { MEMORY_STORE } from '@/auth/session.module';
 import { User } from '@/user/domain/user.entity';
+import { UserService } from '@/user/user.service';
 
 export interface SessionSocket extends Socket {
   session?: User;
 }
 
 export interface PassportSession extends SessionData {
-  passport: { user: User };
+  passport: { user: number };
 }
 
 @Injectable()
 export class WebSocketSessionGuard implements CanActivate {
   constructor(
     @Inject(MEMORY_STORE) private readonly sessionStore: MemoryStore,
+    private readonly userService: UserService,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const socket: SessionSocket = context.switchToHttp().getRequest();
     const cookieValue = websocketCookieParse(socket);
     const session = await this.getSession(cookieValue);
-    socket.session = session.passport.user;
+    const user = await this.userService.findUserById(session.passport.user);
+    if (!user) {
+      return false;
+    }
+    socket.session = user;
     return true;
   }
 
