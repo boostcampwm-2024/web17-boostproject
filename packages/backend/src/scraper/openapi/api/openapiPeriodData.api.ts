@@ -71,7 +71,20 @@ export class OpenapiPeriodData {
   /**
    * 월, 년의 경우 마지막 데이터를 업데이트 하는 형식으로 변경해야됨
    */
-  private getLiveDataSaveCallback(
+  private getLiveDataSaveCallback(stockId: string, entity: typeof StockData) {
+    return async (data: Json) => {
+      if (!data.output2 || !Array.isArray(data.output2)) return;
+      // 이거 빈값들어오는 케이스 있음(빈값 필터링 안하면 요청이 매우 많아짐)
+      data.output2 = data.output2.filter(
+        (data) => Object.keys(data).length !== 0,
+      );
+      if (data.output2.length === 0) return;
+      await this.saveChartData(entity, stockId, data.output2 as ChartData[]);
+    };
+  }
+
+  /* eslint-disable-next-line max-lines-per-function */
+  private getLiveDataSaveUntilEndCallback(
     stockId: string,
     entity: typeof StockData,
     period: Period,
@@ -96,7 +109,7 @@ export class OpenapiPeriodData {
         url: this.url,
         query,
         trId: TR_IDS.ITEM_CHART_PRICE,
-        callback: this.getLiveDataSaveCallback(
+        callback: this.getLiveDataSaveUntilEndCallback(
           stockId,
           entity,
           period,
@@ -127,48 +140,8 @@ export class OpenapiPeriodData {
       url: this.url,
       query,
       trId: TR_IDS.ITEM_CHART_PRICE,
-      callback: this.getLiveDataSaveCallback(stock.id!, entity, period, end),
+      callback: this.getLiveDataSaveCallback(stock.id!, entity),
     });
-  }
-
-  private async processStockData(
-    stock: Stock,
-    period: Period,
-    entity: typeof StockData,
-  ) {
-    const stockPeriod = new StockData();
-    let configIdx = 0;
-    let end = getTodayDate();
-    let start = getPreviousDate(end, DATE_TO_MONTH[period]);
-    let isFail = false;
-
-    while (!isFail) {
-      await new Promise((resolve) => setTimeout(resolve, INTERVALS / 10));
-      configIdx = (configIdx + 1) % (await this.openApiToken.configs()).length;
-      this.setStockPeriod(stockPeriod, stock.id!, end);
-
-      const query = this.getItemChartPriceQuery(stock.id!, start, end, period);
-
-      const output = await this.fetchChartData(query, configIdx);
-
-      if (output) {
-        await this.saveChartData(entity, stock.id!, output);
-        ({ endDate: end, startDate: start } = this.updateDates(end, period));
-      } else isFail = true;
-    }
-  }
-
-  private setStockPeriod(
-    stockPeriod: StockData,
-    stockId: string,
-    endDate: string,
-  ): void {
-    stockPeriod.stock = { id: stockId } as Stock;
-    stockPeriod.startTime = new Date(
-      parseInt(endDate.slice(0, 4)),
-      parseInt(endDate.slice(4, 6)) - 1,
-      parseInt(endDate.slice(6, 8)),
-    );
   }
 
   private async fetchChartData(query: ItemChartPriceQuery, configIdx: number) {
