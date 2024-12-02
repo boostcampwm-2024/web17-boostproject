@@ -7,6 +7,7 @@ import { PriorityQueue } from '@/scraper/openapi/util/priorityQueue';
 
 export interface Json {
   output: Record<string, string> | Record<string, string>[];
+  output1: Record<string, string>[];
   output2: Record<string, string>[];
 }
 
