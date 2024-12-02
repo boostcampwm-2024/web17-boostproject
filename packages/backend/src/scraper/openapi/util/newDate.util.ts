@@ -44,6 +44,8 @@ export class NewDate extends Date {
   }
 
   isSameWeek(dateToCompare: NewDate | Date): boolean {
+    if (!(dateToCompare instanceof NewDate))
+      dateToCompare = new NewDate(dateToCompare);
     const toNewDate = (date: Date | NewDate): date is NewDate => {
       return (
         date instanceof NewDate ||
