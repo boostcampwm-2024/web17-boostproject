@@ -39,54 +39,64 @@ export const useChart = ({
   volumeData,
 }: UseChartProps) => {
   const chart = useRef<IChartApi>();
+  const candleSeries = useRef<ReturnType<IChartApi['addCandlestickSeries']>>();
+  const volumeSeries = useRef<ReturnType<IChartApi['addHistogramSeries']>>();
+  const containerInstance = containerRef.current;
 
-  const { data } = useGetUserTheme();
-  const graphTheme = data?.theme === 'light' ? lightTheme : darkTheme;
+  const { data: theme } = useGetUserTheme();
+  const graphTheme = theme === 'light' ? lightTheme : darkTheme;
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerInstance) return;
 
-    chart.current = createChart(containerRef.current, {
-      width: containerRef.current.clientWidth,
-      height: containerRef.current.clientHeight,
+    chart.current = createChart(containerInstance, {
+      width: containerInstance.clientWidth,
+      height: containerInstance.clientHeight,
       ...createChartOptions(graphTheme),
-      handleScroll: {
-        mouseWheel: false,
-        pressedMouseMove: false,
-        horzTouchDrag: false,
-        vertTouchDrag: false,
-      },
-      handleScale: false,
     });
 
-    const volumeSeries = chart.current.addHistogramSeries(
+    volumeSeries.current = chart.current.addHistogramSeries(
       createVolumeOptions(),
     );
-    volumeSeries.priceScale().applyOptions({
+    volumeSeries.current.priceScale().applyOptions({
       scaleMargins: {
         top: 0.93,
         bottom: 0,
       },
     });
 
-    const transformedVolumeData = volumeData.map((item) =>
-      TransformVolumeData.parse(item),
-    );
-    const histogramData = getHistogramColorData(transformedVolumeData);
-    volumeSeries.setData(histogramData);
-
-    const candleSeries = chart.current.addCandlestickSeries(
+    candleSeries.current = chart.current.addCandlestickSeries(
       createCandlestickOptions(graphTheme),
     );
-    const transformedPriceData = priceData.map((item) =>
-      TransformPriceData.parse(item),
-    );
-    candleSeries.setData(transformedPriceData);
 
     return () => {
       chart.current?.remove();
     };
-  }, [containerRef, graphTheme, priceData, volumeData]);
+  }, [containerInstance]);
+
+  useEffect(() => {
+    if (!chart.current || !candleSeries.current) return;
+
+    chart.current.applyOptions(createChartOptions(graphTheme));
+    candleSeries.current.applyOptions(createCandlestickOptions(graphTheme));
+  }, [graphTheme]);
+
+  useEffect(() => {
+    if (!candleSeries.current || !volumeSeries.current) return;
+
+    const transformedVolumeData = volumeData.map((item) =>
+      TransformVolumeData.parse(item),
+    );
+
+    const transformedPriceData = priceData.map((item) =>
+      TransformPriceData.parse(item),
+    );
+
+    const histogramData = getHistogramColorData(transformedVolumeData);
+
+    candleSeries.current.setData(transformedPriceData);
+    volumeSeries.current.setData(histogramData);
+  }, [priceData, volumeData]);
 
   return chart;
 };
