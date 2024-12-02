@@ -36,6 +36,7 @@ export class LiveData {
         this.configSubscribeSize.push(0);
       }
       this.connect();
+      setTimeout(() => this.subscribe('005930'), 3000);
     });
   }
 
