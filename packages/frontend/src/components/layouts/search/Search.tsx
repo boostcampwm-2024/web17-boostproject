@@ -26,6 +26,7 @@ export const Search = ({ className }: SearchProps) => {
       </p>
       <form className="mb-8 flex gap-4" onSubmit={handleSubmit}>
         <Input
+          className="bg-white"
           placeholder="검색어"
           onChange={(e) => setStockName(e.target.value)}
           autoFocus
