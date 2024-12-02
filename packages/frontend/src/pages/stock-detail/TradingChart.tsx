@@ -8,13 +8,8 @@ import {
   useGetStocksPriceSeries,
 } from '@/apis/queries/stocks';
 import { TIME_UNIT } from '@/constants/timeUnit';
-import { ChartTheme, lightTheme } from '@/styles/theme';
 
-interface TradingChartProps {
-  theme?: ChartTheme;
-}
-
-export const TradingChart = ({ theme = lightTheme }: TradingChartProps) => {
+export const TradingChart = () => {
   const { stockId } = useParams();
   const [timeunit, setTimeunit] =
     useState<StockTimeSeriesRequest['timeunit']>('day');
@@ -29,7 +24,6 @@ export const TradingChart = ({ theme = lightTheme }: TradingChartProps) => {
     priceData: data?.priceDtoList ?? [],
     volumeData: data?.volumeDtoList ?? [],
     containerRef,
-    theme,
   });
 
   useChartResize({ containerRef, chart });

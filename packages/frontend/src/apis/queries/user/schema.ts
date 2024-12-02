@@ -34,8 +34,17 @@ export const PostUserNicknameSchema = z.object({
 
 export type PostUserNickname = z.infer<typeof PostUserNicknameSchema>;
 
-export const GetUserThemeSchema = z.object({
+export const UserThemeSchema = z.object({
   theme: z.enum(['light', 'dark']),
 });
 
-export type GetUserTheme = z.infer<typeof GetUserThemeSchema>;
+export type GetUserTheme = z.infer<typeof UserThemeSchema>;
+
+export type PatchUserThemeRequest = z.infer<typeof UserThemeSchema>;
+
+export const PatchUserThemeSchema = z.object({
+  theme: z.enum(['light', 'dark']),
+  updatedAt: z.string().datetime(),
+});
+
+export type PatchUserTheme = z.infer<typeof PatchUserThemeSchema>;

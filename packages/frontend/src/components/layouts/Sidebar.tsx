@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logoCharacter from '/logoCharacter.png';
 import logoTitle from '/logoTitle.png';
 import { Alarm } from './alarm';
 import { MenuList } from './MenuList';
 import { Search } from './search';
+import { useGetUserTheme } from '@/apis/queries/user/useGetUserTheme';
+import { usePatchUserTheme } from '@/apis/queries/user/usePatchUserTheme';
 import { BOTTOM_MENU_ITEMS, TOP_MENU_ITEMS } from '@/constants/menuItems';
 import { useOutsideClick } from '@/hooks/useOutsideClick';
 import { type MenuSection } from '@/types/menu';
@@ -19,6 +21,17 @@ export const Sidebar = () => {
     search: false,
     alarm: false,
   });
+
+  const { data } = useGetUserTheme();
+  const { mutate } = usePatchUserTheme();
+
+  useEffect(() => {
+    if (data?.theme === 'light') {
+      document.body.classList.remove('dark');
+      return;
+    }
+    document.body.classList.add('dark');
+  }, [data]);
 
   const ref = useOutsideClick(() => {
     setShowTabs({ search: false, alarm: false });
@@ -44,7 +57,13 @@ export const Sidebar = () => {
     }
 
     if (item.text === '다크모드') {
-      document.body.classList.toggle('dark');
+      if (data?.theme === 'dark') {
+        mutate({ theme: 'light' });
+      }
+
+      if (data?.theme === 'light') {
+        mutate({ theme: 'dark' });
+      }
     }
   };
 
