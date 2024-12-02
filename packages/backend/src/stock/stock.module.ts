@@ -27,6 +27,8 @@ import { StockRateIndexService } from './stockRateIndex.service';
 import { AlarmModule } from '@/alarm/alarm.module';
 import { Alarm } from '@/alarm/domain/alarm.entity';
 import { ScraperModule } from '@/scraper/scraper.module';
+import { StockDataCache } from '@/stock/cache/stockData.cache';
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -45,6 +47,7 @@ import { ScraperModule } from '@/scraper/scraper.module';
   ],
   controllers: [StockController],
   providers: [
+    StockDataCache,
     StockService,
     StockGateway,
     StockLiveDataSubscriber,

@@ -3,8 +3,8 @@ import { plainToInstance } from 'class-transformer';
 import { DataSource, EntityManager } from 'typeorm';
 import { Stock } from './domain/stock.entity';
 import {
-  StockMinutely,
   StockDaily,
+  StockMinutely,
   StockMonthly,
   StockWeekly,
   StockYearly,
@@ -14,6 +14,8 @@ import {
   StockDataResponse,
   VolumeDto,
 } from './dto/stockData.response';
+import { StockDataCache } from '@/stock/cache/stockData.cache';
+import { getFormattedDate } from '@/utils/date';
 
 type StockData = {
   id: number;
@@ -30,9 +32,11 @@ type StockData = {
 @Injectable()
 export class StockDataService {
   protected readonly PAGE_SIZE = 100;
-  protected readonly DEFAULT_COLOR = 'red';
 
-  constructor(private readonly dataSource: DataSource) {}
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly stockDataCache: StockDataCache,
+  ) {}
 
   async getPaginated(
     entity: new () => StockData,
@@ -42,6 +46,12 @@ export class StockDataService {
     return await this.dataSource.manager.transaction(async (manager) => {
       if (!(await this.isStockExist(stock_id, manager)))
         throw new NotFoundException('stock not found');
+      const date = lastStartTime ? new Date(lastStartTime) : new Date();
+      const cacheKey = `${entity.name}_${stock_id}_${getFormattedDate(date)}`;
+      const cachedData = this.stockDataCache.get(cacheKey);
+      if (cachedData) {
+        return cachedData;
+      }
 
       const queryBuilder = manager
         .createQueryBuilder(entity, 'entity')
@@ -60,8 +70,13 @@ export class StockDataService {
       if (hasMore) resultList.pop();
       const priceDtoList = this.mapResultListToPriceDtoList(resultList);
       const volumeDtoList = this.mapResultListToVolumeDtoList(resultList);
-
-      return this.createStockDataResponse(priceDtoList, volumeDtoList, hasMore);
+      const response = this.createStockDataResponse(
+        priceDtoList,
+        volumeDtoList,
+        hasMore,
+      );
+      this.stockDataCache.set(cacheKey, response);
+      return response;
     });
   }
 
@@ -98,107 +113,75 @@ export class StockDataService {
     const priceData = plainToInstance(PriceDto, priceDtoList);
     const volumeData = plainToInstance(VolumeDto, volumeDtoList);
 
-    const responseDto = plainToInstance(StockDataResponse, {
+    return plainToInstance(StockDataResponse, {
       priceDtoList: priceData,
       volumeDtoList: volumeData,
       hasMore,
     });
-
-    return responseDto;
   }
 }
 
 @Injectable()
 export class StockDataMinutelyService extends StockDataService {
-  constructor(dataSource: DataSource) {
-    super(dataSource);
+  constructor(dataSource: DataSource, stockDataCache: StockDataCache) {
+    super(dataSource, stockDataCache);
   }
   async getStockDataMinutely(
     stock_id: string,
     lastStartTime?: string,
   ): Promise<StockDataResponse> {
-    const response = await this.getPaginated(
-      StockMinutely,
-      stock_id,
-      lastStartTime,
-    );
-
-    return response;
+    return await this.getPaginated(StockMinutely, stock_id, lastStartTime);
   }
 }
 
 @Injectable()
 export class StockDataDailyService extends StockDataService {
-  constructor(dataSource: DataSource) {
-    super(dataSource);
+  constructor(dataSource: DataSource, stockDataCache: StockDataCache) {
+    super(dataSource, stockDataCache);
   }
   async getStockDataDaily(
     stock_id: string,
     lastStartTime?: string,
   ): Promise<StockDataResponse> {
-    const response = await this.getPaginated(
-      StockDaily,
-      stock_id,
-      lastStartTime,
-    );
-
-    return response;
+    return await this.getPaginated(StockDaily, stock_id, lastStartTime);
   }
 }
 
 @Injectable()
 export class StockDataWeeklyService extends StockDataService {
-  constructor(dataSource: DataSource) {
-    super(dataSource);
+  constructor(dataSource: DataSource, sockDataCache: StockDataCache) {
+    super(dataSource, sockDataCache);
   }
   async getStockDataWeekly(
     stock_id: string,
     lastStartTime?: string,
   ): Promise<StockDataResponse> {
-    const response = await this.getPaginated(
-      StockWeekly,
-      stock_id,
-      lastStartTime,
-    );
-
-    return response;
+    return await this.getPaginated(StockWeekly, stock_id, lastStartTime);
   }
 }
 
 @Injectable()
 export class StockDataMonthlyService extends StockDataService {
-  constructor(dataSource: DataSource) {
-    super(dataSource);
+  constructor(dataSource: DataSource, stockDataCache: StockDataCache) {
+    super(dataSource, stockDataCache);
   }
   async getStockDataMonthly(
     stock_id: string,
     lastStartTime?: string,
   ): Promise<StockDataResponse> {
-    const response = await this.getPaginated(
-      StockMonthly,
-      stock_id,
-      lastStartTime,
-    );
-
-    return response;
+    return await this.getPaginated(StockMonthly, stock_id, lastStartTime);
   }
 }
 
 @Injectable()
 export class StockDataYearlyService extends StockDataService {
-  constructor(dataSource: DataSource) {
-    super(dataSource);
+  constructor(dataSource: DataSource, stockDataCache: StockDataCache) {
+    super(dataSource, stockDataCache);
   }
   async getStockDataYearly(
     stock_id: string,
     lastStartTime?: string,
   ): Promise<StockDataResponse> {
-    const response = await this.getPaginated(
-      StockYearly,
-      stock_id,
-      lastStartTime,
-    );
-
-    return response;
+    return await this.getPaginated(StockYearly, stock_id, lastStartTime);
   }
 }
