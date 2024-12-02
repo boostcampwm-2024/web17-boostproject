@@ -29,7 +29,7 @@ export const AddAlarmForm = ({ className }: AddAlarmFormProps) => {
         <div className="flex flex-col gap-16">
           <article className="flex flex-col gap-2">
             <p className="display-bold16">언제 알림을 보낼까요?</p>
-            <section className="flex">
+            <section className="flex gap-5">
               <select className="display-medium14 bg-white focus:outline-none">
                 {ALARM_OPTIONS.map((option) => (
                   <option key={option.id} value={option.label}>
@@ -46,7 +46,7 @@ export const AddAlarmForm = ({ className }: AddAlarmFormProps) => {
           </article>
           <article className="flex flex-col gap-2">
             <p className="display-bold16">어떻게 알림을 보낼까요?</p>
-            <section className="flex items-center">
+            <section className="flex items-center gap-5">
               <Input
                 type="radio"
                 name="method"

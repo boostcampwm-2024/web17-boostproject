@@ -36,7 +36,7 @@ export const TradingChart = ({ theme = lightTheme }: TradingChartProps) => {
 
   return (
     <div className="flex h-[30rem] flex-col xl:h-full">
-      <section className="flex justify-end">
+      <section className="flex justify-end gap-5">
         {TIME_UNIT.map((option) => (
           <RadioButton
             key={option.id}

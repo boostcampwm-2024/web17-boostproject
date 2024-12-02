@@ -34,7 +34,7 @@ export const StockDetail = () => {
         loginStatus={loginStatus}
         isOwnerStock={userOwnerStock.isOwner}
       />
-      <article className="grid flex-1 grid-cols-1 gap-5 xl:grid-cols-[2fr_1fr] 2xl:grid-cols-[2.5fr_1fr_1fr] [&_section]:gap-5">
+      <article className="grid flex-1 grid-cols-1 gap-5 xl:grid-cols-[2fr_1fr] 2xl:grid-cols-[2.5fr_1fr_1fr] [&>section]:gap-5">
         <section className="flex flex-col">
           <div className="relative h-full">
             <TradingChart />
