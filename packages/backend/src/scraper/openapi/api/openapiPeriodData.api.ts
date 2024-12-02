@@ -173,12 +173,13 @@ export class OpenapiPeriodData {
     });
   }
 
-  private isSamePeriod(stock: StockData, period: Period) {
+  private isSamePeriod(stock: StockData, period: Period, date: Date) {
+    this.logger.info(date);
+    this.logger.info(stock.startTime);
     return (
-      (period === 'W' && new NewDate(stock.startTime).isSameWeek(new Date())) ||
-      (period === 'M' &&
-        new NewDate(stock.startTime).isSameMonth(new Date())) ||
-      (period === 'Y' && new NewDate(stock.startTime).isSameYear(new Date()))
+      (period === 'W' && new NewDate(stock.startTime).isSameWeek(date)) ||
+      (period === 'M' && new NewDate(stock.startTime).isSameMonth(date)) ||
+      (period === 'Y' && new NewDate(stock.startTime).isSameYear(date))
     );
   }
 
@@ -186,16 +187,21 @@ export class OpenapiPeriodData {
     const entity = DATE_TO_ENTITY[period];
     const manager = this.datasource.manager;
 
-    //로직 변경
-    if (this.isSamePeriod(stock, period)) {
+    // db 쿼리 전 최근 데이터인지 먼저 확인
+    if (this.isSamePeriod(stock, period, new Date())) {
       const pastOneData = await manager
         .createQueryBuilder()
         .from(entity, 'stock')
+        .where({ stock: stock.stock.id })
         .limit(1)
         .orderBy('stock.start_time', 'DESC')
         .execute();
-      if (pastOneData.length !== 0) {
-        await manager.update(entity, pastOneData.id, stock);
+      if (
+        pastOneData.length !== 0 &&
+        this.isSamePeriod(stock, period, pastOneData[0].start_time)
+      ) {
+        await manager.delete(entity, pastOneData[0].id);
+        await manager.insert(entity, stock);
         return;
       }
     }
