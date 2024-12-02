@@ -45,10 +45,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private readonly stockService: StockService,
     private readonly chatService: ChatService,
     private readonly mentionService: MentionService,
-    private readonly UserService: UserService,
+    private readonly userService: UserService,
     @Inject(MEMORY_STORE) sessionStore: MemoryStore,
   ) {
-    this.websocketSessionService = new WebsocketSessionService(sessionStore);
+    this.websocketSessionService = new WebsocketSessionService(
+      sessionStore,
+      userService,
+    );
   }
 
   @UseGuards(WebSocketSessionGuard)
@@ -169,7 +172,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   private async searchMentionedUser(nickname: string, subName: string) {
-    return await this.UserService.searchOneUserByNicknameAndSubName(
+    return await this.userService.searchOneUserByNicknameAndSubName(
       nickname,
       subName,
     );
