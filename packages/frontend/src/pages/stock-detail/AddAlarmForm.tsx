@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ALARM_OPTIONS } from '@/constants/alarmOptions';
@@ -8,10 +7,10 @@ interface AddAlarmFormProps {
   className?: string;
 }
 
-type AlarmMethod = 'push' | 'email';
+// type AlarmMethod = 'push' | 'email';
 
 export const AddAlarmForm = ({ className }: AddAlarmFormProps) => {
-  const [alarmMethod, setAlarmMethod] = useState<AlarmMethod>('push');
+  // const [alarmMethod, setAlarmMethod] = useState<AlarmMethod>('push');
   const handleSubmit = () => {};
 
   return (
@@ -53,7 +52,7 @@ export const AddAlarmForm = ({ className }: AddAlarmFormProps) => {
                 id="push"
                 checked
                 className="w-fit"
-                onChange={() => setAlarmMethod('push')}
+                // onChange={() => setAlarmMethod('push')}
               />
               <label htmlFor="push" className="display-medium14">
                 웹 푸시
@@ -63,7 +62,7 @@ export const AddAlarmForm = ({ className }: AddAlarmFormProps) => {
                 name="method"
                 id="email"
                 className="w-fit"
-                onChange={() => setAlarmMethod('email')}
+                // onChange={() => setAlarmMethod('email')}
               />
               <label htmlFor="email" className="display-medium14">
                 이메일
