@@ -52,7 +52,7 @@ export class OpenapiPeriodData {
     private readonly openApiQueue: OpenapiQueue,
     @Inject('winston') private readonly logger: Logger,
   ) {
-    this.getItemChartPriceCheck();
+    //this.getItemChartPriceCheck();
   }
 
   @Cron('0 1 * * 1-5')
