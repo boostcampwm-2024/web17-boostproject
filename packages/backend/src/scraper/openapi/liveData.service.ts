@@ -48,7 +48,7 @@ export class LiveData {
         stockId,
       );
       if (stockLiveData) {
-        this.openapiLiveData.saveLiveData(stockLiveData);
+        await this.openapiLiveData.saveLiveData(stockLiveData);
       }
     } catch (error) {
       this.logger.warn(`Subscribe error in open api : ${error}`);
@@ -60,8 +60,10 @@ export class LiveData {
   }
 
   async subscribe(stockId: string) {
+    if (stockId === null || stockId === undefined) {
+      return;
+    }
     await this.openapiSubscribe(stockId);
-
     if (!this.isCloseTime(new Date(), this.startTime, this.endTime)) {
       for (const [idx, size] of this.configSubscribeSize.entries()) {
         if (size >= this.SOCKET_LIMITS) continue;
@@ -85,7 +87,7 @@ export class LiveData {
       const idx = this.subscribeStocks.get(stockId);
       this.subscribeStocks.delete(stockId);
 
-      if (idx) {
+      if (idx !== undefined) {
         this.configSubscribeSize[idx]--;
       } else {
         this.logger.warn(`Websocket error : ${stockId} has invalid idx`);
@@ -98,7 +100,7 @@ export class LiveData {
         '2',
       );
 
-      this.websocketClient[idx].discribe(message);
+      this.websocketClient[idx].unsubscribe(message);
     }
   }
 
@@ -122,11 +124,13 @@ export class LiveData {
         if (message.header) {
           if (message.header.tr_id === 'PINGPONG') {
             client.pong(data);
+          } else {
+            this.logger.info(JSON.stringify(message));
           }
           return;
         }
         const liveData = this.openapiLiveData.convertLiveData(message);
-        await this.openapiLiveData.saveLiveData(liveData[0]);
+        await this.openapiLiveData.saveLiveData(liveData[0])
       } catch (error) {
         this.logger.warn(error);
       }

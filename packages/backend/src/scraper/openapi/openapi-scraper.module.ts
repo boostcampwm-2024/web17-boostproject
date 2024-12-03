@@ -7,7 +7,6 @@ import { OpenapiMinuteData } from './api/openapiMinuteData.api';
 import { OpenapiPeriodData } from './api/openapiPeriodData.api';
 import { OpenapiTokenApi } from './api/openapiToken.api';
 import { LiveData } from './liveData.service';
-import { OpenapiScraperService } from './openapi-scraper.service';
 import { WebsocketClient } from './websocket/websocketClient.websocket';
 import { OpenapiFluctuationData } from '@/scraper/openapi/api/openapiFluctuationData.api';
 import { OpenapiRankViewApi } from '@/scraper/openapi/api/openapiRankView.api';
@@ -48,7 +47,6 @@ import { StockLiveData } from '@/stock/domain/stockLiveData.entity';
     OpenapiPeriodData,
     OpenapiMinuteData,
     OpenapiDetailData,
-    OpenapiScraperService,
     OpenapiFluctuationData,
     OpenapiIndex,
     OpenapiRankViewApi,
