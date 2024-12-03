@@ -6,7 +6,6 @@ import { OpenapiLiveData } from './api/openapiLiveData.api';
 import { OpenapiTokenApi } from './api/openapiToken.api';
 import { openApiConfig } from './config/openapi.config';
 import { parseMessage } from './parse/openapi.parser';
-import { OpenapiConsumer } from './queue/openapi.queue';
 import { WebsocketClient } from './websocket/websocketClient.websocket';
 
 type TR_IDS = '1' | '2';
@@ -26,7 +25,6 @@ export class LiveData {
   constructor(
     private readonly openApiToken: OpenapiTokenApi,
     private readonly openapiLiveData: OpenapiLiveData,
-    private readonly openapiConsumer: OpenapiConsumer,
     @Inject('winston') private readonly logger: Logger,
   ) {
     this.openApiToken.configs().then((config) => {
@@ -37,7 +35,7 @@ export class LiveData {
         );
         this.configSubscribeSize.push(0);
       }
-      //this.connect();
+      this.connect();
     });
   }
 
