@@ -2,7 +2,7 @@
 
 ![juchumjuchum](https://github.com/user-attachments/assets/08f462d3-3f47-4566-bb36-b96ccf320450)
 
-<p align="center"><b>📊 초보 투자자를 위한 실시간 주식 정보 커뮤니티 서비스</b></p>
+<b>📊 초보 투자자를 위한 실시간 주식 정보 커뮤니티 서비스</b>
 
 > 주춤주춤은 주식 초보자들이 투자를 하기 위한 정보를 번거로운 과정없이 알 수 있도록 해주는 서비스입니다.
 
