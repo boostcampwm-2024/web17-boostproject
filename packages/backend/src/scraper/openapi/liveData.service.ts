@@ -75,6 +75,7 @@ export class LiveData {
           stockId,
           '1',
         );
+        this.logger.info(`${idx} : ${message}`);
         this.websocketClient[idx].subscribe(message);
         return;
       }
@@ -99,7 +100,7 @@ export class LiveData {
         stockId,
         '2',
       );
-
+      this.logger.info(`${idx} : ${message}`);
       this.websocketClient[idx].unsubscribe(message);
     }
   }
