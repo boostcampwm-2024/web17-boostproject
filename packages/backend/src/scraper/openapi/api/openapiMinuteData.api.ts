@@ -97,16 +97,10 @@ export class OpenapiMinuteData {
       this.convertResToMinuteData(stockId, val, time),
     );
     if (stockPeriod[0]) {
-      this.datasource.manager
-        .createQueryBuilder()
-        .insert()
-        .into(this.entity)
-        .values(stockPeriod[0])
-        .orUpdate(
-          ['id', 'close', 'low', 'high', 'open', 'volume', 'created_at'],
-          ['stock_id', 'start_time'],
-        )
-        .execute();
+      this.datasource.manager.upsert(this.entity, stockPeriod[0], [
+        'stock.id',
+        'startTime',
+      ]);
     }
   }
 
