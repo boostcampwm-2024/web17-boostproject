@@ -32,7 +32,7 @@ export const StockInfo = ({ loginStatus }: StockInfoProps) => {
           <article className="grid grid-cols-2 gap-5">
             {data?.userStocks.map((stock) => (
               <section
-                className="display-bold14 text-dark-gray flex cursor-pointer justify-between rounded bg-[#FAFAFA] p-10 transition-all duration-300 hover:scale-105"
+                className="display-bold14 text-dark-gray bg-extra-light-gray flex cursor-pointer justify-between rounded p-10 transition-all duration-300 hover:scale-105"
                 onClick={() => navigate(`/stocks/${stock.stockId}`)}
               >
                 <p>{stock.name}</p>
