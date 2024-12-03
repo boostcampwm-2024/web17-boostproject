@@ -100,10 +100,11 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
     clickLike({ chatId });
   };
 
-  const { fetchNextPage, data, status, isFetching } = useGetChatList({
-    stockId,
-    order,
-  });
+  const { fetchNextPage, data, status, isFetching, hasNextPage } =
+    useGetChatList({
+      stockId,
+      order,
+    });
 
   useEffect(() => {
     if (status === 'success') {
@@ -119,7 +120,10 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
     }
   };
 
-  const { ref } = useInfiniteScroll({ onIntersect: fetchMoreChats });
+  const { ref } = useInfiniteScroll({
+    onIntersect: fetchMoreChats,
+    hasNextPage,
+  });
 
   const isWriter = (chat: ChatData) => {
     if (!nickname || !subName) {
