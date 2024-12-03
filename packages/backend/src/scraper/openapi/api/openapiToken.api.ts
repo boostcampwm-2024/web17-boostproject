@@ -68,8 +68,8 @@ export class OpenapiTokenApi {
   private isTokenExpired(startDate?: Date) {
     if (!startDate) return true;
     const now = new Date();
-    //실제 만료 시간은 24시간이지만, 문제가 발생할 여지를 줄이기 위해 12시간으로 설정
-    const baseTimeToMilliSec = 12 * 60 * 60 * 1000;
+    //실제 만료 시간은 24시간이지만, 문제가 발생할 여지를 줄이기 위해 6시간으로 설정
+    const baseTimeToMilliSec = 6 * 60 * 60 * 1000;
     const timeDiff = now.getTime() - startDate.getTime();
 
     return timeDiff >= baseTimeToMilliSec;

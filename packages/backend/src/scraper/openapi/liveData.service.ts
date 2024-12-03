@@ -85,7 +85,7 @@ export class LiveData {
       const idx = this.subscribeStocks.get(stockId);
       this.subscribeStocks.delete(stockId);
 
-      if (idx) {
+      if (idx !== undefined) {
         this.configSubscribeSize[idx]--;
       } else {
         this.logger.warn(`Websocket error : ${stockId} has invalid idx`);
@@ -98,7 +98,7 @@ export class LiveData {
         '2',
       );
 
-      this.websocketClient[idx].discribe(message);
+      this.websocketClient[idx].unsubscribe(message);
     }
   }
 
@@ -122,10 +122,13 @@ export class LiveData {
         if (message.header) {
           if (message.header.tr_id === 'PINGPONG') {
             client.pong(data);
+          } else {
+            this.logger.info(JSON.stringify(message));
           }
           return;
         }
         const liveData = this.openapiLiveData.convertLiveData(message);
+        this.logger.info(JSON.stringify(liveData[0]));
         await this.openapiLiveData.saveLiveData(liveData[0]);
       } catch (error) {
         this.logger.warn(error);
