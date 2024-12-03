@@ -1,14 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { DataSource } from 'typeorm';
+import { Logger } from 'winston';
 import {
   Json,
   OpenapiQueue,
   OpenapiQueueNodeValue,
 } from '../queue/openapi.queue';
 import {
-  isMinuteData,
+  isMinuteDataOutput1,
+  isMinuteDataOutput2,
   MinuteData,
+  MinuteDataOutput1,
+  MinuteDataOutput2,
   UpdateStockQuery,
 } from '../type/openapiMinuteData.type';
 import { TR_IDS } from '../type/openapiUtil.type';
@@ -22,9 +26,11 @@ export class OpenapiMinuteData {
   private readonly entity = StockMinutely;
   private readonly url: string =
     '/uapi/domestic-stock/v1/quotations/inquire-time-itemchartprice';
+  private readonly STOCK_LIMITS: number = 200;
   constructor(
     private readonly datasource: DataSource,
     private readonly openapiQueue: OpenapiQueue,
+    @Inject('winston') private readonly logger: Logger,
   ) {
     this.getStockMinuteData();
   }
@@ -40,8 +46,8 @@ export class OpenapiMinuteData {
       .addSelect('COUNT(alarm.id)', 'alarmCount')
       .groupBy('stock.id')
       .orderBy('alarmCount', 'DESC')
+      .limit(this.STOCK_LIMITS)
       .execute();
-    console.log(alarms);
     for (const alarm of alarms) {
       const time = getCurrentTime();
       const query = this.getUpdateStockQuery(alarm.stockId, time);
@@ -57,12 +63,27 @@ export class OpenapiMinuteData {
 
   getStockMinuteDataCallback(stockId: string, time: string) {
     return async (data: Json) => {
-      let output;
-      if (data.output2) output = data.output2;
-      if (output && output[0] && isMinuteData(output[0])) {
-        console.log(output);
-        this.saveMinuteData(stockId, output as MinuteData[], time);
+      let output1: MinuteDataOutput1, output2: MinuteDataOutput2[];
+      if (data.output1 && isMinuteDataOutput1(data.output1)) {
+        output1 = data.output1;
+      } else {
+        this.logger.info(`${stockId} has invalid minute data`);
+        return;
       }
+      if (
+        data.output2 &&
+        data.output2[0] &&
+        isMinuteDataOutput2(data.output2[0])
+      ) {
+        output2 = data.output2 as MinuteDataOutput2[];
+      } else {
+        this.logger.info(`${stockId} has invalid minute data`);
+        return;
+      }
+      const minuteDatas: MinuteData[] = output2.map((val): MinuteData => {
+        return { acml_vol: output1.acml_vol, ...val };
+      });
+      await this.saveMinuteData(stockId, minuteDatas, time);
     };
   }
 
@@ -75,19 +96,18 @@ export class OpenapiMinuteData {
     const stockPeriod = item.map((val) =>
       this.convertResToMinuteData(stockId, val, time),
     );
-    for (const stock of stockPeriod) {
+    if (stockPeriod[0]) {
       this.datasource.manager
         .createQueryBuilder()
         .insert()
         .into(this.entity)
-        .values(stock)
+        .values(stockPeriod[0])
         .orUpdate(
           ['id', 'close', 'low', 'high', 'open', 'volume', 'created_at'],
           ['stock_id', 'start_time'],
         )
         .execute();
     }
-    //this.datasource.manager.save(this.entity, stockPeriod);
   }
 
   private convertResToMinuteData(
@@ -108,7 +128,7 @@ export class OpenapiMinuteData {
     stockPeriod.open = parseInt(item.stck_oprc);
     stockPeriod.high = parseInt(item.stck_hgpr);
     stockPeriod.low = parseInt(item.stck_lwpr);
-    stockPeriod.volume = parseInt(item.cntg_vol);
+    stockPeriod.volume = parseInt(item.acml_vol);
     stockPeriod.createdAt = new Date();
     return stockPeriod;
   }
@@ -116,7 +136,7 @@ export class OpenapiMinuteData {
   private isMarketOpenTime(time: string) {
     const numberTime = parseInt(time);
     // 이거 바꿔놓음
-    return numberTime >= 90000 && numberTime <= 183000;
+    return numberTime >= 90000 && numberTime <= 203000;
   }
 
   private getUpdateStockQuery(
