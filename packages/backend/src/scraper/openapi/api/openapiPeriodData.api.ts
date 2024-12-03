@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { DataSource } from 'typeorm';
+import { DataSource, QueryFailedError } from 'typeorm';
 import { Logger } from 'winston';
 import {
   ChartData,
@@ -75,7 +75,18 @@ export class OpenapiPeriodData {
           if (!isChartData(item)) return acc;
           const stockData = this.convertObjectToStockData(item, stockId);
           acc.push(stockData);
-          this.insertChartData(stockData, period);
+          this.insertChartData(stockData, period).catch((e) => {
+            if (
+              e instanceof QueryFailedError &&
+              e.driverError.message.includes('duplicate')
+            ) {
+              this.logger.warn(
+                `when insert missing chart data, duplicate error :${stockId}`,
+              );
+              return;
+            }
+            this.logger.error(e);
+          });
           return acc;
         }, [])
         .reverse();
