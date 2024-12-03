@@ -64,8 +64,6 @@ export class LiveData {
       return;
     }
     await this.openapiSubscribe(stockId);
-    return;
-    // TODO : 이거 커밋하기 전에 날려야함.
     if (!this.isCloseTime(new Date(), this.startTime, this.endTime)) {
       for (const [idx, size] of this.configSubscribeSize.entries()) {
         if (size >= this.SOCKET_LIMITS) continue;
