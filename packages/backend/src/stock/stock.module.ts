@@ -13,14 +13,6 @@ import { StockLiveData } from './domain/stockLiveData.entity';
 import { StockController } from './stock.controller';
 import { StockGateway } from './stock.gateway';
 import { StockService } from './stock.service';
-import {
-  StockDataDailyService,
-  StockDataMinutelyService,
-  StockDataMonthlyService,
-  StockDataService,
-  StockDataWeeklyService,
-  StockDataYearlyService,
-} from './stockData.service';
 import { StockDetailService } from './stockDetail.service';
 import { StockLiveDataSubscriber } from './stockLiveData.subscriber';
 import { StockRateIndexService } from './stockRateIndex.service';
@@ -29,6 +21,7 @@ import { Alarm } from '@/alarm/domain/alarm.entity';
 import { OpenapiScraperModule } from '@/scraper/openapi/openapi-scraper.module';
 import { ScraperModule } from '@/scraper/scraper.module';
 import { StockDataCache } from '@/stock/cache/stockData.cache';
+import { StockDataService } from '@/stock/stockData.service';
 
 @Module({
   imports: [
@@ -54,11 +47,6 @@ import { StockDataCache } from '@/stock/cache/stockData.cache';
     StockGateway,
     StockLiveDataSubscriber,
     StockDataService,
-    StockDataDailyService,
-    StockDataMinutelyService,
-    StockDataWeeklyService,
-    StockDataYearlyService,
-    StockDataMonthlyService,
     StockDetailService,
     StockRateIndexService,
   ],

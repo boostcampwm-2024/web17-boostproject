@@ -7,7 +7,6 @@ import { DataSource, EntityManager } from 'typeorm';
 import { Stock } from './domain/stock.entity';
 import {
   StockDaily,
-  StockMinutely,
   StockMonthly,
   StockWeekly,
   StockYearly,
@@ -178,90 +177,5 @@ export class StockDataService {
         return acc;
       }, [])
       .reverse();
-  }
-}
-
-@Injectable()
-export class StockDataMinutelyService extends StockDataService {
-  constructor(
-    dataSource: DataSource,
-    stockDataCache: StockDataCache,
-    openapiPeriodData: OpenapiPeriodData,
-  ) {
-    super(dataSource, stockDataCache, openapiPeriodData);
-  }
-  async getStockDataMinutely(
-    stock_id: string,
-    lastStartTime?: string,
-  ): Promise<StockDataResponse> {
-    return await this.getPaginated(StockMinutely, stock_id, lastStartTime);
-  }
-}
-
-@Injectable()
-export class StockDataDailyService extends StockDataService {
-  constructor(
-    dataSource: DataSource,
-    stockDataCache: StockDataCache,
-    openapiPeriodData: OpenapiPeriodData,
-  ) {
-    super(dataSource, stockDataCache, openapiPeriodData);
-  }
-  async getStockDataDaily(
-    stock_id: string,
-    lastStartTime?: string,
-  ): Promise<StockDataResponse> {
-    return await this.getPaginated(StockDaily, stock_id, lastStartTime);
-  }
-}
-
-@Injectable()
-export class StockDataWeeklyService extends StockDataService {
-  constructor(
-    dataSource: DataSource,
-    stockDataCache: StockDataCache,
-    openapiPeriodData: OpenapiPeriodData,
-  ) {
-    super(dataSource, stockDataCache, openapiPeriodData);
-  }
-  async getStockDataWeekly(
-    stock_id: string,
-    lastStartTime?: string,
-  ): Promise<StockDataResponse> {
-    return await this.getPaginated(StockWeekly, stock_id, lastStartTime);
-  }
-}
-
-@Injectable()
-export class StockDataMonthlyService extends StockDataService {
-  constructor(
-    dataSource: DataSource,
-    stockDataCache: StockDataCache,
-    openapiPeriodData: OpenapiPeriodData,
-  ) {
-    super(dataSource, stockDataCache, openapiPeriodData);
-  }
-  async getStockDataMonthly(
-    stock_id: string,
-    lastStartTime?: string,
-  ): Promise<StockDataResponse> {
-    return await this.getPaginated(StockMonthly, stock_id, lastStartTime);
-  }
-}
-
-@Injectable()
-export class StockDataYearlyService extends StockDataService {
-  constructor(
-    dataSource: DataSource,
-    stockDataCache: StockDataCache,
-    openapiPeriodData: OpenapiPeriodData,
-  ) {
-    super(dataSource, stockDataCache, openapiPeriodData);
-  }
-  async getStockDataYearly(
-    stock_id: string,
-    lastStartTime?: string,
-  ): Promise<StockDataResponse> {
-    return await this.getPaginated(StockYearly, stock_id, lastStartTime);
   }
 }
