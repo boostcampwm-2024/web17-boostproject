@@ -68,6 +68,7 @@ export class ChatService {
 
   private async validateLastedChatId(chatScrollQuery: ChatScrollQuery) {
     const { latestChatId, stockId } = chatScrollQuery;
+    if (!latestChatId) return;
     const lastChat = await this.dataSource.manager.findOne(Chat, {
       where: { id: latestChatId },
       relations: ['stock'],
