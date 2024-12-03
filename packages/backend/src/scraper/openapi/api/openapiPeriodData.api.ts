@@ -75,18 +75,9 @@ export class OpenapiPeriodData {
           if (!isChartData(item)) return acc;
           const stockData = this.convertObjectToStockData(item, stockId);
           acc.push(stockData);
-          this.insertChartData(stockData, period).catch((e) => {
-            if (
-              e instanceof QueryFailedError &&
-              e.driverError.message.includes('duplicate')
-            ) {
-              this.logger.warn(
-                `when insert missing chart data, duplicate error :${stockId}`,
-              );
-              return;
-            }
-            this.logger.error(e);
-          });
+          this.insertChartData(stockData, period).catch((e) =>
+            this.catchAndLogError(e, stockId),
+          );
           return acc;
         }, [])
         .reverse();
@@ -102,12 +93,32 @@ export class OpenapiPeriodData {
     const end = getTodayDate();
     const start = getPreviousDate(end, DATE_TO_MONTH[period]);
     const query = this.getItemChartPriceQuery(stockId, start, end, period);
-    this.openApiQueue.enqueue({
-      url: this.url,
-      query,
-      trId: TR_IDS.ITEM_CHART_PRICE,
-      callback: this.getInsertCartDataRequestCallback(resolve, stockId, period),
-    });
+    this.openApiQueue.enqueue(
+      {
+        url: this.url,
+        query,
+        trId: TR_IDS.ITEM_CHART_PRICE,
+        callback: this.getInsertCartDataRequestCallback(
+          resolve,
+          stockId,
+          period,
+        ),
+      },
+      1,
+    );
+  }
+
+  private catchAndLogError(e: Error, stockId: string) {
+    if (
+      e instanceof QueryFailedError &&
+      e.driverError.message.includes('duplicate')
+    ) {
+      this.logger.warn(
+        `when insert missing chart data, duplicate error :${stockId}`,
+      );
+      return;
+    }
+    this.logger.error(e);
   }
 
   /**
