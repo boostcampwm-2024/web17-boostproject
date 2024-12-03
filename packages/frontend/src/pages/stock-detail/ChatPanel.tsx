@@ -30,11 +30,14 @@ interface ChatPanelProps {
   isOwnerStock: boolean;
 }
 
+type OrderType = 'latest' | 'like';
+
 export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
   const { stockId = '' } = useParams();
   const [chatData, setChatData] = useState<ChatData[]>([]);
   const [latestChatId, setLatestChatId] = useState<number>();
   const [hasMore, setHasMore] = useState(false);
+  const [order, setOrder] = useState<OrderType>('latest');
 
   const { mutate } = usePostChatLike();
   const { message, nickname, subName } = loginStatus;
@@ -117,6 +120,7 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
   const { fetchNextPage, data, status, isFetchingNextPage } = useGetChatList({
     stockId,
     latestChatId,
+    order,
   });
 
   const fetchMoreChats = () => {
@@ -137,6 +141,13 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
   const checkWriter = (chat: ChatData) =>
     chat.nickname === nickname && chat.subName === subName;
 
+  const handleOrderType = () => {
+    setOrder((prev) => {
+      if (prev === 'latest') return 'like';
+      return 'latest';
+    });
+  };
+
   return (
     <article className="flex min-w-80 flex-col gap-5 rounded-md bg-white p-7 shadow">
       <h2 className="display-bold20 text-center font-bold">채팅</h2>
@@ -147,9 +158,14 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
       />
       <div className="border-light-gray display-medium12 text-dark-gray flex items-center justify-between gap-1 border-b-2 pb-2">
         <span>{isConnected ? '🟢 접속 중' : '❌ 연결 끊김'}</span>
-        <div className="flex items-center gap-2">
-          <p>최신순</p>
-          <DownArrow className="cursor-pointer" />
+        <div className="flex items-center gap-2" onClick={handleOrderType}>
+          <p>{order === 'latest' ? '최신순' : '좋아요순'}</p>
+          <DownArrow
+            className={cn(
+              'cursor-pointer',
+              order === 'latest' ? 'rotate-0' : 'rotate-180',
+            )}
+          />
         </div>
       </div>
       <section
