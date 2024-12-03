@@ -27,6 +27,7 @@ import { StockRateIndexService } from './stockRateIndex.service';
 import { AlarmModule } from '@/alarm/alarm.module';
 import { Alarm } from '@/alarm/domain/alarm.entity';
 import { ScraperModule } from '@/scraper/scraper.module';
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([

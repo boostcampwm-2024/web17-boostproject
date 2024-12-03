@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
+  OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -17,10 +18,12 @@ import { LiveData } from '@/scraper/openapi/liveData.service';
   pingTimeout: 5000,
 })
 @Injectable()
-export class StockGateway {
+export class StockGateway implements OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
   private readonly mutex = new Mutex();
+
+  private readonly users: Map<string, string> = new Map();
 
   constructor(
     private readonly liveData: LiveData,
@@ -32,40 +35,43 @@ export class StockGateway {
     @MessageBody() stockId: string,
     @ConnectedSocket() client: Socket,
   ) {
-    client.join(stockId);
+    try {
+      client.join(stockId);
+      this.users.set(client.id, stockId);
 
-    await this.mutex.runExclusive(async () => {
-      const connectedSockets = await this.server.to(stockId).fetchSockets();
+      await this.mutex.runExclusive(async () => {
+        const connectedSockets = await this.server.to(stockId).fetchSockets();
 
-      if (connectedSockets.length > 0 && !this.liveData.isSubscribe(stockId)) {
-        await this.liveData.subscribe(stockId);
-        this.logger.info(`${stockId} is subscribed`);
-      }
-    });
+        if (
+          connectedSockets.length > 0 &&
+          !this.liveData.isSubscribe(stockId)
+        ) {
+          await this.liveData.subscribe(stockId);
+          this.logger.info(`${stockId} is subscribed`);
+        }
+      });
 
-    client.on('disconnecting', () => {
-      client.rooms.delete(client.id);
-      const stocks = Array.from(client.rooms.values());
-      for (const stock of stocks) {
-        this.handleDisconnectStock(stock);
-      }
-    });
-
-    client.emit('connectionSuccess', {
-      message: `Successfully connected to stock room: ${stockId}`,
-      stockId,
-    });
+      client.emit('connectionSuccess', {
+        message: `Successfully connected to stock room: ${stockId}`,
+        stockId,
+      });
+    } catch (e) {
+      const error = e as Error;
+      this.logger.warn(error.message);
+      client.emit('error', error.message);
+      client.disconnect();
+    }
   }
 
-  async handleDisconnectStock(stockId: string) {
-    await this.mutex.runExclusive(async () => {
-      const connectedSockets = await this.server.in(stockId).fetchSockets();
-
-      if (connectedSockets.length === 0) {
-        await this.liveData.unsubscribe(stockId);
-        this.logger.info(`${stockId} is unsubscribed`);
-      }
-    });
+  async handleDisconnect(client: Socket) {
+    const stockId = this.users.get(client.id);
+    if (stockId) {
+      this.logger.info(stockId);
+      await this.mutex.runExclusive(async () => {
+        this.liveData.unsubscribe(stockId);
+        this.users.delete(client.id);
+      });
+    }
   }
 
   onUpdateStock(
