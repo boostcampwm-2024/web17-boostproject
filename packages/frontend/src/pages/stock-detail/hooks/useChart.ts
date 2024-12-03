@@ -1,11 +1,11 @@
 import { createChart, type IChartApi } from 'lightweight-charts';
-import { useEffect, useRef, RefObject } from 'react';
+import { useEffect, useRef, RefObject, useContext } from 'react';
 import {
   PriceSchema,
   StockTimeSeriesResponse,
   VolumeSchema,
 } from '@/apis/queries/stocks';
-import { useGetUserTheme } from '@/apis/queries/user';
+import { ThemeContext } from '@/contexts/themeContext';
 import { darkTheme, lightTheme } from '@/styles/theme';
 import {
   createCandlestickOptions,
@@ -43,7 +43,7 @@ export const useChart = ({
   const volumeSeries = useRef<ReturnType<IChartApi['addHistogramSeries']>>();
   const containerInstance = containerRef.current;
 
-  const { data: theme } = useGetUserTheme();
+  const { theme } = useContext(ThemeContext);
   const graphTheme = theme === 'light' ? lightTheme : darkTheme;
 
   useEffect(() => {
