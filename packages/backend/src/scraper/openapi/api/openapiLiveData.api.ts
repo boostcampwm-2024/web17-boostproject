@@ -65,7 +65,7 @@ export class OpenapiLiveData {
       stockLiveData.stock = { id: message.STOCK_ID } as Stock;
       stockLiveData.currentPrice = parseFloat(message.STCK_PRPR);
       stockLiveData.changeRate = parseFloat(message.PRDY_CTRT);
-      stockLiveData.volume = parseInt(message.CNTG_VOL);
+      stockLiveData.volume = parseInt(message.ACML_VOL);
       stockLiveData.high = parseFloat(message.STCK_HGPR);
       stockLiveData.low = parseFloat(message.STCK_LWPR);
       stockLiveData.open = parseFloat(message.STCK_OPRC);

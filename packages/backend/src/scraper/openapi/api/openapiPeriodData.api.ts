@@ -84,41 +84,6 @@ export class OpenapiPeriodData {
     };
   }
 
-  /* eslint-disable-next-line max-lines-per-function */
-  private getLiveDataSaveUntilEndCallback(
-    stockId: string,
-    period: Period,
-    end: string,
-  ) {
-    /* eslint-disable-next-line max-lines-per-function */
-    return async (data: Json) => {
-      if (!data.output2 || !Array.isArray(data.output2)) return;
-      // 이거 빈값들어오는 케이스 있음(빈값 필터링 안하면 요청이 매우 많아짐)
-      data.output2 = data.output2.filter(
-        (data) => Object.keys(data).length !== 0,
-      );
-      if (data.output2.length === 0) return;
-      await this.saveChartData(period, stockId, data.output2 as ChartData[]);
-      const { endDate, startDate } = this.updateDates(end, period);
-      const query = this.getItemChartPriceQuery(
-        stockId,
-        startDate,
-        endDate,
-        period,
-      );
-      this.openApiQueue.enqueue({
-        url: this.url,
-        query,
-        trId: TR_IDS.ITEM_CHART_PRICE,
-        callback: this.getLiveDataSaveUntilEndCallback(
-          stockId,
-          period,
-          endDate,
-        ),
-      });
-    };
-  }
-
   private async getChartData(chunk: Stock[], period: Period) {
     for (const stock of chunk) {
       await this.processStockData(stock, period);
@@ -164,8 +129,7 @@ export class OpenapiPeriodData {
   }
 
   private async existsChartData(stock: StockData, entity: typeof StockData) {
-    const manager = this.datasource.manager;
-    return await manager.findOne(entity, {
+    return this.datasource.manager.exists(entity, {
       where: {
         stock: { id: stock.stock.id },
         startTime: stock.startTime,
@@ -174,11 +138,11 @@ export class OpenapiPeriodData {
   }
 
   private isSamePeriod(stock: StockData, period: Period, date: Date) {
-    this.logger.info(date);
-    this.logger.info(stock.startTime);
     return (
       (period === 'W' && new NewDate(stock.startTime).isSameWeek(date)) ||
-      (period === 'M' && new NewDate(stock.startTime).isSameMonth(date)) ||
+      (period === 'M' &&
+        new NewDate(stock.startTime).isSameMonth(date) &&
+        new NewDate(stock.startTime).isSameYear(date)) ||
       (period === 'Y' && new NewDate(stock.startTime).isSameYear(date))
     );
   }
@@ -210,6 +174,55 @@ export class OpenapiPeriodData {
     }
   }
 
+  private async saveChartData(
+    period: Period,
+    stockId: string,
+    data: ChartData[],
+  ) {
+    for (const item of data) {
+      if (!isChartData(item)) {
+        continue;
+      }
+      const stockPeriod = this.convertObjectToStockData(item, stockId);
+      await this.insertChartData(stockPeriod, period);
+    }
+  }
+
+  /* eslint-disable-next-line max-lines-per-function */
+  private getLiveDataSaveUntilEndCallback(
+    stockId: string,
+    period: Period,
+    end: string,
+  ) {
+    /* eslint-disable-next-line max-lines-per-function */
+    return async (data: Json) => {
+      if (!data.output2 || !Array.isArray(data.output2)) return;
+      // 이거 빈값들어오는 케이스 있음(빈값 필터링 안하면 요청이 매우 많아짐)
+      data.output2 = data.output2.filter(
+        (data) => Object.keys(data).length !== 0,
+      );
+      if (data.output2.length === 0) return;
+      await this.saveChartData(period, stockId, data.output2 as ChartData[]);
+      const { endDate, startDate } = this.updateDates(end, period);
+      const query = this.getItemChartPriceQuery(
+        stockId,
+        startDate,
+        endDate,
+        period,
+      );
+      this.openApiQueue.enqueue({
+        url: this.url,
+        query,
+        trId: TR_IDS.ITEM_CHART_PRICE,
+        callback: this.getLiveDataSaveUntilEndCallback(
+          stockId,
+          period,
+          endDate,
+        ),
+      });
+    };
+  }
+
   private convertObjectToStockData(item: ChartData, stockId: string) {
     const stockPeriod = new StockData();
     stockPeriod.stock = { id: stockId } as Stock;
@@ -225,20 +238,6 @@ export class OpenapiPeriodData {
     stockPeriod.volume = parseInt(item.acml_vol);
     stockPeriod.createdAt = new Date();
     return stockPeriod;
-  }
-
-  private async saveChartData(
-    period: Period,
-    stockId: string,
-    data: ChartData[],
-  ) {
-    for (const item of data) {
-      if (!isChartData(item)) {
-        continue;
-      }
-      const stockPeriod = this.convertObjectToStockData(item, stockId);
-      await this.insertChartData(stockPeriod, period);
-    }
   }
 
   private getItemChartPriceQuery(

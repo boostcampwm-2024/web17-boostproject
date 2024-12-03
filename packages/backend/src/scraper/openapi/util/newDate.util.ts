@@ -65,6 +65,7 @@ export class NewDate extends Date {
       ) {
         sameWeek = this.getDay() < dateToCompare.getDay();
       }
+      return sameWeek;
     }
     return false;
   }

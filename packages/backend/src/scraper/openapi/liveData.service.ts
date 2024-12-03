@@ -64,7 +64,6 @@ export class LiveData {
       return;
     }
     await this.openapiSubscribe(stockId);
-
     if (!this.isCloseTime(new Date(), this.startTime, this.endTime)) {
       for (const [idx, size] of this.configSubscribeSize.entries()) {
         if (size >= this.SOCKET_LIMITS) continue;
