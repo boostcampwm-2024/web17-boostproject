@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { TextArea } from './components';
 import { ChatMessage } from './components/ChatMessage';
+import { useChatOrder } from './hooks/useChatOrder';
 import { GetLoginStatus } from '@/apis/queries/auth/schema';
 import { usePostChatLike } from '@/apis/queries/chat';
 import { useGetChatList } from '@/apis/queries/chat/useGetChatList';
@@ -15,7 +16,6 @@ import {
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { socketChat } from '@/sockets/config';
 import {
-  ChatDataResponseSchema,
   ChatDataSchema,
   ChatLikeSchema,
   type ChatLikeResponse,
@@ -23,6 +23,7 @@ import {
   type ChatDataResponse,
 } from '@/sockets/schema';
 import { useWebsocket } from '@/sockets/useWebsocket';
+import { checkChatWriter } from '@/utils/checkChatWriter';
 import { cn } from '@/utils/cn';
 
 interface ChatPanelProps {
@@ -30,20 +31,18 @@ interface ChatPanelProps {
   isOwnerStock: boolean;
 }
 
-type OrderType = 'latest' | 'like';
+const INITIAL_VISIBLE_CHATS = 3;
 
 export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
-  const { stockId = '' } = useParams();
-  const [chatData, setChatData] = useState<ChatData[]>([]);
-  const [latestChatId, setLatestChatId] = useState<number>();
-  const [hasMore, setHasMore] = useState(false);
-  const [order, setOrder] = useState<OrderType>('latest');
-
-  const { mutate } = usePostChatLike();
   const { message, nickname, subName } = loginStatus;
 
-  const socket = useMemo(() => socketChat({ stockId }), [stockId]);
+  const { stockId = '' } = useParams();
+  const [chatData, setChatData] = useState<ChatData[]>([]);
 
+  const { mutate: clickLike } = usePostChatLike();
+  const { order, handleOrderType } = useChatOrder();
+
+  const socket = useMemo(() => socketChat({ stockId }), [stockId]);
   const { isConnected } = useWebsocket(socket);
 
   const userStatus: ChatStatus = useMemo(() => {
@@ -54,27 +53,14 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
     return isOwnerStock ? UserStatus.OWNERSHIP : UserStatus.NOT_OWNERSHIP;
   }, [message, isOwnerStock]);
 
-  const handleChat = useCallback(
-    (message: ChatDataResponse | Partial<ChatData>) => {
-      if ('chats' in message && message.chats) {
-        const validatedChatData = ChatDataResponseSchema.parse(message);
-        if (validatedChatData) {
-          setChatData((prev) => [...message.chats, ...prev]);
-          setHasMore(message.hasMore);
-        }
-        return;
-      }
+  const handleChat = useCallback((message: ChatDataResponse | ChatData) => {
+    if ('chats' in message) return;
 
-      const validatedSingleChat = ChatDataSchema.partial().parse(message);
-      if (validatedSingleChat) {
-        setChatData((prev) => [
-          { ...validatedSingleChat } as ChatData,
-          ...prev,
-        ]);
-      }
-    },
-    [],
-  );
+    const validatedSingleChat = ChatDataSchema.parse(message);
+    if (validatedSingleChat) {
+      setChatData((prev) => [{ ...validatedSingleChat } as ChatData, ...prev]);
+    }
+  }, []);
 
   const handleSendMessage = (message: string) => {
     if (!message) return;
@@ -110,42 +96,37 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
   }, [stockId, socket, handleChat]);
 
   const handleLikeClick = (chatId: number) => {
-    if (isOwnerStock) {
-      mutate({ chatId });
-      return;
-    }
-    alert('주식 소유자만 가능합니다.');
+    if (!isOwnerStock) return alert('주식 소유자만 가능합니다.');
+    clickLike({ chatId });
   };
 
   const { fetchNextPage, data, status, isFetchingNextPage } = useGetChatList({
     stockId,
-    latestChatId,
     order,
   });
 
+  useEffect(() => {
+    if (data) {
+      setChatData(data.pages);
+    }
+  }, [data]);
+
   const fetchMoreChats = () => {
-    setLatestChatId(chatData[chatData.length - 1]?.id);
     fetchNextPage();
 
     if (status === 'success') {
-      setChatData((prev) => [...prev, ...data.pages[0].chats]);
-      setHasMore(data.pages[0].hasMore);
+      setChatData(data.pages);
     }
   };
 
-  const { ref } = useInfiniteScroll({
-    onIntersect: fetchMoreChats,
-    hasMore,
-  });
+  const { ref } = useInfiniteScroll({ onIntersect: fetchMoreChats });
 
-  const checkWriter = (chat: ChatData) =>
-    chat.nickname === nickname && chat.subName === subName;
+  const isWriter = (chat: ChatData) => {
+    if (!nickname || !subName) {
+      return false;
+    }
 
-  const handleOrderType = () => {
-    setOrder((prev) => {
-      if (prev === 'latest') return 'like';
-      return 'latest';
-    });
+    return checkChatWriter({ chat, nickname, subName });
   };
 
   return (
@@ -176,7 +157,7 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
       >
         {chatData.length ? (
           <>
-            {chatData.slice(0, 3).map((chat) => (
+            {chatData.slice(0, INITIAL_VISIBLE_CHATS).map((chat) => (
               <ChatMessage
                 key={chat.id}
                 name={chat.nickname}
@@ -185,11 +166,11 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
                 liked={chat.liked}
                 subName={chat.subName}
                 createdAt={chat.createdAt}
-                writer={checkWriter(chat)}
+                writer={isWriter(chat)}
                 onClick={() => handleLikeClick(chat.id)}
               />
             ))}
-            {chatData.slice(3).map((chat, index) => (
+            {chatData.slice(INITIAL_VISIBLE_CHATS).map((chat, index) => (
               <div className="relative" key={`${chat.id}-${index}`}>
                 {!isOwnerStock && (
                   <div className="absolute inset-0 flex items-center justify-center text-center backdrop-blur-sm">
@@ -208,7 +189,7 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
                   liked={chat.liked}
                   subName={chat.subName}
                   createdAt={chat.createdAt}
-                  writer={checkWriter(chat)}
+                  writer={isWriter(chat)}
                   onClick={() => handleLikeClick(chat.id)}
                 />
               </div>
