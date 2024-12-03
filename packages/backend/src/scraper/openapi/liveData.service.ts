@@ -60,6 +60,9 @@ export class LiveData {
   }
 
   async subscribe(stockId: string) {
+    if (stockId === null || stockId === undefined) {
+      return;
+    }
     await this.openapiSubscribe(stockId);
 
     if (!this.isCloseTime(new Date(), this.startTime, this.endTime)) {
