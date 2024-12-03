@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { ThemeContext } from './themeContext';
 import { useGetLoginStatus } from '@/apis/queries/auth';
@@ -21,9 +21,7 @@ export const ThemeProvider = () => {
     initialTheme as GetUserTheme['theme'],
   );
 
-  useEffect(() => {
-    document.body.classList.toggle('dark', theme === 'dark');
-  }, [theme]);
+  document.body.classList.toggle('dark', theme === 'dark');
 
   const changeTheme = (newTheme: GetUserTheme['theme']) => {
     localStorage.setItem('theme', newTheme);
