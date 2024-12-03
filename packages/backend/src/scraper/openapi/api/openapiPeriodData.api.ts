@@ -10,11 +10,7 @@ import {
 } from '../type/openapiPeriodData.type';
 import { TR_IDS } from '../type/openapiUtil.type';
 import { NewDate } from '../util/newDate.util';
-import {
-  getOpenApi,
-  getPreviousDate,
-  getTodayDate,
-} from '../util/openapiUtil.api';
+import { getPreviousDate, getTodayDate } from '../util/openapiUtil.api';
 import { OpenapiTokenApi } from './openapiToken.api';
 import { Json, OpenapiQueue } from '@/scraper/openapi/queue/openapi.queue';
 import { Stock } from '@/stock/domain/stock.entity';
@@ -33,14 +29,12 @@ const DATE_TO_ENTITY = {
   Y: StockYearly,
 } as const;
 
-const DATE_TO_MONTH = {
+export const DATE_TO_MONTH = {
   D: 1,
   W: 6,
   M: 24,
   Y: 120,
 } as const;
-
-const INTERVALS = 10000;
 
 @Injectable()
 export class OpenapiPeriodData {
@@ -67,6 +61,42 @@ export class OpenapiPeriodData {
     await this.getChartData(stocks, 'M');
     await this.getChartData(stocks, 'W');
     await this.getChartData(stocks, 'D');
+  }
+
+  getInsertCartDataRequestCallback(
+    resolve: (value: StockData[]) => void,
+    stockId: string,
+    period: Period,
+  ) {
+    return async (data: Json) => {
+      if (!data.output2 || !Array.isArray(data.output2)) return resolve([]);
+      const result = data.output2
+        .reduce((acc: StockData[], item: Record<string, string>) => {
+          if (!isChartData(item)) return acc;
+          const stockData = this.convertObjectToStockData(item, stockId);
+          acc.push(stockData);
+          this.insertChartData(stockData, period);
+          return acc;
+        }, [])
+        .reverse();
+      resolve(result);
+    };
+  }
+
+  insertCartDataRequest(
+    resolve: (value: StockData[]) => void,
+    stockId: string,
+    period: Period,
+  ): void {
+    const end = getTodayDate();
+    const start = getPreviousDate(end, DATE_TO_MONTH[period]);
+    const query = this.getItemChartPriceQuery(stockId, start, end, period);
+    this.openApiQueue.enqueue({
+      url: this.url,
+      query,
+      trId: TR_IDS.ITEM_CHART_PRICE,
+      callback: this.getInsertCartDataRequestCallback(resolve, stockId, period),
+    });
   }
 
   /**
@@ -139,21 +169,6 @@ export class OpenapiPeriodData {
     });
   }
 
-  private async fetchChartData(query: ItemChartPriceQuery, configIdx: number) {
-    try {
-      const response = await getOpenApi(
-        this.url,
-        (await this.openApiToken.configs())[configIdx],
-        query,
-        TR_IDS.ITEM_CHART_PRICE,
-      );
-      return response.output2 as ChartData[];
-    } catch (error) {
-      this.logger.warn(error);
-      setTimeout(() => this.fetchChartData(query, configIdx), INTERVALS / 10);
-    }
-  }
-
   private updateDates(
     endDate: string,
     period: Period,
@@ -174,11 +189,11 @@ export class OpenapiPeriodData {
   }
 
   private isSamePeriod(stock: StockData, period: Period, date: Date) {
-    this.logger.info(date);
-    this.logger.info(stock.startTime);
     return (
       (period === 'W' && new NewDate(stock.startTime).isSameWeek(date)) ||
-      (period === 'M' && new NewDate(stock.startTime).isSameMonth(date)) ||
+      (period === 'M' &&
+        new NewDate(stock.startTime).isSameMonth(date) &&
+        new NewDate(stock.startTime).isSameYear(date)) ||
       (period === 'Y' && new NewDate(stock.startTime).isSameYear(date))
     );
   }
