@@ -52,7 +52,7 @@
 
 3️⃣ 웹소켓을 관리할 때 오류를 대응하기 위해 큐를 통해 외부서비스에 대한 구독을 관리했습니다.
 
-[🔌 외부 서비스를 관리하는 방법](https://github.com/boostcampwm-2024/web17-juchumjuchum/wiki/%F0%9F%94%8C-%EC%99%B8%EB%B6%80-%EC%84%9C%EB%B9%84%EC%8A%A4%EB%A5%BC-%EA%B4%80%EB%A6%AC%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95)
+[🔌 websocket이 늦게 할당되어 발생되는 문제](https://github.com/boostcampwm-2024/web17-juchumjuchum/wiki/%F0%9F%94%8C-websocket%EC%9D%B4-%EB%8A%A6%EA%B2%8C-%ED%95%A0%EB%8B%B9%EB%90%98%EC%96%B4-%EB%B0%9C%EC%83%9D%EB%90%98%EB%8A%94-%EB%AC%B8%EC%A0%9C)
 
 <br/>
 
