@@ -16,7 +16,7 @@ export const ThemeProvider = () => {
   const isAuthenticated = loginStatus?.message === 'Authenticated';
   const initialTheme = isAuthenticated
     ? userTheme
-    : localStorage.getItem('juchumTheme');
+    : localStorage.getItem('theme');
   const [theme, setTheme] = useState<GetUserTheme['theme']>(
     initialTheme as GetUserTheme['theme'],
   );
@@ -24,7 +24,7 @@ export const ThemeProvider = () => {
   document.body.classList.toggle('dark', theme === 'dark');
 
   const changeTheme = (newTheme: GetUserTheme['theme']) => {
-    localStorage.setItem('juchumTheme', newTheme);
+    localStorage.setItem('theme', newTheme);
     setTheme(newTheme);
 
     if (isAuthenticated) {
