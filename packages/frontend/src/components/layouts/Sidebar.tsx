@@ -1,13 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logoCharacter from '/logoCharacter.png';
 import logoTitle from '/logoTitle.png';
 import { Alarm } from './alarm';
 import { MenuList } from './MenuList';
 import { Search } from './search';
-import { useGetUserTheme } from '@/apis/queries/user/useGetUserTheme';
-import { usePatchUserTheme } from '@/apis/queries/user/usePatchUserTheme';
 import { BOTTOM_MENU_ITEMS, TOP_MENU_ITEMS } from '@/constants/menuItems';
+import { ThemeContext } from '@/contexts/themeContext';
 import { useOutsideClick } from '@/hooks/useOutsideClick';
 import { type MenuSection } from '@/types/menu';
 import { cn } from '@/utils/cn';
@@ -22,16 +21,7 @@ export const Sidebar = () => {
     alarm: false,
   });
 
-  const { data: theme } = useGetUserTheme();
-  const { mutate } = usePatchUserTheme();
-
-  useEffect(() => {
-    if (theme === 'light') {
-      document.body.classList.remove('dark');
-      return;
-    }
-    document.body.classList.add('dark');
-  }, [theme]);
+  const { theme, changeTheme } = useContext(ThemeContext);
 
   const ref = useOutsideClick(() => {
     setShowTabs({ search: false, alarm: false });
@@ -47,22 +37,16 @@ export const Sidebar = () => {
     if (tabKey) {
       setShowTabs((prev) =>
         Object.keys(prev).reduce(
-          (acc, key) => ({
-            ...acc,
-            [key]: key === tabKey,
-          }),
+          (acc, key) => ({ ...acc, [key]: key === tabKey }),
           {} as Record<TabKey, boolean>,
         ),
       );
+      return;
     }
 
     if (item.text === '다크모드') {
-      if (theme === 'dark') {
-        mutate({ theme: 'light' });
-      }
-      if (theme === 'light') {
-        mutate({ theme: 'dark' });
-      }
+      const newTheme = theme === 'dark' ? 'light' : 'dark';
+      changeTheme(newTheme);
     }
   };
 
