@@ -63,10 +63,10 @@ export class OpenapiPeriodData {
         isTrading: true,
       },
     });
-    //await this.getChartData(stocks, 'Y');
-    //await this.getChartData(stocks, 'M');
+    await this.getChartData(stocks, 'Y');
+    await this.getChartData(stocks, 'M');
     await this.getChartData(stocks, 'W');
-    //await this.getChartData(stocks, 'D');
+    await this.getChartData(stocks, 'D');
   }
 
   /**
