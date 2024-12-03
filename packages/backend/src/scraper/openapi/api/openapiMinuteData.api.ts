@@ -31,9 +31,7 @@ export class OpenapiMinuteData {
     private readonly datasource: DataSource,
     private readonly openapiQueue: OpenapiQueue,
     @Inject('winston') private readonly logger: Logger,
-  ) {
-    this.getStockMinuteData();
-  }
+  ) {}
 
   @Cron(`* 9-15 * * 1-5`)
   async getStockMinuteData() {
@@ -129,8 +127,7 @@ export class OpenapiMinuteData {
 
   private isMarketOpenTime(time: string) {
     const numberTime = parseInt(time);
-    // 이거 바꿔놓음
-    return numberTime >= 90000 && numberTime <= 203000;
+    return numberTime >= 90000 && numberTime <= 153000;
   }
 
   private getUpdateStockQuery(
