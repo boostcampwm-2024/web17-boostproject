@@ -1,10 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-//import { User } from '@/user/domain/user.entity';
 
 export class SubscriptionData {
-  //@ApiProperty({ type: () => User, description: '유저 아이디' })
-  //user: User;
-
   @ApiProperty({
     type: 'string',
     description: '엔드 포인트 설정',
