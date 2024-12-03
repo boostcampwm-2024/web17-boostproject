@@ -1,4 +1,4 @@
-import { type FormEvent, useState } from 'react';
+import { type FormEvent, type KeyboardEvent, useState } from 'react';
 import Send from '@/assets/send.svg?react';
 import { cn } from '@/utils/cn';
 
@@ -12,11 +12,19 @@ export const TextArea = ({ disabled, onSend, placeholder }: TextAreaProps) => {
   const [chatText, setChatText] = useState('');
   const [inputCount, setInputCount] = useState(0);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: FormEvent | KeyboardEvent) => {
     event.preventDefault();
+    if (chatText.trim() === '') return;
     onSend(chatText);
     setChatText('');
     setInputCount(0);
+  };
+
+  const handleEnterPress = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      handleSubmit(event);
+    }
   };
 
   return (
@@ -36,6 +44,7 @@ export const TextArea = ({ disabled, onSend, placeholder }: TextAreaProps) => {
             setChatText(e.target.value);
             setInputCount(e.target.value.length);
           }}
+          onKeyDown={handleEnterPress}
         />
         <button
           className={cn(
