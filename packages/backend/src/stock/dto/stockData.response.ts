@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
+import { StockData } from '@/stock/domain/stockData.entity';
 
 export class PriceDto {
   @ApiProperty({
@@ -33,6 +34,14 @@ export class PriceDto {
     example: '123.45',
   })
   close: number;
+
+  constructor(stockData: StockData) {
+    this.startTime = stockData.startTime;
+    this.open = stockData.open;
+    this.high = stockData.high;
+    this.low = stockData.low;
+    this.close = stockData.close;
+  }
 }
 
 export class VolumeDto {
@@ -49,6 +58,11 @@ export class VolumeDto {
     example: 1000,
   })
   volume: number;
+
+  constructor(stockData: StockData) {
+    this.startTime = stockData.startTime;
+    this.volume = stockData.volume;
+  }
 }
 
 export class StockDataResponse {
@@ -71,4 +85,14 @@ export class StockDataResponse {
     example: true,
   })
   hasMore: boolean;
+
+  constructor(
+    priceDtoList: PriceDto[],
+    volumeDtoList: VolumeDto[],
+    hasMore: boolean,
+  ) {
+    this.priceDtoList = priceDtoList;
+    this.volumeDtoList = volumeDtoList;
+    this.hasMore = hasMore;
+  }
 }

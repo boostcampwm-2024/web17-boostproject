@@ -42,7 +42,6 @@ import { StockLiveData } from '@/stock/domain/stockLiveData.entity';
   ],
   controllers: [],
   providers: [
-    LiveData,
     OpenapiLiveData,
     OpenapiTokenApi,
     OpenapiPeriodData,
@@ -56,6 +55,6 @@ import { StockLiveData } from '@/stock/domain/stockLiveData.entity';
     WebsocketClient,
     LiveData,
   ],
-  exports: [LiveData],
+  exports: [LiveData, OpenapiPeriodData],
 })
 export class OpenapiScraperModule {}
