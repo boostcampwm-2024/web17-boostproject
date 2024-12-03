@@ -99,17 +99,16 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
     if (!isOwnerStock) return alert('주식 소유자만 가능합니다.');
     clickLike({ chatId });
   };
-
   const { fetchNextPage, data, status, isFetchingNextPage } = useGetChatList({
     stockId,
     order,
   });
 
   useEffect(() => {
-    if (data) {
-      setChatData(data.pages);
+    if (status === 'success') {
+      setChatData(data.pages.flat());
     }
-  }, [data]);
+  }, [data, status]);
 
   const fetchMoreChats = () => {
     fetchNextPage();

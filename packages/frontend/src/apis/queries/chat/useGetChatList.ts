@@ -27,7 +27,7 @@ export const useGetChatList = ({
   order,
 }: GetChatListRequest) => {
   return useInfiniteQuery({
-    queryKey: ['chatList', stockId, pageSize, latestChatId, order],
+    queryKey: ['chatList', stockId, order],
     queryFn: ({ pageParam }) =>
       getChatList({
         stockId,
@@ -46,7 +46,6 @@ export const useGetChatList = ({
       pages: [...data.pages].flatMap((page) => page.chats),
       pageParams: [...data.pageParams],
     }),
-    enabled: !!latestChatId,
     staleTime: 1000 * 60 * 5,
   });
 };
