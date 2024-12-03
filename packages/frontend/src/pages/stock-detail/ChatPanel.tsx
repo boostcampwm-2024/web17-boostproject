@@ -108,7 +108,7 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
 
   useEffect(() => {
     if (status === 'success') {
-      setChatData(data.pages.flat());
+      setChatData(data.pages);
     }
   }, [data, status]);
 
