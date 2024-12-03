@@ -58,7 +58,7 @@
 
 ### 실시간 채팅
 
-<p align="center"><img src="https://github.com/user-attachments/assets/46397d2e-0202-45d9-bf20-9b00282737db" width="350" /></p>
+<img src="https://github.com/user-attachments/assets/46397d2e-0202-45d9-bf20-9b00282737db" width="350" />
 
 주식 종목마다 존재하는 채팅방에 접속하여 실시간 소통을 할 수 있습니다.
 <br/>
@@ -68,7 +68,7 @@
 
 - 웹소켓으로 받아오는 실시간 채팅 데이터와, REST API로 받아오는 누적 데이터를 다루기 위한 상태 관리 전략을 고민했습니다.
 
-[]()
+[👊 웹소켓의 채팅 데이터와 REST API의 채팅 데이터를 함께 관리하기](https://github.com/boostcampwm-2024/web17-juchumjuchum/wiki/%F0%9F%91%8A-%EC%9B%B9%EC%86%8C%EC%BC%93%EC%9D%98-%EC%B1%84%ED%8C%85-%EB%8D%B0%EC%9D%B4%ED%84%B0%EC%99%80-REST-API%EC%9D%98-%EC%B1%84%ED%8C%85-%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC-%ED%95%A8%EA%BB%98-%EA%B4%80%EB%A6%AC%ED%95%98%EA%B8%B0)
 
 <br/>
 
@@ -123,7 +123,7 @@
 
 ### 주식 종목 검색
 
-<p align="center"><img src="https://github.com/user-attachments/assets/6d44d8d0-fac5-4d39-9355-d13fbdc2701d" width="350"/></p>
+<img src="https://github.com/user-attachments/assets/6d44d8d0-fac5-4d39-9355-d13fbdc2701d" width="350"/>
 
 - 사이드바의 검색 버튼을 통한 간편한 검색을 지원합니다.
 - 검색 결과 요청 시 로딩 인디케이터를 통한 UX적으로 미려한 로딩바를 보여줍니다.
