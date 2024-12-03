@@ -28,13 +28,13 @@ export class AlarmSubscriber
   }
 
   isValidAlarm(alarm: Alarm, entity: StockMinutely) {
-    if (alarm.alarmDate && alarm.alarmDate > entity.createdAt) {
+    if (alarm.alarmDate && alarm.alarmDate >= entity.createdAt) {
       return false;
     } else {
-      if (alarm.targetPrice && alarm.targetPrice >= entity.open) {
+      if (alarm.targetPrice && alarm.targetPrice <= entity.open) {
         return true;
       }
-      if (alarm.targetVolume && alarm.targetVolume >= entity.volume) {
+      if (alarm.targetVolume && alarm.targetVolume <= entity.volume) {
         return true;
       }
       return false;
@@ -48,7 +48,6 @@ export class AlarmSubscriber
         where: { stock: { id: stockMinutely.stock.id } },
         relations: ['user', 'stock'],
       });
-
       const alarms = rawAlarms.filter((val) =>
         this.isValidAlarm(val, stockMinutely),
       );
