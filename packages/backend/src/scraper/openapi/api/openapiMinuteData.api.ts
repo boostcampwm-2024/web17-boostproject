@@ -1,49 +1,93 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 import { DataSource } from 'typeorm';
-import { Logger } from 'winston';
-import { openApiConfig } from '../config/openapi.config';
-
+import {
+  Json,
+  OpenapiQueue,
+  OpenapiQueueNodeValue,
+} from '../queue/openapi.queue';
 import {
   isMinuteData,
   MinuteData,
   UpdateStockQuery,
 } from '../type/openapiMinuteData.type';
 import { TR_IDS } from '../type/openapiUtil.type';
-import { getCurrentTime, getOpenApi } from '../util/openapiUtil.api';
-import { OpenapiTokenApi } from './openapiToken.api';
+import { getCurrentTime } from '../util/openapiUtil.api';
+import { Alarm } from '@/alarm/domain/alarm.entity';
 import { Stock } from '@/stock/domain/stock.entity';
 import { StockData, StockMinutely } from '@/stock/domain/stockData.entity';
 
-const STOCK_CUT = 4;
-
 @Injectable()
 export class OpenapiMinuteData {
-  private stock: Stock[][] = [];
   private readonly entity = StockMinutely;
   private readonly url: string =
     '/uapi/domestic-stock/v1/quotations/inquire-time-itemchartprice';
-  private readonly intervals: number = 130;
-  private flip: number = 0;
   constructor(
     private readonly datasource: DataSource,
-    private readonly openApiToken: OpenapiTokenApi,
-    @Inject('winston') private readonly logger: Logger,
+    private readonly openapiQueue: OpenapiQueue,
   ) {
-    //this.getStockData();
+    this.getStockMinuteData();
   }
 
-  async getStockData() {
+  @Cron(`* 9-15 * * 1-5`)
+  async getStockMinuteData() {
     if (process.env.NODE_ENV !== 'production') return;
-    const stock = await this.datasource.manager.findBy(Stock, {
-      isTrading: true,
-    });
-    const stockSize = Math.ceil(stock.length / STOCK_CUT);
-    let i = 0;
-    this.stock = [];
-    while (i < STOCK_CUT) {
-      this.stock.push(stock.slice(i * stockSize, (i + 1) * stockSize));
-      i++;
+    const alarms = await this.datasource.manager
+      .getRepository(Alarm)
+      .createQueryBuilder('alarm')
+      .leftJoin('alarm.stock', 'stock')
+      .select('stock.id', 'stockId')
+      .addSelect('COUNT(alarm.id)', 'alarmCount')
+      .groupBy('stock.id')
+      .orderBy('alarmCount', 'DESC')
+      .execute();
+    console.log(alarms);
+    for (const alarm of alarms) {
+      const time = getCurrentTime();
+      const query = this.getUpdateStockQuery(alarm.stockId, time);
+      const node: OpenapiQueueNodeValue = {
+        url: this.url,
+        query,
+        trId: TR_IDS.MINUTE_DATA,
+        callback: this.getStockMinuteDataCallback(alarm.stockId, time),
+      };
+      this.openapiQueue.enqueue(node);
     }
+  }
+
+  getStockMinuteDataCallback(stockId: string, time: string) {
+    return async (data: Json) => {
+      let output;
+      if (data.output2) output = data.output2;
+      if (output && output[0] && isMinuteData(output[0])) {
+        console.log(output);
+        this.saveMinuteData(stockId, output as MinuteData[], time);
+      }
+    };
+  }
+
+  private async saveMinuteData(
+    stockId: string,
+    item: MinuteData[],
+    time: string,
+  ) {
+    if (!this.isMarketOpenTime(time)) return;
+    const stockPeriod = item.map((val) =>
+      this.convertResToMinuteData(stockId, val, time),
+    );
+    for (const stock of stockPeriod) {
+      this.datasource.manager
+        .createQueryBuilder()
+        .insert()
+        .into(this.entity)
+        .values(stock)
+        .orUpdate(
+          ['id', 'close', 'low', 'high', 'open', 'volume', 'created_at'],
+          ['stock_id', 'start_time'],
+        )
+        .execute();
+    }
+    //this.datasource.manager.save(this.entity, stockPeriod);
   }
 
   private convertResToMinuteData(
@@ -71,70 +115,8 @@ export class OpenapiMinuteData {
 
   private isMarketOpenTime(time: string) {
     const numberTime = parseInt(time);
-    return numberTime >= 90000 && numberTime <= 153000;
-  }
-
-  private async saveMinuteData(
-    stockId: string,
-    item: MinuteData[],
-    time: string,
-  ) {
-    const manager = this.datasource.manager;
-    if (!this.isMarketOpenTime(time)) return;
-    const stockPeriod = item.map((val) =>
-      this.convertResToMinuteData(stockId, val, time),
-    );
-    manager.save(this.entity, stockPeriod);
-  }
-
-  private async getMinuteDataInterval(
-    stockId: string,
-    time: string,
-    config: typeof openApiConfig,
-  ) {
-    const query = this.getUpdateStockQuery(stockId, time);
-    try {
-      const response = await getOpenApi(
-        this.url,
-        config,
-        query,
-        TR_IDS.MINUTE_DATA,
-      );
-      let output;
-      if (response.output2) output = response.output2;
-      if (output && output[0] && isMinuteData(output[0])) {
-        this.saveMinuteData(stockId, output, time);
-      }
-    } catch (error) {
-      this.logger.warn(error);
-    }
-  }
-
-  private async getMinuteDataChunk(
-    chunk: Stock[],
-    config: typeof openApiConfig,
-  ) {
-    const time = getCurrentTime();
-    let interval = 0;
-    for await (const stock of chunk) {
-      setTimeout(
-        () => this.getMinuteDataInterval(stock.id!, time, config),
-        interval,
-      );
-      interval += this.intervals;
-    }
-  }
-
-  async getMinuteData() {
-    if (process.env.NODE_ENV !== 'production') return;
-    const configCount = (await this.openApiToken.configs()).length;
-    const stock = this.stock[this.flip % STOCK_CUT];
-    this.flip++;
-    const chunkSize = Math.ceil(stock.length / configCount);
-    for (let i = 0; i < configCount; i++) {
-      const chunk = stock.slice(i * chunkSize, (i + 1) * chunkSize);
-      this.getMinuteDataChunk(chunk, (await this.openApiToken.configs())[i]);
-    }
+    // 이거 바꿔놓음
+    return numberTime >= 90000 && numberTime <= 183000;
   }
 
   private getUpdateStockQuery(
