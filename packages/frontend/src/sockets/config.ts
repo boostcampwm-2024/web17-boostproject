@@ -22,4 +22,5 @@ export const socketChat = ({ stockId, pageSize = 20 }: SocketChatType) => {
 export const socketStock = io(`${URL}/api/stock/realtime`, {
   transports: ['websocket'],
   reconnectionDelayMax: 10000,
+  forceNew: true,
 });
