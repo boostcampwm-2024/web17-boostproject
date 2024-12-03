@@ -48,7 +48,7 @@ export class LiveData {
         stockId,
       );
       if (stockLiveData) {
-        this.openapiLiveData.saveLiveData(stockLiveData);
+        await this.openapiLiveData.saveLiveData(stockLiveData);
       }
     } catch (error) {
       this.logger.warn(`Subscribe error in open api : ${error}`);
