@@ -27,11 +27,26 @@ export const useGetChatList = ({
   order,
 }: GetChatListRequest) => {
   return useInfiniteQuery({
-    queryKey: ['chatList', stockId, latestChatId, pageSize, order],
-    queryFn: () => getChatList({ stockId, latestChatId, pageSize, order }),
-    getNextPageParam: (data) => (data.hasMore ? true : null),
-    initialPageParam: false,
-    staleTime: 60 * 1000 * 5,
+    queryKey: ['chatList', stockId, pageSize, latestChatId, order],
+    queryFn: ({ pageParam }) =>
+      getChatList({
+        stockId,
+        latestChatId: pageParam?.latestChatId,
+        pageSize,
+        order,
+      }),
+    getNextPageParam: (lastPage) =>
+      lastPage.hasMore
+        ? {
+            latestChatId: lastPage.chats[lastPage.chats.length - 1].id,
+          }
+        : undefined,
+    initialPageParam: { latestChatId },
+    select: (data) => ({
+      pages: [...data.pages].flatMap((page) => page.chats),
+      pageParams: [...data.pageParams],
+    }),
     enabled: !!latestChatId,
+    staleTime: 1000 * 60 * 5,
   });
 };
