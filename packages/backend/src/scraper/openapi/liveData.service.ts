@@ -6,6 +6,7 @@ import { OpenapiLiveData } from './api/openapiLiveData.api';
 import { OpenapiTokenApi } from './api/openapiToken.api';
 import { openApiConfig } from './config/openapi.config';
 import { parseMessage } from './parse/openapi.parser';
+import { OpenapiConsumer } from './queue/openapi.queue';
 import { WebsocketClient } from './websocket/websocketClient.websocket';
 
 type TR_IDS = '1' | '2';
@@ -25,6 +26,7 @@ export class LiveData {
   constructor(
     private readonly openApiToken: OpenapiTokenApi,
     private readonly openapiLiveData: OpenapiLiveData,
+    private readonly openapiConsumer: OpenapiConsumer,
     @Inject('winston') private readonly logger: Logger,
   ) {
     this.openApiToken.configs().then((config) => {
@@ -35,7 +37,7 @@ export class LiveData {
         );
         this.configSubscribeSize.push(0);
       }
-      this.connect();
+      //this.connect();
     });
   }
 
@@ -64,7 +66,8 @@ export class LiveData {
       return;
     }
     await this.openapiSubscribe(stockId);
-
+    return;
+    // TODO : 이거 커밋하기 전에 날려야함.
     if (!this.isCloseTime(new Date(), this.startTime, this.endTime)) {
       for (const [idx, size] of this.configSubscribeSize.entries()) {
         if (size >= this.SOCKET_LIMITS) continue;
@@ -131,7 +134,7 @@ export class LiveData {
           return;
         }
         const liveData = this.openapiLiveData.convertLiveData(message);
-        await this.openapiLiveData.saveLiveData(liveData[0])
+        await this.openapiLiveData.saveLiveData(liveData[0]);
       } catch (error) {
         this.logger.warn(error);
       }
