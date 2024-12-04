@@ -44,52 +44,66 @@ export class StockDataService {
     private readonly openapiPeriodData: OpenapiPeriodData,
   ) {}
 
-  async getPaginated(
+  async scrollChart(
     entity: new () => StockData,
     stockId: string,
     lastStartTime?: string,
   ): Promise<StockDataResponse> {
-    return await this.dataSource.manager.transaction(async (manager) => {
-      if (!(await this.isStockExist(stockId, manager)))
-        throw new NotFoundException('stock not found');
-      const cacheKey = this.createCacheKey(entity, stockId, lastStartTime);
-      const cachedData = this.stockDataCache.get(cacheKey);
-      if (cachedData) {
-        return cachedData;
-      }
-      const queryBuilder = this.createQueryBuilder(
-        entity,
-        stockId,
-        manager,
-        lastStartTime,
-      );
-      const results = await queryBuilder.getMany();
-      const lastData = results[0];
-      const periodType = this.getPeriodType(entity);
-      if (!periodType) throw new BadRequestException('period type not found');
-      if (
-        !lastStartTime &&
-        (!lastData || !this.isLastDate(lastData, periodType))
-      ) {
-        return new Promise((resolve) => {
-          this.openapiPeriodData.insertCartDataRequest(
-            (value) => {
-              const index = this.findExistDataIndex(value, lastData);
-              const response = this.convertResultsToResponse([
-                ...value.slice(index + 1).reverse(),
-                ...results,
-              ]);
-              this.stockDataCache.set(cacheKey, response);
-              resolve(response);
-            },
-            stockId,
-            periodType,
-          );
-        });
-      }
-      const response = this.convertResultsToResponse(results);
-      this.stockDataCache.set(cacheKey, response);
-      return response;
+    if (!(await this.isStockExist(stockId, this.dataSource.manager)))
+      throw new NotFoundException('stock not found');
+    const cacheKey = this.createCacheKey(entity, stockId, lastStartTime);
+    const cachedData = this.stockDataCache.get(cacheKey);
+
+    if (cachedData) {
+      return cachedData;
+    }
+    const lastData = await this.findLastData(entity, stockId);
+    const periodType = this.getPeriodType(entity);
+    if (!periodType) throw new BadRequestException('period type not found');
+    if (
+      !lastStartTime &&
+      (!lastData || !this.isLastDate(lastData, periodType))
+    ) {
+      return new Promise((resolve) => {
+        this.openapiPeriodData.insertCartDataRequest(
+          async () => {
+            const results = await this.getChartData(
+              entity,
+              stockId,
+              lastStartTime,
+            );
+            const response = this.convertResultsToResponse(results);
+            resolve(response);
+          },
+          stockId,
+          periodType,
+        );
+      });
+    }
+    const results = await this.getChartData(entity, stockId, lastStartTime);
+    const response = this.convertResultsToResponse(results);
+    this.stockDataCache.set(cacheKey, response);
+    return response;
+  }
+
+  async getChartData(
+    entity: new () => StockData,
+    stockId: string,
+    lastStartTime?: string,
+  ) {
+    const queryBuilder = this.createQueryBuilder(
+      entity,
+      stockId,
+      this.dataSource.manager,
+      lastStartTime,
+    );
+    return queryBuilder.getMany();
+  }
+
+  async findLastData(entity: new () => StockData, stockId: string) {
+    return await this.dataSource.manager.findOne(entity, {
+      where: { stock: { id: stockId } },
+      order: { startTime: 'DESC' },
     });
   }
 
@@ -102,17 +116,18 @@ export class StockDataService {
     const current = new Date();
     if (period === 'D') return lastDate.isSameDate(current);
     if (period === 'M') {
-      return lastDate.isSameWeek(current) && lastDate.isSameYear(current);
+      return (
+        lastDate.isSameWeek(current) &&
+        lastDate.isSameYear(current) &&
+        lastDate.isSameDate(current) &&
+        lastDate.isSameDate(current)
+      );
     }
-    if (period === 'Y') return lastDate.isSameYear(current);
-    return lastDate.isSameWeek(current);
-  }
-
-  private findExistDataIndex(responseData: StockData[], lastData: StockData) {
-    if (!lastData) return -1;
-    const lastDate = new NewDate(lastData.startTime);
-    return responseData.findIndex((data) =>
-      lastDate.isSameDate(data.startTime),
+    if (period === 'Y')
+      return lastDate.isSameYear(current) && lastDate.isSameDate(current);
+    return (
+      lastDate.isSameWeek(current) &&
+      lastData.createdAt.getDate() === current.getDate()
     );
   }
 

@@ -69,18 +69,22 @@ export class OpenapiPeriodData {
     period: Period,
   ) {
     return async (data: Json) => {
+      const promises: Promise<void>[] = [];
       if (!data.output2 || !Array.isArray(data.output2)) return resolve([]);
       const result = data.output2
         .reduce((acc: StockData[], item: Record<string, string>) => {
           if (!isChartData(item)) return acc;
           const stockData = this.convertObjectToStockData(item, stockId);
           acc.push(stockData);
-          this.insertChartData(stockData, period).catch((e) =>
-            this.catchAndLogError(e, stockId),
+          promises.push(
+            this.insertChartData(stockData, period).catch((e) =>
+              this.catchAndLogError(e, stockId),
+            ),
           );
           return acc;
         }, [])
         .reverse();
+      await Promise.all(promises);
       resolve(result);
     };
   }
@@ -105,6 +109,16 @@ export class OpenapiPeriodData {
         ),
       },
       1,
+    );
+  }
+
+  isSamePeriod(stock: StockData, period: Period, date: Date) {
+    return (
+      (period === 'W' && new NewDate(stock.startTime).isSameWeek(date)) ||
+      (period === 'M' &&
+        new NewDate(stock.startTime).isSameMonth(date) &&
+        new NewDate(stock.startTime).isSameYear(date)) ||
+      (period === 'Y' && new NewDate(stock.startTime).isSameYear(date))
     );
   }
 
@@ -172,16 +186,6 @@ export class OpenapiPeriodData {
         startTime: stock.startTime,
       },
     });
-  }
-
-  private isSamePeriod(stock: StockData, period: Period, date: Date) {
-    return (
-      (period === 'W' && new NewDate(stock.startTime).isSameWeek(date)) ||
-      (period === 'M' &&
-        new NewDate(stock.startTime).isSameMonth(date) &&
-        new NewDate(stock.startTime).isSameYear(date)) ||
-      (period === 'Y' && new NewDate(stock.startTime).isSameYear(date))
-    );
   }
 
   private async insertChartData(stock: StockData, period: Period) {

@@ -294,7 +294,7 @@ export class StockController {
     stockId: string,
     lastStartTime: string | undefined,
   ) {
-    return this.stockDataService.getPaginated(
+    return this.stockDataService.scrollChart(
       StockYearly,
       stockId,
       lastStartTime,
@@ -305,7 +305,7 @@ export class StockController {
     stockId: string,
     lastStartTime: string | undefined,
   ) {
-    return this.stockDataService.getPaginated(
+    return this.stockDataService.scrollChart(
       StockWeekly,
       stockId,
       lastStartTime,
@@ -316,7 +316,7 @@ export class StockController {
     stockId: string,
     lastStartTime: string | undefined,
   ) {
-    return this.stockDataService.getPaginated(
+    return this.stockDataService.scrollChart(
       StockMonthly,
       stockId,
       lastStartTime,
@@ -324,7 +324,7 @@ export class StockController {
   }
 
   private getDailyData(stockId: string, lastStartTime?: string) {
-    return this.stockDataService.getPaginated(
+    return this.stockDataService.scrollChart(
       StockDaily,
       stockId,
       lastStartTime,
