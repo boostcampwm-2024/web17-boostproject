@@ -3,21 +3,24 @@ import { cva, VariantProps } from 'class-variance-authority';
 import { cn } from '@/utils/cn';
 
 export const ButtonVariants = cva(
-  `display-bold12 border rounded shadow-black`,
+  `display-bold12 border rounded shadow-black py-1 border-orange`,
   {
     variants: {
       backgroundColor: {
-        default: 'bg-white',
+        default: 'bg-white hover:bg-orange',
         gray: 'bg-gray',
-        orange: 'bg-orange',
+        orange: 'bg-orange hover:bg-white',
       },
       textColor: {
-        default: 'text-orange',
-        white: 'text-white',
+        default: 'text-orange hover:text-white',
+        white: 'text-white hover:text-orange',
       },
       size: {
         default: 'w-24',
         sm: 'w-14',
+      },
+      border: {
+        gray: 'border-gray',
       },
     },
     defaultVariants: {
@@ -35,6 +38,7 @@ export interface ButtonProps
 }
 
 export const Button = ({
+  type = 'button',
   backgroundColor,
   textColor,
   size,
@@ -44,6 +48,7 @@ export const Button = ({
 }: ButtonProps) => {
   return (
     <button
+      type={type}
       className={cn(
         ButtonVariants({ backgroundColor, textColor, size }),
         className,

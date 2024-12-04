@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
-import { AuthController } from '@/auth/auth.controller';
 import { GoogleAuthController } from '@/auth/google/googleAuth.controller';
 import { GoogleAuthService } from '@/auth/google/googleAuth.service';
 import { GoogleStrategy } from '@/auth/google/strategy/google.strategy';
+import { AuthController } from '@/auth/auth.controller';
 import { SessionSerializer } from '@/auth/session/session.serializer';
 import { TesterStrategy } from '@/auth/tester/strategy/tester.strategy';
 import { TesterAuthController } from '@/auth/tester/testerAuth.controller';
