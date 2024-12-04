@@ -6,17 +6,19 @@ export const useSubscribeAlarm = () => {
   const subscribeAlarm = async () => {
     if ('Notification' in window && navigator.serviceWorker) {
       try {
-        const permission = await Notification.requestPermission();
-        if (permission === 'granted') {
-          const registration = await navigator.serviceWorker.ready;
-          const subscription = await registration.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: urlB64ToUint8Array(
-              import.meta.env.VITE_VAPID_PUBLIC_KEY,
-            ),
-          });
+        if (Notification.permission === 'default') {
+          const permission = await Notification.requestPermission();
+          if (permission === 'granted') {
+            const registration = await navigator.serviceWorker.ready;
+            const subscription = await registration.pushManager.subscribe({
+              userVisibleOnly: true,
+              applicationServerKey: urlB64ToUint8Array(
+                import.meta.env.VITE_VAPID_PUBLIC_KEY,
+              ),
+            });
 
-          postInitAlarm(subscription);
+            postInitAlarm(subscription);
+          }
         }
       } catch (error) {
         console.log('Subscription failed', error);
