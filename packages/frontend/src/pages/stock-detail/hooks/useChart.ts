@@ -44,7 +44,11 @@ export const useChart = ({
   const containerInstance = containerRef.current;
 
   const { theme } = useContext(ThemeContext);
-  const graphTheme = theme === 'light' ? lightTheme : darkTheme;
+  const graphTheme = theme
+    ? theme === 'light'
+      ? lightTheme
+      : darkTheme
+    : lightTheme;
 
   useEffect(() => {
     if (!containerInstance) return;
