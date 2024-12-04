@@ -19,7 +19,7 @@ export const UserInfo = () => {
 
   return (
     <div className="flex flex-col gap-5">
-      <section className="flex justify-between">
+      <section className="flex flex-col md:flex-row md:justify-between">
         <div className="display-medium14 text-gray flex gap-3">
           <h2 className="display-bold20 text-black">내정보</h2>
           {isEdit ? (
