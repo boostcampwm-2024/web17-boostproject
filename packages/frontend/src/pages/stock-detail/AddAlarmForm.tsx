@@ -7,10 +7,7 @@ interface AddAlarmFormProps {
   className?: string;
 }
 
-// type AlarmMethod = 'push' | 'email';
-
 export const AddAlarmForm = ({ className }: AddAlarmFormProps) => {
-  // const [alarmMethod, setAlarmMethod] = useState<AlarmMethod>('push');
   const handleSubmit = () => {};
 
   return (
@@ -41,32 +38,6 @@ export const AddAlarmForm = ({ className }: AddAlarmFormProps) => {
                 placeholder="1,000"
                 className="w-full text-right"
               />
-            </section>
-          </article>
-          <article className="flex flex-col gap-2">
-            <p className="display-bold16">어떻게 알림을 보낼까요?</p>
-            <section className="flex items-center gap-5">
-              <Input
-                type="radio"
-                name="method"
-                id="push"
-                checked
-                className="w-fit"
-                // onChange={() => setAlarmMethod('push')}
-              />
-              <label htmlFor="push" className="display-medium14">
-                웹 푸시
-              </label>
-              <Input
-                type="radio"
-                name="method"
-                id="email"
-                className="w-fit"
-                // onChange={() => setAlarmMethod('email')}
-              />
-              <label htmlFor="email" className="display-medium14">
-                이메일
-              </label>
             </section>
           </article>
           <article className="flex flex-col gap-2">
