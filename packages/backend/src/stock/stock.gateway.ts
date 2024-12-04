@@ -37,6 +37,10 @@ export class StockGateway implements OnGatewayDisconnect {
   ) {
     try {
       client.join(stockId);
+      const beforeStockId = this.users.get(client.id);
+      if (beforeStockId !== undefined) {
+        client.leave(beforeStockId);
+      }
       this.users.set(client.id, stockId);
 
       await this.mutex.runExclusive(async () => {
