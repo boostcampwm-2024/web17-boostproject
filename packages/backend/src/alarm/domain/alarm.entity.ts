@@ -36,7 +36,7 @@ export class Alarm {
   targetVolume?: number;
 
   @Column({ type: 'timestamp', name: 'alarm_date', nullable: true })
-  alarmDate?: Date;
+  alarmExpiredDate?: Date;
 
   @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
   createdAt: Date;

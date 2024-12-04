@@ -28,7 +28,7 @@ export class AlarmSubscriber
   }
 
   isValidAlarm(alarm: Alarm, entity: StockMinutely) {
-    if (alarm.alarmDate && alarm.alarmDate <= entity.createdAt) {
+    if (alarm.alarmExpiredDate && alarm.alarmExpiredDate <= entity.createdAt) {
       return false;
     } else {
       if (alarm.targetPrice && alarm.targetPrice <= entity.open) {
