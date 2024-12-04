@@ -39,22 +39,6 @@ export class LiveData {
     });
   }
 
-  private async openapiSubscribe(stockId: string) {
-    const config = (await this.openApiToken.configs())[0];
-    const result = await this.openapiLiveData.connectLiveData(stockId, config);
-    try {
-      const stockLiveData = this.openapiLiveData.convertResponseToStockLiveData(
-        result.output,
-        stockId,
-      );
-      if (stockLiveData) {
-        await this.openapiLiveData.saveLiveData(stockLiveData);
-      }
-    } catch (error) {
-      this.logger.warn(`Subscribe error in open api : ${error}`);
-    }
-  }
-
   isSubscribe(stockId: string) {
     return Object.keys(this.subscribeStocks).some((val) => val === stockId);
   }
@@ -103,6 +87,22 @@ export class LiveData {
       this.logger.info(`${idx} : ${message}`);
       this.websocketClient[idx].unsubscribe(message);
     }
+  }
+
+  @Cron('0 2 * * 1-5')
+  connect() {
+    this.websocketClient.forEach((socket, idx) => {
+      socket.connectFacade(
+        this.initOpenCallback(idx),
+        this.initMessageCallback,
+        this.initCloseCallback,
+        this.initErrorCallback,
+      );
+    });
+  }
+
+  private async openapiSubscribe(stockId: string) {
+    this.openapiLiveData.insertLiveDataRequest(stockId);
   }
 
   private initOpenCallback =
@@ -158,18 +158,6 @@ export class LiveData {
     const endMinutes = end.getHours() * 60 + end.getMinutes();
 
     return dateMinutes <= startMinutes || dateMinutes >= endMinutes;
-  }
-
-  @Cron('0 2 * * 1-5')
-  connect() {
-    this.websocketClient.forEach((socket, idx) => {
-      socket.connectFacade(
-        this.initOpenCallback(idx),
-        this.initMessageCallback,
-        this.initCloseCallback,
-        this.initErrorCallback,
-      );
-    });
   }
 
   private convertObjectToMessage(
