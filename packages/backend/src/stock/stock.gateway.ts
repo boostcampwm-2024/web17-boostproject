@@ -75,11 +75,11 @@ export class StockGateway implements OnGatewayDisconnect {
     if (stockId !== undefined) {
       await this.mutex.runExclusive(async () => {
         client.leave(stockId);
+        this.users.delete(client.id);
         const values = Object.values(this.users);
         const isStockIdExists = values.some((value) => stockId === value);
         if (!isStockIdExists) {
           await this.liveData.unsubscribe(stockId);
-          this.users.delete(client.id);
         }
       });
     }
