@@ -74,7 +74,7 @@ export const METRICS_DATA = ({
       metrics: [
         {
           ...METRIC_DETAILS.enterpriseValue.marketCap,
-          value: `${marketCap?.toLocaleString()}원`,
+          value: `${marketCap?.toLocaleString()}억원`,
         },
         {
           ...METRIC_DETAILS.enterpriseValue.per,

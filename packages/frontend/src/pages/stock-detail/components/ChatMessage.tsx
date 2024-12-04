@@ -45,7 +45,7 @@ export const ChatMessage = ({
       <div className="flex items-center gap-2">
         <p
           className={cn(
-            'display-bold14 w-full rounded p-2 py-3',
+            'display-bold14 w-full whitespace-pre-wrap rounded p-2 py-3',
             writer ? 'bg-light-yellow' : 'bg-extra-light-gray',
           )}
         >

@@ -2,23 +2,23 @@ import { useEffect, useRef } from 'react';
 
 interface InfiniteScrollProps {
   onIntersect: () => void;
-  hasMore: boolean;
+  hasNextPage: boolean;
 }
 
 export const useInfiniteScroll = ({
   onIntersect,
-  hasMore,
+  hasNextPage,
 }: InfiniteScrollProps) => {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && hasMore) {
+        if (entries[0].isIntersecting && hasNextPage) {
           onIntersect();
         }
       },
-      { threshold: 0.3 },
+      { threshold: 0.5 },
     );
     const instance = ref.current;
 
@@ -28,10 +28,10 @@ export const useInfiniteScroll = ({
 
     return () => {
       if (instance) {
-        observer.unobserve(instance);
+        observer.disconnect();
       }
     };
-  }, [onIntersect, hasMore]);
+  }, [onIntersect, hasNextPage]);
 
   return { ref };
 };

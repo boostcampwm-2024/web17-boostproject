@@ -3,7 +3,12 @@ import { GetChatListRequest } from './schema';
 import { get } from '@/apis/utils/get';
 import { ChatDataResponse, ChatDataResponseSchema } from '@/sockets/schema';
 
-const getChatList = ({ stockId, latestChatId, pageSize }: GetChatListRequest) =>
+const getChatList = ({
+  stockId,
+  latestChatId,
+  pageSize,
+  order,
+}: GetChatListRequest) =>
   get<ChatDataResponse>({
     schema: ChatDataResponseSchema,
     url: '/api/chat',
@@ -11,6 +16,7 @@ const getChatList = ({ stockId, latestChatId, pageSize }: GetChatListRequest) =>
       stockId,
       latestChatId,
       pageSize,
+      order,
     },
   });
 
@@ -18,13 +24,28 @@ export const useGetChatList = ({
   stockId,
   latestChatId,
   pageSize,
+  order,
 }: GetChatListRequest) => {
   return useInfiniteQuery({
-    queryKey: ['chatList', stockId, latestChatId, pageSize],
-    queryFn: () => getChatList({ stockId, latestChatId, pageSize }),
-    getNextPageParam: (data) => (data.hasMore ? true : null),
-    initialPageParam: false,
-    staleTime: 60 * 1000 * 5,
-    enabled: !!latestChatId,
+    queryKey: ['chatList', stockId, order],
+    queryFn: ({ pageParam }) =>
+      getChatList({
+        stockId,
+        latestChatId: pageParam?.latestChatId,
+        pageSize,
+        order,
+      }),
+    getNextPageParam: (lastPage) =>
+      lastPage.hasMore
+        ? {
+            latestChatId: lastPage.chats[lastPage.chats.length - 1].id,
+          }
+        : undefined,
+    initialPageParam: { latestChatId },
+    select: (data) => ({
+      pages: [...data.pages].flatMap((page) => page.chats),
+      pageParams: [...data.pageParams],
+    }),
+    staleTime: 1000 * 60 * 5,
   });
 };
