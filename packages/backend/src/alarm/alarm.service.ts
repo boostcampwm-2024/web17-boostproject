@@ -84,7 +84,7 @@ export class AlarmService {
 
     if (alarm.targetPrice && this.isTargetPriceMet(alarm.targetPrice, recent))
       throw new BadRequestException(
-        `${alarm.targetPrice}는 최근 가격보다 낮습니다. 다시 입력해주세요.`,
+        `${alarm.targetPrice}원은 최근 가격보다 낮습니다. 다시 입력해주세요.`,
       );
 
     if (
@@ -92,7 +92,7 @@ export class AlarmService {
       this.isTargetVolumeMet(alarm.targetVolume, recent)
     )
       throw new BadRequestException(
-        `${alarm.targetVolume}는 최근 거래량보다 낮습니다. 다시 입력해주세요.`,
+        `${alarm.targetVolume}은 최근 거래량보다 낮습니다. 다시 입력해주세요.`,
       );
   }
 
