@@ -10,7 +10,7 @@ import {
 } from '@/apis/queries/stocks';
 import { TIME_UNIT } from '@/constants/timeUnit';
 
-export const TradingChart = () => {
+const TradingChart = () => {
   const { stockId } = useParams();
   const [timeunit, setTimeunit] =
     useState<StockTimeSeriesRequest['timeunit']>('day');
@@ -23,14 +23,8 @@ export const TradingChart = () => {
     timeunit,
   });
 
-  const allPriceData = data?.pages.flatMap((page) => page.priceDtoList) ?? [];
-  const allVolumeData = data?.pages.flatMap((page) => page.volumeDtoList) ?? [];
-
-  const chart = useChart({
-    priceData: allPriceData,
-    volumeData: allVolumeData,
-    containerRef,
-  });
+  const { priceDtoList: priceData, volumeDtoList: volumeData } = data;
+  const chart = useChart({ priceData, volumeData, containerRef });
 
   const fetchGraphData = useCallback(
     async (logicalRange: LogicalRange | null) => {
@@ -79,3 +73,5 @@ export const TradingChart = () => {
     </div>
   );
 };
+
+export default TradingChart;

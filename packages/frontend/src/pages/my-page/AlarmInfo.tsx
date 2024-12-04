@@ -16,9 +16,7 @@ export const AlarmInfo = () => {
 
 const AlarmInfoContents = () => {
   const { isLoggedIn } = useContext(LoginContext);
-  const { data } = useGetAlarm({
-    isLoggedIn,
-  });
+  const { data } = useGetAlarm({ isLoggedIn });
 
   if (!isLoggedIn) {
     return (

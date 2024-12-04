@@ -1,4 +1,12 @@
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import {
+  Suspense,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { useParams } from 'react-router-dom';
 import { TextArea } from './components';
 import { ChatMessage } from './components/ChatMessage';
@@ -153,49 +161,59 @@ export const ChatPanel = ({ isOwnerStock }: ChatPanelProps) => {
         </div>
       </div>
       <section className="flex h-[40rem] flex-col gap-8 overflow-auto break-words break-all p-3">
-        {chatData.length ? (
-          <>
-            {chatData.slice(0, INITIAL_VISIBLE_CHATS).map((chat) => (
-              <ChatMessage
-                key={chat.id}
-                name={chat.nickname}
-                contents={chat.message}
-                likeCount={chat.likeCount}
-                liked={chat.liked}
-                subName={chat.subName}
-                createdAt={chat.createdAt}
-                writer={isWriter(chat)}
-                onClick={() => handleLikeClick(chat.id)}
-              />
-            ))}
-            {chatData.slice(INITIAL_VISIBLE_CHATS).map((chat, index) => (
-              <div className="relative" key={`${chat.id}-${index}`}>
-                {!isOwnerStock && (
-                  <div className="absolute inset-0 flex items-center justify-center text-center backdrop-blur-sm">
-                    {index === 0 && (
-                      <p>
-                        주식 소유자만 <br />
-                        확인할 수 있습니다.
-                      </p>
+        <ErrorBoundary
+          fallback={
+            <p className="text-center">채팅을 불러오는데 실패했어요.</p>
+          }
+        >
+          <Suspense fallback={<Loader />}>
+            {chatData.length ? (
+              <>
+                {chatData.slice(0, INITIAL_VISIBLE_CHATS).map((chat) => (
+                  <ChatMessage
+                    key={chat.id}
+                    name={chat.nickname}
+                    contents={chat.message}
+                    likeCount={chat.likeCount}
+                    liked={chat.liked}
+                    subName={chat.subName}
+                    createdAt={chat.createdAt}
+                    writer={isWriter(chat)}
+                    onClick={() => handleLikeClick(chat.id)}
+                  />
+                ))}
+                {chatData.slice(INITIAL_VISIBLE_CHATS).map((chat, index) => (
+                  <div className="relative" key={`${chat.id}-${index}`}>
+                    {!isOwnerStock && (
+                      <div className="absolute inset-0 flex items-center justify-center text-center backdrop-blur-sm">
+                        {index === 0 && (
+                          <p>
+                            주식 소유자만 <br />
+                            확인할 수 있어요.
+                          </p>
+                        )}
+                      </div>
                     )}
+                    <ChatMessage
+                      name={chat.nickname}
+                      contents={
+                        isOwnerStock ? chat.message : '로그인 후 이용 가능'
+                      }
+                      likeCount={chat.likeCount}
+                      liked={chat.liked}
+                      subName={chat.subName}
+                      createdAt={chat.createdAt}
+                      writer={isWriter(chat)}
+                      onClick={() => handleLikeClick(chat.id)}
+                    />
                   </div>
-                )}
-                <ChatMessage
-                  name={chat.nickname}
-                  contents={isOwnerStock ? chat.message : '로그인 후 이용 가능'}
-                  likeCount={chat.likeCount}
-                  liked={chat.liked}
-                  subName={chat.subName}
-                  createdAt={chat.createdAt}
-                  writer={isWriter(chat)}
-                  onClick={() => handleLikeClick(chat.id)}
-                />
-              </div>
-            ))}
-          </>
-        ) : (
-          <p className="text-center">채팅이 없어요.</p>
-        )}
+                ))}
+              </>
+            ) : (
+              <p className="text-center">채팅이 없어요.</p>
+            )}
+          </Suspense>
+        </ErrorBoundary>
         {isFetching ? <Loader className="w-44" /> : <div ref={ref} />}
       </section>
     </article>

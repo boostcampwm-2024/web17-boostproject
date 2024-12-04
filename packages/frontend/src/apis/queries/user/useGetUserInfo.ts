@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { GetUserInfoSchema, type GetUserInfo } from './schema';
 import { get } from '@/apis/utils/get';
 
@@ -9,7 +9,7 @@ const getUserInfo = () =>
   });
 
 export const useGetUserInfo = () => {
-  return useQuery({
+  return useSuspenseQuery({
     queryKey: ['userInfo'],
     queryFn: getUserInfo,
   });
