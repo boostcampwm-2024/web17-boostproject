@@ -4,7 +4,7 @@ import Flag from '@/assets/flag.svg?react';
 export interface AlarmProps {
   option: string;
   goalPrice: number | string;
-  alarmDate: string;
+  alarmDate: string | null;
 }
 
 export const Alarm = ({ option, goalPrice, alarmDate }: AlarmProps) => {
@@ -16,7 +16,7 @@ export const Alarm = ({ option, goalPrice, alarmDate }: AlarmProps) => {
       </span>
       <span className="flex items-center gap-2">
         <Date />
-        {alarmDate.slice(0, 10)}
+        기한: {alarmDate ? alarmDate.slice(0, 10) : '무기한'}
       </span>
     </article>
   );

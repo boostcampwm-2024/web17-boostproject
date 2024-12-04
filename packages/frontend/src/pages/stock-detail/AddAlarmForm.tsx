@@ -18,7 +18,7 @@ interface AddAlarmFormProps {
 interface AlarmInfo {
   option: AlarmOptionName;
   value: number;
-  endDate: string;
+  endDate: string | null;
 }
 
 export const AddAlarmForm = ({ className }: AddAlarmFormProps) => {
@@ -30,7 +30,7 @@ export const AddAlarmForm = ({ className }: AddAlarmFormProps) => {
   const [alarmInfo, setAlarmInfo] = useState<AlarmInfo>({
     option: ALARM_OPTIONS[0].name,
     value: 0,
-    endDate: '',
+    endDate: null,
   });
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -41,26 +41,24 @@ export const AddAlarmForm = ({ className }: AddAlarmFormProps) => {
       return;
     }
 
-    if (!alarmInfo.endDate) {
-      alert('알림을 받을 기한을 선택해주세요.');
-      return;
-    }
-
     subscribeAlarm();
     const { option, value, endDate } = alarmInfo;
 
     const requestData: PostCreateAlarmRequest = {
       stockId,
       [option]: value,
-      alarmDate: endDate,
+      alarmExpiredDate: endDate,
     };
 
     mutate(requestData, {
       onSuccess: () => {
         alert('알림이 등록되었어요!');
-        setAlarmInfo({ option: ALARM_OPTIONS[0].name, value: 0, endDate: '' });
+        setAlarmInfo({
+          option: ALARM_OPTIONS[0].name,
+          value: 0,
+          endDate: null,
+        });
       },
-      onError: () => alert('예기치 못한 문제가 발생했어요. 다시 시도해주세요.'),
     });
   };
 
@@ -77,8 +75,13 @@ export const AddAlarmForm = ({ className }: AddAlarmFormProps) => {
         className="text-dark-gray flex h-full flex-col items-center justify-between gap-16"
       >
         <div className="flex flex-col gap-16">
-          <article className="flex flex-col gap-3">
-            <p className="display-bold16">언제 알림을 보낼까요?</p>
+          <article className="flex flex-col gap-4">
+            <div>
+              <p className="display-bold16">언제 알림을 보낼까요?</p>
+              <p className="display-medium12 text-gray">
+                알림을 받고 싶은 도달 가격을 설정하세요.
+              </p>
+            </div>
             <section className="flex gap-5">
               <select
                 className="display-medium14 bg-white focus:outline-none"
@@ -107,11 +110,17 @@ export const AddAlarmForm = ({ className }: AddAlarmFormProps) => {
               />
             </section>
           </article>
-          <article className="flex flex-col gap-3">
-            <p className="display-bold16">언제까지 알림을 보낼까요?</p>
+          <article className="flex flex-col gap-5">
+            <div>
+              <p className="display-bold16">언제까지 알림을 보낼까요?</p>
+              <p className="display-medium12 text-gray">
+                알림 종료 일자를 선택하세요.
+                <br /> 미 선택시 무기한으로 설정됩니다.
+              </p>
+            </div>
             <Input
               type="date"
-              value={alarmInfo.endDate}
+              value={alarmInfo.endDate ?? ''}
               onChange={(e) =>
                 setAlarmInfo((prev) => ({ ...prev, endDate: e.target.value }))
               }
