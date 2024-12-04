@@ -1,4 +1,10 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { User } from '@/user/domain/user.entity';
 
 @Entity()
@@ -7,6 +13,7 @@ export class PushSubscription {
   id: number;
 
   @ManyToOne(() => User, (user) => user.subscriptions, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
   @Column({ type: 'text' })
