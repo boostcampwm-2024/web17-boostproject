@@ -58,7 +58,7 @@ export class AlarmService {
   async findOne(id: number) {
     const result = await this.alarmRepository.findOne({
       where: { id },
-      relations: ['user', 'stock'],
+      relations: ['user'],
     });
     if (result) return new AlarmResponse(result);
     else throw new NotFoundException('등록된 알림을 찾을 수 없습니다.');
@@ -70,7 +70,12 @@ export class AlarmService {
       throw new NotFoundException('등록된 알림을 찾을 수 없습니다.');
     }
 
-    await this.alarmRepository.update(id, updateData);
+    await this.alarmRepository.update(id, {
+      stock: { id: updateData.stockId },
+      targetVolume: updateData.targetVolume,
+      targetPrice: updateData.targetPrice,
+      alarmDate: updateData.alarmExpiredDate,
+    });
     const updatedAlarm = await this.alarmRepository.findOne({
       where: { id },
       relations: ['user', 'stock'],
