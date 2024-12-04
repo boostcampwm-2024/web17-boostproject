@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ALARM_OPTIONS, type AlarmOptionName } from '@/constants/alarmOptions';
 import { LoginContext } from '@/contexts/login';
+import { useSubscribeAlarm } from '@/hooks/useSubscribeAlarm';
 import { cn } from '@/utils/cn';
 
 interface AddAlarmFormProps {
@@ -24,6 +25,7 @@ export const AddAlarmForm = ({ className }: AddAlarmFormProps) => {
   const { stockId = '' } = useParams();
   const { mutate } = usePostCreateAlarm();
   const { isLoggedIn } = useContext(LoginContext);
+  const { subscribeAlarm } = useSubscribeAlarm();
 
   const [alarmInfo, setAlarmInfo] = useState<AlarmInfo>({
     option: ALARM_OPTIONS[0].name,
@@ -44,6 +46,7 @@ export const AddAlarmForm = ({ className }: AddAlarmFormProps) => {
       return;
     }
 
+    subscribeAlarm();
     const { option, value, endDate } = alarmInfo;
 
     const requestData: PostCreateAlarmRequest = {
@@ -71,10 +74,10 @@ export const AddAlarmForm = ({ className }: AddAlarmFormProps) => {
       <h2 className="display-bold20 text-center font-bold">알림 추가</h2>
       <form
         onSubmit={handleSubmit}
-        className="text-dark-gray flex flex-col items-center gap-16"
+        className="text-dark-gray flex h-full flex-col items-center justify-between gap-16"
       >
         <div className="flex flex-col gap-16">
-          <article className="flex flex-col gap-2">
+          <article className="flex flex-col gap-3">
             <p className="display-bold16">언제 알림을 보낼까요?</p>
             <section className="flex gap-5">
               <select
@@ -104,7 +107,7 @@ export const AddAlarmForm = ({ className }: AddAlarmFormProps) => {
               />
             </section>
           </article>
-          <article className="flex flex-col gap-2">
+          <article className="flex flex-col gap-3">
             <p className="display-bold16">언제까지 알림을 보낼까요?</p>
             <Input
               type="date"
@@ -112,7 +115,7 @@ export const AddAlarmForm = ({ className }: AddAlarmFormProps) => {
               onChange={(e) =>
                 setAlarmInfo((prev) => ({ ...prev, endDate: e.target.value }))
               }
-              className="display-medium14"
+              className="display-medium14 w-full"
             />
           </article>
         </div>
