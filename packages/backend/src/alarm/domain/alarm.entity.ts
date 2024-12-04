@@ -26,11 +26,17 @@ export class Alarm {
   @Column({ type: 'int', name: 'target_price', nullable: true })
   targetPrice?: number;
 
-  @Column({ type: 'bigint', name: 'target_volume', nullable: true })
+  @Column({
+    type: 'decimal',
+    precision: 15,
+    scale: 2,
+    name: 'target_volume',
+    nullable: true,
+  })
   targetVolume?: number;
 
   @Column({ type: 'timestamp', name: 'alarm_date', nullable: true })
-  alarmDate?: Date;
+  alarmExpiredDate?: Date;
 
   @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
   createdAt: Date;

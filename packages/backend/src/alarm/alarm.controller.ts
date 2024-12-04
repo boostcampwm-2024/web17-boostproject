@@ -9,6 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBadRequestResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -35,6 +36,17 @@ export class AlarmController {
     description: '알림 생성 완료',
     type: AlarmResponse,
   })
+  @ApiBadRequestResponse({
+    description: '유효하지 않은 알람 입력값으로 인해 예외가 발생했습니다.',
+    schema: {
+      type: 'object',
+      properties: {
+        statusCode: { type: 'number', example: 400 },
+        message: { type: 'string', example: '알람 조건을 다시 확인해주세요.' },
+        error: { type: 'string', example: 'Bad Request' },
+      },
+    },
+  })
   @UseGuards(SessionGuard)
   async create(
     @Body() alarmRequest: AlarmRequest,
@@ -43,72 +55,6 @@ export class AlarmController {
     const userId = user.id;
 
     return await this.alarmService.create(alarmRequest, userId);
-  }
-
-  @Get(':id')
-  @ApiOperation({
-    summary: '등록된 알림 확인',
-    description: '등록된 알림을 알림 아이디를 기준으로 찾을 수 있다.',
-  })
-  @ApiOkResponse({
-    description: '알림 아이디와 동일한 알림 찾음',
-    type: AlarmResponse,
-  })
-  @ApiParam({
-    name: 'id',
-    type: Number,
-    description: '알림 아이디',
-    example: 1,
-  })
-  @UseGuards(SessionGuard)
-  async findOne(@Param('id') alarmId: number): Promise<AlarmResponse> {
-    return this.alarmService.findOne(alarmId);
-  }
-
-  @Put(':id')
-  @ApiOperation({
-    summary: '등록된 알림 업데이트',
-    description: '알림 아이디 기준으로 업데이트를 할 수 있다.',
-  })
-  @ApiResponse({
-    status: 201,
-    description: '아이디와 동일한 알림 업데이트',
-    type: AlarmResponse,
-  })
-  @ApiParam({
-    name: 'id',
-    type: Number,
-    description: '알림 아이디',
-    example: 1,
-  })
-  @UseGuards(SessionGuard)
-  async update(
-    @Param('id') alarmId: number,
-    @Body() updateData: AlarmRequest,
-  ): Promise<AlarmResponse> {
-    return this.alarmService.update(alarmId, updateData);
-  }
-
-  @Delete(':id')
-  @ApiParam({
-    name: 'id',
-    type: Number,
-    description: '알림 아이디',
-    example: 1,
-  })
-  @ApiOperation({
-    summary: '등록된 알림 삭제',
-    description: '알림 아이디 기준으로 삭제를 할 수 있다.',
-  })
-  @ApiOkResponse({
-    description: '아이디와 동일한 알림 삭제',
-    type: AlarmSuccessResponse,
-  })
-  @UseGuards(SessionGuard)
-  async delete(@Param('id') alarmId: number) {
-    await this.alarmService.delete(alarmId);
-
-    return new AlarmSuccessResponse('알림 삭제를 성공했습니다.');
   }
 
   @Get('user')
@@ -144,9 +90,85 @@ export class AlarmController {
     example: '005930',
   })
   @UseGuards(SessionGuard)
-  async getByStockId(@Param('stockId') stockId: string, @GetUser() user: User) {
+  async getByStockId(@Param('id') stockId: string, @GetUser() user: User) {
     const userId = user.id;
 
     return await this.alarmService.findByStockId(stockId, userId);
+  }
+
+  @Get(':id')
+  @ApiOperation({
+    summary: '등록된 알림 확인',
+    description: '등록된 알림을 알림 아이디를 기준으로 찾을 수 있다.',
+  })
+  @ApiOkResponse({
+    description: '알림 아이디와 동일한 알림 찾음',
+    type: AlarmResponse,
+  })
+  @ApiParam({
+    name: 'id',
+    type: Number,
+    description: '알림 아이디',
+    example: 1,
+  })
+  @UseGuards(SessionGuard)
+  async findOne(@Param('id') alarmId: number): Promise<AlarmResponse> {
+    return this.alarmService.findOne(alarmId);
+  }
+
+  @Put(':id')
+  @ApiOperation({
+    summary: '등록된 알림 업데이트',
+    description: '알림 아이디 기준으로 업데이트를 할 수 있다.',
+  })
+  @ApiOkResponse({
+    description: '아이디와 동일한 알림 업데이트',
+    type: AlarmResponse,
+  })
+  @ApiParam({
+    name: 'id',
+    type: Number,
+    description: '알림 아이디',
+    example: 1,
+  })
+  @ApiBadRequestResponse({
+    description: '유효하지 않은 알람 입력값으로 인해 예외가 발생했습니다.',
+    schema: {
+      type: 'object',
+      properties: {
+        statusCode: { type: 'number', example: 400 },
+        message: { type: 'string', example: '알람 조건을 다시 확인해주세요.' },
+        error: { type: 'string', example: 'Bad Request' },
+      },
+    },
+  })
+  @UseGuards(SessionGuard)
+  async update(
+    @Param('id') alarmId: number,
+    @Body() updateData: AlarmRequest,
+  ): Promise<AlarmResponse> {
+    return this.alarmService.update(alarmId, updateData);
+  }
+
+  @Delete(':id')
+  @ApiParam({
+    name: 'id',
+    type: Number,
+    description: '알림 아이디',
+    example: 1,
+  })
+  @ApiOperation({
+    summary: '등록된 알림 삭제',
+    description: '알림 아이디 기준으로 삭제를 할 수 있다.',
+  })
+  @ApiOkResponse({
+    description: '아이디와 동일한 알림 삭제',
+    type: AlarmSuccessResponse,
+  })
+  @UseGuards(SessionGuard)
+  async delete(@Param('id') alarmId: number) {
+    await this.alarmService.delete(alarmId);
+
+    return new AlarmSuccessResponse('알림 삭제를 성공했습니다.');
   }
 }
