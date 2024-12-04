@@ -75,7 +75,7 @@ export const TradingChart = () => {
           </RadioButton>
         ))}
       </section>
-      <div ref={containerRef} className="h-0 w-full flex-grow" />
+      <div ref={containerRef} className="min-h-0 w-full flex-1" />
     </div>
   );
 };
