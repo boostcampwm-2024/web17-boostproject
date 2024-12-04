@@ -33,14 +33,14 @@ export class AlarmResponse {
     example: 10,
     nullable: true,
   })
-  alarmDate?: Date;
+  alarmExpiredDate?: Date;
 
   constructor(alarm: Alarm) {
     this.alarmId = alarm.id;
     this.stockId = alarm.stock.id;
     this.targetPrice = alarm.targetPrice;
     this.targetVolume = alarm.targetVolume;
-    this.alarmDate = alarm.alarmDate;
+    this.alarmExpiredDate = alarm.alarmExpiredDate;
   }
 }
 

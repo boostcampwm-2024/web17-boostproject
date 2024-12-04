@@ -27,20 +27,6 @@ export class AlarmSubscriber
     return StockMinutely;
   }
 
-  isValidAlarm(alarm: Alarm, entity: StockMinutely) {
-    if (alarm.alarmDate && alarm.alarmDate >= entity.createdAt) {
-      return false;
-    } else {
-      if (alarm.targetPrice && alarm.targetPrice <= entity.open) {
-        return true;
-      }
-      if (alarm.targetVolume && alarm.targetVolume <= entity.volume) {
-        return true;
-      }
-      return false;
-    }
-  }
-
   async afterInsert(event: InsertEvent<StockMinutely>) {
     try {
       const stockMinutely = event.entity;
@@ -49,7 +35,7 @@ export class AlarmSubscriber
         relations: ['user', 'stock'],
       });
       const alarms = rawAlarms.filter((val) =>
-        this.isValidAlarm(val, stockMinutely),
+        this.alarmService.isValidAlarmCompareEntity(val, stockMinutely),
       );
       for (const alarm of alarms) {
         await this.alarmService.sendPushNotification(alarm);

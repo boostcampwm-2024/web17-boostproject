@@ -23,8 +23,8 @@ export class AlarmRequest {
 
   @ApiProperty({
     description: '알림 종료 날짜',
-    example: '2024-12-01T00:00:00Z',
+    example: '2026-12-01T00:00:00Z',
     required: false,
   })
-  alarmDate?: Date;
+  alarmExpiredDate?: Date;
 }
