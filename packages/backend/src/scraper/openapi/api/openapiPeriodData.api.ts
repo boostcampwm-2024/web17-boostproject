@@ -69,27 +69,22 @@ export class OpenapiPeriodData {
     period: Period,
   ) {
     return async (data: Json) => {
+      const promises: Promise<void>[] = [];
       if (!data.output2 || !Array.isArray(data.output2)) return resolve([]);
       const result = data.output2
         .reduce((acc: StockData[], item: Record<string, string>) => {
           if (!isChartData(item)) return acc;
           const stockData = this.convertObjectToStockData(item, stockId);
           acc.push(stockData);
-          this.insertChartData(stockData, period).catch((e) => {
-            if (
-              e instanceof QueryFailedError &&
-              e.driverError.message.includes('duplicate')
-            ) {
-              this.logger.warn(
-                `when insert missing chart data, duplicate error :${stockId}`,
-              );
-              return;
-            }
-            this.logger.error(e);
-          });
+          promises.push(
+            this.insertChartData(stockData, period).catch((e) =>
+              this.catchAndLogError(e, stockId),
+            ),
+          );
           return acc;
         }, [])
         .reverse();
+      await Promise.all(promises);
       resolve(result);
     };
   }
@@ -102,12 +97,42 @@ export class OpenapiPeriodData {
     const end = getTodayDate();
     const start = getPreviousDate(end, DATE_TO_MONTH[period]);
     const query = this.getItemChartPriceQuery(stockId, start, end, period);
-    this.openApiQueue.enqueue({
-      url: this.url,
-      query,
-      trId: TR_IDS.ITEM_CHART_PRICE,
-      callback: this.getInsertCartDataRequestCallback(resolve, stockId, period),
-    });
+    this.openApiQueue.enqueue(
+      {
+        url: this.url,
+        query,
+        trId: TR_IDS.ITEM_CHART_PRICE,
+        callback: this.getInsertCartDataRequestCallback(
+          resolve,
+          stockId,
+          period,
+        ),
+      },
+      1,
+    );
+  }
+
+  isSamePeriod(stock: StockData, period: Period, date: Date) {
+    return (
+      (period === 'W' && new NewDate(stock.startTime).isSameWeek(date)) ||
+      (period === 'M' &&
+        new NewDate(stock.startTime).isSameMonth(date) &&
+        new NewDate(stock.startTime).isSameYear(date)) ||
+      (period === 'Y' && new NewDate(stock.startTime).isSameYear(date))
+    );
+  }
+
+  private catchAndLogError(e: Error, stockId: string) {
+    if (
+      e instanceof QueryFailedError &&
+      e.driverError.message.includes('duplicate')
+    ) {
+      this.logger.warn(
+        `when insert missing chart data, duplicate error :${stockId}`,
+      );
+      return;
+    }
+    this.logger.error(e);
   }
 
   /**
@@ -161,16 +186,6 @@ export class OpenapiPeriodData {
         startTime: stock.startTime,
       },
     });
-  }
-
-  private isSamePeriod(stock: StockData, period: Period, date: Date) {
-    return (
-      (period === 'W' && new NewDate(stock.startTime).isSameWeek(date)) ||
-      (period === 'M' &&
-        new NewDate(stock.startTime).isSameMonth(date) &&
-        new NewDate(stock.startTime).isSameYear(date)) ||
-      (period === 'Y' && new NewDate(stock.startTime).isSameYear(date))
-    );
   }
 
   private async insertChartData(stock: StockData, period: Period) {

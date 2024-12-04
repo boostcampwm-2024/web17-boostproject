@@ -16,6 +16,7 @@ export interface OpenapiQueueNodeValue {
   query: object;
   trId: TR_ID;
   callback: <T extends Json>(value: T) => Promise<void>;
+  count?: number;
 }
 
 @Injectable()
@@ -24,9 +25,8 @@ export class OpenapiQueue {
   constructor() {}
 
   enqueue(value: OpenapiQueueNodeValue, priority?: number) {
-    if (!priority) {
-      priority = 2;
-    }
+    if (!priority) priority = 2;
+    if (value.count === undefined) value.count = 5;
     this.queue.enqueue(value, priority);
   }
 
@@ -101,7 +101,12 @@ export class OpenapiConsumer {
       );
       await node.callback(data);
     } catch (error) {
+      if (node.count === undefined || node.count! <= 0) {
+        this.logger.error(error);
+        return;
+      }
       this.logger.warn(error);
+      node.count -= 1;
       this.queue.enqueue(node, 1);
     }
   }
