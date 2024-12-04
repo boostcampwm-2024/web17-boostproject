@@ -24,7 +24,7 @@ export class AlarmService {
     private readonly pushService: PushService,
   ) {}
 
-  private isAlarmExpired(
+  private isAlarmNotExpired(
     expiredDate: Date,
     recent: StockMinutely | StockLiveData,
   ): boolean {
@@ -54,7 +54,7 @@ export class AlarmService {
   ): boolean {
     if (
       alarm.alarmExpiredDate &&
-      this.isAlarmExpired(alarm.alarmExpiredDate, recent)
+      this.isAlarmNotExpired(alarm.alarmExpiredDate, recent)
     ) {
       return true;
     }
@@ -76,20 +76,20 @@ export class AlarmService {
   ) {
     if (
       alarm.alarmExpiredDate &&
-      !this.isAlarmExpired(alarm.alarmExpiredDate, recent)
+      !this.isAlarmNotExpired(alarm.alarmExpiredDate, recent)
     )
       throw new BadRequestException(
         `${alarm.alarmExpiredDate}는 잘못된 날짜입니다. 다시 입력해주세요.`,
       );
 
-    if (alarm.targetPrice && !this.isTargetPriceMet(alarm.targetPrice, recent))
+    if (alarm.targetPrice && this.isTargetPriceMet(alarm.targetPrice, recent))
       throw new BadRequestException(
         `${alarm.targetPrice}는 최근 가격보다 낮습니다. 다시 입력해주세요.`,
       );
 
     if (
       alarm.targetVolume &&
-      !this.isTargetVolumeMet(alarm.targetVolume, recent)
+      this.isTargetVolumeMet(alarm.targetVolume, recent)
     )
       throw new BadRequestException(
         `${alarm.targetVolume}는 최근 거래량보다 낮습니다. 다시 입력해주세요.`,
