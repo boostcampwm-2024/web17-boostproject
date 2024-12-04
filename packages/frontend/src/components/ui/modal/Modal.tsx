@@ -19,7 +19,7 @@ export const Modal = ({ title, children, onClose, onConfirm }: ModalProps) => {
       >
         <section className="flex flex-col items-center gap-1">
           <h2 className="display-bold20">{title}</h2>
-          <p>{children}</p>
+          <pre className="text-center">{children}</pre>
         </section>
         <section className="flex gap-3">
           <Button onClick={onClose}>취소</Button>
