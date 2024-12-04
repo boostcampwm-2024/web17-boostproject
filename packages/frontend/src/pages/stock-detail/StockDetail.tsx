@@ -48,7 +48,7 @@ export const StockDetail = () => {
             <NotificationPanel className="h-full w-full" />
           </div>
           <div className="flex-1">
-            <AddAlarmForm className="h-full w-full" />
+            <AddAlarmForm className="h-full w-full" loginStatus={loginStatus} />
           </div>
         </section>
       </article>
