@@ -23,7 +23,7 @@ export const Stocks = () => {
           지금 시장, 이렇게 움직이고 있어요.
         </h2>
         {stockIndex ? (
-          <div className="grid w-fit grid-cols-3 gap-5">
+          <div className="flex flex-col gap-5 lg:grid lg:w-fit lg:grid-cols-3">
             {stockIndex?.map((info) => (
               <StockIndexCard
                 key={info.name}
@@ -44,7 +44,7 @@ export const Stocks = () => {
         <h2 className="display-bold16 text-dark-gray mb-5">
           이 종목은 어떠신가요?
         </h2>
-        <div className="grid w-fit grid-cols-5 gap-5">
+        <div className="flex flex-col gap-5 lg:grid lg:w-fit lg:grid-cols-5">
           {topViews ? (
             topViews.map((stock, index) => (
               <StockInfoCard
