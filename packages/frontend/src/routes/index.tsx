@@ -1,6 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { Layout } from '@/components/layouts';
-import { ThemeProvider } from '@/contexts/themeProvider';
+import { ThemeProvider } from '@/contexts/theme';
 import { Login } from '@/pages/login';
 import { MyPage } from '@/pages/my-page';
 import { StockDetail } from '@/pages/stock-detail';

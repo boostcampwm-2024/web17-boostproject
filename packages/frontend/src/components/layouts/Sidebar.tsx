@@ -6,7 +6,7 @@ import { Alarm } from './alarm';
 import { MenuList } from './MenuList';
 import { Search } from './search';
 import { BOTTOM_MENU_ITEMS, TOP_MENU_ITEMS } from '@/constants/menuItems';
-import { ThemeContext } from '@/contexts/themeContext';
+import { ThemeContext } from '@/contexts/theme';
 import { useOutsideClick } from '@/hooks/useOutsideClick';
 import { type MenuSection } from '@/types/menu';
 import { cn } from '@/utils/cn';
