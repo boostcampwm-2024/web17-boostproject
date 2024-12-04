@@ -49,7 +49,7 @@ export class OpenapiPeriodData {
     //this.getItemChartPriceCheck();
   }
 
-  @Cron('0 1 * * 1-5')
+  @Cron('0 1 * * 2-6')
   async getItemChartPriceCheck() {
     if (process.env.NODE_ENV !== 'production') return;
     const stocks = await this.datasource.manager.find(Stock, {

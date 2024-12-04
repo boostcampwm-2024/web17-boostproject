@@ -24,7 +24,7 @@ export class OpenapiDetailData extends Openapi {
     super(datasource, config, 100);
   }
 
-  @Cron('35 0 * * 1-5')
+  @Cron('35 0 * * 2-6')
   async start() {
     super.start();
   }

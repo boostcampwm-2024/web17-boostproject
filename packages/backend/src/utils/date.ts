@@ -4,3 +4,9 @@ export function getFormattedDate(date: Date): string {
     '0',
   )}-${String(date.getDate()).padStart(2, '0')}`;
 }
+
+export function isTodayWeekend() {
+  const today = new Date();
+  const day = today.getDay();
+  return day === 0 || day === 6;
+}

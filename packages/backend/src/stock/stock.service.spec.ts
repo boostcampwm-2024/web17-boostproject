@@ -14,11 +14,11 @@ import { StockRankResponses, StocksResponse } from '@/stock/dto/stock.response';
 import { User } from '@/user/domain/user.entity';
 
 describe('StockService 테스트', () => {
-  const stockId = 'A005930';
+  const stockId = '005930';
   const userId = 1;
   const result = [
     {
-      id: 'A005930',
+      id: '005930',
       name: '삼성전자',
       currentPrice: '100000.0',
       changeRate: '2.5',

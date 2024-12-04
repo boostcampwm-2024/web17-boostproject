@@ -4,7 +4,7 @@ import { IsNumber, IsOptional, IsString } from 'class-validator';
 export class ChatScrollQuery {
   @ApiProperty({
     description: '종목 주식 id(종목방 id)',
-    example: 'A005930',
+    example: '005930',
   })
   @IsString()
   stockId: string;
