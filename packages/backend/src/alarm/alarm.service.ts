@@ -47,11 +47,12 @@ export class AlarmService {
     return result.map((val) => new AlarmResponse(val));
   }
 
-  async findByStockId(stockId: string, userId: number): Promise<Alarm[]> {
-    return await this.alarmRepository.find({
+  async findByStockId(stockId: string, userId: number) {
+    const result = await this.alarmRepository.find({
       where: { stock: { id: stockId }, user: { id: userId } },
       relations: ['user', 'stock'],
     });
+    return result.map((val) => new AlarmResponse(val));
   }
 
   async findOne(id: number) {

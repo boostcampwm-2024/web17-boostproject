@@ -45,6 +45,45 @@ export class AlarmController {
     return await this.alarmService.create(alarmRequest, userId);
   }
 
+  @Get('user')
+  @ApiOperation({
+    summary: '사용자별 알림 조회',
+    description: '사용자 아이디를 기준으로 모든 알림을 조회한다.',
+  })
+  @ApiOkResponse({
+    description: '사용자에게 등록되어 있는 모든 알림 조회',
+    type: [AlarmResponse],
+  })
+  @UseGuards(SessionGuard)
+  async getByUserId(@GetUser() user: User) {
+    const userId = user.id;
+
+    return await this.alarmService.findByUserId(userId);
+  }
+
+  @Get('stock/:stockId')
+  @ApiOperation({
+    summary: '주식별 알림 조회',
+    description: '주식 아이디를 기준으로 알림을 조회한다.',
+  })
+  @ApiOkResponse({
+    description:
+      '주식 아이디에 등록되어 있는 알림 중 유저에 해당하는 알림 조회',
+    type: [AlarmResponse],
+  })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: '주식 아이디',
+    example: '005930',
+  })
+  @UseGuards(SessionGuard)
+  async getByStockId(@Param('id') stockId: string, @GetUser() user: User) {
+    const userId = user.id;
+
+    return await this.alarmService.findByStockId(stockId, userId);
+  }
+
   @Get(':id')
   @ApiOperation({
     summary: '등록된 알림 확인',
@@ -109,44 +148,5 @@ export class AlarmController {
     await this.alarmService.delete(alarmId);
 
     return new AlarmSuccessResponse('알림 삭제를 성공했습니다.');
-  }
-
-  @Get('user')
-  @ApiOperation({
-    summary: '사용자별 알림 조회',
-    description: '사용자 아이디를 기준으로 모든 알림을 조회한다.',
-  })
-  @ApiOkResponse({
-    description: '사용자에게 등록되어 있는 모든 알림 조회',
-    type: [AlarmResponse],
-  })
-  @UseGuards(SessionGuard)
-  async getByUserId(@GetUser() user: User) {
-    const userId = user.id;
-
-    return await this.alarmService.findByUserId(userId);
-  }
-
-  @Get('stock/:stockId')
-  @ApiOperation({
-    summary: '주식별 알림 조회',
-    description: '주식 아이디를 기준으로 알림을 조회한다.',
-  })
-  @ApiOkResponse({
-    description:
-      '주식 아이디에 등록되어 있는 알림 중 유저에 해당하는 알림 조회',
-    type: [AlarmResponse],
-  })
-  @ApiParam({
-    name: 'id',
-    type: String,
-    description: '주식 아이디',
-    example: '005930',
-  })
-  @UseGuards(SessionGuard)
-  async getByStockId(@Param('stockId') stockId: string, @GetUser() user: User) {
-    const userId = user.id;
-
-    return await this.alarmService.findByStockId(stockId, userId);
   }
 }
