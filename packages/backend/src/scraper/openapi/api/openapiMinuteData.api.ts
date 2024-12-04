@@ -26,7 +26,7 @@ export class OpenapiMinuteData {
   private readonly entity = StockMinutely;
   private readonly url: string =
     '/uapi/domestic-stock/v1/quotations/inquire-time-itemchartprice';
-  private readonly STOCK_LIMITS: number = 200;
+
   constructor(
     private readonly datasource: DataSource,
     private readonly openapiQueue: OpenapiQueue,
@@ -41,10 +41,7 @@ export class OpenapiMinuteData {
       .createQueryBuilder('alarm')
       .leftJoin('alarm.stock', 'stock')
       .select('stock.id', 'stockId')
-      .addSelect('COUNT(alarm.id)', 'alarmCount')
       .groupBy('stock.id')
-      .orderBy('alarmCount', 'DESC')
-      .limit(this.STOCK_LIMITS)
       .execute();
     for (const alarm of alarms) {
       const time = getCurrentTime();

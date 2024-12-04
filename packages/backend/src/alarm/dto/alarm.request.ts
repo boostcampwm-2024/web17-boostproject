@@ -19,7 +19,7 @@ export class AlarmRequest {
     example: 1000,
     required: false,
   })
-  targetVolum?: number;
+  targetVolume?: number;
 
   @ApiProperty({
     description: '알림 종료 날짜',
