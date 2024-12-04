@@ -33,7 +33,7 @@ export const AlarmInfoSchema = z.object({
   alarmId: z.number(),
   stockId: z.string(),
   targetPrice: z.number().nullable(),
-  targetVolume: z.number().nullable(),
+  targetVolume: z.string().nullable(),
   alarmDate: z.string().datetime(),
 });
 
