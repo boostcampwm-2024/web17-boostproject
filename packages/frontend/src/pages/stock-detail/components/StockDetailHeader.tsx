@@ -1,8 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { GetLoginStatus } from '@/apis/queries/auth/schema';
 import {
   useDeleteStockUser,
   usePostStockUser,
@@ -11,22 +10,22 @@ import { Button } from '@/components/ui/button';
 import { Modal } from '@/components/ui/modal';
 import { UserStatus } from '@/constants/chatStatus';
 import { modalMessage, ModalMessage } from '@/constants/modalMessage';
+import { LoginContext } from '@/contexts/login';
 
 interface StockDetailHeaderProps {
   stockId: string;
   stockName: string;
-  loginStatus: GetLoginStatus;
   isOwnerStock: boolean;
 }
 
 export const StockDetailHeader = ({
   stockId,
   stockName,
-  loginStatus,
   isOwnerStock,
 }: StockDetailHeaderProps) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { isLoggedIn } = useContext(LoginContext);
 
   const [showModal, setShowModal] = useState(false);
   const [userStatus, setUserStatus] = useState<ModalMessage>(
@@ -34,7 +33,7 @@ export const StockDetailHeader = ({
   );
 
   useEffect(() => {
-    if (loginStatus.message === 'Not Authenticated') {
+    if (!isLoggedIn) {
       setUserStatus(UserStatus.NOT_AUTHENTICATED);
       return;
     }
@@ -42,7 +41,7 @@ export const StockDetailHeader = ({
     setUserStatus(() => {
       return isOwnerStock ? UserStatus.OWNERSHIP : UserStatus.NOT_OWNERSHIP;
     });
-  }, [isOwnerStock, loginStatus]);
+  }, [isOwnerStock, isLoggedIn]);
 
   const { mutate: postStockUser } = usePostStockUser({
     onSuccess: () => {

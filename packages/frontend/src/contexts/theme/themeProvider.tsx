@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Outlet } from 'react-router-dom';
+import { LoginContext } from '../login';
 import { ThemeContext } from './themeContext';
-import { useGetLoginStatus } from '@/apis/queries/auth';
 import {
   GetUserTheme,
   useGetUserTheme,
@@ -9,14 +9,11 @@ import {
 } from '@/apis/queries/user';
 
 export const ThemeProvider = () => {
-  const { data: loginStatus } = useGetLoginStatus();
+  const { isLoggedIn } = useContext(LoginContext);
   const { data: userTheme } = useGetUserTheme();
   const { mutate: updateTheme } = usePatchUserTheme();
 
-  const isAuthenticated = loginStatus?.message === 'Authenticated';
-  const initialTheme = isAuthenticated
-    ? userTheme
-    : localStorage.getItem('theme');
+  const initialTheme = isLoggedIn ? userTheme : localStorage.getItem('theme');
   const [theme, setTheme] = useState<GetUserTheme['theme']>(
     initialTheme as GetUserTheme['theme'],
   );
@@ -27,7 +24,7 @@ export const ThemeProvider = () => {
     localStorage.setItem('theme', newTheme);
     setTheme(newTheme);
 
-    if (isAuthenticated) {
+    if (isLoggedIn) {
       updateTheme({ theme: newTheme });
     }
   };

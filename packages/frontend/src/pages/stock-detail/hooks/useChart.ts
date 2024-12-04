@@ -5,7 +5,7 @@ import {
   StockTimeSeriesResponse,
   VolumeSchema,
 } from '@/apis/queries/stocks';
-import { ThemeContext } from '@/contexts/themeContext';
+import { ThemeContext } from '@/contexts/theme';
 import { darkTheme, lightTheme } from '@/styles/theme';
 import {
   createCandlestickOptions,

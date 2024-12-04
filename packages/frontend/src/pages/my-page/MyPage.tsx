@@ -1,13 +1,12 @@
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { AlarmInfo } from './AlarmInfo';
 import { StockInfo } from './StockInfo';
 import { UserInfo } from './UserInfo';
-import { useGetLoginStatus } from '@/apis/queries/auth';
+import { LoginContext } from '@/contexts/login';
 
 export const MyPage = () => {
-  const { data: loginStatus } = useGetLoginStatus();
-
-  if (!loginStatus) return <></>;
+  const { isLoggedIn } = useContext(LoginContext);
 
   return (
     <div>
@@ -15,7 +14,7 @@ export const MyPage = () => {
       <article className="grid gap-5 lg:h-[40rem] lg:grid-cols-[1.5fr_2.5fr]">
         <section className="grid grid-rows-[1fr_2fr] gap-5">
           <section className="rounded-md bg-white p-7">
-            {loginStatus?.message === 'Authenticated' ? (
+            {isLoggedIn ? (
               <UserInfo />
             ) : (
               <Link
@@ -26,9 +25,9 @@ export const MyPage = () => {
               </Link>
             )}
           </section>
-          <AlarmInfo loginStatus={loginStatus} />
+          <AlarmInfo />
         </section>
-        <StockInfo loginStatus={loginStatus} />
+        <StockInfo />
       </article>
     </div>
   );
