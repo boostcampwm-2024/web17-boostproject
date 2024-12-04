@@ -79,6 +79,7 @@ export class StockGateway implements OnGatewayDisconnect {
         if (!isStockIdExists) {
           await this.liveData.unsubscribe(stockId);
           this.users.delete(client.id);
+          client.leave(stockId);
         }
       });
     }
