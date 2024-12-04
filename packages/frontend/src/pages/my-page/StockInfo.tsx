@@ -1,31 +1,33 @@
+import { useQueryClient } from '@tanstack/react-query';
+import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { GetLoginStatus } from '@/apis/queries/auth/schema';
 import { useDeleteStockUser } from '@/apis/queries/stock-detail';
 import { useGetUserStock } from '@/apis/queries/user/useGetUserStock';
 import { Button } from '@/components/ui/button';
+import { LoginContext } from '@/contexts/login';
 
-interface StockInfoProps {
-  loginStatus: GetLoginStatus;
-}
-
-export const StockInfo = ({ loginStatus }: StockInfoProps) => {
+export const StockInfo = () => {
   return (
     <section className="display-bold20 flex flex-col gap-5 rounded-md bg-white p-7">
       <h2>주식 정보</h2>
-      <StockInfoContents loginStatus={loginStatus} />
+      <StockInfoContents />
     </section>
   );
 };
 
-const StockInfoContents = ({ loginStatus }: StockInfoProps) => {
+const StockInfoContents = () => {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   const { data } = useGetUserStock();
-  const { mutate } = useDeleteStockUser();
+  const { mutate } = useDeleteStockUser({
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['userStock'] }),
+  });
+  const { isLoggedIn } = useContext(LoginContext);
 
   const { userStocks } = data || {};
 
-  if (!loginStatus || loginStatus.message === 'Not Authenticated') {
+  if (!isLoggedIn) {
     return (
       <p className="text-dark-gray display-medium14">
         로그인 후 이용 가능해요.

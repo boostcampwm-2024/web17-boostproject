@@ -1,9 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { TextArea } from './components';
 import { ChatMessage } from './components/ChatMessage';
 import { useChatOrder } from './hooks/useChatOrder';
-import { GetLoginStatus } from '@/apis/queries/auth/schema';
 import { usePostChatLike } from '@/apis/queries/chat';
 import { useGetChatList } from '@/apis/queries/chat/useGetChatList';
 import DownArrow from '@/assets/down-arrow.svg?react';
@@ -13,6 +12,7 @@ import {
   chatPlaceholder,
   UserStatus,
 } from '@/constants/chatStatus';
+import { LoginContext } from '@/contexts/login';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { socketChat } from '@/sockets/config';
 import {
@@ -27,14 +27,13 @@ import { checkChatWriter } from '@/utils/checkChatWriter';
 import { cn } from '@/utils/cn';
 
 interface ChatPanelProps {
-  loginStatus: GetLoginStatus;
   isOwnerStock: boolean;
 }
 
 const INITIAL_VISIBLE_CHATS = 3;
 
-export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
-  const { message, nickname, subName } = loginStatus;
+export const ChatPanel = ({ isOwnerStock }: ChatPanelProps) => {
+  const { isLoggedIn, nickname, subName } = useContext(LoginContext);
 
   const { stockId = '' } = useParams();
   const [chatData, setChatData] = useState<ChatData[]>([]);
@@ -46,12 +45,12 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
   const { isConnected } = useWebsocket(socket);
 
   const userStatus: ChatStatus = useMemo(() => {
-    if (message === 'Not Authenticated') {
+    if (!isLoggedIn) {
       return UserStatus.NOT_AUTHENTICATED;
     }
 
     return isOwnerStock ? UserStatus.OWNERSHIP : UserStatus.NOT_OWNERSHIP;
-  }, [message, isOwnerStock]);
+  }, [isLoggedIn, isOwnerStock]);
 
   const handleChat = useCallback((message: ChatDataResponse | ChatData) => {
     if ('chats' in message) return;

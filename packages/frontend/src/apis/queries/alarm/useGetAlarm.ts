@@ -8,10 +8,10 @@ const getAlarm = () =>
     url: '/api/alarm/user',
   });
 
-export const useGetAlarm = ({ loginStatus }: { loginStatus: boolean }) => {
+export const useGetAlarm = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   return useQuery({
     queryKey: ['getAlarm'],
     queryFn: getAlarm,
-    enabled: loginStatus,
+    enabled: isLoggedIn,
   });
 };

@@ -1,26 +1,24 @@
+import { useContext } from 'react';
 import { useGetAlarm } from '@/apis/queries/alarm';
-import { GetLoginStatus } from '@/apis/queries/auth/schema';
 import { Alarm } from '@/components/ui/alarm';
+import { LoginContext } from '@/contexts/login';
 
-interface AlarmInfoProps {
-  loginStatus: GetLoginStatus;
-}
-
-export const AlarmInfo = ({ loginStatus }: AlarmInfoProps) => {
+export const AlarmInfo = () => {
   return (
     <section className="display-bold20 flex flex-col gap-5 rounded-md bg-white p-7">
       <h2>알림</h2>
-      <AlarmInfoContents loginStatus={loginStatus} />
+      <AlarmInfoContents />
     </section>
   );
 };
 
-const AlarmInfoContents = ({ loginStatus }: AlarmInfoProps) => {
+const AlarmInfoContents = () => {
+  const { isLoggedIn } = useContext(LoginContext);
   const { data } = useGetAlarm({
-    loginStatus: loginStatus.message === 'Authenticated',
+    isLoggedIn,
   });
 
-  if (!loginStatus || loginStatus.message === 'Not Authenticated') {
+  if (!isLoggedIn) {
     return (
       <p className="text-dark-gray display-medium14">
         로그인 후 이용 가능해요.

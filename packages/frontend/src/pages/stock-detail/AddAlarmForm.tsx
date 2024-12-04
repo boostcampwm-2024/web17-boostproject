@@ -1,18 +1,17 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useContext, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   PostCreateAlarmRequest,
   usePostCreateAlarm,
 } from '@/apis/queries/alarm';
-import { GetLoginStatus } from '@/apis/queries/auth/schema';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ALARM_OPTIONS, type AlarmOptionName } from '@/constants/alarmOptions';
+import { LoginContext } from '@/contexts/login';
 import { cn } from '@/utils/cn';
 
 interface AddAlarmFormProps {
   className?: string;
-  loginStatus: GetLoginStatus;
 }
 
 interface AlarmInfo {
@@ -21,9 +20,10 @@ interface AlarmInfo {
   endDate: string;
 }
 
-export const AddAlarmForm = ({ className, loginStatus }: AddAlarmFormProps) => {
+export const AddAlarmForm = ({ className }: AddAlarmFormProps) => {
   const { stockId = '' } = useParams();
   const { mutate } = usePostCreateAlarm();
+  const { isLoggedIn } = useContext(LoginContext);
 
   const [alarmInfo, setAlarmInfo] = useState<AlarmInfo>({
     option: ALARM_OPTIONS[0].name,
@@ -34,8 +34,8 @@ export const AddAlarmForm = ({ className, loginStatus }: AddAlarmFormProps) => {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (loginStatus.message === 'Not Authenticated') {
-      alert('로그인이 필요합니다.');
+    if (!isLoggedIn) {
+      alert('로그인 후 이용 가능해요.');
       return;
     }
 

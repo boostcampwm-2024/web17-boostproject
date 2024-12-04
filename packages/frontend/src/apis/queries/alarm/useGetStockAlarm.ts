@@ -14,11 +14,11 @@ const getStockAlarm = ({ stockId }: StockAlarmRequest) =>
 
 export const useGetStockAlarm = ({
   stockId,
-  loginStatus,
-}: StockAlarmRequest & { loginStatus: boolean }) => {
+  isLoggedIn,
+}: StockAlarmRequest & { isLoggedIn: boolean }) => {
   return useQuery({
     queryKey: ['getStockAlarm', stockId],
     queryFn: () => getStockAlarm({ stockId }),
-    enabled: loginStatus,
+    enabled: isLoggedIn,
   });
 };

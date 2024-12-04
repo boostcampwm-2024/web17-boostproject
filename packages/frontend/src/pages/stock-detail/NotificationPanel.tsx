@@ -1,7 +1,8 @@
+import { useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { useGetStockAlarm } from '@/apis/queries/alarm';
-import { useGetLoginStatus } from '@/apis/queries/auth';
 import { Alarm } from '@/components/ui/alarm';
+import { LoginContext } from '@/contexts/login';
 import { cn } from '@/utils/cn';
 
 interface NotificationPanelProps {
@@ -26,14 +27,11 @@ export const NotificationPanel = ({ className }: NotificationPanelProps) => {
 
 const NotificationContents = () => {
   const { stockId = '' } = useParams();
+  const { isLoggedIn } = useContext(LoginContext);
 
-  const { data: loginStatus } = useGetLoginStatus();
-  const { data } = useGetStockAlarm({
-    stockId,
-    loginStatus: loginStatus?.message === 'Authenticated',
-  });
+  const { data } = useGetStockAlarm({ stockId, isLoggedIn });
 
-  if (!loginStatus || loginStatus.message === 'Not Authenticated') {
+  if (!isLoggedIn) {
     return <p className="text-center">로그인 후 이용 가능해요.</p>;
   }
 
