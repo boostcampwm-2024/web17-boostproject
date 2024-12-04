@@ -12,7 +12,7 @@ type TR_IDS = '1' | '2';
 
 @Injectable()
 export class LiveData {
-  private readonly startTime: Date = new Date(2024, 0, 1, 9, 0, 0, 0);
+  private readonly startTime: Date = new Date(2024, 0, 1, 2, 0, 0, 0);
   private readonly endTime: Date = new Date(2024, 0, 1, 15, 30, 0, 0);
 
   private readonly reconnectInterval = 60 * 1000;
@@ -75,6 +75,7 @@ export class LiveData {
           stockId,
           '1',
         );
+        this.logger.info(`${idx} : ${message}`);
         this.websocketClient[idx].subscribe(message);
         return;
       }
@@ -99,7 +100,7 @@ export class LiveData {
         stockId,
         '2',
       );
-
+      this.logger.info(`${idx} : ${message}`);
       this.websocketClient[idx].unsubscribe(message);
     }
   }
@@ -130,7 +131,7 @@ export class LiveData {
           return;
         }
         const liveData = this.openapiLiveData.convertLiveData(message);
-        await this.openapiLiveData.saveLiveData(liveData[0])
+        await this.openapiLiveData.saveLiveData(liveData[0]);
       } catch (error) {
         this.logger.warn(error);
       }

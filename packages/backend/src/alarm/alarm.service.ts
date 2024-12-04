@@ -110,6 +110,8 @@ export class AlarmService {
 
     for (const subscription of subscriptions) {
       await this.pushService.sendPushNotification(subscription, payload);
+      //한번만 보내고 삭제하게 처리.
+      this.alarmRepository.delete(alarm.id);
     }
   }
 }

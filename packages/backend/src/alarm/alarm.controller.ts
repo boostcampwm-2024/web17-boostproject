@@ -8,7 +8,12 @@ import {
   Delete,
   UseGuards,
 } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiParam } from '@nestjs/swagger';
+import {
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { AlarmService } from './alarm.service';
 import { AlarmRequest } from './dto/alarm.request';
 import { AlarmResponse, AlarmSuccessResponse } from './dto/alarm.response';
@@ -25,7 +30,8 @@ export class AlarmController {
     summary: '알림 생성',
     description: '각 정보에 맞는 알림을 생성한다.',
   })
-  @ApiOkResponse({
+  @ApiResponse({
+    status: 201,
     description: '알림 생성 완료',
     type: AlarmResponse,
   })
@@ -64,7 +70,8 @@ export class AlarmController {
     summary: '등록된 알림 업데이트',
     description: '알림 아이디 기준으로 업데이트를 할 수 있다.',
   })
-  @ApiOkResponse({
+  @ApiResponse({
+    status: 201,
     description: '아이디와 동일한 알림 업데이트',
     type: AlarmResponse,
   })

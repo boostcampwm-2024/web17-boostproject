@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Logger } from 'winston';
 import { RawData, WebSocket } from 'ws';
-
 @Injectable()
 export class WebsocketClient {
   static url = process.env.WS_URL ?? 'ws://ops.koreainvestment.com:21000';
@@ -21,27 +20,21 @@ export class WebsocketClient {
   subscribe(message: string) {
     this.sendMessage(message);
   }
-
   unsubscribe(message: string) {
     this.sendMessage(message);
   }
-
   private initOpen(fn: () => void) {
     this.client.on('open', fn);
   }
-
   private initMessage(fn: (data: RawData) => void) {
     this.client.on('message', fn);
   }
-
   private initDisconnect(initCloseCallback: () => void) {
     this.client.on('close', initCloseCallback);
   }
-
   private initError(initErrorCallback: (error: unknown) => void) {
     this.client.on('error', initErrorCallback);
   }
-
   connectFacade(
     initOpenCallback: (fn: (message: string) => void) => () => void,
     initMessageCallback: (client: WebSocket) => (data: RawData) => void,

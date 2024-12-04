@@ -7,6 +7,7 @@ import { DataSource, EntityManager } from 'typeorm';
 import { Stock } from './domain/stock.entity';
 import {
   StockDaily,
+  StockMinutely,
   StockMonthly,
   StockWeekly,
   StockYearly,
