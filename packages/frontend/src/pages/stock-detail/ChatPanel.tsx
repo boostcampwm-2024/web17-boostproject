@@ -153,12 +153,7 @@ export const ChatPanel = ({ loginStatus, isOwnerStock }: ChatPanelProps) => {
           />
         </div>
       </div>
-      <section
-        className={cn(
-          'flex h-[40rem] flex-col gap-8 overflow-auto break-words break-all p-3',
-          isOwnerStock ? 'overflow-auto' : 'overflow-hidden',
-        )}
-      >
+      <section className="flex h-[40rem] flex-col gap-8 overflow-auto break-words break-all p-3">
         {chatData.length ? (
           <>
             {chatData.slice(0, INITIAL_VISIBLE_CHATS).map((chat) => (
