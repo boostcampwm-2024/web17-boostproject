@@ -1,4 +1,4 @@
-import { useMutation, UseMutationOptions } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   DeleteStockUserSchema,
   type DeleteStockUserRequest,
@@ -13,13 +13,12 @@ const deleteStockUser = ({ stockId }: DeleteStockUserRequest) =>
     data: { stockId },
   });
 
-export const useDeleteStockUser = (
-  options?: UseMutationOptions<DeleteStockUser, Error, DeleteStockUserRequest>,
-) => {
+export const useDeleteStockUser = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ['deleteStockUser'],
     mutationFn: ({ stockId }: DeleteStockUserRequest) =>
       deleteStockUser({ stockId }),
-    ...options,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['userStock'] }),
   });
 };
