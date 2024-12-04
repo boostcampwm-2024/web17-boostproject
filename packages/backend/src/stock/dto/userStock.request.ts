@@ -3,7 +3,7 @@ import { IsString } from 'class-validator';
 
 export class UserStockRequest {
   @ApiProperty({
-    example: 'A005930',
+    example: '005930',
     description: '주식 종목 id',
   })
   @IsString()

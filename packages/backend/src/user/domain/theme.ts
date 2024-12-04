@@ -3,4 +3,4 @@ export const Theme = {
   dark: 'dark',
 };
 
-export type Theme = typeof Theme[keyof typeof Theme];
+export type Theme = (typeof Theme)[keyof typeof Theme];

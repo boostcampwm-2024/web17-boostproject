@@ -39,7 +39,7 @@ export class OpenapiTokenApi {
     return this.config;
   }
 
-  @Cron('30 0 * * 1-5')
+  @Cron('30 0 * * *')
   async init() {
     const expired_config = this.config.filter(
       (val) =>

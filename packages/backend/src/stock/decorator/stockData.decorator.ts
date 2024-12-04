@@ -12,7 +12,7 @@ export function ApiGetStockData(summary: string, type: string) {
       name: 'stockId',
       type: String,
       description: '주식 ID',
-      example: 'A005930',
+      example: '005930',
     }),
     ApiQuery({
       name: 'lastStartTime',

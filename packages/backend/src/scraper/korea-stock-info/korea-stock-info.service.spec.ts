@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { KoreaStockInfoService } from './korea-stock-info.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Stock } from '@/stock/domain/stock.entity';
 import { WinstonModule } from 'nest-winston';
+import { KoreaStockInfoService } from './korea-stock-info.service';
 import { logger } from '@/configs/logger.config';
+import { Stock } from '@/stock/domain/stock.entity';
 
 xdescribe('KoreaStockInfoService', () => {
   let service: KoreaStockInfoService;

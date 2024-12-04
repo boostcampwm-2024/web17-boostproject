@@ -13,7 +13,7 @@ import { Stock } from '@/stock/domain/stock.entity';
 import { StockDetailResponse } from '@/stock/dto/stockDetail.response';
 
 describe('StockDetailService 테스트', () => {
-  const stockId = 'A005930';
+  const stockId = '005930';
   let stockDetailService: StockDetailService;
   let logger: Logger;
   let dataSourceMock: DataSource;

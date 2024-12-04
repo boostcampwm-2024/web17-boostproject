@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { User } from '@/user/domain/user.entity';
 import { OauthType } from '@/user/domain/ouathType';
+import { User } from '@/user/domain/user.entity';
 
 interface UserResponse {
   nickname: string;
