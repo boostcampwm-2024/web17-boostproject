@@ -84,14 +84,16 @@ export class AlarmController {
     type: [AlarmResponse],
   })
   @ApiParam({
-    name: 'id',
+    name: 'stockId',
     type: String,
     description: '주식 아이디',
     example: '005930',
   })
   @UseGuards(SessionGuard)
-  async getByStockId(@Param('id') stockId: string, @GetUser() user: User) {
+  async getByStockId(@Param('stockId') stockId: string, @GetUser() user: User) {
     const userId = user.id;
+    console.log(userId);
+    console.log(stockId);
 
     return await this.alarmService.findByStockId(stockId, userId);
   }
