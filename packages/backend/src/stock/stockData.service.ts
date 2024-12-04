@@ -67,12 +67,20 @@ export class StockDataService {
       return new Promise((resolve) => {
         this.openapiPeriodData.insertCartDataRequest(
           async () => {
-            const results = await this.getChartData(
+            setTimeout(
+              async () =>
+                resolve(
+                  await this.getChartData(entity, stockId, lastStartTime),
+                ),
+              2000,
+            );
+
+            const response = await this.getChartData(
               entity,
               stockId,
               lastStartTime,
             );
-            const response = this.convertResultsToResponse(results);
+
             resolve(response);
           },
           stockId,
@@ -80,8 +88,7 @@ export class StockDataService {
         );
       });
     }
-    const results = await this.getChartData(entity, stockId, lastStartTime);
-    const response = this.convertResultsToResponse(results);
+    const response = await this.getChartData(entity, stockId, lastStartTime);
     this.stockDataCache.set(cacheKey, response);
     return response;
   }
@@ -97,7 +104,8 @@ export class StockDataService {
       this.dataSource.manager,
       lastStartTime,
     );
-    return queryBuilder.getMany();
+    const results = await queryBuilder.getMany();
+    return this.convertResultsToResponse(results);
   }
 
   async findLastData(entity: new () => StockData, stockId: string) {
