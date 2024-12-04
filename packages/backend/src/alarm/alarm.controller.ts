@@ -9,13 +9,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
-  ApiBadRequestResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiResponse,
 } from '@nestjs/swagger';
 import { AlarmService } from './alarm.service';
+import { WrongAlarmApi } from './decorator/wrong.decorator';
 import { AlarmRequest } from './dto/alarm.request';
 import { AlarmResponse, AlarmSuccessResponse } from './dto/alarm.response';
 import SessionGuard from '@/auth/session/session.guard';
@@ -36,18 +36,7 @@ export class AlarmController {
     description: '알림 생성 완료',
     type: AlarmResponse,
   })
-  @ApiBadRequestResponse({
-    description: '유효하지 않은 알람 입력값으로 인해 예외가 발생했습니다.',
-    schema: {
-      type: 'object',
-      properties: {
-        statusCode: { type: 'number', example: 400 },
-        message: { type: 'string', example: '알람 조건을 다시 확인해주세요.' },
-        error: { type: 'string', example: 'Bad Request' },
-      },
-    },
-  })
-  @UseGuards(SessionGuard)
+  @WrongAlarmApi()
   async create(
     @Body() alarmRequest: AlarmRequest,
     @GetUser() user: User,
@@ -92,8 +81,6 @@ export class AlarmController {
   @UseGuards(SessionGuard)
   async getByStockId(@Param('stockId') stockId: string, @GetUser() user: User) {
     const userId = user.id;
-    console.log(userId);
-    console.log(stockId);
 
     return await this.alarmService.findByStockId(stockId, userId);
   }
@@ -133,18 +120,7 @@ export class AlarmController {
     description: '알림 아이디',
     example: 1,
   })
-  @ApiBadRequestResponse({
-    description: '유효하지 않은 알람 입력값으로 인해 예외가 발생했습니다.',
-    schema: {
-      type: 'object',
-      properties: {
-        statusCode: { type: 'number', example: 400 },
-        message: { type: 'string', example: '알람 조건을 다시 확인해주세요.' },
-        error: { type: 'string', example: 'Bad Request' },
-      },
-    },
-  })
-  @UseGuards(SessionGuard)
+  @WrongAlarmApi()
   async update(
     @Param('id') alarmId: number,
     @Body() updateData: AlarmRequest,
