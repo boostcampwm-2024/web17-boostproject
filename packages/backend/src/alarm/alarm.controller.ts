@@ -9,6 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBadRequestResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -34,6 +35,17 @@ export class AlarmController {
     status: 201,
     description: '알림 생성 완료',
     type: AlarmResponse,
+  })
+  @ApiBadRequestResponse({
+    description: '유효하지 않은 알람 입력값으로 인해 예외가 발생했습니다.',
+    schema: {
+      type: 'object',
+      properties: {
+        statusCode: { type: 'number', example: 400 },
+        message: { type: 'string', example: '알람 조건을 다시 확인해주세요.' },
+        error: { type: 'string', example: 'Bad Request' },
+      },
+    },
   })
   @UseGuards(SessionGuard)
   async create(
@@ -109,8 +121,7 @@ export class AlarmController {
     summary: '등록된 알림 업데이트',
     description: '알림 아이디 기준으로 업데이트를 할 수 있다.',
   })
-  @ApiResponse({
-    status: 201,
+  @ApiOkResponse({
     description: '아이디와 동일한 알림 업데이트',
     type: AlarmResponse,
   })
@@ -119,6 +130,17 @@ export class AlarmController {
     type: Number,
     description: '알림 아이디',
     example: 1,
+  })
+  @ApiBadRequestResponse({
+    description: '유효하지 않은 알람 입력값으로 인해 예외가 발생했습니다.',
+    schema: {
+      type: 'object',
+      properties: {
+        statusCode: { type: 'number', example: 400 },
+        message: { type: 'string', example: '알람 조건을 다시 확인해주세요.' },
+        error: { type: 'string', example: 'Bad Request' },
+      },
+    },
   })
   @UseGuards(SessionGuard)
   async update(
