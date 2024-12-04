@@ -23,18 +23,12 @@ import { ApiGetStockData } from './decorator/stockData.decorator';
 import { StockDetailResponse } from './dto/stockDetail.response';
 import { StockIndexRateResponse } from './dto/stockIndexRate.response';
 import { StockService } from './stock.service';
-import {
-  StockDataDailyService,
-  StockDataMinutelyService,
-  StockDataMonthlyService,
-  StockDataWeeklyService,
-  StockDataYearlyService,
-} from './stockData.service';
 import { StockDetailService } from './stockDetail.service';
 import { StockRateIndexService } from './stockRateIndex.service';
 import SessionGuard from '@/auth/session/session.guard';
 import { GetUser } from '@/common/decorator/user.decorator';
 import { sessionConfig } from '@/configs/session.config';
+import { TIME_UNIT } from '@/stock/constants/timeunit';
 import { StockSearchRequest } from '@/stock/dto/stock.request';
 import {
   StockRankResponses,
@@ -52,16 +46,13 @@ import {
   UserStocksResponse,
 } from '@/stock/dto/userStock.response';
 import { User } from '@/user/domain/user.entity';
-
-const TIME_UNIT = {
-  MINUTE: 'minute',
-  DAY: 'day',
-  WEEK: 'week',
-  MONTH: 'month',
-  YEAR: 'year',
-} as const;
-
-type TIME_UNIT = (typeof TIME_UNIT)[keyof typeof TIME_UNIT];
+import { StockDataService } from '@/stock/stockData.service';
+import {
+  StockDaily,
+  StockMonthly,
+  StockWeekly,
+  StockYearly,
+} from '@/stock/domain/stockData.entity';
 
 const FLUCTUATION_TYPE = {
   INCREASE: 'increase',
@@ -76,13 +67,9 @@ type FLUCTUATION_TYPE =
 export class StockController {
   constructor(
     private readonly stockService: StockService,
-    private readonly stockDataMinutelyService: StockDataMinutelyService,
-    private readonly stockDataDailyService: StockDataDailyService,
-    private readonly stockDataWeeklyService: StockDataWeeklyService,
-    private readonly stockDataMonthlyService: StockDataMonthlyService,
-    private readonly stockDataYearlyService: StockDataYearlyService,
     private readonly stockDetailService: StockDetailService,
     private readonly stockRateIndexService: StockRateIndexService,
+    private readonly stockDataService: StockDataService,
   ) {}
 
   @HttpCode(200)
@@ -289,11 +276,9 @@ export class StockController {
   async getStockDataDaily(
     @Param('stockId') stockId: string,
     @Query('lastStartTime') lastStartTime?: string,
-    @Query('timeunit') timeunit: TIME_UNIT = TIME_UNIT.MINUTE,
+    @Query('timeunit') timeunit: TIME_UNIT = TIME_UNIT.DAY,
   ) {
     switch (timeunit) {
-      case TIME_UNIT.MINUTE:
-        return this.getMinutelyData(stockId, lastStartTime);
       case TIME_UNIT.DAY:
         return this.getDailyData(stockId, lastStartTime);
       case TIME_UNIT.MONTH:
@@ -309,7 +294,8 @@ export class StockController {
     stockId: string,
     lastStartTime: string | undefined,
   ) {
-    return this.stockDataYearlyService.getStockDataYearly(
+    return this.stockDataService.getPaginated(
+      StockYearly,
       stockId,
       lastStartTime,
     );
@@ -319,7 +305,8 @@ export class StockController {
     stockId: string,
     lastStartTime: string | undefined,
   ) {
-    return this.stockDataWeeklyService.getStockDataWeekly(
+    return this.stockDataService.getPaginated(
+      StockWeekly,
       stockId,
       lastStartTime,
     );
@@ -329,20 +316,18 @@ export class StockController {
     stockId: string,
     lastStartTime: string | undefined,
   ) {
-    return this.stockDataMonthlyService.getStockDataMonthly(
-      stockId,
-      lastStartTime,
-    );
-  }
-
-  private getMinutelyData(stockId: string, lastStartTime?: string) {
-    return this.stockDataMinutelyService.getStockDataMinutely(
+    return this.stockDataService.getPaginated(
+      StockMonthly,
       stockId,
       lastStartTime,
     );
   }
 
   private getDailyData(stockId: string, lastStartTime?: string) {
-    return this.stockDataDailyService.getStockDataDaily(stockId, lastStartTime);
+    return this.stockDataService.getPaginated(
+      StockDaily,
+      stockId,
+      lastStartTime,
+    );
   }
 }
