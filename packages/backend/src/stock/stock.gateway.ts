@@ -47,12 +47,11 @@ export class StockGateway implements OnGatewayDisconnect {
     try {
       client.join(stockId);
 
-      const beforeStockId = this.users.get(client.id);
-      await this.handleClientStockEvent(beforeStockId, client);
-
-      this.users.set(client.id, stockId);
-
       await this.mutex.runExclusive(async () => {
+        const beforeStockId = this.users.get(client.id);
+        await this.handleClientStockEvent(beforeStockId, client);
+
+        this.users.set(client.id, stockId);
         this.handleJoinToRoom(stockId);
       });
 
@@ -73,21 +72,21 @@ export class StockGateway implements OnGatewayDisconnect {
     client: Socket,
   ) {
     if (stockId !== undefined) {
-      await this.mutex.runExclusive(async () => {
-        client.leave(stockId);
-        this.users.delete(client.id);
-        const values = Object.values(this.users);
-        const isStockIdExists = values.some((value) => stockId === value);
-        if (!isStockIdExists) {
-          await this.liveData.unsubscribe(stockId);
-        }
-      });
+      client.leave(stockId);
+      this.users.delete(client.id);
+      const values = Object.values(this.users);
+      const isStockIdExists = values.some((value) => stockId === value);
+      if (!isStockIdExists) {
+        await this.liveData.unsubscribe(stockId);
+      }
     }
   }
 
   async handleDisconnect(client: Socket) {
     const stockId = this.users.get(client.id);
-    await this.handleClientStockEvent(stockId, client);
+    await this.mutex.runExclusive(async () => {
+      await this.handleClientStockEvent(stockId, client);
+    });
   }
 
   onUpdateStock(
