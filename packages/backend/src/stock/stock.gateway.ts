@@ -30,6 +30,15 @@ export class StockGateway implements OnGatewayDisconnect {
     @Inject('winston') private readonly logger: Logger,
   ) {}
 
+  private async handleJoinToRoom(stockId: string) {
+    const connectedSockets = await this.server.to(stockId).fetchSockets();
+
+    if (connectedSockets.length > 0 && !this.liveData.isSubscribe(stockId)) {
+      await this.liveData.subscribe(stockId);
+      this.logger.info(`${stockId} is subscribed`);
+    }
+  }
+
   @SubscribeMessage('connectStock')
   async handleConnectStock(
     @MessageBody() stockId: string,
@@ -37,18 +46,13 @@ export class StockGateway implements OnGatewayDisconnect {
   ) {
     try {
       client.join(stockId);
-      this.users.set(client.id, stockId);
 
       await this.mutex.runExclusive(async () => {
-        const connectedSockets = await this.server.to(stockId).fetchSockets();
+        const beforeStockId = this.users.get(client.id);
+        await this.handleClientStockEvent(beforeStockId, client);
 
-        if (
-          connectedSockets.length > 0 &&
-          !this.liveData.isSubscribe(stockId)
-        ) {
-          await this.liveData.subscribe(stockId);
-          this.logger.info(`${stockId} is subscribed`);
-        }
+        this.users.set(client.id, stockId);
+        this.handleJoinToRoom(stockId);
       });
 
       client.emit('connectionSuccess', {
@@ -63,14 +67,26 @@ export class StockGateway implements OnGatewayDisconnect {
     }
   }
 
+  private async handleClientStockEvent(
+    stockId: string | undefined,
+    client: Socket,
+  ) {
+    if (stockId !== undefined) {
+      client.leave(stockId);
+      this.users.delete(client.id);
+      const values = Object.values(this.users);
+      const isStockIdExists = values.some((value) => stockId === value);
+      if (!isStockIdExists) {
+        await this.liveData.unsubscribe(stockId);
+      }
+    }
+  }
+
   async handleDisconnect(client: Socket) {
     const stockId = this.users.get(client.id);
-    if (stockId) {
-      await this.mutex.runExclusive(async () => {
-        await this.liveData.unsubscribe(stockId);
-        this.users.delete(client.id);
-      });
-    }
+    await this.mutex.runExclusive(async () => {
+      await this.handleClientStockEvent(stockId, client);
+    });
   }
 
   onUpdateStock(
