@@ -43,10 +43,10 @@ export class PriceDto {
 
   constructor(stockData: StockData) {
     this.startTime = stockData.startTime;
-    this.open = Number(stockData.open);
-    this.high = Number(stockData.high);
-    this.low = Number(stockData.low);
-    this.close = Number(stockData.close);
+    this.open = stockData.open;
+    this.high = stockData.high;
+    this.low = stockData.low;
+    this.close = stockData.close;
   }
 }
 
@@ -63,11 +63,11 @@ export class VolumeDto {
     description: '거래량',
     example: 1000,
   })
-  volume: number;
+  volume: string;
 
   constructor(stockData: StockData) {
     this.startTime = stockData.startTime;
-    this.volume = Number(stockData.volume);
+    this.volume = String(stockData.volume);
   }
 }
 
@@ -104,13 +104,13 @@ export class StockDataResponse {
 
   renewLastData(stockLiveData: StockLiveData, entity: new () => StockData) {
     const lastIndex = this.priceDtoList.length - 1;
-    this.priceDtoList[lastIndex].close = Number(stockLiveData.currentPrice);
+    this.priceDtoList[lastIndex].close = stockLiveData.currentPrice;
     this.priceDtoList[lastIndex].high =
-      stockLiveData.high > this.priceDtoList[lastIndex].high
+      Number(stockLiveData.high) > Number(this.priceDtoList[lastIndex].high)
         ? stockLiveData.high
         : this.priceDtoList[lastIndex].high;
     this.priceDtoList[lastIndex].low =
-      stockLiveData.low < this.priceDtoList[lastIndex].low
+      Number(stockLiveData.low) < Number(this.priceDtoList[lastIndex].low)
         ? stockLiveData.low
         : this.priceDtoList[lastIndex].low;
 
@@ -120,7 +120,10 @@ export class StockDataResponse {
         : this.priceDtoList[lastIndex].startTime;
     this.volumeDtoList[lastIndex].volume =
       entity === StockDaily
-        ? stockLiveData.volume
-        : this.volumeDtoList[lastIndex].volume + stockLiveData.volume;
+        ? String(stockLiveData.volume)
+        : String(
+            Number(this.volumeDtoList[lastIndex].volume) +
+              Number(stockLiveData.volume),
+          );
   }
 }
