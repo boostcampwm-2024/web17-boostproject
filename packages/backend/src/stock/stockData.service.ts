@@ -7,7 +7,6 @@ import { DataSource, EntityManager } from 'typeorm';
 import { Stock } from './domain/stock.entity';
 import {
   StockDaily,
-  StockMinutely,
   StockMonthly,
   StockWeekly,
   StockYearly,
@@ -58,6 +57,42 @@ export class StockDataService {
     if (cachedData) {
       return cachedData;
     }
+    const response = await this.getChartData(entity, stockId, lastStartTime);
+    this.stockDataCache.set(cacheKey, response);
+    return response;
+  }
+
+  private async getCardDataWithMissing(
+    entity: new () => StockData,
+    stockId: string,
+    periodType: Period,
+    lastStartTime?: string,
+  ) {
+    return new Promise<StockDataResponse>((resolve) => {
+      this.openapiPeriodData.insertCartDataRequest(
+        this.getHandleResponseCallback(entity, stockId, resolve, lastStartTime),
+        stockId,
+        periodType,
+      );
+    });
+  }
+
+  private async findLastData(entity: new () => StockData, stockId: string) {
+    return await this.dataSource.manager.findOne(entity, {
+      where: { stock: { id: stockId } },
+      order: { startTime: 'DESC' },
+    });
+  }
+
+  private async isStockExist(stockId: string, manager: EntityManager) {
+    return await manager.exists(Stock, { where: { id: stockId } });
+  }
+
+  private async getChartData(
+    entity: new () => StockData,
+    stockId: string,
+    lastStartTime?: string,
+  ) {
     const lastData = await this.findLastData(entity, stockId);
     const periodType = this.getPeriodType(entity);
     if (!periodType) throw new BadRequestException('period type not found');
@@ -65,36 +100,17 @@ export class StockDataService {
       !lastStartTime &&
       (!lastData || !this.isLastDate(lastData, periodType))
     ) {
-      return new Promise((resolve) => {
-        this.openapiPeriodData.insertCartDataRequest(
-          async () => {
-            setTimeout(
-              async () =>
-                resolve(
-                  await this.getChartData(entity, stockId, lastStartTime),
-                ),
-              2000,
-            );
-
-            const response = await this.getChartData(
-              entity,
-              stockId,
-              lastStartTime,
-            );
-
-            resolve(response);
-          },
-          stockId,
-          periodType,
-        );
-      });
+      return this.getCardDataWithMissing(
+        entity,
+        stockId,
+        periodType,
+        lastStartTime,
+      );
     }
-    const response = await this.getChartData(entity, stockId, lastStartTime);
-    this.stockDataCache.set(cacheKey, response);
-    return response;
+    return await this.getChartDataFromDB(entity, stockId, lastStartTime);
   }
 
-  async getChartData(
+  private async getChartDataFromDB(
     entity: new () => StockData,
     stockId: string,
     lastStartTime?: string,
@@ -109,15 +125,29 @@ export class StockDataService {
     return this.convertResultsToResponse(results);
   }
 
-  async findLastData(entity: new () => StockData, stockId: string) {
-    return await this.dataSource.manager.findOne(entity, {
-      where: { stock: { id: stockId } },
-      order: { startTime: 'DESC' },
-    });
-  }
+  private getHandleResponseCallback(
+    entity: new () => StockData,
+    stockId: string,
+    resolve: (value: StockDataResponse) => void,
+    lastStartTime?: string,
+  ) {
+    return async () => {
+      setTimeout(
+        async () =>
+          resolve(
+            await this.getChartDataFromDB(entity, stockId, lastStartTime),
+          ),
+        2000,
+      );
 
-  async isStockExist(stockId: string, manager: EntityManager) {
-    return await manager.exists(Stock, { where: { id: stockId } });
+      const response = await this.getChartDataFromDB(
+        entity,
+        stockId,
+        lastStartTime,
+      );
+
+      resolve(response);
+    };
   }
 
   private isLastDate(lastData: StockData, period: Period) {
