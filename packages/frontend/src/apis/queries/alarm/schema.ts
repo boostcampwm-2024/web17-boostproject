@@ -20,8 +20,8 @@ export type PostInitAlarmResponse = z.infer<typeof PostInitAlarmResponseSchema>;
 
 export const PostCreateAlarmRequestSchema = z.object({
   stockId: z.string(),
-  targetPrice: z.number(),
-  targetVolum: z.number(),
+  targetPrice: z.number().optional(),
+  targetVolume: z.number().optional(),
   alarmDate: z.string().datetime(),
 });
 
@@ -32,16 +32,16 @@ export type PostCreateAlarmRequest = z.infer<
 export const AlarmInfoSchema = z.object({
   alarmId: z.number(),
   stockId: z.string(),
-  targetPrice: z.number(),
-  targetVolume: z.number(),
+  targetPrice: z.number().nullable(),
+  targetVolume: z.number().nullable(),
   alarmDate: z.string().datetime(),
 });
 
-export type AlarmInfoResponse = z.infer<typeof AlarmInfoSchema>;
+export const AlarmResponseSchema = z.array(AlarmInfoSchema);
+export type AlarmResponse = z.infer<typeof AlarmResponseSchema>;
 
 export const StockAlarmRequestSchema = z.object({
   stockId: z.string(),
-  id: z.string(),
 });
 
 export type StockAlarmRequest = z.infer<typeof StockAlarmRequestSchema>;

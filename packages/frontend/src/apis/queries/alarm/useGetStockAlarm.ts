@@ -1,21 +1,24 @@
 import { useQuery } from '@tanstack/react-query';
 import {
-  type AlarmInfoResponse,
+  type AlarmResponse,
   StockAlarmRequest,
-  StockAlarmRequestSchema,
+  AlarmResponseSchema,
 } from './schema';
 import { get } from '@/apis/utils/get';
 
-const getStockAlarm = ({ stockId, id }: StockAlarmRequest) =>
-  get<AlarmInfoResponse>({
-    params: { id },
-    schema: StockAlarmRequestSchema,
+const getStockAlarm = ({ stockId }: StockAlarmRequest) =>
+  get<AlarmResponse>({
+    schema: AlarmResponseSchema,
     url: `/api/alarm/stock/${stockId}`,
   });
 
-export const useGetStockAlarm = ({ stockId, id }: StockAlarmRequest) => {
+export const useGetStockAlarm = ({
+  stockId,
+  loginStatus,
+}: StockAlarmRequest & { loginStatus: boolean }) => {
   return useQuery({
-    queryKey: ['getStockAlarm', stockId, id],
-    queryFn: () => getStockAlarm({ stockId, id }),
+    queryKey: ['getStockAlarm', stockId],
+    queryFn: () => getStockAlarm({ stockId }),
+    enabled: loginStatus,
   });
 };
