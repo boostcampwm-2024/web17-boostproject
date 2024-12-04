@@ -10,3 +10,11 @@ export function isTodayWeekend() {
   const day = today.getDay();
   return day === 0 || day === 6;
 }
+
+export function getToday() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const day = now.getDate();
+  return new Date(year, month, day);
+}

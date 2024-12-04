@@ -5,7 +5,7 @@ import { openApiConfig } from '../config/openapi.config';
 import { isOpenapiLiveData } from '../type/openapiLiveData.type';
 import { TR_IDS } from '../type/openapiUtil.type';
 import { getOpenApi } from '../util/openapiUtil.api';
-import { Json } from '@/scraper/openapi/queue/openapi.queue';
+import { Json, OpenapiQueue } from '@/scraper/openapi/queue/openapi.queue';
 import { Stock } from '@/stock/domain/stock.entity';
 import { StockLiveData } from '@/stock/domain/stockLiveData.entity';
 
@@ -15,6 +15,7 @@ export class OpenapiLiveData {
     '/uapi/domestic-stock/v1/quotations/inquire-ccnl';
   constructor(
     private readonly datasource: DataSource,
+    private readonly openapiQueue: OpenapiQueue,
     @Inject('winston') private readonly logger: Logger,
   ) {}
 
@@ -74,6 +75,16 @@ export class OpenapiLiveData {
       stockData.push(stockLiveData);
     });
     return stockData;
+  }
+
+  insertLiveDataRequest(stockId: string) {
+    const query = this.makeLiveDataQuery(stockId);
+    this.openapiQueue.enqueue({
+      url: this.url,
+      query,
+      trId: TR_IDS.LIVE_DATA,
+      callback: this.getLiveDataSaveCallback(stockId),
+    });
   }
 
   async connectLiveData(stockId: string, config: typeof openApiConfig) {
