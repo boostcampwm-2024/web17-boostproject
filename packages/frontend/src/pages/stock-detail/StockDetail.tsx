@@ -50,11 +50,11 @@ export const StockDetail = () => {
           isOwnerStock={userOwnerStock.isOwner}
         />
         <section className="flex flex-col flex-wrap gap-5 lg:flex-row 2xl:flex-col 2xl:flex-nowrap">
-          <div className="flex-1">
+          <div className="max-h-[500px] flex-1">
             <NotificationPanel className="h-full w-full" />
           </div>
           <div className="flex-1">
-            <AddAlarmForm className="h-full w-full" />
+            <AddAlarmForm className="h-full w-full" loginStatus={loginStatus} />
           </div>
         </section>
       </article>
