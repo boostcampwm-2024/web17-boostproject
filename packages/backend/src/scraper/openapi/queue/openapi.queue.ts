@@ -7,6 +7,8 @@ import { PriorityQueue } from '@/scraper/openapi/util/priorityQueue';
 
 export interface Json {
   output: Record<string, string> | Record<string, string>[];
+  output1: Record<string, string>[];
+  output2: Record<string, string>[];
 }
 
 export interface OpenapiQueueNodeValue {
@@ -14,6 +16,7 @@ export interface OpenapiQueueNodeValue {
   query: object;
   trId: TR_ID;
   callback: <T extends Json>(value: T) => Promise<void>;
+  count?: number;
 }
 
 @Injectable()
@@ -22,9 +25,8 @@ export class OpenapiQueue {
   constructor() {}
 
   enqueue(value: OpenapiQueueNodeValue, priority?: number) {
-    if (!priority) {
-      priority = 2;
-    }
+    if (!priority) priority = 2;
+    if (value.count === undefined) value.count = 5;
     this.queue.enqueue(value, priority);
   }
 
@@ -83,20 +85,29 @@ export class OpenapiConsumer {
     for (let i = 0; i < this.REQUEST_COUNT_PER_SECOND; i++) {
       const node = this.queue.dequeue();
       if (!node) {
-        return (this.isProcessing = false);
+        return;
       }
-      try {
-        const data = await getOpenApi(
-          node.url,
-          (await this.openapiTokenApi.configs())[index],
-          node.query,
-          node.trId,
-        );
-        await node.callback(data);
-      } catch (error) {
-        this.logger.warn(error);
-        this.queue.enqueue(node, 1);
+      this.processRequest(node, index);
+    }
+  }
+
+  private async processRequest(node: OpenapiQueueNodeValue, index: number) {
+    try {
+      const data = await getOpenApi(
+        node.url,
+        (await this.openapiTokenApi.configs())[index],
+        node.query,
+        node.trId,
+      );
+      await node.callback(data);
+    } catch (error) {
+      if (node.count === undefined || node.count! <= 0) {
+        this.logger.error(error);
+        return;
       }
+      this.logger.warn(error);
+      node.count -= 1;
+      this.queue.enqueue(node, 1);
     }
   }
 }

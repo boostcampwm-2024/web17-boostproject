@@ -13,21 +13,15 @@ import { StockLiveData } from './domain/stockLiveData.entity';
 import { StockController } from './stock.controller';
 import { StockGateway } from './stock.gateway';
 import { StockService } from './stock.service';
-import {
-  StockDataDailyService,
-  StockDataMinutelyService,
-  StockDataMonthlyService,
-  StockDataService,
-  StockDataWeeklyService,
-  StockDataYearlyService,
-} from './stockData.service';
 import { StockDetailService } from './stockDetail.service';
 import { StockLiveDataSubscriber } from './stockLiveData.subscriber';
 import { StockRateIndexService } from './stockRateIndex.service';
-import { OpenapiLiveData } from '@/scraper/openapi/api/openapiLiveData.api';
-import { OpenapiTokenApi } from '@/scraper/openapi/api/openapiToken.api';
-import { LiveData } from '@/scraper/openapi/liveData.service';
-import { WebsocketClient } from '@/scraper/openapi/websocket/websocketClient.websocket';
+import { AlarmModule } from '@/alarm/alarm.module';
+import { Alarm } from '@/alarm/domain/alarm.entity';
+import { OpenapiScraperModule } from '@/scraper/openapi/openapi-scraper.module';
+import { ScraperModule } from '@/scraper/scraper.module';
+import { StockDataCache } from '@/stock/cache/stockData.cache';
+import { StockDataService } from '@/stock/stockData.service';
 
 @Module({
   imports: [
@@ -40,23 +34,19 @@ import { WebsocketClient } from '@/scraper/openapi/websocket/websocketClient.web
       StockYearly,
       StockLiveData,
       StockDetail,
+      Alarm,
     ]),
+    AlarmModule,
+    ScraperModule,
+    OpenapiScraperModule,
   ],
   controllers: [StockController],
   providers: [
+    StockDataCache,
     StockService,
-    WebsocketClient,
-    OpenapiTokenApi,
-    OpenapiLiveData,
-    LiveData,
     StockGateway,
     StockLiveDataSubscriber,
     StockDataService,
-    StockDataDailyService,
-    StockDataMinutelyService,
-    StockDataWeeklyService,
-    StockDataYearlyService,
-    StockDataMonthlyService,
     StockDetailService,
     StockRateIndexService,
   ],

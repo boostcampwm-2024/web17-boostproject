@@ -1,4 +1,4 @@
-import { Global, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { DataSource } from 'typeorm';
 import { Logger } from 'winston';
@@ -7,7 +7,6 @@ import { openApiConfig } from '../config/openapi.config';
 import { OpenapiException } from '../util/openapiCustom.error';
 import { postOpenApi } from '../util/openapiUtil.api';
 
-@Global()
 @Injectable()
 export class OpenapiTokenApi {
   private config: (typeof openApiConfig)[] = [];
@@ -40,7 +39,7 @@ export class OpenapiTokenApi {
     return this.config;
   }
 
-  @Cron('30 0 * * 1-5')
+  @Cron('30 0 * * *')
   async init() {
     const expired_config = this.config.filter(
       (val) =>
@@ -69,8 +68,8 @@ export class OpenapiTokenApi {
   private isTokenExpired(startDate?: Date) {
     if (!startDate) return true;
     const now = new Date();
-    //실제 만료 시간은 24시간이지만, 문제가 발생할 여지를 줄이기 위해 12시간으로 설정
-    const baseTimeToMilliSec = 12 * 60 * 60 * 1000;
+    //실제 만료 시간은 24시간이지만, 문제가 발생할 여지를 줄이기 위해 6시간으로 설정
+    const baseTimeToMilliSec = 6 * 60 * 60 * 1000;
     const timeDiff = now.getTime() - startDate.getTime();
 
     return timeDiff >= baseTimeToMilliSec;

@@ -24,6 +24,58 @@ export class KoreaStockInfoService {
     this.initKoreaStockInfo();
   }
 
+  @Cron('0 9 * * 1-5')
+  @Cron('0 0 * * 1-5')
+  public async initKoreaStockInfo(): Promise<void> {
+    await this.downloadMaster({ baseDir: './', target: 'kosdaq_code' });
+    await this.getKosdaqMasterData({
+      baseDir: './',
+      target: 'kosdaq_code',
+    });
+
+    await this.downloadMaster({ baseDir: './', target: 'kospi_code' });
+    await this.getKospiMasterData({
+      baseDir: './',
+      target: 'kospi_code',
+    });
+  }
+
+  public async downloadMaster(downloadDto: MasterDownloadDto): Promise<any> {
+    const { baseDir, target } = downloadDto;
+    const downloadZipFile = target + '.mst.zip';
+    const outputFile = target + '.mst';
+    const url = process.env.MST_URL + target + '.mst.zip';
+    this.logger.info(`Downloading file from ${url} to ${downloadZipFile}`);
+    const downloadZipFilePath = path.join(baseDir, downloadZipFile);
+    const extractedFile = path.join(baseDir, outputFile);
+
+    try {
+      await this.downloadFile(url, downloadZipFilePath);
+      await this.extractZip(downloadZipFilePath, baseDir);
+      fs.unlink(downloadZipFilePath, (err) => {
+        if (err) throw err;
+      });
+    } catch (error) {
+      this.logger.error('Error during download or extraction:', error);
+    }
+
+    return extractedFile;
+  }
+
+  public async getKospiMasterData(
+    downloadDto: MasterDownloadDto,
+  ): Promise<void> {
+    await this.getMasterData(downloadDto, 228);
+    this.logger.info('Kospi master data processing done.');
+  }
+
+  public async getKosdaqMasterData(
+    downloadDto: MasterDownloadDto,
+  ): Promise<void> {
+    await this.getMasterData(downloadDto, 222);
+    this.logger.info('Kosdaq master data processing done.');
+  }
+
   private async existsStockInfo(stockId: string, manager: EntityManager) {
     return await manager.exists(Stock, {
       where: {
@@ -38,21 +90,6 @@ export class KoreaStockInfoService {
     if (!exists) {
       await manager.save(Stock, stock);
     }
-  }
-
-  @Cron('0 0 * * 1-5')
-  public async initKoreaStockInfo(): Promise<void> {
-    await this.downloadMaster({ baseDir: './', target: 'kosdaq_code' });
-    await this.getKosdaqMasterData({
-      baseDir: './',
-      target: 'kosdaq_code',
-    });
-
-    await this.downloadMaster({ baseDir: './', target: 'kospi_code' });
-    await this.getKospiMasterData({
-      baseDir: './',
-      target: 'kospi_code',
-    });
   }
 
   private async downloadFile(url: string, filePath: string): Promise<void> {
@@ -95,38 +132,15 @@ export class KoreaStockInfoService {
     return row.slice(start, end).trim();
   }
 
-  public async downloadMaster(downloadDto: MasterDownloadDto): Promise<any> {
-    const { baseDir, target } = downloadDto;
-    const downloadZipFile = target + '.mst.zip';
-    const outputFile = target + '.mst';
-    const url = process.env.MST_URL + target + '.mst.zip';
-    this.logger.info(`Downloading file from ${url} to ${downloadZipFile}`);
-    const downloadZipFilePath = path.join(baseDir, downloadZipFile);
-    const extractedFile = path.join(baseDir, outputFile);
-
-    try {
-      await this.downloadFile(url, downloadZipFilePath);
-      await this.extractZip(downloadZipFilePath, baseDir);
-      fs.unlink(downloadZipFilePath, (err) => {
-        if (err) throw err;
-      });
-    } catch (error) {
-      this.logger.error('Error during download or extraction:', error);
-    }
-
-    return extractedFile;
-  }
-
   private beforeMasterData(downloadDto: MasterDownloadDto): readline.Interface {
     const targetFileName = downloadDto.target + '.mst';
     const fileName = path.join(downloadDto.baseDir, targetFileName);
     const encoding = 'cp949';
 
-    const rl = readline.createInterface({
+    return readline.createInterface({
       input: fs.createReadStream(fileName).pipe(iconv.decodeStream(encoding)),
       crlfDelay: Infinity,
     });
-    return rl;
   }
 
   private handleUnlinkFile(
@@ -171,19 +185,5 @@ export class KoreaStockInfoService {
     }
 
     this.handleUnlinkFile(targetFileName);
-  }
-
-  public async getKospiMasterData(
-    downloadDto: MasterDownloadDto,
-  ): Promise<void> {
-    await this.getMasterData(downloadDto, 228);
-    this.logger.info('Kospi master data processing done.');
-  }
-
-  public async getKosdaqMasterData(
-    downloadDto: MasterDownloadDto,
-  ): Promise<void> {
-    await this.getMasterData(downloadDto, 222);
-    this.logger.info('Kosdaq master data processing done.');
   }
 }

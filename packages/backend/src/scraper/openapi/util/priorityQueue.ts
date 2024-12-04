@@ -1,12 +1,11 @@
-export class PriorityQueue<T> {
-  private heap: { value: T; priority: number }[];
+type HeapNode<T> = { value: T; priority: number; order: number };
 
-  constructor() {
-    this.heap = [];
-  }
+export class PriorityQueue<T> {
+  private heap: HeapNode<T>[] = [];
+  private count: number = 0;
 
   enqueue(value: T, priority: number) {
-    this.heap.push({ value, priority });
+    this.heap.push({ value, priority, order: this.count++ });
     this.heapifyUp();
   }
 
@@ -31,7 +30,17 @@ export class PriorityQueue<T> {
   }
 
   isEmpty(): boolean {
-    return this.heap.length === 0;
+    const result = this.heap.length === 0;
+    if (!result) {
+      return result;
+    }
+    this.count = 0;
+    return result;
+  }
+
+  clear() {
+    this.heap = [];
+    this.count = 0;
   }
 
   private getParentIndex(index: number): number {
@@ -52,13 +61,20 @@ export class PriorityQueue<T> {
 
   private heapifyUp() {
     let index = this.heap.length - 1;
-    while (
-      index > 0 &&
-      this.heap[index].priority < this.heap[this.getParentIndex(index)].priority
-    ) {
-      this.swap(index, this.getParentIndex(index));
-      index = this.getParentIndex(index);
+
+    while (index > 0) {
+      const parentIndex = this.getParentIndex(index);
+      if (!this.compare(this.heap[index], this.heap[parentIndex])) break;
+      this.swap(index, parentIndex);
+      index = parentIndex;
     }
+  }
+
+  private compare(a: HeapNode<T>, b: HeapNode<T>) {
+    if (a.priority === b.priority) {
+      return a.order < b.order;
+    }
+    return a.priority < b.priority;
   }
 
   private heapifyDown() {
@@ -69,13 +85,12 @@ export class PriorityQueue<T> {
 
       if (
         rightChildIndex < this.heap.length &&
-        this.heap[rightChildIndex].priority <
-          this.heap[smallerChildIndex].priority
+        this.compare(this.heap[rightChildIndex], this.heap[smallerChildIndex])
       ) {
         smallerChildIndex = rightChildIndex;
       }
 
-      if (this.heap[index].priority <= this.heap[smallerChildIndex].priority) {
+      if (this.compare(this.heap[index], this.heap[smallerChildIndex])) {
         break;
       }
 

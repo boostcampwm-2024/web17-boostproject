@@ -60,3 +60,10 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 # remote
 .remote
+
+# .zip, .mst
+*.zip
+*.mst
+
+# remote
+.remote

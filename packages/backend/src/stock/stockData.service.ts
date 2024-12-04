@@ -1,9 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { plainToInstance } from 'class-transformer';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { DataSource, EntityManager } from 'typeorm';
 import { Stock } from './domain/stock.entity';
 import {
-  StockMinutely,
   StockDaily,
   StockMonthly,
   StockWeekly,
@@ -14,6 +16,12 @@ import {
   StockDataResponse,
   VolumeDto,
 } from './dto/stockData.response';
+import { OpenapiPeriodData } from '@/scraper/openapi/api/openapiPeriodData.api';
+import { Period } from '@/scraper/openapi/type/openapiPeriodData.type';
+import { NewDate } from '@/scraper/openapi/util/newDate.util';
+import { StockDataCache } from '@/stock/cache/stockData.cache';
+import { StockLiveData } from '@/stock/domain/stockLiveData.entity';
+import { getFormattedDate, isTodayWeekend } from '@/utils/date';
 
 type StockData = {
   id: number;
@@ -30,175 +38,227 @@ type StockData = {
 @Injectable()
 export class StockDataService {
   protected readonly PAGE_SIZE = 100;
-  protected readonly DEFAULT_COLOR = 'red';
 
-  constructor(private readonly dataSource: DataSource) {}
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly stockDataCache: StockDataCache,
+    private readonly openapiPeriodData: OpenapiPeriodData,
+  ) {}
 
-  async getPaginated(
+  async scrollChart(
     entity: new () => StockData,
-    stock_id: string,
+    stockId: string,
     lastStartTime?: string,
   ): Promise<StockDataResponse> {
-    return await this.dataSource.manager.transaction(async (manager) => {
-      if (!(await this.isStockExist(stock_id, manager)))
-        throw new NotFoundException('stock not found');
+    if (!(await this.isStockExist(stockId, this.dataSource.manager)))
+      throw new NotFoundException('stock not found');
+    const cacheKey = this.createCacheKey(entity, stockId, lastStartTime);
+    const cachedData = this.stockDataCache.get(cacheKey);
 
-      const queryBuilder = manager
-        .createQueryBuilder(entity, 'entity')
-        .where('entity.stock_id = :stockId', { stockId: stock_id })
-        .orderBy('entity.startTime', 'DESC')
-        .take(this.PAGE_SIZE + 1);
+    if (cachedData) {
+      return cachedData;
+    }
+    const response = await this.getChartData(entity, stockId, lastStartTime);
+    this.stockDataCache.set(cacheKey, response);
+    return response;
+  }
 
-      if (lastStartTime)
-        queryBuilder.andWhere('entity.startTime < :lastStartTime', {
-          lastStartTime: lastStartTime,
-        });
-
-      const resultList = await queryBuilder.getMany();
-
-      const hasMore = resultList.length > this.PAGE_SIZE;
-      if (hasMore) resultList.pop();
-      const priceDtoList = this.mapResultListToPriceDtoList(resultList);
-      const volumeDtoList = this.mapResultListToVolumeDtoList(resultList);
-
-      return this.createStockDataResponse(priceDtoList, volumeDtoList, hasMore);
+  private async getCardDataWithMissing(
+    entity: new () => StockData,
+    stockId: string,
+    periodType: Period,
+    lastStartTime?: string,
+  ) {
+    return new Promise<StockDataResponse>((resolve) => {
+      this.openapiPeriodData.insertCartDataRequest(
+        this.getHandleResponseCallback(entity, stockId, resolve, lastStartTime),
+        stockId,
+        periodType,
+      );
     });
   }
 
-  async isStockExist(stockId: string, manager: EntityManager) {
+  private async findLastData(entity: new () => StockData, stockId: string) {
+    return await this.dataSource.manager.findOne(entity, {
+      where: { stock: { id: stockId } },
+      order: { startTime: 'DESC' },
+    });
+  }
+
+  private async isStockExist(stockId: string, manager: EntityManager) {
     return await manager.exists(Stock, { where: { id: stockId } });
   }
 
-  mapResultListToPriceDtoList(resultList: StockData[]): PriceDto[] {
-    return resultList
-      .map((data: StockData) => ({
-        startTime: data.startTime,
-        open: data.open,
-        close: data.close,
-        high: data.high,
-        low: data.low,
-      }))
-      .reverse();
+  private async getChartData(
+    entity: new () => StockData,
+    stockId: string,
+    lastStartTime?: string,
+  ) {
+    const lastData = await this.findLastData(entity, stockId);
+    const periodType = this.getPeriodType(entity);
+    if (!periodType) throw new BadRequestException('period type not found');
+    if (
+      !isTodayWeekend() &&
+      !lastStartTime &&
+      (!lastData || !this.isLastDate(lastData, periodType))
+    ) {
+      return await this.getCardDataWithMissing(
+        entity,
+        stockId,
+        periodType,
+        lastStartTime,
+      );
+    }
+    const response = await this.getChartDataFromDB(
+      entity,
+      stockId,
+      lastStartTime,
+    );
+    const time = new Date();
+    if (!lastStartTime && time.getHours() < 16 && time.getHours() >= 9) {
+      return await this.renewResponse(response, entity, stockId);
+    }
+    return response;
   }
 
-  mapResultListToVolumeDtoList(resultList: StockData[]): VolumeDto[] {
-    return resultList
-      .map((data) => ({
-        startTime: data.startTime,
-        volume: data.volume,
-      }))
-      .reverse();
-  }
-
-  createStockDataResponse(
-    priceDtoList: PriceDto[],
-    volumeDtoList: VolumeDto[],
-    hasMore: boolean,
-  ): StockDataResponse {
-    const priceData = plainToInstance(PriceDto, priceDtoList);
-    const volumeData = plainToInstance(VolumeDto, volumeDtoList);
-
-    const responseDto = plainToInstance(StockDataResponse, {
-      priceDtoList: priceData,
-      volumeDtoList: volumeData,
-      hasMore,
+  private async renewResponse(
+    response: StockDataResponse,
+    entity: new () => StockData,
+    stockId: string,
+  ) {
+    const liveData = await this.dataSource.manager.findOne(StockLiveData, {
+      where: { stock: { id: stockId } },
     });
-
-    return responseDto;
-  }
-}
-
-@Injectable()
-export class StockDataMinutelyService extends StockDataService {
-  constructor(dataSource: DataSource) {
-    super(dataSource);
-  }
-  async getStockDataMinutely(
-    stock_id: string,
-    lastStartTime?: string,
-  ): Promise<StockDataResponse> {
-    const response = await this.getPaginated(
-      StockMinutely,
-      stock_id,
-      lastStartTime,
-    );
-
+    if (liveData) {
+      response.renewLastData(liveData, entity);
+    }
     return response;
   }
-}
 
-@Injectable()
-export class StockDataDailyService extends StockDataService {
-  constructor(dataSource: DataSource) {
-    super(dataSource);
-  }
-  async getStockDataDaily(
-    stock_id: string,
+  private async getChartDataFromDB(
+    entity: new () => StockData,
+    stockId: string,
     lastStartTime?: string,
-  ): Promise<StockDataResponse> {
-    const response = await this.getPaginated(
-      StockDaily,
-      stock_id,
+  ) {
+    const queryBuilder = this.createQueryBuilder(
+      entity,
+      stockId,
+      this.dataSource.manager,
       lastStartTime,
     );
-
-    return response;
+    const results = await queryBuilder.getMany();
+    return this.convertResultsToResponse(results);
   }
-}
 
-@Injectable()
-export class StockDataWeeklyService extends StockDataService {
-  constructor(dataSource: DataSource) {
-    super(dataSource);
-  }
-  async getStockDataWeekly(
-    stock_id: string,
+  private getHandleResponseCallback(
+    entity: new () => StockData,
+    stockId: string,
+    resolve: (value: StockDataResponse) => void,
     lastStartTime?: string,
-  ): Promise<StockDataResponse> {
-    const response = await this.getPaginated(
-      StockWeekly,
-      stock_id,
-      lastStartTime,
+  ) {
+    return async () => {
+      setTimeout(
+        async () =>
+          resolve(
+            await this.getChartDataFromDB(entity, stockId, lastStartTime),
+          ),
+        2000,
+      );
+
+      const response = await this.getChartDataFromDB(
+        entity,
+        stockId,
+        lastStartTime,
+      );
+
+      resolve(response);
+    };
+  }
+
+  private isLastDate(lastData: StockData, period: Period) {
+    const lastDate = new NewDate(lastData.startTime);
+    const current = new Date();
+    if (period === 'D') return lastDate.isSameDate(current);
+    if (period === 'M') {
+      return (
+        lastDate.isSameMonth(current) &&
+        (lastDate.isSameDate(current) ||
+          (current.getHours() < 16 && current.getHours() > 1))
+      );
+    }
+    if (period === 'Y')
+      return (
+        lastDate.isSameYear(current) &&
+        (lastDate.isSameDate(current) ||
+          (current.getHours() < 16 && current.getHours() > 1))
+      );
+    return (
+      lastDate.isSameWeek(current) &&
+      (lastData.createdAt.getDate() === current.getDate() ||
+        (current.getHours() < 16 && current.getHours() > 1))
     );
-
-    return response;
   }
-}
 
-@Injectable()
-export class StockDataMonthlyService extends StockDataService {
-  constructor(dataSource: DataSource) {
-    super(dataSource);
+  private getPeriodType(entity: new () => StockData) {
+    if (entity === StockDaily) return 'D';
+    if (entity === StockWeekly) return 'W';
+    if (entity === StockMonthly) return 'M';
+    if (entity === StockYearly) return 'Y';
   }
-  async getStockDataMonthly(
-    stock_id: string,
+
+  private createCacheKey(
+    entity: new () => StockData,
+    stockId: string,
     lastStartTime?: string,
-  ): Promise<StockDataResponse> {
-    const response = await this.getPaginated(
-      StockMonthly,
-      stock_id,
-      lastStartTime,
-    );
-
-    return response;
+  ) {
+    const date = lastStartTime ? new Date(lastStartTime) : new Date();
+    return `${entity.name}_${stockId}_${getFormattedDate(date)}`;
   }
-}
 
-@Injectable()
-export class StockDataYearlyService extends StockDataService {
-  constructor(dataSource: DataSource) {
-    super(dataSource);
+  private convertResultsToResponse(results: StockData[]) {
+    const hasMore = results.length > this.PAGE_SIZE;
+    if (hasMore) results.pop();
+    const prices = this.convertResultsToPriceDtoList(results);
+    const volumes = this.convertResultsToVolumeDtoList(results);
+    return new StockDataResponse(prices, volumes, hasMore);
   }
-  async getStockDataYearly(
+
+  private createQueryBuilder(
+    entity: new () => StockData,
     stock_id: string,
+    manager: EntityManager,
     lastStartTime?: string,
-  ): Promise<StockDataResponse> {
-    const response = await this.getPaginated(
-      StockYearly,
-      stock_id,
-      lastStartTime,
-    );
+  ) {
+    const queryBuilder = manager
+      .createQueryBuilder(entity, 'entity')
+      .where('entity.stock_id = :stockId', { stockId: stock_id })
+      .orderBy('entity.startTime', 'DESC')
+      .take(this.PAGE_SIZE + 1);
 
-    return response;
+    if (lastStartTime)
+      queryBuilder.andWhere('entity.startTime < :lastStartTime', {
+        lastStartTime: lastStartTime,
+      });
+    return queryBuilder;
+  }
+
+  private convertResultsToPriceDtoList(resultList: StockData[]): PriceDto[] {
+    return resultList
+      .reduce((acc: PriceDto[], stockData) => {
+        if (!stockData) return acc;
+        acc.push(new PriceDto(stockData));
+        return acc;
+      }, [])
+      .reverse();
+  }
+
+  private convertResultsToVolumeDtoList(resultList: StockData[]): VolumeDto[] {
+    return resultList
+      .reduce((acc: VolumeDto[], stockData) => {
+        if (!stockData) return acc;
+        acc.push(new VolumeDto(stockData));
+        return acc;
+      }, [])
+      .reverse();
   }
 }

@@ -35,11 +35,23 @@ export class UserService {
   }
 
   async searchUserByNicknameAndSubName(nickname: string, subName?: string) {
+    const whereCondition = subName
+      ? { nickname: Like(`%${nickname}%`), subName: Like(`${subName}%`) }
+      : { nickname: Like(`%${nickname}%`) };
     const users = await this.dataSource.manager.find(User, {
-      where: { nickname: Like(`%${nickname}%`), subName: Like(`${subName}%`) },
+      where: whereCondition,
       take: 10,
     });
     return new UserSearchResult(users);
+  }
+
+  async searchOneUserByNicknameAndSubName(nickname: string, subName?: string) {
+    return await this.dataSource.manager.findOne(User, {
+      where: {
+        nickname,
+        subName,
+      },
+    });
   }
 
   async createSubName(nickname: string) {
@@ -56,6 +68,10 @@ export class UserService {
 
       return (parseInt(maxSubName.max, 10) + 1).toString().padStart(4, '0');
     });
+  }
+
+  async findUserById(id: number) {
+    return await this.dataSource.manager.findOne(User, { where: { id } });
   }
 
   async getUserInfo(id: number) {

@@ -12,7 +12,7 @@ export class LikeResponse {
   @ApiProperty({
     type: 'string',
     description: '참여 중인 좀목 id',
-    example: 'A005930',
+    example: '005930',
   })
   stockId: string;
 
