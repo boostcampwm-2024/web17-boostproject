@@ -15,6 +15,7 @@ export const Search = ({ className }: SearchProps) => {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!stockName) return;
     refetch();
   };
 
