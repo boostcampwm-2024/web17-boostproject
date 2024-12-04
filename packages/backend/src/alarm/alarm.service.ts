@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -10,6 +11,8 @@ import { PushSubscription } from './domain/subscription.entity';
 import { AlarmRequest } from './dto/alarm.request';
 import { AlarmResponse } from './dto/alarm.response';
 import { PushService } from './push.service';
+import { StockMinutely } from '@/stock/domain/stockData.entity';
+import { StockLiveData } from '@/stock/domain/stockLiveData.entity';
 import { User } from '@/user/domain/user.entity';
 
 @Injectable()
@@ -21,9 +24,113 @@ export class AlarmService {
     private readonly pushService: PushService,
   ) {}
 
+  private isAlarmExpired(
+    expiredDate: Date,
+    recent: StockMinutely | StockLiveData,
+  ): boolean {
+    const updatedAt =
+      (recent as StockLiveData).updatedAt ||
+      (recent as StockMinutely).createdAt;
+    return updatedAt && expiredDate >= updatedAt;
+  }
+
+  private isTargetPriceMet(
+    targetPrice: number,
+    recent: StockMinutely | StockLiveData,
+  ): boolean {
+    return targetPrice <= recent.open;
+  }
+
+  private isTargetVolumeMet(
+    targetVolume: number,
+    recent: StockMinutely | StockLiveData,
+  ): boolean {
+    return targetVolume <= recent.volume;
+  }
+
+  isValidAlarmCompareEntity(
+    alarm: Partial<Alarm>,
+    recent: StockMinutely | StockLiveData,
+  ): boolean {
+    if (
+      alarm.alarmExpiredDate &&
+      this.isAlarmExpired(alarm.alarmExpiredDate, recent)
+    ) {
+      return true;
+    }
+    if (alarm.targetPrice && this.isTargetPriceMet(alarm.targetPrice, recent)) {
+      return true;
+    }
+    if (
+      alarm.targetVolume &&
+      this.isTargetVolumeMet(alarm.targetVolume, recent)
+    ) {
+      return true;
+    }
+    return false;
+  }
+
+  private validAlarmThrow(
+    alarm: Partial<Alarm>,
+    recent: StockMinutely | StockLiveData,
+  ) {
+    if (
+      alarm.alarmExpiredDate &&
+      !this.isAlarmExpired(alarm.alarmExpiredDate, recent)
+    )
+      throw new BadRequestException(
+        `${alarm.alarmExpiredDate}는 잘못된 날짜입니다. 다시 입력해주세요.`,
+      );
+
+    if (alarm.targetPrice && !this.isTargetPriceMet(alarm.targetPrice, recent))
+      throw new BadRequestException(
+        `${alarm.targetPrice}는 최근 가격보다 낮습니다. 다시 입력해주세요.`,
+      );
+
+    if (
+      alarm.targetVolume &&
+      !this.isTargetVolumeMet(alarm.targetVolume, recent)
+    )
+      throw new BadRequestException(
+        `${alarm.targetVolume}는 최근 거래량보다 낮습니다. 다시 입력해주세요.`,
+      );
+  }
+
+  async validAlarmThrowException(
+    alarmData: AlarmRequest,
+    stockId: string = alarmData.stockId,
+  ) {
+    const recentLiveData = await this.dataSource.manager.findOne(
+      StockLiveData,
+      {
+        where: { stock: { id: stockId } },
+      },
+    );
+
+    if (recentLiveData) {
+      this.validAlarmThrow(alarmData, recentLiveData);
+    }
+
+    const recentMinuteData = await this.dataSource.manager.findOne(
+      StockMinutely,
+      {
+        where: { stock: { id: stockId } },
+        order: { startTime: 'DESC' },
+      },
+    );
+
+    if (recentMinuteData) {
+      this.validAlarmThrow(alarmData, recentMinuteData);
+    }
+
+    return true;
+  }
+
   async create(alarmData: AlarmRequest, userId: number) {
+    await this.validAlarmThrowException(alarmData);
     return await this.dataSource.transaction(async (manager) => {
       const repository = manager.getRepository(Alarm);
+
       const user = await manager.findOne(User, { where: { id: userId } });
       if (!user) {
         throw new ForbiddenException('유저를 찾을 수 없습니다.');
@@ -34,7 +141,9 @@ export class AlarmService {
         user,
         stock: { id: alarmData.stockId },
       });
+
       const result = await repository.save(newAlarm);
+
       return new AlarmResponse(result);
     });
   }
@@ -44,6 +153,7 @@ export class AlarmService {
       where: { user: { id: userId } },
       relations: ['user', 'stock'],
     });
+
     return result.map((val) => new AlarmResponse(val));
   }
 
@@ -52,6 +162,7 @@ export class AlarmService {
       where: { stock: { id: stockId }, user: { id: userId } },
       relations: ['user', 'stock'],
     });
+
     return result.map((val) => new AlarmResponse(val));
   }
 
@@ -60,11 +171,13 @@ export class AlarmService {
       where: { id },
       relations: ['stock'],
     });
+
     if (result) return new AlarmResponse(result);
     else throw new NotFoundException('등록된 알림을 찾을 수 없습니다.');
   }
 
   async update(id: number, updateData: AlarmRequest) {
+    await this.validAlarmThrowException(updateData);
     const alarm = await this.alarmRepository.findOne({ where: { id } });
     if (!alarm) {
       throw new NotFoundException('등록된 알림을 찾을 수 없습니다.');
@@ -80,6 +193,7 @@ export class AlarmService {
       where: { id },
       relations: ['stock'],
     });
+
     if (updatedAlarm) return new AlarmResponse(updatedAlarm);
     else
       throw new NotFoundException(
@@ -89,6 +203,7 @@ export class AlarmService {
 
   async delete(id: number) {
     const alarm = await this.alarmRepository.findOne({ where: { id } });
+
     if (!alarm) {
       throw new NotFoundException(`${id} : 삭제할 알림을 찾을 수 없습니다.`);
     }
