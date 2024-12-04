@@ -38,8 +38,8 @@ export class AlarmResponse {
   constructor(alarm: Alarm) {
     this.alarmId = alarm.id;
     this.stockId = alarm.stock.id;
-    this.targetPrice = alarm.targetPrice;
-    this.targetVolume = alarm.targetVolume;
+    this.targetPrice = Number(alarm.targetPrice);
+    this.targetVolume = Number(alarm.targetVolume);
     this.alarmExpiredDate = alarm.alarmExpiredDate;
   }
 }
