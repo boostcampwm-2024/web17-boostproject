@@ -10,10 +10,10 @@ const postCreateAlarm = ({
   stockId,
   targetPrice,
   targetVolume,
-  alarmDate,
+  alarmExpiredDate,
 }: PostCreateAlarmRequest) =>
   post<AlarmResponse>({
-    params: { stockId, targetPrice, targetVolume, alarmDate },
+    params: { stockId, targetPrice, targetVolume, alarmExpiredDate },
     schema: AlarmInfoSchema,
     url: '/api/alarm',
   });
@@ -26,9 +26,9 @@ export const usePostCreateAlarm = () => {
       stockId,
       targetPrice,
       targetVolume,
-      alarmDate,
+      alarmExpiredDate,
     }: PostCreateAlarmRequest) =>
-      postCreateAlarm({ stockId, targetPrice, targetVolume, alarmDate }),
+      postCreateAlarm({ stockId, targetPrice, targetVolume, alarmExpiredDate }),
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: ['getStockAlarm'] }),
   });

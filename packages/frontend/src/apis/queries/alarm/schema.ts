@@ -22,7 +22,7 @@ export const PostCreateAlarmRequestSchema = z.object({
   stockId: z.string(),
   targetPrice: z.number().optional(),
   targetVolume: z.number().optional(),
-  alarmDate: z.string().datetime(),
+  alarmExpiredDate: z.string().datetime().nullish(),
 });
 
 export type PostCreateAlarmRequest = z.infer<
@@ -33,8 +33,8 @@ export const AlarmInfoSchema = z.object({
   alarmId: z.number(),
   stockId: z.string(),
   targetPrice: z.number().nullable(),
-  targetVolume: z.string().nullable(),
-  alarmDate: z.string().datetime(),
+  targetVolume: z.number().nullable(),
+  alarmExpiredDate: z.string().datetime().nullable(),
 });
 
 export const AlarmResponseSchema = z.array(AlarmInfoSchema);
