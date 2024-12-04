@@ -20,7 +20,7 @@ import { OpenapiPeriodData } from '@/scraper/openapi/api/openapiPeriodData.api';
 import { Period } from '@/scraper/openapi/type/openapiPeriodData.type';
 import { NewDate } from '@/scraper/openapi/util/newDate.util';
 import { StockDataCache } from '@/stock/cache/stockData.cache';
-import { getFormattedDate } from '@/utils/date';
+import { getFormattedDate, isTodayWeekend } from '@/utils/date';
 
 type StockData = {
   id: number;
@@ -97,10 +97,11 @@ export class StockDataService {
     const periodType = this.getPeriodType(entity);
     if (!periodType) throw new BadRequestException('period type not found');
     if (
+      !isTodayWeekend() &&
       !lastStartTime &&
       (!lastData || !this.isLastDate(lastData, periodType))
     ) {
-      return this.getCardDataWithMissing(
+      return await this.getCardDataWithMissing(
         entity,
         stockId,
         periodType,
