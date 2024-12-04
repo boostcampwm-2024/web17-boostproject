@@ -1,6 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { StockData } from '@/stock/domain/stockData.entity';
+import {
+  StockDaily,
+  StockData,
+  StockWeekly,
+} from '@/stock/domain/stockData.entity';
+import { StockLiveData } from '@/stock/domain/stockLiveData.entity';
+import { getToday } from '@/utils/date';
 
 export class PriceDto {
   @ApiProperty({
@@ -37,10 +43,10 @@ export class PriceDto {
 
   constructor(stockData: StockData) {
     this.startTime = stockData.startTime;
-    this.open = stockData.open;
-    this.high = stockData.high;
-    this.low = stockData.low;
-    this.close = stockData.close;
+    this.open = Number(stockData.open);
+    this.high = Number(stockData.high);
+    this.low = Number(stockData.low);
+    this.close = Number(stockData.close);
   }
 }
 
@@ -61,7 +67,7 @@ export class VolumeDto {
 
   constructor(stockData: StockData) {
     this.startTime = stockData.startTime;
-    this.volume = stockData.volume;
+    this.volume = Number(stockData.volume);
   }
 }
 
@@ -94,5 +100,27 @@ export class StockDataResponse {
     this.priceDtoList = priceDtoList;
     this.volumeDtoList = volumeDtoList;
     this.hasMore = hasMore;
+  }
+
+  renewLastData(stockLiveData: StockLiveData, entity: new () => StockData) {
+    const lastIndex = this.priceDtoList.length - 1;
+    this.priceDtoList[lastIndex].close = Number(stockLiveData.currentPrice);
+    this.priceDtoList[lastIndex].high =
+      stockLiveData.high > this.priceDtoList[lastIndex].high
+        ? stockLiveData.high
+        : this.priceDtoList[lastIndex].high;
+    this.priceDtoList[lastIndex].low =
+      stockLiveData.low < this.priceDtoList[lastIndex].low
+        ? stockLiveData.low
+        : this.priceDtoList[lastIndex].low;
+
+    this.priceDtoList[lastIndex].startTime =
+      entity !== StockWeekly
+        ? getToday()
+        : this.priceDtoList[lastIndex].startTime;
+    this.volumeDtoList[lastIndex].volume =
+      entity === StockDaily
+        ? stockLiveData.volume
+        : this.volumeDtoList[lastIndex].volume + stockLiveData.volume;
   }
 }

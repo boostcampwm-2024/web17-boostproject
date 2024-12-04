@@ -20,6 +20,7 @@ import { OpenapiPeriodData } from '@/scraper/openapi/api/openapiPeriodData.api';
 import { Period } from '@/scraper/openapi/type/openapiPeriodData.type';
 import { NewDate } from '@/scraper/openapi/util/newDate.util';
 import { StockDataCache } from '@/stock/cache/stockData.cache';
+import { StockLiveData } from '@/stock/domain/stockLiveData.entity';
 import { getFormattedDate, isTodayWeekend } from '@/utils/date';
 
 type StockData = {
@@ -108,7 +109,30 @@ export class StockDataService {
         lastStartTime,
       );
     }
-    return await this.getChartDataFromDB(entity, stockId, lastStartTime);
+    const response = await this.getChartDataFromDB(
+      entity,
+      stockId,
+      lastStartTime,
+    );
+    const time = new Date();
+    if (!lastStartTime && time.getHours() < 16 && time.getHours() >= 9) {
+      return await this.renewResponse(response, entity, stockId);
+    }
+    return response;
+  }
+
+  private async renewResponse(
+    response: StockDataResponse,
+    entity: new () => StockData,
+    stockId: string,
+  ) {
+    const liveData = await this.dataSource.manager.findOne(StockLiveData, {
+      where: { stock: { id: stockId } },
+    });
+    if (liveData) {
+      response.renewLastData(liveData, entity);
+    }
+    return response;
   }
 
   private async getChartDataFromDB(
@@ -157,17 +181,21 @@ export class StockDataService {
     if (period === 'D') return lastDate.isSameDate(current);
     if (period === 'M') {
       return (
-        lastDate.isSameWeek(current) &&
-        lastDate.isSameYear(current) &&
-        lastDate.isSameDate(current) &&
-        lastDate.isSameDate(current)
+        lastDate.isSameMonth(current) &&
+        (lastDate.isSameDate(current) ||
+          (current.getHours() < 16 && current.getHours() > 1))
       );
     }
     if (period === 'Y')
-      return lastDate.isSameYear(current) && lastDate.isSameDate(current);
+      return (
+        lastDate.isSameYear(current) &&
+        (lastDate.isSameDate(current) ||
+          (current.getHours() < 16 && current.getHours() > 1))
+      );
     return (
       lastDate.isSameWeek(current) &&
-      lastData.createdAt.getDate() === current.getDate()
+      (lastData.createdAt.getDate() === current.getDate() ||
+        (current.getHours() < 16 && current.getHours() > 1))
     );
   }
 
