@@ -15,10 +15,13 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
-  ApiQuery,
 } from '@nestjs/swagger';
 import { Request } from 'express';
-import { ApiGetStocks, LimitQuery } from './decorator/stock.decorator';
+import {
+  ApiFluctuationQuery,
+  ApiGetStocks,
+  LimitQuery,
+} from './decorator/stock.decorator';
 import { ApiGetStockData } from './decorator/stockData.decorator';
 import { StockDetailResponse } from './dto/stockDetail.response';
 import { StockIndexRateResponse } from './dto/stockIndexRate.response';
@@ -29,9 +32,14 @@ import SessionGuard from '@/auth/session/session.guard';
 import { GetUser } from '@/common/decorator/user.decorator';
 import { sessionConfig } from '@/configs/session.config';
 import { TIME_UNIT } from '@/stock/constants/timeunit';
+import {
+  StockDaily,
+  StockMonthly,
+  StockWeekly,
+  StockYearly,
+} from '@/stock/domain/stockData.entity';
 import { StockSearchRequest } from '@/stock/dto/stock.request';
 import {
-  StockRankResponses,
   StockSearchResponse,
   StockViewsResponse,
 } from '@/stock/dto/stock.response';
@@ -45,14 +53,8 @@ import {
   UserStockResponse,
   UserStocksResponse,
 } from '@/stock/dto/userStock.response';
-import { User } from '@/user/domain/user.entity';
 import { StockDataService } from '@/stock/stockData.service';
-import {
-  StockDaily,
-  StockMonthly,
-  StockWeekly,
-  StockYearly,
-} from '@/stock/domain/stockData.entity';
+import { User } from '@/user/domain/user.entity';
 
 const FLUCTUATION_TYPE = {
   INCREASE: 'increase',
@@ -209,26 +211,7 @@ export class StockController {
   }
 
   @Get('fluctuation')
-  @ApiOperation({
-    summary: '등가, 등락률 기반 주식 리스트 조회 API',
-    description: '등가, 등락률 기반 주식 리스트를 조회합니다',
-  })
-  @ApiQuery({
-    name: 'limit',
-    required: false,
-    description:
-      '조회할 리스트 수(기본값: 20, 등가, 등락 모두 받으면 모든 데이터 전송)',
-  })
-  @ApiQuery({
-    name: 'type',
-    required: false,
-    description: '데이터 타입(기본값: increase, all, increase, decrease)',
-    enum: ['increase', 'decrease', 'all'],
-  })
-  @ApiOkResponse({
-    description: '',
-    type: [StockRankResponses],
-  })
+  @ApiFluctuationQuery()
   async getTopStocksByFluctuation(
     @LimitQuery(20) limit: number,
     @Query('type') type: FLUCTUATION_TYPE,
