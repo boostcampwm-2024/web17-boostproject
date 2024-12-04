@@ -37,10 +37,6 @@ export class LiveData {
       }
       this.connect();
     });
-    this.subscribe('005930');
-    this.subscribe('000660');
-    this.subscribe('000150');
-    this.subscribe('000020');
   }
 
   private async openapiSubscribe(stockId: string) {
