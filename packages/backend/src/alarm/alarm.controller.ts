@@ -144,7 +144,7 @@ export class AlarmController {
     example: '005930',
   })
   @UseGuards(SessionGuard)
-  async getByStockId(@Param('stockId') stockId: string, @GetUser() user: User) {
+  async getByStockId(@Param('id') stockId: string, @GetUser() user: User) {
     const userId = user.id;
 
     return await this.alarmService.findByStockId(stockId, userId);
