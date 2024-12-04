@@ -61,7 +61,7 @@ export const TradingChart = () => {
   useChartResize({ containerRef, chart });
 
   return (
-    <div className="flex h-[30rem] flex-col xl:h-full">
+    <div className="flex min-h-[30rem] flex-col">
       <section className="flex justify-end gap-5">
         {TIME_UNIT.map((option) => (
           <RadioButton
@@ -75,7 +75,7 @@ export const TradingChart = () => {
           </RadioButton>
         ))}
       </section>
-      <div ref={containerRef} className="h-0 w-full flex-grow" />
+      <div ref={containerRef} className="min-h-0 w-full flex-1" />
     </div>
   );
 };

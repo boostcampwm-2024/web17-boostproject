@@ -8,7 +8,7 @@ export interface MetricItemProps {
 
 export const MetricItem = ({ label, tooltip, value }: MetricItemProps) => {
   return (
-    <>
+    <div className="flex items-center gap-5">
       <div className="group relative">
         <Tooltip className="absolute bottom-full mb-6">{tooltip}</Tooltip>
         <span className="display-medium14 text-gray cursor-pointer font-bold">
@@ -16,6 +16,6 @@ export const MetricItem = ({ label, tooltip, value }: MetricItemProps) => {
         </span>
       </div>
       <span className="display-medium14 text-dark-gray">{value}</span>
-    </>
+    </div>
   );
 };

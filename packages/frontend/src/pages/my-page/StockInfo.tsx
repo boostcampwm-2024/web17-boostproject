@@ -29,10 +29,10 @@ export const StockInfo = ({ loginStatus }: StockInfoProps) => {
             소유한 주식이 없습니다.
           </p>
         ) : (
-          <article className="grid grid-cols-2 gap-5">
+          <article className="grid gap-5 xl:grid-cols-2">
             {data?.userStocks.map((stock) => (
               <section
-                className="display-bold14 text-dark-gray bg-extra-light-gray flex cursor-pointer justify-between rounded p-10 transition-all duration-300 hover:scale-105"
+                className="display-bold14 text-dark-gray bg-extra-light-gray flex cursor-pointer items-center justify-between rounded px-4 py-2 transition-all duration-300 hover:scale-105 xl:p-8"
                 onClick={() => navigate(`/stocks/${stock.stockId}`)}
               >
                 <p>{stock.name}</p>

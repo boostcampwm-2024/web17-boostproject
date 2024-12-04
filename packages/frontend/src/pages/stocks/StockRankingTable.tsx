@@ -24,11 +24,11 @@ export const StockRankingTable = () => {
     <div className="rounded-md bg-white px-6 shadow">
       <table className="w-full border-collapse">
         <colgroup>
-          <col className="w-4/12" />
-          <col className="w-2/12" />
-          <col className="w-2/12" />
-          <col className="w-2/12" />
-          <col className="w-2/12" />
+          <col className="w-3/5 lg:w-4/12" />
+          <col className="w-1/5 lg:w-2/12" />
+          <col className="w-1/5 lg:w-2/12" />
+          <col className="hidden lg:table-cell lg:w-2/12" />
+          <col className="hidden lg:table-cell lg:w-2/12" />
         </colgroup>
         <thead>
           <tr className="display-medium12 text-dark-gray border-light-gray border-b text-left [&>*]:p-4 [&>*]:py-3">
@@ -44,8 +44,8 @@ export const StockRankingTable = () => {
                 onClick={handleSortType}
               />
             </th>
-            <th className="text-right">거래대금</th>
-            <th className="text-right">거래량</th>
+            <th className="hidden lg:table-cell lg:text-right">거래대금</th>
+            <th className="hidden lg:table-cell lg:text-right">거래량</th>
           </tr>
         </thead>
         <tbody>
@@ -76,8 +76,12 @@ export const StockRankingTable = () => {
                 >
                   {stock.changeRate}%
                 </td>
-                <td>{stock.volume?.toLocaleString()}원</td>
-                <td>{stock.marketCap?.toLocaleString()}주</td>
+                <td className="hidden lg:table-cell">
+                  {stock.volume?.toLocaleString()}원
+                </td>
+                <td className="hidden lg:table-cell">
+                  {stock.marketCap?.toLocaleString()}주
+                </td>
               </tr>
             ))
           ) : (

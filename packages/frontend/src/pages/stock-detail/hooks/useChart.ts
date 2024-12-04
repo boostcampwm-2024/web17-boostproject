@@ -52,6 +52,7 @@ export const useChart = ({
     chart.current = createChart(containerInstance, {
       width: containerInstance.clientWidth,
       height: containerInstance.clientHeight,
+      autoSize: true,
       ...createChartOptions(graphTheme),
     });
 

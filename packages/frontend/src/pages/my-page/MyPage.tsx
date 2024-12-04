@@ -12,7 +12,7 @@ export const MyPage = () => {
   return (
     <div>
       <h1 className="display-bold24 mb-16">마이페이지</h1>
-      <article className="grid h-[40rem] grid-cols-[1.5fr_2.5fr] gap-5">
+      <article className="grid gap-5 lg:h-[40rem] lg:grid-cols-[1.5fr_2.5fr]">
         <section className="grid grid-rows-[1fr_2fr] gap-5">
           <section className="rounded-md bg-white p-7">
             {loginStatus?.message === 'Authenticated' ? (
