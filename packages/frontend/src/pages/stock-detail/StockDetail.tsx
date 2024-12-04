@@ -36,9 +36,7 @@ export const StockDetail = () => {
       />
       <article className="grid flex-1 grid-cols-1 gap-5 xl:grid-cols-[2fr_1fr] 2xl:grid-cols-[2.5fr_1fr_1fr] [&>section]:gap-5">
         <section className="flex flex-col">
-          <div className="relative h-full">
-            <TradingChart />
-          </div>
+          <TradingChart />
           <StockMetricsPanel
             eps={eps}
             high52w={high52w}
@@ -51,7 +49,7 @@ export const StockDetail = () => {
           loginStatus={loginStatus}
           isOwnerStock={userOwnerStock.isOwner}
         />
-        <section className="flex flex-wrap gap-5 2xl:flex-col 2xl:flex-nowrap">
+        <section className="flex flex-col flex-wrap gap-5 lg:flex-row 2xl:flex-col 2xl:flex-nowrap">
           <div className="flex-1">
             <NotificationPanel className="h-full w-full" />
           </div>

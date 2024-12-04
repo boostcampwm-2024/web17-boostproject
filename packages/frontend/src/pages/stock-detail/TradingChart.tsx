@@ -61,7 +61,7 @@ export const TradingChart = () => {
   useChartResize({ containerRef, chart });
 
   return (
-    <div className="flex h-[30rem] flex-col xl:h-full">
+    <div className="flex min-h-[30rem] flex-col">
       <section className="flex justify-end gap-5">
         {TIME_UNIT.map((option) => (
           <RadioButton
