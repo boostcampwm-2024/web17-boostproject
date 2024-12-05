@@ -58,9 +58,11 @@ export class AlarmService {
     ) {
       return true;
     }
+
     if (alarm.targetPrice && this.isTargetPriceMet(alarm.targetPrice, recent)) {
       return true;
     }
+
     if (
       alarm.targetVolume &&
       this.isTargetVolumeMet(alarm.targetVolume, recent)
@@ -74,6 +76,11 @@ export class AlarmService {
     alarm: Partial<Alarm>,
     recent: StockMinutely | StockLiveData,
   ) {
+    if (!alarm.targetPrice && !alarm.targetVolume)
+      throw new BadRequestException(
+        '입력값이 잘못되었습니다. 다시 입력해주세요.',
+      );
+
     if (
       alarm.alarmExpiredDate &&
       !this.isAlarmNotExpired(alarm.alarmExpiredDate, recent)
@@ -100,6 +107,9 @@ export class AlarmService {
     alarmData: AlarmRequest,
     stockId: string = alarmData.stockId,
   ) {
+    if (!alarmData.targetPrice && !alarmData.targetVolume)
+      throw new BadRequestException(`입력되지 않았습니다. 다시 입력해주세요.`);
+
     const recentLiveData = await this.dataSource.manager.findOne(
       StockLiveData,
       {
@@ -107,9 +117,7 @@ export class AlarmService {
       },
     );
 
-    if (recentLiveData) {
-      this.validAlarmThrow(alarmData, recentLiveData);
-    }
+    if (recentLiveData) this.validAlarmThrow(alarmData, recentLiveData);
 
     const recentMinuteData = await this.dataSource.manager.findOne(
       StockMinutely,
@@ -119,11 +127,7 @@ export class AlarmService {
       },
     );
 
-    if (recentMinuteData) {
-      this.validAlarmThrow(alarmData, recentMinuteData);
-    }
-
-    return true;
+    if (recentMinuteData) this.validAlarmThrow(alarmData, recentMinuteData);
   }
 
   async create(alarmData: AlarmRequest, userId: number) {
