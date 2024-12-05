@@ -151,7 +151,9 @@ export const ChatPanel = ({ isOwnerStock }: ChatPanelProps) => {
       <div className="border-light-gray display-medium12 text-dark-gray flex items-center justify-between gap-1 border-b-2 pb-2">
         <span>{isConnected ? '🟢 접속 중' : '❌ 연결 끊김'}</span>
         <div className="flex items-center gap-2" onClick={handleOrderType}>
-          <p>{order === 'latest' ? '최신순' : '좋아요순'}</p>
+          <span className="cursor-pointer">
+            {order === 'latest' ? '최신순' : '좋아요순'}
+          </span>
           <DownArrow
             className={cn(
               'cursor-pointer',
