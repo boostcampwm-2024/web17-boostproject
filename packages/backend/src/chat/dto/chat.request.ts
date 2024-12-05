@@ -4,7 +4,7 @@ import { IsNumber, IsOptional, IsString } from 'class-validator';
 export class ChatScrollQuery {
   @ApiProperty({
     description: '종목 주식 id(종목방 id)',
-    example: 'A005930',
+    example: '005930',
   })
   @IsString()
   stockId: string;
@@ -45,8 +45,20 @@ export function isChatScrollQuery(object: unknown): object is ChatScrollQuery {
   return !('pageSize' in object && !Number.isInteger(Number(object.pageSize)));
 }
 
+export class SortedChatScrollQuery extends ChatScrollQuery {
+  @ApiProperty({
+    description: '정렬 기준(기본은 최신 순)',
+    example: 'latest',
+    enum: ['latest', 'like'],
+    required: false,
+  })
+  @IsOptional()
+  order: string;
+}
+
 export interface ChatMessage {
   room: string;
   content: string;
-  mention?: number;
+  nickname: string;
+  subName: string;
 }

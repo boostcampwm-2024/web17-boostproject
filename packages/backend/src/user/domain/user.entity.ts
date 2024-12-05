@@ -5,6 +5,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Alarm } from '@/alarm/domain/alarm.entity';
+import { PushSubscription } from '@/alarm/domain/subscription.entity';
 import { Mention } from '@/chat/domain/mention.entity';
 import { DateEmbedded } from '@/common/dateEmbedded.entity';
 import { UserStock } from '@/stock/domain/userStock.entity';
@@ -44,6 +46,12 @@ export class User {
 
   @OneToMany(() => UserStock, (userStock) => userStock.user)
   userStocks: UserStock[];
+
+  @OneToMany(() => Alarm, (alarm) => alarm.user)
+  alarms: Alarm[];
+
+  @OneToMany(() => PushSubscription, (subscription) => subscription.user)
+  subscriptions: PushSubscription[];
 
   @OneToMany(() => Mention, (mention) => mention.user)
   mentions: Mention[];

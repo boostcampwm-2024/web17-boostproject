@@ -5,7 +5,6 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  Param,
   Patch,
   Post,
   Query,
@@ -13,16 +12,21 @@ import {
 } from '@nestjs/common';
 import {
   ApiBody,
+  ApiCookieAuth,
   ApiOkResponse,
   ApiOperation,
-  ApiParam,
+  ApiQuery,
   ApiResponse,
 } from '@nestjs/swagger';
+import { Request } from 'express';
 import { UpdateUserThemeResponse } from './dto/userTheme.response';
 import { UserService } from './user.service';
-import { Request } from 'express';
 import { User } from '@/user/domain/user.entity';
-import { ChangeNicknameRequest } from '@/user/dto/user.request';
+import {
+  ChangeNicknameRequest,
+  ChangeThemeRequest,
+  UserThemeResponse,
+} from '@/user/dto/user.request';
 
 @Controller('user')
 export class UserController {
@@ -33,8 +37,13 @@ export class UserController {
     summary: '유저 닉네임과 서브 닉네임으로 유저 조회 API',
     description: '유저 닉네임과 서브 닉네임으로 유저를 조회합니다.',
   })
-  @ApiParam({ name: 'nickname', type: 'string', description: '유저 닉네임' })
-  @ApiParam({ name: 'subName', type: 'string', description: '유저 서브네임' })
+  @ApiQuery({ name: 'nickname', type: 'string', description: '유저 닉네임' })
+  @ApiQuery({
+    name: 'subName',
+    type: 'string',
+    description: '유저 서브네임',
+    required: false,
+  })
   async searchUser(
     @Query('nickname') nickname: string,
     @Query('subName') subName: string,
@@ -79,58 +88,58 @@ export class UserController {
     return { message: '닉네임 변경 완료', date: new Date() };
   }
 
-  @Patch(':id/theme')
+  @Patch('theme')
   @HttpCode(HttpStatus.OK)
+  @ApiCookieAuth()
   @ApiOperation({
     summary: '유저 테마 변경 API',
     description: '유저 테마를 라이트모드인지 다크모드인지 변경합니다.',
   })
-  @ApiParam({ name: 'id', type: Number, description: 'User ID' })
   @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        isLight: {
-          type: 'boolean',
-          description: 'true: light mode, false: dark mode',
-          example: true,
-        },
-      },
-      required: ['isLight'],
-    },
+    type: ChangeThemeRequest,
   })
-  @ApiResponse({ status: 200, description: 'User theme updated successfully' })
   @ApiResponse({ status: 400, description: 'isLight property is required' })
-  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiResponse({ status: 403, description: 'Forbidden access to update theme' })
+  @ApiResponse({
+    status: 200,
+    description: 'User theme updated successfully',
+    type: UpdateUserThemeResponse,
+  })
   async updateTheme(
-    @Param('id') id: number,
-    @Body('isLight') isLight?: boolean,
+    @Req() request: Request,
+    @Body() changeThemeRequest: ChangeThemeRequest,
   ): Promise<UpdateUserThemeResponse> {
+    if (!request.user) {
+      throw new ForbiddenException('Forbidden access to update theme');
+    }
+    const id = (request.user as User).id;
+    const isLight = changeThemeRequest.theme === 'light';
     const updatedUser = await this.userService.updateUserTheme(id, isLight);
 
     return {
-      id: updatedUser.id!,
-      isLight: updatedUser.isLight!,
-      nickname: updatedUser.nickname!,
-      updatedAt: updatedUser.date!.updatedAt!,
+      theme: updatedUser.isLight ? 'light' : 'dark',
+      updatedAt: updatedUser.date.updatedAt,
     };
   }
 
-  @Get(':id/theme')
+  @Get('theme')
   @ApiOperation({
     summary: 'Get user theme mode',
     description:
       'Retrieve the current theme mode (light or dark) for a specific user',
   })
-  @ApiParam({ name: 'id', type: Number, description: 'User ID' })
   @ApiResponse({
     status: 200,
     description: 'User theme retrieved successfully',
-    schema: { type: 'boolean' },
+    type: UserThemeResponse,
   })
   @ApiResponse({ status: 404, description: 'User not found' })
-  async getTheme(@Param('id') id: number) {
+  async getTheme(@Req() request: Request): Promise<UserThemeResponse> {
+    if (!request.user) {
+      return { theme: 'light' };
+    }
+    const id = (request.user as User).id;
     const isLight = await this.userService.getUserTheme(id);
-    return { isLight };
+    return { theme: isLight ? 'light' : 'dark' };
   }
 }

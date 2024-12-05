@@ -39,12 +39,14 @@ export class ChatService {
 
   async scrollChat(chatScrollQuery: ChatScrollQuery, userId?: number) {
     this.validatePageSize(chatScrollQuery);
+    await this.validateLastedChatId(chatScrollQuery);
     const result = await this.findChatScroll(chatScrollQuery, userId);
     return await this.toScrollResponse(result, chatScrollQuery.pageSize);
   }
 
   async scrollChatByLike(chatScrollQuery: ChatScrollQuery, userId?: number) {
     this.validatePageSize(chatScrollQuery);
+    await this.validateLastedChatId(chatScrollQuery);
     const result = await this.findChatScrollOrderByLike(
       chatScrollQuery,
       userId,
@@ -62,6 +64,18 @@ export class ChatService {
       ORDER.LIKE,
     );
     return queryBuilder.getMany();
+  }
+
+  private async validateLastedChatId(chatScrollQuery: ChatScrollQuery) {
+    const { latestChatId, stockId } = chatScrollQuery;
+    if (!latestChatId) return;
+    const lastChat = await this.dataSource.manager.findOne(Chat, {
+      where: { id: latestChatId },
+      relations: ['stock'],
+    });
+    if (!lastChat || stockId !== lastChat.stock.id) {
+      throw new BadRequestException('lasted chat not in this room');
+    }
   }
 
   private hasStock(userId: number, stockId: string, manager: EntityManager) {
@@ -152,8 +166,8 @@ export class ChatService {
       });
       if (chat) {
         queryBuilder.andWhere(
-          'chat.likeCount < :likeCount or' +
-            ' (chat.likeCount = :likeCount and chat.id < :latestChatId)',
+          '(chat.likeCount < :likeCount or' +
+            ' (chat.likeCount = :likeCount and chat.id < :latestChatId))',
           {
             likeCount: chat.likeCount,
             latestChatId,

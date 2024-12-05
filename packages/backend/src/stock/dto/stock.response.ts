@@ -5,7 +5,7 @@ import { Stock } from '@/stock/domain/stock.entity';
 export class StockViewsResponse {
   @ApiProperty({
     description: '응답 메시지',
-    example: 'A005930',
+    example: '005930',
   })
   id: string;
 
@@ -31,7 +31,7 @@ export class StockViewsResponse {
 export class StocksResponse {
   @ApiProperty({
     description: '주식 종목 코드',
-    example: 'A005930',
+    example: '005930',
   })
   id: string;
 
@@ -72,7 +72,7 @@ export class StocksResponse {
 class StockSearchResult {
   @ApiProperty({
     description: '주식 종목 코드',
-    example: 'A005930',
+    example: '005930',
   })
   id: string;
 
@@ -105,7 +105,7 @@ export class StockSearchResponse {
 export class StockRankResponse {
   @ApiProperty({
     description: '주식 종목 코드',
-    example: 'A005930',
+    example: '005930',
   })
   id: string;
 
@@ -169,7 +169,7 @@ export class StockRankResponses {
       currentPrice: parseFloat(stock.currentPrice),
       volume: parseInt(stock.volume),
       marketCap: stock.marketCap,
-      changeRate: parseFloat(stock.rank_fluctuation_rate),
+      changeRate: parseFloat(stock.changeRate),
       rank: parseInt(stock.rank_rank),
       isRising: Number(stock.rank_isRising) === 1,
     }));

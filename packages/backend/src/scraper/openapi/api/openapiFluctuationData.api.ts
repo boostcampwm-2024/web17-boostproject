@@ -2,15 +2,15 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { DataSource, EntityManager } from 'typeorm';
 import { Logger } from 'winston';
+import { OpenapiLiveData } from '@/scraper/openapi/api/openapiLiveData.api';
 import {
   DECREASE_STOCK_QUERY,
   INCREASE_STOCK_QUERY,
 } from '@/scraper/openapi/constants/query';
+import { Json, OpenapiQueue } from '@/scraper/openapi/queue/openapi.queue';
 import { TR_IDS } from '@/scraper/openapi/type/openapiUtil.type';
 import { FluctuationRankStock } from '@/stock/domain/FluctuationRankStock.entity';
 import { Stock } from '@/stock/domain/stock.entity';
-import { Json, OpenapiQueue } from '@/scraper/openapi/queue/openapi.queue';
-import { OpenapiLiveData } from '@/scraper/openapi/api/openapiLiveData.api';
 
 @Injectable()
 export class OpenapiFluctuationData {
@@ -26,7 +26,6 @@ export class OpenapiFluctuationData {
     setTimeout(() => this.getFluctuationRankStocks(), 1000);
   }
 
-  @Cron('* 9-15 * * 1-5')
   @Cron('*/1 9-15 * * 1-5')
   async getFluctuationRankStocks() {
     await this.getFluctuationRankFromApi(true);
@@ -61,14 +60,12 @@ export class OpenapiFluctuationData {
       return [
         {
           rank: Number(data.output.data_rank),
-          fluctuationRate: data.output.prdy_ctrt,
           stock: { id: data.output.stck_shrn_iscd } as Stock,
           isRising,
         },
       ];
     return data.output.slice(0, 20).map((result: Record<string, string>) => ({
       rank: Number(result.data_rank),
-      fluctuationRate: result.prdy_ctrt,
       stock: { id: result.stck_shrn_iscd } as Stock,
       isRising,
     }));

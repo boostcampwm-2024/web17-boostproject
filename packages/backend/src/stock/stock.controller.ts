@@ -18,26 +18,29 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 import { Request } from 'express';
-import { ApiGetStocks, LimitQuery } from './decorator/stock.decorator';
+import {
+  ApiFluctuationQuery,
+  ApiGetStocks,
+  LimitQuery,
+} from './decorator/stock.decorator';
 import { ApiGetStockData } from './decorator/stockData.decorator';
 import { StockDetailResponse } from './dto/stockDetail.response';
 import { StockIndexRateResponse } from './dto/stockIndexRate.response';
 import { StockService } from './stock.service';
-import {
-  StockDataDailyService,
-  StockDataMinutelyService,
-  StockDataMonthlyService,
-  StockDataWeeklyService,
-  StockDataYearlyService,
-} from './stockData.service';
 import { StockDetailService } from './stockDetail.service';
 import { StockRateIndexService } from './stockRateIndex.service';
 import SessionGuard from '@/auth/session/session.guard';
 import { GetUser } from '@/common/decorator/user.decorator';
 import { sessionConfig } from '@/configs/session.config';
+import { TIME_UNIT } from '@/stock/constants/timeunit';
+import {
+  StockDaily,
+  StockMonthly,
+  StockWeekly,
+  StockYearly,
+} from '@/stock/domain/stockData.entity';
 import { StockSearchRequest } from '@/stock/dto/stock.request';
 import {
-  StockRankResponses,
   StockSearchResponse,
   StockViewsResponse,
 } from '@/stock/dto/stock.response';
@@ -51,17 +54,8 @@ import {
   UserStockResponse,
   UserStocksResponse,
 } from '@/stock/dto/userStock.response';
+import { StockDataService } from '@/stock/stockData.service';
 import { User } from '@/user/domain/user.entity';
-
-const TIME_UNIT = {
-  MINUTE: 'minute',
-  DAY: 'day',
-  WEEK: 'week',
-  MONTH: 'month',
-  YEAR: 'year',
-} as const;
-
-type TIME_UNIT = (typeof TIME_UNIT)[keyof typeof TIME_UNIT];
 
 const FLUCTUATION_TYPE = {
   INCREASE: 'increase',
@@ -76,13 +70,9 @@ type FLUCTUATION_TYPE =
 export class StockController {
   constructor(
     private readonly stockService: StockService,
-    private readonly stockDataMinutelyService: StockDataMinutelyService,
-    private readonly stockDataDailyService: StockDataDailyService,
-    private readonly stockDataWeeklyService: StockDataWeeklyService,
-    private readonly stockDataMonthlyService: StockDataMonthlyService,
-    private readonly stockDataYearlyService: StockDataYearlyService,
     private readonly stockDetailService: StockDetailService,
     private readonly stockRateIndexService: StockRateIndexService,
+    private readonly stockDataService: StockDataService,
   ) {}
 
   @HttpCode(200)
@@ -222,26 +212,7 @@ export class StockController {
   }
 
   @Get('fluctuation')
-  @ApiOperation({
-    summary: '등가, 등락률 기반 주식 리스트 조회 API',
-    description: '등가, 등락률 기반 주식 리스트를 조회합니다',
-  })
-  @ApiQuery({
-    name: 'limit',
-    required: false,
-    description:
-      '조회할 리스트 수(기본값: 20, 등가, 등락 모두 받으면 모든 데이터 전송)',
-  })
-  @ApiQuery({
-    name: 'type',
-    required: false,
-    description: '데이터 타입(기본값: increase, all, increase, decrease)',
-    enum: ['increase', 'decrease', 'all'],
-  })
-  @ApiOkResponse({
-    description: '',
-    type: [StockRankResponses],
-  })
+  @ApiFluctuationQuery()
   async getTopStocksByFluctuation(
     @LimitQuery(20) limit: number,
     @Query('type') type: FLUCTUATION_TYPE,
@@ -289,11 +260,9 @@ export class StockController {
   async getStockDataDaily(
     @Param('stockId') stockId: string,
     @Query('lastStartTime') lastStartTime?: string,
-    @Query('timeunit') timeunit: TIME_UNIT = TIME_UNIT.MINUTE,
+    @Query('timeunit') timeunit: TIME_UNIT = TIME_UNIT.DAY,
   ) {
     switch (timeunit) {
-      case TIME_UNIT.MINUTE:
-        return this.getMinutelyData(stockId, lastStartTime);
       case TIME_UNIT.DAY:
         return this.getDailyData(stockId, lastStartTime);
       case TIME_UNIT.MONTH:
@@ -309,7 +278,8 @@ export class StockController {
     stockId: string,
     lastStartTime: string | undefined,
   ) {
-    return this.stockDataYearlyService.getStockDataYearly(
+    return this.stockDataService.scrollChart(
+      StockYearly,
       stockId,
       lastStartTime,
     );
@@ -319,7 +289,8 @@ export class StockController {
     stockId: string,
     lastStartTime: string | undefined,
   ) {
-    return this.stockDataWeeklyService.getStockDataWeekly(
+    return this.stockDataService.scrollChart(
+      StockWeekly,
       stockId,
       lastStartTime,
     );
@@ -329,20 +300,18 @@ export class StockController {
     stockId: string,
     lastStartTime: string | undefined,
   ) {
-    return this.stockDataMonthlyService.getStockDataMonthly(
-      stockId,
-      lastStartTime,
-    );
-  }
-
-  private getMinutelyData(stockId: string, lastStartTime?: string) {
-    return this.stockDataMinutelyService.getStockDataMinutely(
+    return this.stockDataService.scrollChart(
+      StockMonthly,
       stockId,
       lastStartTime,
     );
   }
 
   private getDailyData(stockId: string, lastStartTime?: string) {
-    return this.stockDataDailyService.getStockDataDaily(stockId, lastStartTime);
+    return this.stockDataService.scrollChart(
+      StockDaily,
+      stockId,
+      lastStartTime,
+    );
   }
 }

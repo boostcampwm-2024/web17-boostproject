@@ -1,6 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
-import { DataSource, EntityManager } from 'typeorm';
+import { DataSource, EntityManager, Like } from 'typeorm';
 import { Logger } from 'winston';
 import { Stock } from './domain/stock.entity';
 import {
@@ -87,15 +87,13 @@ export class StockService {
   }
 
   async searchStock(stockName: string) {
-    const result = await this.datasource
-      .getRepository(Stock)
-      .createQueryBuilder('stock')
-      .where('stock.is_trading = :isTrading and stock.stock_name LIKE :name', {
+    const result = await this.datasource.manager.find(Stock, {
+      where: {
         isTrading: true,
-        name: `%${stockName}%`,
-      })
-      .limit(10)
-      .getMany();
+        name: Like(`%${stockName}%`),
+      },
+      take: 10,
+    });
     return new StockSearchResponse(result);
   }
 

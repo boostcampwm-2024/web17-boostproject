@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
+import {
+  StockDaily,
+  StockData,
+  StockWeekly,
+} from '@/stock/domain/stockData.entity';
+import { StockLiveData } from '@/stock/domain/stockLiveData.entity';
+import { getToday } from '@/utils/date';
 
 export class PriceDto {
   @ApiProperty({
@@ -33,6 +40,14 @@ export class PriceDto {
     example: '123.45',
   })
   close: number;
+
+  constructor(stockData: StockData) {
+    this.startTime = stockData.startTime;
+    this.open = stockData.open;
+    this.high = stockData.high;
+    this.low = stockData.low;
+    this.close = stockData.close;
+  }
 }
 
 export class VolumeDto {
@@ -48,7 +63,12 @@ export class VolumeDto {
     description: '거래량',
     example: 1000,
   })
-  volume: number;
+  volume: string;
+
+  constructor(stockData: StockData) {
+    this.startTime = stockData.startTime;
+    this.volume = String(stockData.volume);
+  }
 }
 
 export class StockDataResponse {
@@ -71,4 +91,39 @@ export class StockDataResponse {
     example: true,
   })
   hasMore: boolean;
+
+  constructor(
+    priceDtoList: PriceDto[],
+    volumeDtoList: VolumeDto[],
+    hasMore: boolean,
+  ) {
+    this.priceDtoList = priceDtoList;
+    this.volumeDtoList = volumeDtoList;
+    this.hasMore = hasMore;
+  }
+
+  renewLastData(stockLiveData: StockLiveData, entity: new () => StockData) {
+    const lastIndex = this.priceDtoList.length - 1;
+    this.priceDtoList[lastIndex].close = stockLiveData.currentPrice;
+    this.priceDtoList[lastIndex].high =
+      Number(stockLiveData.high) > Number(this.priceDtoList[lastIndex].high)
+        ? stockLiveData.high
+        : this.priceDtoList[lastIndex].high;
+    this.priceDtoList[lastIndex].low =
+      Number(stockLiveData.low) < Number(this.priceDtoList[lastIndex].low)
+        ? stockLiveData.low
+        : this.priceDtoList[lastIndex].low;
+
+    this.priceDtoList[lastIndex].startTime =
+      entity !== StockWeekly
+        ? getToday()
+        : this.priceDtoList[lastIndex].startTime;
+    this.volumeDtoList[lastIndex].volume =
+      entity === StockDaily
+        ? String(stockLiveData.volume)
+        : String(
+            Number(this.volumeDtoList[lastIndex].volume) +
+              Number(stockLiveData.volume),
+          );
+  }
 }
