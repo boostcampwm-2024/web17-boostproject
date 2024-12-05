@@ -13,5 +13,6 @@ export const useGetAlarm = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
     queryKey: ['getAlarm'],
     queryFn: getAlarm,
     enabled: isLoggedIn,
+    staleTime: 1000 * 60 * 5,
   });
 };

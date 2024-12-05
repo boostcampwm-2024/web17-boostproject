@@ -16,5 +16,6 @@ export const useGetStockDetail = ({ stockId }: GetStockRequest) => {
   return useSuspenseQuery({
     queryKey: ['stockDetail', stockId],
     queryFn: () => getStockDetail({ stockId }),
+    staleTime: 1000 * 60 * 5,
   });
 };
