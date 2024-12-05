@@ -14,5 +14,6 @@ export const useGetAlarm = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
     queryFn: getAlarm,
     enabled: isLoggedIn,
     staleTime: 1000 * 60 * 5,
+    select: (data) => data.reverse(),
   });
 };

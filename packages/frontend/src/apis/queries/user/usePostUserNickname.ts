@@ -15,8 +15,6 @@ export const usePostUserNickname = ({ nickname }: { nickname: string }) => {
   return useMutation({
     mutationKey: ['userNickname'],
     mutationFn: () => postUserNickname({ nickname }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['userInfo'] });
-    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['userInfo'] }),
   });
 };
