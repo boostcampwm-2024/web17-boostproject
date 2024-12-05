@@ -10,13 +10,16 @@ import {
 
 export const ThemeProvider = () => {
   const { isLoggedIn } = useContext(LoginContext);
-  const { data: userTheme } = useGetUserTheme();
+  const { data: userTheme, isLoading } = useGetUserTheme();
   const { mutate: updateTheme } = usePatchUserTheme();
 
-  const initialTheme = isLoggedIn ? userTheme : localStorage.getItem('theme');
-  const [theme, setTheme] = useState<GetUserTheme['theme']>(
-    initialTheme as GetUserTheme['theme'],
-  );
+  const [theme, setTheme] = useState<GetUserTheme['theme']>(() => {
+    if (!isLoading && isLoggedIn && userTheme) {
+      return userTheme;
+    }
+    const localTheme = localStorage.getItem('theme');
+    return (localTheme as GetUserTheme['theme']) || 'light';
+  });
 
   document.body.classList.toggle('dark', theme === 'dark');
 
