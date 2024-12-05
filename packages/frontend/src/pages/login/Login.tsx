@@ -31,7 +31,7 @@ export const Login = () => {
               <span>구글 로그인</span>
             </Button>
           </Link>
-          <Link to="/">
+          <Link to="/" reloadDocument>
             <Button
               onClick={() => refetch()}
               className="h-10 w-full dark:bg-black"
