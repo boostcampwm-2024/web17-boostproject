@@ -5,18 +5,18 @@ import { LoginContext } from '@/contexts/login';
 
 export const AlarmInfo = () => {
   return (
-    <section className="display-bold20 flex flex-col gap-5 rounded-md bg-white p-7">
+    <section className="display-bold20 flex max-h-[28rem] flex-col gap-5 rounded-md bg-white p-7">
       <h2>알림</h2>
-      <AlarmInfoContents />
+      <div className="flex flex-col gap-5 overflow-auto pr-5">
+        <AlarmInfoContents />
+      </div>
     </section>
   );
 };
 
 const AlarmInfoContents = () => {
   const { isLoggedIn } = useContext(LoginContext);
-  const { data } = useGetAlarm({
-    isLoggedIn,
-  });
+  const { data } = useGetAlarm({ isLoggedIn });
 
   if (!isLoggedIn) {
     return (
@@ -39,7 +39,7 @@ const AlarmInfoContents = () => {
       key={alarm.alarmId}
       option={alarm.targetPrice ? '목표가' : '거래가'}
       goalPrice={alarm.targetPrice ?? alarm.targetVolume!}
-      alarmDate={alarm.alarmDate}
+      alarmDate={alarm.alarmExpiredDate}
     />
   ));
 };

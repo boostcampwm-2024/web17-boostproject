@@ -44,7 +44,7 @@ const NotificationContents = () => {
       key={alarm.alarmId}
       option={alarm.targetPrice ? '목표가' : '거래가'}
       goalPrice={alarm.targetPrice ?? alarm.targetVolume!}
-      alarmDate={alarm.alarmDate}
+      alarmDate={alarm.alarmExpiredDate}
     />
   ));
 };

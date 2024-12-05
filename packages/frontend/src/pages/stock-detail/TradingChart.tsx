@@ -23,14 +23,9 @@ export const TradingChart = () => {
     timeunit,
   });
 
-  const allPriceData = data?.pages.flatMap((page) => page.priceDtoList) ?? [];
-  const allVolumeData = data?.pages.flatMap((page) => page.volumeDtoList) ?? [];
-
-  const chart = useChart({
-    priceData: allPriceData,
-    volumeData: allVolumeData,
-    containerRef,
-  });
+  const { priceDtoList: priceData = [], volumeDtoList: volumeData = [] } =
+    data || {};
+  const chart = useChart({ priceData, volumeData, containerRef });
 
   const fetchGraphData = useCallback(
     async (logicalRange: LogicalRange | null) => {

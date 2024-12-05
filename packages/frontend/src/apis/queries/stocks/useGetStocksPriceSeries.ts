@@ -41,8 +41,12 @@ export const useGetStocksPriceSeries = ({
         : undefined,
     initialPageParam: { lastStartTime },
     select: (data) => ({
-      pages: [...data.pages].reverse(),
-      pageParams: [...data.pageParams].reverse(),
+      priceDtoList: [...data.pages]
+        .reverse()
+        .flatMap((page) => page.priceDtoList),
+      volumeDtoList: [...data.pages]
+        .reverse()
+        .flatMap((page) => page.volumeDtoList),
     }),
     refetchOnWindowFocus: false,
     staleTime: 5 * 60 * 1000,

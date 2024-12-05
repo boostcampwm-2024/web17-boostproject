@@ -12,6 +12,6 @@ export const useGetLoginStatus = () => {
   return useQuery({
     queryKey: ['loginStatus'],
     queryFn: getLoginStatus,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 3,
   });
 };

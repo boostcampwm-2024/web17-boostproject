@@ -1,15 +1,29 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { Suspense } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { RouterProvider } from 'react-router-dom';
+import { Error } from './components/errors/error';
+import { Loader } from './components/ui/loader';
 import { router } from './routes';
 
-const App = () => {
-  const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      throwOnError: true,
+    },
+  },
+});
 
+const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-      <ReactQueryDevtools initialIsOpen={false} />
+      <ErrorBoundary fallback={<Error />}>
+        <Suspense fallback={<Loader className="h-64 w-64 items-center" />}>
+          <RouterProvider router={router} />
+          <ReactQueryDevtools initialIsOpen={false} />
+        </Suspense>
+      </ErrorBoundary>
     </QueryClientProvider>
   );
 };

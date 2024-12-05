@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   GetChatLikeResponseSchema,
   type GetChatLikeRequest,
@@ -14,8 +14,10 @@ const postChatLike = ({ chatId }: GetChatLikeRequest) =>
   });
 
 export const usePostChatLike = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ['chatLike'],
     mutationFn: ({ chatId }: GetChatLikeRequest) => postChatLike({ chatId }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['chatList'] }),
   });
 };

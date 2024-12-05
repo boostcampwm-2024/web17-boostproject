@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import {
   GetUserStockResponseSchema,
   type GetUserStockResponse,
@@ -12,7 +12,7 @@ const getUserStock = () =>
   });
 
 export const useGetUserStock = () => {
-  return useQuery({
+  return useSuspenseQuery({
     queryKey: ['userStock'],
     queryFn: getUserStock,
   });

@@ -1,4 +1,5 @@
 import axios, { AxiosError } from 'axios';
+import { ErrorResponse } from '@/apis/queries/errorSchema';
 
 export const instance = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
@@ -10,9 +11,10 @@ instance.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     const status = error.response?.status;
+    const { message } = error.response?.data as ErrorResponse;
 
     if (status === 400) {
-      alert('잘못된 요청이에요.');
+      alert(message);
     }
 
     if (status === 403) {

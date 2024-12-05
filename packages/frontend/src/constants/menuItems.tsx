@@ -1,4 +1,3 @@
-import Bell from '@/assets/bell.svg?react';
 import Home from '@/assets/home.svg?react';
 import Search from '@/assets/search.svg?react';
 import Stock from '@/assets/stock.svg?react';
@@ -15,7 +14,7 @@ export const TOP_MENU_ITEMS: MenuSection[] = [
     text: '주식',
     path: '/stocks/005930',
   },
-  { id: 4, icon: <Bell className="w-7" />, text: '알림' },
+  // { id: 4, icon: <Bell className="w-7" />, text: '알림' },
 ];
 
 export const BOTTOM_MENU_ITEMS: MenuSection[] = [

@@ -2,7 +2,7 @@ import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logoCharacter from '/logoCharacter.png';
 import logoTitle from '/logoTitle.png';
-import { Alarm } from './alarm';
+// import { Alarm } from './alarm';
 import { MenuList } from './MenuList';
 import { Search } from './search';
 import { BOTTOM_MENU_ITEMS, TOP_MENU_ITEMS } from '@/constants/menuItems';
@@ -101,7 +101,7 @@ export const Sidebar = () => {
         )}
       >
         {showTabs.search && <Search className="h-screen" />}
-        {showTabs.alarm && <Alarm className="h-screen" />}
+        {/* {showTabs.alarm && <Alarm className="h-screen" />} */}
       </div>
     </div>
   );

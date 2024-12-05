@@ -19,6 +19,7 @@ export const useGetSearchStocks = (name: string) => {
       await new Promise((resolve) => setTimeout(resolve, 500));
       return getSearchStocks(name);
     },
+    retry: 0,
     enabled: false,
   });
 };

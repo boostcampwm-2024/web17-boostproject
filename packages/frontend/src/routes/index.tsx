@@ -1,4 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom';
+import { Error } from '@/components/errors/error';
 import { Layout } from '@/components/layouts';
 import { LoginProvider } from '@/contexts/login';
 import { ThemeProvider } from '@/contexts/theme';
@@ -37,6 +38,10 @@ export const router = createBrowserRouter([
           {
             path: '/login',
             element: <Login />,
+          },
+          {
+            path: '*',
+            element: <Error />,
           },
         ],
       },

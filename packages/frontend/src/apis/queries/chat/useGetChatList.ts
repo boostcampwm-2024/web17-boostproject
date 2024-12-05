@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
 import { GetChatListRequest } from './schema';
 import { get } from '@/apis/utils/get';
 import { ChatDataResponse, ChatDataResponseSchema } from '@/sockets/schema';
@@ -26,7 +26,7 @@ export const useGetChatList = ({
   pageSize,
   order,
 }: GetChatListRequest) => {
-  return useInfiniteQuery({
+  return useSuspenseInfiniteQuery({
     queryKey: ['chatList', stockId, order],
     queryFn: ({ pageParam }) =>
       getChatList({
