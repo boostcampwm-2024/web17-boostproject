@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { LocalCache } from '@/common/cache/localCache';
-import { StockDataResponse } from '@/stock/dto/stockData.response';
+import { StockData } from '@/stock/domain/stockData.entity';
 
 @Injectable()
 export class StockDataCache {
-  private readonly localCache = new LocalCache<string, StockDataResponse>();
+  private readonly localCache = new LocalCache<string, StockData[]>();
 
-  set(key: string, value: StockDataResponse, ttl: number = 60000) {
+  set(key: string, value: StockData[], ttl: number = 60000) {
     this.localCache.set(key, value, ttl);
   }
 
-  get(key: string): StockDataResponse | null {
+  get(key: string): StockData[] | null {
     return this.localCache.get(key);
   }
 }
