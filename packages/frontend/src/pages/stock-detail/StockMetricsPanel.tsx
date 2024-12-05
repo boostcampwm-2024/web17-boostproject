@@ -12,7 +12,7 @@ interface RealTimeStockData {
   volume: number;
 }
 
-export const StockMetricsPanel = ({
+const StockMetricsPanel = ({
   eps,
   high52w,
   low52w,
@@ -75,3 +75,5 @@ export const StockMetricsPanel = ({
     </article>
   );
 };
+
+export default StockMetricsPanel;

@@ -2,19 +2,14 @@ import { lazy, Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useParams } from 'react-router-dom';
 import { StockDetailHeader } from './components';
-import {
-  AddAlarmForm,
-  ChatPanel,
-  NotificationPanel,
-  StockMetricsPanel,
-} from '.';
+import { AddAlarmForm, ChatPanel, NotificationPanel, TradingChart } from '.';
 import {
   useGetOwnership,
   useGetStockDetail,
 } from '@/apis/queries/stock-detail';
 import { Loader } from '@/components/ui/loader';
 
-const TradingChart = lazy(() => import('./TradingChart'));
+const StockMetricsPanel = lazy(() => import('./StockMetricsPanel'));
 
 export const StockDetail = () => {
   const { stockId = '' } = useParams();
