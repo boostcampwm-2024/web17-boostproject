@@ -7,6 +7,7 @@ export const useSubscribeAlarm = () => {
     if ('Notification' in window && navigator.serviceWorker) {
       try {
         if (Notification.permission === 'default') {
+          alert('알림 허용을 먼저 해주세요.');
           const permission = await Notification.requestPermission();
           if (permission === 'granted') {
             const registration = await navigator.serviceWorker.ready;
