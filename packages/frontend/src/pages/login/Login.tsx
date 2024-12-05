@@ -7,7 +7,14 @@ import { Button } from '@/components/ui/button';
 const GOOGLE_LOGIN = '/api/auth/google/login';
 export const Login = () => {
   const queryClient = useQueryClient();
-  const { refetch } = useGetTestLogin({ password: 'test', username: 'test' });
+  const { refetch, isSuccess } = useGetTestLogin({
+    password: 'test',
+    username: 'test',
+  });
+
+  if (isSuccess) {
+    queryClient.invalidateQueries({ queryKey: ['loginStatus'] });
+  }
 
   return (
     <div className="flex h-[calc(100vh-8rem)] flex-col items-center justify-center">
@@ -26,10 +33,7 @@ export const Login = () => {
           </Link>
           <Link to="/">
             <Button
-              onClick={() => {
-                refetch();
-                queryClient.invalidateQueries({ queryKey: ['loginStatus'] });
-              }}
+              onClick={() => refetch()}
               className="h-10 w-full dark:bg-black"
             >
               게스트로 로그인
