@@ -1,7 +1,7 @@
 name: Deploy Frontend in Monorepo
 
 on:
-  pull_request:
+  push:
     branches:
       - dev-fe
 
