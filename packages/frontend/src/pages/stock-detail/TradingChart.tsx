@@ -23,9 +23,14 @@ export const TradingChart = () => {
     timeunit,
   });
 
-  const { priceDtoList: priceData = [], volumeDtoList: volumeData = [] } =
-    data || {};
-  const chart = useChart({ priceData, volumeData, containerRef });
+  const allPriceData = data?.pages.flatMap((page) => page.priceDtoList) ?? [];
+  const allVolumeData = data?.pages.flatMap((page) => page.volumeDtoList) ?? [];
+
+  const chart = useChart({
+    priceData: allPriceData,
+    volumeData: allVolumeData,
+    containerRef,
+  });
 
   const fetchGraphData = useCallback(
     async (logicalRange: LogicalRange | null) => {
@@ -56,7 +61,7 @@ export const TradingChart = () => {
   useChartResize({ containerRef, chart });
 
   return (
-    <div className="flex min-h-[35rem] flex-col">
+    <div className="flex h-[30rem] flex-col xl:h-full">
       <section className="flex justify-end gap-5">
         {TIME_UNIT.map((option) => (
           <RadioButton
@@ -70,7 +75,7 @@ export const TradingChart = () => {
           </RadioButton>
         ))}
       </section>
-      <div ref={containerRef} className="min-h-0 w-full flex-1" />
+      <div ref={containerRef} className="h-0 w-full flex-grow" />
     </div>
   );
 };
