@@ -1,10 +1,12 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { useGetTestLogin } from '@/apis/queries/auth/useGetTestLogin';
 import Google from '@/assets/google.svg?react';
 import { Button } from '@/components/ui/button';
 
+const GOOGLE_LOGIN = '/api/auth/google/login';
 export const Login = () => {
-  const googleLoginUrl = '/api/auth/google/login';
+  const queryClient = useQueryClient();
   const { refetch } = useGetTestLogin({ password: 'test', username: 'test' });
 
   return (
@@ -16,7 +18,7 @@ export const Login = () => {
           <p className="display-medium20">주춤주춤과 함께해요!</p>
         </section>
         <section className="relative z-10 flex flex-col gap-4">
-          <Link to={googleLoginUrl} className="w-72" reloadDocument>
+          <Link to={GOOGLE_LOGIN} className="w-72" reloadDocument>
             <Button className="flex h-10 w-full items-center justify-center gap-4 px-10 dark:bg-black">
               <Google />
               <span>구글 로그인</span>
@@ -24,7 +26,10 @@ export const Login = () => {
           </Link>
           <Link to="/">
             <Button
-              onClick={() => refetch()}
+              onClick={() => {
+                refetch();
+                queryClient.invalidateQueries({ queryKey: ['loginStatus'] });
+              }}
               className="h-10 w-full dark:bg-black"
             >
               게스트로 로그인
