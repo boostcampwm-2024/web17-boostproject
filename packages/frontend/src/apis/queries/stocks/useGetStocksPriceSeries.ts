@@ -1,4 +1,4 @@
-import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import {
   StockTimeSeriesResponseSchema,
   type StockTimeSeriesRequest,
@@ -25,7 +25,7 @@ export const useGetStocksPriceSeries = ({
   lastStartTime,
   timeunit,
 }: StockTimeSeriesRequest) => {
-  return useSuspenseInfiniteQuery({
+  return useInfiniteQuery({
     queryKey: ['stocksTimeSeries', stockId, timeunit],
     queryFn: ({ pageParam }) =>
       getStocksPriceSeries({

@@ -10,7 +10,7 @@ import {
 } from '@/apis/queries/stocks';
 import { TIME_UNIT } from '@/constants/timeUnit';
 
-const TradingChart = () => {
+export const TradingChart = () => {
   const { stockId } = useParams();
   const [timeunit, setTimeunit] =
     useState<StockTimeSeriesRequest['timeunit']>('day');
@@ -23,7 +23,8 @@ const TradingChart = () => {
     timeunit,
   });
 
-  const { priceDtoList: priceData, volumeDtoList: volumeData } = data;
+  const { priceDtoList: priceData = [], volumeDtoList: volumeData = [] } =
+    data || {};
   const chart = useChart({ priceData, volumeData, containerRef });
 
   const fetchGraphData = useCallback(
@@ -73,5 +74,3 @@ const TradingChart = () => {
     </div>
   );
 };
-
-export default TradingChart;
