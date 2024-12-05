@@ -74,6 +74,9 @@
 
 ### 맞춤형 알림
 
+| <img src="https://github.com/user-attachments/assets/aa53faa3-3b6b-4c0b-ab68-3220da7df71c" width="400" /> | <img src="https://github.com/user-attachments/assets/f02cae0f-5890-4192-957f-f92305e3cc6f" width="300"/> |
+| --------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+
 관심 있는 종목의 주요 변동 사항을 푸쉬 알림으로 즉시 확인할 수 있습니다.
 
 #### 기술적 도전
@@ -163,9 +166,9 @@
 
 [🚩 FE 기술 선택 이유](https://github.com/boostcampwm-2024/web17-juchumjuchum/wiki/%F0%9F%9A%A9-FE-%EA%B8%B0%EC%88%A0-%EC%84%A0%ED%83%9D%EC%9D%B4%EC%9C%A0)
 
-[📡BE 기술 선택 이유](https://github.com/boostcampwm-2024/web17-juchumjuchum/wiki/%F0%9F%93%A1-BE-%EA%B8%B0%EC%88%A0-%EC%84%A0%ED%83%9D-%EC%9D%B4%EC%9C%A0)
+[📡 BE 기술 선택 이유](https://github.com/boostcampwm-2024/web17-juchumjuchum/wiki/%F0%9F%93%A1-BE-%EA%B8%B0%EC%88%A0-%EC%84%A0%ED%83%9D-%EC%9D%B4%EC%9C%A0)
 
-[🛠️인프라 기술 선택 이유](https://github.com/boostcampwm-2024/web17-juchumjuchum/wiki/%F0%9F%9B%A0%EF%B8%8F-%EC%9D%B8%ED%94%84%EB%9D%BC-%EA%B8%B0%EC%88%A0-%EC%8A%A4%ED%83%9D-%EC%84%A0%ED%83%9D-%EC%9D%B4%EC%9C%A0)
+[🛠️ 인프라 기술 선택 이유](https://github.com/boostcampwm-2024/web17-juchumjuchum/wiki/%F0%9F%9B%A0%EF%B8%8F-%EC%9D%B8%ED%94%84%EB%9D%BC-%EA%B8%B0%EC%88%A0-%EC%8A%A4%ED%83%9D-%EC%84%A0%ED%83%9D-%EC%9D%B4%EC%9C%A0)
 
 <br/>
 
