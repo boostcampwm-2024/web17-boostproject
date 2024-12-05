@@ -34,14 +34,17 @@ const StockRankingTable = () => {
           <tr className="display-medium12 text-dark-gray border-light-gray border-b text-left [&>*]:p-4 [&>*]:py-3">
             <th>종목</th>
             <th className="text-right">현재가</th>
-            <th className="flex items-center justify-end gap-1 text-right">
-              <p>등락률({sortType === 'increase' ? '상승순' : '하락순'})</p>
+            <th
+              className="flex cursor-pointer items-center justify-end gap-1 text-right"
+              onClick={handleSortType}
+            >
+              <span>
+                등락률({sortType === 'increase' ? '상승순' : '하락순'})
+              </span>
               <DownArrow
                 className={cn(
-                  'cursor-pointer',
                   sortType === 'increase' ? 'rotate-0' : 'rotate-180',
                 )}
-                onClick={handleSortType}
               />
             </th>
             <th className="hidden lg:table-cell lg:text-right">거래대금</th>
