@@ -16,7 +16,7 @@ export class LocalCache<K, V> {
     new PriorityQueue();
 
   constructor(private readonly interval = 500) {
-    setInterval(() => this.clearExpired(), interval);
+    setInterval(() => this.clearExpired(), this.interval);
   }
 
   get(key: K) {
