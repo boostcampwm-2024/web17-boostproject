@@ -1,50 +1,51 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { GetLoginStatus } from '@/apis/queries/auth/schema';
 import {
   useDeleteStockUser,
   usePostStockUser,
 } from '@/apis/queries/stock-detail';
 import { Button } from '@/components/ui/button';
 import { Modal } from '@/components/ui/modal';
+import { UserStatus } from '@/constants/chatStatus';
 import { modalMessage, ModalMessage } from '@/constants/modalMessage';
+import { LoginContext } from '@/contexts/login';
 
 interface StockDetailHeaderProps {
   stockId: string;
   stockName: string;
-  loginStatus: GetLoginStatus;
   isOwnerStock: boolean;
 }
 
 export const StockDetailHeader = ({
   stockId,
   stockName,
-  loginStatus,
   isOwnerStock,
 }: StockDetailHeaderProps) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { isLoggedIn } = useContext(LoginContext);
 
   const [showModal, setShowModal] = useState(false);
-  const [userStatus, setUserStatus] =
-    useState<ModalMessage>('NOT_AUTHENTICATED');
+  const [userStatus, setUserStatus] = useState<ModalMessage>(
+    UserStatus.NOT_AUTHENTICATED,
+  );
 
   useEffect(() => {
-    if (loginStatus.message === 'Not Authenticated') {
-      setUserStatus('NOT_AUTHENTICATED');
+    if (!isLoggedIn) {
+      setUserStatus(UserStatus.NOT_AUTHENTICATED);
       return;
     }
 
     setUserStatus(() => {
-      return isOwnerStock ? 'OWNERSHIP' : 'NOT_OWNERSHIP';
+      return isOwnerStock ? UserStatus.OWNERSHIP : UserStatus.NOT_OWNERSHIP;
     });
-  }, [isOwnerStock, loginStatus]);
+  }, [isOwnerStock, isLoggedIn]);
 
   const { mutate: postStockUser } = usePostStockUser({
     onSuccess: () => {
-      setUserStatus('OWNERSHIP');
+      setUserStatus(UserStatus.OWNERSHIP);
       queryClient.invalidateQueries({ queryKey: ['loginStatus'] });
       queryClient.invalidateQueries({ queryKey: ['stockOwnership', stockId] });
     },
@@ -52,7 +53,7 @@ export const StockDetailHeader = ({
 
   const { mutate: deleteStockUser } = useDeleteStockUser({
     onSuccess: () => {
-      setUserStatus('NOT_OWNERSHIP');
+      setUserStatus(UserStatus.NOT_OWNERSHIP);
       queryClient.invalidateQueries({ queryKey: ['loginStatus'] });
       queryClient.invalidateQueries({ queryKey: ['stockOwnership', stockId] });
     },

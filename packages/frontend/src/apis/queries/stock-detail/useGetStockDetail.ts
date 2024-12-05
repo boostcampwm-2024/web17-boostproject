@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import {
   GetStockResponseSchema,
   type GetStockRequest,
@@ -13,9 +13,9 @@ const getStockDetail = ({ stockId }: GetStockRequest) =>
   });
 
 export const useGetStockDetail = ({ stockId }: GetStockRequest) => {
-  return useQuery({
+  return useSuspenseQuery({
     queryKey: ['stockDetail', stockId],
     queryFn: () => getStockDetail({ stockId }),
-    enabled: !!stockId,
+    staleTime: 1000 * 60 * 5,
   });
 };

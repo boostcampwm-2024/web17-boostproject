@@ -16,10 +16,12 @@ export const socketChat = ({ stockId, pageSize = 20 }: SocketChatType) => {
       pageSize,
     },
     forceNew: true,
+    autoConnect: false,
   });
 };
 
 export const socketStock = io(`${URL}/api/stock/realtime`, {
   transports: ['websocket'],
   reconnectionDelayMax: 10000,
+  autoConnect: false,
 });

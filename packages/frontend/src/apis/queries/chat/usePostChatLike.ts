@@ -15,12 +15,9 @@ const postChatLike = ({ chatId }: GetChatLikeRequest) =>
 
 export const usePostChatLike = () => {
   const queryClient = useQueryClient();
-
   return useMutation({
     mutationKey: ['chatLike'],
     mutationFn: ({ chatId }: GetChatLikeRequest) => postChatLike({ chatId }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['chatLike'] });
-    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['chatList'] }),
   });
 };

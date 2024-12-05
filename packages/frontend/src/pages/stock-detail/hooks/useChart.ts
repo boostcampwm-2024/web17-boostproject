@@ -1,11 +1,12 @@
-import type { ChartTheme } from '@/styles/theme';
 import { createChart, type IChartApi } from 'lightweight-charts';
-import { useEffect, useRef, RefObject } from 'react';
+import { useEffect, useRef, RefObject, useContext } from 'react';
 import {
   PriceSchema,
   StockTimeSeriesResponse,
   VolumeSchema,
 } from '@/apis/queries/stocks';
+import { ThemeContext } from '@/contexts/theme';
+import { darkTheme, lightTheme } from '@/styles/theme';
 import {
   createCandlestickOptions,
   createChartOptions,
@@ -15,7 +16,6 @@ import { getHistogramColorData } from '@/utils/getHistogramColorData';
 
 interface UseChartProps {
   containerRef: RefObject<HTMLDivElement>;
-  theme: ChartTheme;
   priceData: StockTimeSeriesResponse['priceDtoList'];
   volumeData: StockTimeSeriesResponse['volumeDtoList'];
 }
@@ -35,56 +35,73 @@ const TransformVolumeData = VolumeSchema.transform((item) => ({
 
 export const useChart = ({
   containerRef,
-  theme,
   priceData,
   volumeData,
 }: UseChartProps) => {
   const chart = useRef<IChartApi>();
+  const candleSeries = useRef<ReturnType<IChartApi['addCandlestickSeries']>>();
+  const volumeSeries = useRef<ReturnType<IChartApi['addHistogramSeries']>>();
+  const containerInstance = containerRef.current;
+
+  const { theme } = useContext(ThemeContext);
+  const graphTheme = theme
+    ? theme === 'light'
+      ? lightTheme
+      : darkTheme
+    : lightTheme;
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerInstance) return;
 
-    chart.current = createChart(containerRef.current, {
-      width: containerRef.current.clientWidth,
-      height: containerRef.current.clientHeight,
-      ...createChartOptions(theme),
-      handleScroll: {
-        mouseWheel: false,
-        pressedMouseMove: false,
-        horzTouchDrag: false,
-        vertTouchDrag: false,
-      },
-      handleScale: false,
+    chart.current = createChart(containerInstance, {
+      width: containerInstance.clientWidth,
+      height: containerInstance.clientHeight,
+      autoSize: true,
+      ...createChartOptions(graphTheme),
     });
 
-    const volumeSeries = chart.current.addHistogramSeries(
+    volumeSeries.current = chart.current.addHistogramSeries(
       createVolumeOptions(),
     );
-    volumeSeries.priceScale().applyOptions({
+    volumeSeries.current.priceScale().applyOptions({
       scaleMargins: {
         top: 0.93,
         bottom: 0,
       },
     });
 
-    const transformedVolumeData = volumeData.map((item) =>
-      TransformVolumeData.parse(item),
+    candleSeries.current = chart.current.addCandlestickSeries(
+      createCandlestickOptions(graphTheme),
     );
-    const histogramData = getHistogramColorData(transformedVolumeData);
-    volumeSeries.setData(histogramData);
-
-    const candleSeries = chart.current.addCandlestickSeries(
-      createCandlestickOptions(theme),
-    );
-    const transformedPriceData = priceData.map((item) =>
-      TransformPriceData.parse(item),
-    );
-    candleSeries.setData(transformedPriceData);
 
     return () => {
       chart.current?.remove();
     };
-  }, [containerRef, theme, priceData, volumeData]);
+  }, [containerInstance]);
+
+  useEffect(() => {
+    if (!chart.current || !candleSeries.current) return;
+
+    chart.current.applyOptions(createChartOptions(graphTheme));
+    candleSeries.current.applyOptions(createCandlestickOptions(graphTheme));
+  }, [graphTheme]);
+
+  useEffect(() => {
+    if (!candleSeries.current || !volumeSeries.current) return;
+
+    const transformedVolumeData = volumeData.map((item) =>
+      TransformVolumeData.parse(item),
+    );
+
+    const transformedPriceData = priceData.map((item) =>
+      TransformPriceData.parse(item),
+    );
+
+    const histogramData = getHistogramColorData(transformedVolumeData);
+
+    candleSeries.current.setData(transformedPriceData);
+    volumeSeries.current.setData(histogramData);
+  }, [priceData, volumeData]);
 
   return chart;
 };

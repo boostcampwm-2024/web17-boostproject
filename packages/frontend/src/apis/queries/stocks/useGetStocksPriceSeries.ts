@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
 import {
   StockTimeSeriesResponseSchema,
   type StockTimeSeriesRequest,
@@ -25,8 +25,31 @@ export const useGetStocksPriceSeries = ({
   lastStartTime,
   timeunit,
 }: StockTimeSeriesRequest) => {
-  return useQuery({
-    queryKey: ['stocksTimeSeries', stockId, lastStartTime, timeunit],
-    queryFn: () => getStocksPriceSeries({ stockId, lastStartTime, timeunit }),
+  return useInfiniteQuery({
+    queryKey: ['stocksTimeSeries', stockId, timeunit],
+    queryFn: ({ pageParam }) =>
+      getStocksPriceSeries({
+        stockId,
+        lastStartTime: pageParam?.lastStartTime ?? lastStartTime,
+        timeunit,
+      }),
+    getNextPageParam: (lastPage) =>
+      lastPage.hasMore
+        ? {
+            lastStartTime: lastPage.priceDtoList[0].startTime,
+          }
+        : undefined,
+    initialPageParam: { lastStartTime },
+    select: (data) => ({
+      priceDtoList: [...data.pages]
+        .reverse()
+        .flatMap((page) => page.priceDtoList),
+      volumeDtoList: [...data.pages]
+        .reverse()
+        .flatMap((page) => page.volumeDtoList),
+    }),
+    refetchOnWindowFocus: false,
+    staleTime: 10 * 1000,
+    placeholderData: keepPreviousData,
   });
 };

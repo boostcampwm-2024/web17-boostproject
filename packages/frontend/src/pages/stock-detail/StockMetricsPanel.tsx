@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
+import Lottie from 'react-lottie-player';
 import { useParams } from 'react-router-dom';
 import { MetricItem, Title } from './components';
+import skeleton from '@/components/lottie/skeleton.json';
 import { METRICS_DATA } from '@/constants/metricDetail';
 import { socketStock } from '@/sockets/config';
 import { useWebsocket } from '@/sockets/useWebsocket';
@@ -12,7 +14,7 @@ interface RealTimeStockData {
   volume: number;
 }
 
-export const StockMetricsPanel = ({
+const StockMetricsPanel = ({
   eps,
   high52w,
   low52w,
@@ -56,22 +58,33 @@ export const StockMetricsPanel = ({
   });
 
   return (
-    <article className="flex flex-col gap-10 rounded-md bg-white p-6 shadow">
-      {Object.values(metricsData).map((section) => (
-        <section className="flex flex-col" key={section.id}>
-          <Title>{section.title}</Title>
-          <section className="grid w-9/12 grid-cols-4 items-center">
-            {section.metrics.map((metric) => (
-              <MetricItem
-                key={metric.name}
-                label={metric.name}
-                value={metric.value}
-                tooltip={metric.message}
-              />
-            ))}
-          </section>
+    <article className="flex flex-1 flex-col gap-10 rounded-md bg-white p-6 shadow">
+      {!price || !change || !volume ? (
+        <section className="grid w-9/12 grid-cols-2 grid-rows-2">
+          <Lottie animationData={skeleton} play className="w-64" />
+          <Lottie animationData={skeleton} play className="w-64" />
+          <Lottie animationData={skeleton} play className="w-64" />
+          <Lottie animationData={skeleton} play className="w-64" />
         </section>
-      ))}
+      ) : (
+        Object.values(metricsData).map((section) => (
+          <section className="flex flex-col gap-5" key={section.id}>
+            <Title>{section.title}</Title>
+            <section className="grid items-center gap-5 lg:grid-cols-2 lg:grid-rows-2 2xl:w-9/12">
+              {section.metrics.map((metric) => (
+                <MetricItem
+                  key={metric.name}
+                  label={metric.name}
+                  value={metric.value}
+                  tooltip={metric.message}
+                />
+              ))}
+            </section>
+          </section>
+        ))
+      )}
     </article>
   );
 };
+
+export default StockMetricsPanel;

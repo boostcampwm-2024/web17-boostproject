@@ -1,5 +1,12 @@
-export const ALARM_OPTIONS = [
-  { id: 1, label: '목표가' },
-  { id: 2, label: '등락률' },
-  { id: 3, label: '거래가' },
+export type AlarmOptionName = 'targetVolume' | 'targetPrice';
+
+interface AlarmOption {
+  id: number;
+  name: AlarmOptionName;
+  label: string;
+}
+
+export const ALARM_OPTIONS: AlarmOption[] = [
+  { id: 1, name: 'targetPrice', label: '목표가' },
+  { id: 2, name: 'targetVolume', label: '거래가' },
 ];

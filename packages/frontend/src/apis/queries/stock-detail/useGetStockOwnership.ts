@@ -18,5 +18,6 @@ export const useGetOwnership = ({ stockId }: GetStockRequest) => {
     queryKey: ['stockOwnership', stockId],
     queryFn: () => getOwnership({ stockId }),
     enabled: !!stockId,
+    staleTime: 1000 * 60 * 5,
   });
 };

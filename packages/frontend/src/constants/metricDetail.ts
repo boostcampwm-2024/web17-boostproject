@@ -52,19 +52,19 @@ export const METRICS_DATA = ({
       metrics: [
         {
           ...METRIC_DETAILS.price.currentPrice,
-          value: price?.toLocaleString(),
+          value: `${price?.toLocaleString()}원`,
         },
         {
           ...METRIC_DETAILS.price.tradingVolume,
-          value: volume?.toLocaleString(),
+          value: `${volume?.toLocaleString()}주`,
         },
         {
           ...METRIC_DETAILS.price.fluctuationRate,
-          value: change?.toLocaleString(),
+          value: `${change?.toLocaleString()}%`,
         },
         {
           ...METRIC_DETAILS.price.fiftyTwoWeekRange,
-          value: `${high52w?.toLocaleString()}/${low52w?.toLocaleString()}`,
+          value: `${high52w?.toLocaleString()}원/${low52w?.toLocaleString()}원`,
         },
       ],
     },
@@ -74,7 +74,7 @@ export const METRICS_DATA = ({
       metrics: [
         {
           ...METRIC_DETAILS.enterpriseValue.marketCap,
-          value: marketCap?.toLocaleString(),
+          value: `${marketCap?.toLocaleString()}억원`,
         },
         {
           ...METRIC_DETAILS.enterpriseValue.per,
@@ -82,7 +82,7 @@ export const METRICS_DATA = ({
         },
         {
           ...METRIC_DETAILS.enterpriseValue.eps,
-          value: eps?.toLocaleString(),
+          value: `${eps?.toLocaleString()}원`,
         },
       ],
     },

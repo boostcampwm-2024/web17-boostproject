@@ -1,4 +1,5 @@
-import { useRef, useState } from 'react';
+import { type LogicalRange } from 'lightweight-charts';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { RadioButton } from './components/RadioButton';
 import { useChart } from './hooks/useChart';
@@ -8,35 +9,55 @@ import {
   useGetStocksPriceSeries,
 } from '@/apis/queries/stocks';
 import { TIME_UNIT } from '@/constants/timeUnit';
-import { ChartTheme, lightTheme } from '@/styles/theme';
 
-interface TradingChartProps {
-  theme?: ChartTheme;
-}
-
-export const TradingChart = ({ theme = lightTheme }: TradingChartProps) => {
+export const TradingChart = () => {
   const { stockId } = useParams();
   const [timeunit, setTimeunit] =
     useState<StockTimeSeriesRequest['timeunit']>('day');
+  const isPending = useRef(false);
+
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { data } = useGetStocksPriceSeries({
+  const { data, fetchNextPage, hasNextPage } = useGetStocksPriceSeries({
     stockId: stockId ?? '',
     timeunit,
   });
 
-  const chart = useChart({
-    priceData: data?.priceDtoList ?? [],
-    volumeData: data?.volumeDtoList ?? [],
-    containerRef,
-    theme,
-  });
+  const { priceDtoList: priceData = [], volumeDtoList: volumeData = [] } =
+    data || {};
+  const chart = useChart({ priceData, volumeData, containerRef });
+
+  const fetchGraphData = useCallback(
+    async (logicalRange: LogicalRange | null) => {
+      if (isPending.current) return;
+      isPending.current = true;
+
+      if (logicalRange && logicalRange.from < 10 && hasNextPage) {
+        await fetchNextPage();
+      }
+
+      isPending.current = false;
+    },
+    [hasNextPage, fetchNextPage],
+  );
+
+  useEffect(() => {
+    const chartInstance = chart.current;
+    if (!chartInstance) return;
+
+    const timeScale = chartInstance.timeScale();
+    timeScale.subscribeVisibleLogicalRangeChange(fetchGraphData);
+
+    return () => {
+      timeScale.unsubscribeVisibleLogicalRangeChange(fetchGraphData);
+    };
+  }, [chart, fetchGraphData]);
 
   useChartResize({ containerRef, chart });
 
   return (
-    <div className="flex h-full flex-col">
-      <section className="flex justify-end">
+    <div className="flex min-h-[35rem] flex-col">
+      <section className="flex justify-end gap-5">
         {TIME_UNIT.map((option) => (
           <RadioButton
             key={option.id}
@@ -49,7 +70,7 @@ export const TradingChart = ({ theme = lightTheme }: TradingChartProps) => {
           </RadioButton>
         ))}
       </section>
-      <div ref={containerRef} className="w-full flex-grow" />
+      <div ref={containerRef} className="min-h-0 w-full flex-1" />
     </div>
   );
 };

@@ -25,5 +25,10 @@
 
     "composite": true
   },
-  "include": ["src", "src/**/*.json", "tailwind.config.ts"]
+  "include": [
+    "src",
+    "src/**/*.json",
+    "tailwind.config.ts",
+    "public/serviceWorker.js"
+  ]
 }

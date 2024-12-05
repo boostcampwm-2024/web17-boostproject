@@ -15,3 +15,12 @@ export const GetChatLikeResponseSchema = z.object({
 });
 
 export type GetChatLikeResponse = z.infer<typeof GetChatLikeResponseSchema>;
+
+export const GetChatListRequestSchema = z.object({
+  stockId: z.string(),
+  latestChatId: z.number().optional(),
+  pageSize: z.number().optional(),
+  order: z.enum(['latest', 'like']).optional(),
+});
+
+export type GetChatListRequest = z.infer<typeof GetChatListRequestSchema>;

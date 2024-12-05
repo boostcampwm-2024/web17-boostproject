@@ -5,6 +5,10 @@ export const useWebsocket = (socket: Socket) => {
   const [isConnected, setIsConnected] = useState(socket.connected);
 
   useEffect(() => {
+    if (!socket.connected) {
+      socket.connect();
+    }
+
     const onConnect = () => {
       setIsConnected(true);
     };
@@ -19,6 +23,7 @@ export const useWebsocket = (socket: Socket) => {
     return () => {
       socket.off('connect', onConnect);
       socket.off('disconnect', onDisconnect);
+      socket.disconnect();
     };
   }, [socket]);
 

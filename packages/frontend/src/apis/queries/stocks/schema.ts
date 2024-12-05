@@ -1,7 +1,8 @@
 import { z } from 'zod';
 
 export const GetStockListRequestSchema = z.object({
-  limit: z.number(),
+  limit: z.number().optional(),
+  type: z.enum(['all', 'increase', 'decrease']).optional(),
 });
 
 export type GetStockListRequest = z.infer<typeof GetStockListRequestSchema>;
@@ -14,6 +15,7 @@ export const GetStockSchema = z.object({
   volume: z.number(),
   marketCap: z.string(),
   rank: z.number(),
+  isRising: z.boolean(),
 });
 
 export const GetStockListResponseSchema = z.object({

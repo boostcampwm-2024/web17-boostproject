@@ -12,14 +12,14 @@ export const Modal = ({ title, children, onClose, onConfirm }: ModalProps) => {
   const ref = useOutsideClick(onClose);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div className="bg-black/4 fixed inset-0 z-50 flex items-center justify-center">
       <div
         className="relative flex flex-col items-center justify-center gap-8 rounded-md bg-white p-10 px-24 shadow"
         ref={ref}
       >
         <section className="flex flex-col items-center gap-1">
           <h2 className="display-bold20">{title}</h2>
-          <p>{children}</p>
+          <pre className="text-center">{children}</pre>
         </section>
         <section className="flex gap-3">
           <Button onClick={onClose}>취소</Button>
