@@ -30,6 +30,8 @@ export const usePostCreateAlarm = () => {
     }: PostCreateAlarmRequest) =>
       postCreateAlarm({ stockId, targetPrice, targetVolume, alarmExpiredDate }),
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ['getStockAlarm'] }),
+      queryClient.invalidateQueries({
+        queryKey: ['getStockAlarm', 'getAlarm'],
+      }),
   });
 };

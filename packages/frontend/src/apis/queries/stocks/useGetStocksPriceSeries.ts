@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
 import {
   StockTimeSeriesResponseSchema,
   type StockTimeSeriesRequest,
@@ -49,6 +49,7 @@ export const useGetStocksPriceSeries = ({
         .flatMap((page) => page.volumeDtoList),
     }),
     refetchOnWindowFocus: false,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 10 * 1000,
+    placeholderData: keepPreviousData,
   });
 };

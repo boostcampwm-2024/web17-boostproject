@@ -3,7 +3,7 @@ import Flag from '@/assets/flag.svg?react';
 
 export interface AlarmProps {
   option: string;
-  goalPrice: number | string;
+  goalPrice: number;
   alarmDate: string | null;
 }
 

@@ -36,6 +36,10 @@ const NotificationContents = () => {
   }
 
   if (!data) {
+    return <p className="text-center">알림 정보를 불러오는 데 실패했어요.</p>;
+  }
+
+  if (data.length === 0) {
     return <p className="text-center">현재 설정된 알림이 없어요.</p>;
   }
 
@@ -43,7 +47,7 @@ const NotificationContents = () => {
     <Alarm
       key={alarm.alarmId}
       option={alarm.targetPrice ? '목표가' : '거래가'}
-      goalPrice={alarm.targetPrice ?? alarm.targetVolume!}
+      goalPrice={alarm.targetPrice ?? alarm.targetVolume ?? 0}
       alarmDate={alarm.alarmExpiredDate}
     />
   ));

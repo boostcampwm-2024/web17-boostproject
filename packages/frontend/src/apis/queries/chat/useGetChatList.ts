@@ -46,6 +46,6 @@ export const useGetChatList = ({
       pages: [...data.pages].flatMap((page) => page.chats),
       pageParams: [...data.pageParams],
     }),
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 3,
   });
 };

@@ -15,5 +15,6 @@ export const useGetUserStock = () => {
   return useSuspenseQuery({
     queryKey: ['userStock'],
     queryFn: getUserStock,
+    staleTime: 1000 * 60 * 3,
   });
 };
