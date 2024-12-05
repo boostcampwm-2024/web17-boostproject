@@ -7,7 +7,13 @@ import { Error } from './components/errors/error';
 import { Loader } from './components/ui/loader';
 import { router } from './routes';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      throwOnError: true,
+    },
+  },
+});
 
 const App = () => {
   return (
