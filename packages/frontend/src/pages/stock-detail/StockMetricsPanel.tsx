@@ -14,7 +14,7 @@ interface RealTimeStockData {
   volume: number;
 }
 
-const StockMetricsPanel = ({
+export const StockMetricsPanel = ({
   eps,
   high52w,
   low52w,
@@ -60,11 +60,10 @@ const StockMetricsPanel = ({
   return (
     <article className="flex flex-1 flex-col gap-10 rounded-md bg-white p-6 shadow">
       {!price || !change || !volume ? (
-        <section className="grid w-9/12 grid-cols-2 grid-rows-2">
-          <Lottie animationData={skeleton} play className="w-64" />
-          <Lottie animationData={skeleton} play className="w-64" />
-          <Lottie animationData={skeleton} play className="w-64" />
-          <Lottie animationData={skeleton} play className="w-64" />
+        <section className="grid w-9/12 lg:grid-cols-2 lg:grid-rows-2">
+          {Array.from({ length: 4 }, () => (
+            <Lottie animationData={skeleton} play className="w-64" />
+          ))}
         </section>
       ) : (
         Object.values(metricsData).map((section) => (
@@ -86,5 +85,3 @@ const StockMetricsPanel = ({
     </article>
   );
 };
-
-export default StockMetricsPanel;
