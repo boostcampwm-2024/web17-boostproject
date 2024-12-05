@@ -7,8 +7,6 @@ interface LoaderProps {
 
 export const Loader = ({ className }: LoaderProps) => {
   return (
-    <div className="bg-extra-light-gray flex h-screen justify-center">
-      <Lottie className={className} animationData={loading} play speed={3} />
-    </div>
+    <Lottie className={className} animationData={loading} play speed={3} />
   );
 };
