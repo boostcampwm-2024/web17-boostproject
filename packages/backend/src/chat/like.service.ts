@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 import { DataSource, EntityManager } from 'typeorm';
 import { Chat } from '@/chat/domain/chat.entity';
 import { Like } from '@/chat/domain/like.entity';
@@ -6,6 +7,8 @@ import { LikeResponse } from '@/chat/dto/like.response';
 
 @Injectable()
 export class LikeService {
+  private readonly likedChats = new Set<number>();
+
   constructor(private readonly dataSource: DataSource) {}
 
   async toggleLike(userId: number, chatId: number) {
@@ -14,11 +17,30 @@ export class LikeService {
       const like = await manager.findOne(Like, {
         where: { user: { id: userId }, chat: { id: chatId } },
       });
+      this.likedChats.add(chatId);
       if (like) {
         return await this.deleteLike(manager, chat, like);
       }
       return await this.saveLike(manager, chat, userId);
     });
+  }
+
+  @Cron('*/30 * * * *')
+  async calculateLike() {
+    const tasks = [];
+    for (const chatId of this.likedChats) {
+      tasks.push(async () => {
+        const likeCount = await this.dataSource
+          .getRepository(Like)
+          .createQueryBuilder('like')
+          .where('like.chat_id = :chatId', { chatId })
+          .getCount();
+
+        await this.dataSource.getRepository(Chat).update(chatId, { likeCount });
+      });
+    }
+    await Promise.all(tasks.map((task) => task()));
+    this.likedChats.clear();
   }
 
   private async findChat(chatId: number, manager: EntityManager) {
