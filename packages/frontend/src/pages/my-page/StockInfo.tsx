@@ -8,7 +8,7 @@ import { LoginContext } from '@/contexts/login';
 
 export const StockInfo = () => {
   return (
-    <section className="display-bold20 flex max-h-[43.3rem] flex-col gap-5 rounded-md bg-white p-7">
+    <section className="display-bold20 flex h-full max-h-[43.4rem] flex-col gap-5 rounded-md bg-white p-7">
       <h2>주식 정보</h2>
       <StockInfoContents />
     </section>
@@ -21,7 +21,14 @@ const StockInfoContents = () => {
 
   const { data } = useGetUserStock();
   const { mutate } = useDeleteStockUser({
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['userStock'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['userStock'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['stockOwnership'],
+      });
+    },
   });
   const { isLoggedIn } = useContext(LoginContext);
 
@@ -47,7 +54,7 @@ const StockInfoContents = () => {
     <article className="grid gap-5 overflow-auto pr-5 xl:grid-cols-2">
       {data?.userStocks.map((stock) => (
         <section
-          className="display-bold14 text-dark-gray bg-extra-light-gray flex cursor-pointer items-center justify-between rounded px-4 py-2 transition-all duration-300 hover:scale-105 xl:p-8"
+          className="display-bold14 text-dark-gray bg-extra-light-gray flex cursor-pointer items-center justify-between rounded px-4 py-2 xl:p-8"
           onClick={() => navigate(`/stocks/${stock.stockId}`)}
         >
           <p>{stock.name}</p>

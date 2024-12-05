@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   PostStockResponseSchema,
   type PostStockRequest,
@@ -14,8 +14,11 @@ const postStockView = ({ stockId }: PostStockRequest) =>
   });
 
 export const usePostStockView = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationKey: ['stockView'],
     mutationFn: ({ stockId }: PostStockRequest) => postStockView({ stockId }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['topViews'] }),
   });
 };
