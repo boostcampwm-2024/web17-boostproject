@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import {
   GetStockListResponseSchema,
   type GetStockListRequest,
@@ -14,8 +14,9 @@ const getStockByPrice = ({ limit, type }: GetStockListRequest) =>
   });
 
 export const useGetStocksByPrice = ({ limit, type }: GetStockListRequest) => {
-  return useSuspenseQuery({
+  return useQuery({
     queryKey: ['stocks', limit, type],
     queryFn: () => getStockByPrice({ limit, type }),
+    placeholderData: keepPreviousData,
   });
 };
