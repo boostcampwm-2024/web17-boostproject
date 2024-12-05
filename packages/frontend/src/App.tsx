@@ -19,7 +19,13 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary fallback={<Error />}>
-        <Suspense fallback={<Loader className="h-64 w-64 items-center" />}>
+        <Suspense
+          fallback={
+            <div className="bg-extra-light-gray flex h-screen items-center justify-center">
+              <Loader className="h-64 w-64 items-center" />
+            </div>
+          }
+        >
           <RouterProvider router={router} />
           <ReactQueryDevtools initialIsOpen={false} />
         </Suspense>
