@@ -19,8 +19,6 @@ export const usePatchUserTheme = () => {
   return useMutation({
     mutationKey: ['patchTheme'],
     mutationFn: ({ theme }: PatchUserThemeRequest) => patchUserTheme({ theme }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['userTheme'] });
-    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['userTheme'] }),
   });
 };

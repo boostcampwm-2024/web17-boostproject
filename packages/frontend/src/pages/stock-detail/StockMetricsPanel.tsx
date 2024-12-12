@@ -1,12 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Lottie from 'react-lottie-player';
 import { useParams } from 'react-router-dom';
 import { MetricItem, Title } from './components';
+import darkSkeleton from '@/components/lottie/dark-skeleton.json';
 import skeleton from '@/components/lottie/skeleton.json';
 import { METRICS_DATA } from '@/constants/metricDetail';
+import { ThemeContext } from '@/contexts/theme';
 import { socketStock } from '@/sockets/config';
 import { useWebsocket } from '@/sockets/useWebsocket';
 import { type StockMetricsPanelProps } from '@/types/metrics';
+import { cn } from '@/utils/cn';
 
 interface RealTimeStockData {
   price: number;
@@ -14,7 +17,7 @@ interface RealTimeStockData {
   volume: number;
 }
 
-const StockMetricsPanel = ({
+export const StockMetricsPanel = ({
   eps,
   high52w,
   low52w,
@@ -23,6 +26,7 @@ const StockMetricsPanel = ({
 }: Partial<StockMetricsPanelProps>) => {
   const { stockId } = useParams();
   const { isConnected } = useWebsocket(socketStock);
+  const { theme } = useContext(ThemeContext);
   const [realTimeData, setRealTimeData] = useState<RealTimeStockData>({
     price: 0,
     change: 0,
@@ -60,11 +64,14 @@ const StockMetricsPanel = ({
   return (
     <article className="flex flex-1 flex-col gap-10 rounded-md bg-white p-6 shadow">
       {!price || !change || !volume ? (
-        <section className="grid w-9/12 grid-cols-2 grid-rows-2">
-          <Lottie animationData={skeleton} play className="w-64" />
-          <Lottie animationData={skeleton} play className="w-64" />
-          <Lottie animationData={skeleton} play className="w-64" />
-          <Lottie animationData={skeleton} play className="w-64" />
+        <section className="grid w-9/12 lg:grid-cols-2 lg:grid-rows-2">
+          {Array.from({ length: 4 }, () => (
+            <Lottie
+              animationData={theme === 'light' ? skeleton : darkSkeleton}
+              play
+              className={cn(theme === 'light' ? 'w-64' : 'w-36')}
+            />
+          ))}
         </section>
       ) : (
         Object.values(metricsData).map((section) => (
@@ -86,5 +93,3 @@ const StockMetricsPanel = ({
     </article>
   );
 };
-
-export default StockMetricsPanel;

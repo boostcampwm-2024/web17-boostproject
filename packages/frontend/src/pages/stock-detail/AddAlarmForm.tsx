@@ -33,7 +33,7 @@ export const AddAlarmForm = ({ className }: AddAlarmFormProps) => {
     endDate: null,
   });
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!isLoggedIn) {
@@ -41,7 +41,8 @@ export const AddAlarmForm = ({ className }: AddAlarmFormProps) => {
       return;
     }
 
-    subscribeAlarm();
+    await subscribeAlarm();
+
     const { option, value, endDate } = alarmInfo;
 
     const requestData: PostCreateAlarmRequest = {
@@ -50,7 +51,7 @@ export const AddAlarmForm = ({ className }: AddAlarmFormProps) => {
       alarmExpiredDate: endDate,
     };
 
-    mutate(requestData, {
+    await mutate(requestData, {
       onSuccess: () => {
         alert('알림이 등록되었어요!');
         setAlarmInfo({
