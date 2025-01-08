@@ -21,6 +21,8 @@ export class GoogleAuthController {
   @Get('/redirect')
   @UseGuards(GoogleAuthGuard)
   async handleRedirect(@Res() response: Response) {
-    response.redirect('/');
+    const redirectUrl =
+      process.env.NODE_ENV === 'production' ? '/' : 'http://localhost:5173';
+    response.redirect(redirectUrl);
   }
 }
