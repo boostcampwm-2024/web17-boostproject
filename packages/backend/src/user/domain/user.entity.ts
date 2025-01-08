@@ -35,7 +35,7 @@ export class User {
   @Column({ length: 10, default: OauthType.LOCAL })
   type: OauthType = OauthType.LOCAL;
 
-  @Column('decimal', { name: 'oauth_id' })
+  @Column('varchar', { name: 'oauth_id', length: 255 })
   oauthId: string;
 
   @Column({ name: 'is_light', default: true })
