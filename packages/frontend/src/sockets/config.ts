@@ -1,6 +1,7 @@
 import { io } from 'socket.io-client';
 
-const URL = 'wss://juchum.info';
+// const URL = 'wss://juchum.info';
+const URL = 'ws://localhost:3000';
 
 export interface SocketChatType {
   stockId: string;

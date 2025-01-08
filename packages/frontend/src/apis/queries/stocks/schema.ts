@@ -13,7 +13,7 @@ export const GetStockSchema = z.object({
   currentPrice: z.number(),
   changeRate: z.number(),
   volume: z.number(),
-  marketCap: z.string(),
+  marketCap: z.string().nullable(), // 문자열이면서 null 허용,
   rank: z.number(),
   isRising: z.boolean(),
 });
