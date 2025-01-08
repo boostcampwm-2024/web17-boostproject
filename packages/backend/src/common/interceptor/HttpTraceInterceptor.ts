@@ -100,6 +100,8 @@ export class HttpTraceInterceptor implements NestInterceptor {
         next.handle().pipe(
           tap({
             next: (data) => {
+              // response 로깅 추가
+              traceContext.addLog(`[Response] ${this.formatResponse(data)}`);
               const executionTime = Date.now() - startTime;
               traceContext.addLog(`[Execution Time] ${executionTime}ms`);
 
@@ -133,6 +135,15 @@ export class HttpTraceInterceptor implements NestInterceptor {
 
   private generateRequestId(): string {
     return `REQ-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  }
+
+  // 응답 데이터를 포맷팅하고 길이를 제한하는 함수
+  private formatResponse(data: any, maxLength: number = 500): string {
+    const formatted = JSON.stringify(data, null, 2);
+    if (formatted.length <= maxLength) {
+      return formatted;
+    }
+    return formatted.substring(0, maxLength) + '... (response truncated)';
   }
 }
 
