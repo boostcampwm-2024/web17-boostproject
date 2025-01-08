@@ -4,7 +4,9 @@ import { useGetTestLogin } from '@/apis/queries/auth/useGetTestLogin';
 import Google from '@/assets/google.svg?react';
 import { Button } from '@/components/ui/button';
 
-const GOOGLE_LOGIN = '/api/auth/google/login';
+const BACKEND_URL = import.meta.env.VITE_BASE_URL;
+const GOOGLE_LOGIN = `${BACKEND_URL}/api/auth/google/login`;
+
 export const Login = () => {
   const queryClient = useQueryClient();
   const { refetch, isSuccess } = useGetTestLogin({
@@ -16,6 +18,10 @@ export const Login = () => {
     queryClient.invalidateQueries({ queryKey: ['loginStatus'] });
   }
 
+  const handleGoogleLogin = () => {
+    window.location.href = GOOGLE_LOGIN;
+  };
+
   return (
     <div className="flex h-[calc(100vh-8rem)] flex-col items-center justify-center">
       <main className="relative flex flex-col gap-36 rounded-lg bg-gradient-to-br from-[#ffe259] to-[#ffa751] p-16 py-24 shadow-sm dark:from-[#e26262] dark:to-[#f3d55d]">
@@ -25,12 +31,13 @@ export const Login = () => {
           <p className="display-medium20">주춤주춤과 함께해요!</p>
         </section>
         <section className="relative z-10 flex flex-col gap-4">
-          <Link to={GOOGLE_LOGIN} className="w-72" reloadDocument>
-            <Button className="flex h-10 w-full items-center justify-center gap-4 px-10 dark:bg-black">
-              <Google />
-              <span>구글 로그인</span>
-            </Button>
-          </Link>
+          <Button
+            onClick={handleGoogleLogin}
+            className="flex h-10 w-72 items-center justify-center gap-4 px-10 dark:bg-black"
+          >
+            <Google />
+            <span>구글 로그인</span>
+          </Button>
           <Link to="/" reloadDocument>
             <Button
               onClick={() => refetch()}
