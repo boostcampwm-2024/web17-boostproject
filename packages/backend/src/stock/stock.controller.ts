@@ -56,7 +56,6 @@ import {
 } from '@/stock/dto/userStock.response';
 import { StockDataService } from '@/stock/stockData.service';
 import { User } from '@/user/domain/user.entity';
-import { TraceClass } from '@/common/interceptor/HttpTraceInterceptor';
 
 const FLUCTUATION_TYPE = {
   INCREASE: 'increase',
