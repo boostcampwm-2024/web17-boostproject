@@ -45,49 +45,67 @@ class TraceStore {
 
 @Injectable()
 export class HttpTraceInterceptor implements NestInterceptor {
-  private readonly logger = new Logger('HttpTraceLogger');
+  private readonly logger = new Logger('TraceLogger');
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    if (context.getType() !== 'http') {
+    const contextType = context.getType();
+
+    // HTTP나 WebSocket이 아니면 그냥 통과
+    if (contextType !== 'http' && contextType !== 'ws') {
       return next.handle();
     }
 
-    const request = context.switchToHttp().getRequest<Request>();
     const requestId = this.generateRequestId();
     const startTime = Date.now();
-
-    // 새로운 추적 컨텍스트 시작
     const traceContext = new TraceContext(requestId);
 
     return new Observable(subscriber => {
       TraceStore.getStore().run(traceContext, () => {
-        const { method, url, body, params, query } = request;
-        const controller = context.getClass().name;
-        const handler = context.getHandler().name;
+        // HTTP 요청인 경우
+        if (contextType === 'http') {
+          const request = context.switchToHttp().getRequest<Request>();
+          const { method, url, body, params, query } = request;
+          const controller = context.getClass().name;
+          const handler = context.getHandler().name;
 
-        traceContext.addLog(`[Request] ${method} ${url}`);
-        traceContext.addLog(`[Controller] ${controller}.${handler}`);
+          traceContext.addLog(`[Request] ${method} ${url}`);
+          traceContext.addLog(`[Controller] ${controller}.${handler}`);
 
-        if (Object.keys(params).length > 0) {
-          traceContext.addLog(`[Params] ${JSON.stringify(params)}`);
+          if (Object.keys(params).length > 0) {
+            traceContext.addLog(`[Params] ${JSON.stringify(params)}`);
+          }
+          if (Object.keys(query).length > 0) {
+            traceContext.addLog(`[Query] ${JSON.stringify(query)}`);
+          }
+          if (Object.keys(body).length > 0) {
+            traceContext.addLog(`[Body] ${JSON.stringify(body)}`);
+          }
         }
-        if (Object.keys(query).length > 0) {
-          traceContext.addLog(`[Query] ${JSON.stringify(query)}`);
-        }
-        if (Object.keys(body).length > 0) {
-          traceContext.addLog(`[Body] ${JSON.stringify(body)}`);
+        // WebSocket 요청인 경우
+        else if (contextType === 'ws') {
+          const wsContext = context.switchToWs();
+          const client = wsContext.getClient();
+          const data = wsContext.getData();
+          const controller = context.getClass().name;
+          const handler = context.getHandler().name;
+
+          traceContext.addLog(`[WebSocket Event] ${handler}`);
+          traceContext.addLog(`[Controller] ${controller}.${handler}`);
+          traceContext.addLog(`[Client ID] ${client.id}`);
+          if (data) {
+            traceContext.addLog(`[Payload] ${JSON.stringify(data)}`);
+          }
         }
 
         next.handle().pipe(
           tap({
             next: (data) => {
               const executionTime = Date.now() - startTime;
-              // traceContext.addLog(`[Response] ${JSON.stringify(data)}`);
               traceContext.addLog(`[Execution Time] ${executionTime}ms`);
 
               const logs = traceContext.getLogs();
               this.logger.log(
-                `Request ${requestId}\n${logs.join('\n')}\n` +
+                `${contextType.toUpperCase()} ${requestId}\n${logs.join('\n')}\n` +
                 '========================================='
               );
 
@@ -101,7 +119,7 @@ export class HttpTraceInterceptor implements NestInterceptor {
 
               const logs = traceContext.getLogs();
               this.logger.error(
-                `Request ${requestId}\n${logs.join('\n')}\n` +
+                `${contextType.toUpperCase()} ${requestId}\n${logs.join('\n')}\n` +
                 '========================================='
               );
 
