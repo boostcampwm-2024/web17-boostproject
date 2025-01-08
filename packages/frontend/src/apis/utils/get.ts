@@ -17,7 +17,17 @@ export const get = async <T>({
   const { data } = await instance.get(url, { params });
   const result = schema.safeParse(data);
 
+  // if (!result.success) {
+  //   throw new Error(formatZodError(result.error));
+  // }
+
   if (!result.success) {
+    // Zod 검증 실패 로깅
+    console.log(`${url} : Validation Error`, {
+      errors: result.error.errors,
+      receivedData: data,
+      params
+    });
     throw new Error(formatZodError(result.error));
   }
 

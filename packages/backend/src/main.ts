@@ -6,6 +6,7 @@ import { AppModule } from './app.module';
 import { MEMORY_STORE } from '@/auth/session.module';
 import { sessionConfig } from '@/configs/session.config';
 import { useSwagger } from '@/configs/swagger.config';
+import { HttpTraceInterceptor } from '@/common/interceptor/HttpTraceInterceptor';
 
 const setCors = (app: INestApplication) => {
   app.enableCors({
@@ -37,6 +38,7 @@ async function bootstrap() {
       transformOptions: { enableImplicitConversion: true },
     }),
   );
+  app.useGlobalInterceptors(new HttpTraceInterceptor());
   setCors(app);
   useSwagger(app);
   app.use(passport.initialize());

@@ -1,4 +1,4 @@
-import { createLogger, format } from 'winston';
+import { createLogger, format, transports } from 'winston';
 import * as DailyRotateFile from 'winston-daily-rotate-file';
 
 const { combine, timestamp, printf } = format;
@@ -33,6 +33,14 @@ export const logger = createLogger({
       dirname: '../logs',
       maxFiles: '7d',
       maxSize: '10m',
+    }),
+
+    // Console transport 추가
+    new transports.Console({
+      format: combine(
+        format.colorize(),
+        logFormat
+      )
     }),
   ],
 });
