@@ -27,6 +27,7 @@ export class KoreaStockInfoService {
   @Cron('0 9 * * 1-5')
   @Cron('0 0 * * 1-5')
   public async initKoreaStockInfo(): Promise<void> {
+    console.time('개별 처리');
     await this.downloadMaster({ baseDir: './', target: 'kosdaq_code' });
     await this.getKosdaqMasterData({
       baseDir: './',
@@ -38,6 +39,138 @@ export class KoreaStockInfoService {
       baseDir: './',
       target: 'kospi_code',
     });
+    console.timeEnd('개별 처리');
+  }
+
+  private async insertStockDataBatch(stocks: Stock[]): Promise<void> {
+
+    if (stocks.length === 0) return;
+
+    const manager = this.datasource.manager;
+
+    // 한 번의 쿼리로 모든 기존 stock_id 조회
+    const existingStocks = await manager
+      .createQueryBuilder(Stock, "stock")
+      .select("stock.id")
+      .where("stock.id IN (:...ids)", {
+        ids: stocks.map(s => s.id)
+      })
+      .getRawMany();
+
+    const existingIds = new Set(existingStocks.map(s => s.id));
+
+    // 존재하지 않는 stocks만 필터링
+    const newStocks = stocks.filter(s => !existingIds.has(s.id));
+
+    // 새로운 stocks가 있다면 일괄 저장
+    if (newStocks.length > 0) {
+      await manager.save(Stock, newStocks);
+      this.logger.info(`Inserted ${newStocks.length} new stocks`);
+    }
+  }
+
+  private async getMasterData(
+    downloadDto: MasterDownloadDto,
+    offset: number,
+  ): Promise<void> {
+    console.log('\n=== 주식 마스터 데이터 처리 시작 ===');
+    const startTime = process.hrtime();
+
+    const targetFileName = downloadDto.target + '.mst';
+    const rl = this.beforeMasterData(downloadDto);
+
+    let totalCount = 0;
+    let queryCount = 0;
+    const stocks: Stock[] = [];
+
+    for await (const row of rl) {
+      totalCount++;
+      const shortCode = this.getValueFromMst(row, 0, 9);
+      const koreanName = this.getValueFromMst(row, 21, row.length - offset);
+      const groupCode = this.getValueFromMst(
+        row,
+        row.length - offset,
+        row.length - offset + 2,
+      );
+
+      const masterData: Stock = {
+        id: shortCode,
+        name: koreanName,
+        views: 0,
+        isTrading: true,
+        groupCode,
+      };
+      queryCount++;
+      await this.insertStockData(masterData);
+    }
+    const [seconds, nanoseconds] = process.hrtime(startTime);
+    const milliseconds = (seconds * 1000) + (nanoseconds / 1000000);
+
+    console.log('\n=== 주식 마스터 데이터 처리 완료 ===');
+    console.log(`총 처리된 데이터: ${totalCount}개`);
+    console.log(`실행된 쿼리 수: ${queryCount}개`);
+    console.log(`총 처리 시간: ${milliseconds.toFixed(2)}ms`);
+    console.log('===============================\n');
+
+    this.handleUnlinkFile(targetFileName);
+  }
+
+  private async getMasterData2(
+    downloadDto: MasterDownloadDto,
+    offset: number,
+  ): Promise<void> {
+    console.log('\n=== 주식 마스터 데이터 처리 시작 ===');
+    const startTime = process.hrtime();
+
+    const targetFileName = downloadDto.target + '.mst';
+    const rl = this.beforeMasterData(downloadDto);
+
+    let totalCount = 0;
+    let queryCount = 0;
+    const stocks: Stock[] = [];
+
+
+    for await (const row of rl) {
+      totalCount++;
+      const shortCode = this.getValueFromMst(row, 0, 9);
+      const koreanName = this.getValueFromMst(row, 21, row.length - offset);
+      const groupCode = this.getValueFromMst(
+        row,
+        row.length - offset,
+        row.length - offset + 2,
+      );
+
+      stocks.push({
+        id: shortCode,
+        name: koreanName,
+        views: 0,
+        isTrading: true,
+        groupCode,
+      });
+
+
+      // 배치 크기가 되면 처리 (메모리 관리를 위해)
+      if (stocks.length >= 100) {
+        queryCount++;
+        await this.insertStockDataBatch([...stocks]);
+        stocks.length = 0; // 배열 비우기
+      }
+    }
+
+    // 남은 stocks 처리
+    if (stocks.length > 0) {
+      await this.insertStockDataBatch(stocks);
+    }
+
+    const [seconds, nanoseconds] = process.hrtime(startTime);
+    const milliseconds = (seconds * 1000) + (nanoseconds / 1000000);
+    console.log('\n=== 주식 마스터 데이터 처리 완료 ===');
+    console.log(`총 처리된 데이터: ${totalCount}개`);
+    console.log(`실행된 쿼리 수: ${queryCount}개`);
+    console.log(`총 처리 시간: ${milliseconds.toFixed(2)}ms`);
+    console.log('===============================\n');
+
+    this.handleUnlinkFile(targetFileName);
   }
 
   public async downloadMaster(downloadDto: MasterDownloadDto): Promise<any> {
@@ -65,14 +198,14 @@ export class KoreaStockInfoService {
   public async getKospiMasterData(
     downloadDto: MasterDownloadDto,
   ): Promise<void> {
-    await this.getMasterData(downloadDto, 228);
+    await this.getMasterData2(downloadDto, 228);
     this.logger.info('Kospi master data processing done.');
   }
 
   public async getKosdaqMasterData(
     downloadDto: MasterDownloadDto,
   ): Promise<void> {
-    await this.getMasterData(downloadDto, 222);
+    await this.getMasterData2(downloadDto, 222);
     this.logger.info('Kosdaq master data processing done.');
   }
 
@@ -156,34 +289,5 @@ export class KoreaStockInfoService {
         callback(err);
       }
     });
-  }
-
-  private async getMasterData(
-    downloadDto: MasterDownloadDto,
-    offset: number,
-  ): Promise<void> {
-    const targetFileName = downloadDto.target + '.mst';
-    const rl = this.beforeMasterData(downloadDto);
-
-    for await (const row of rl) {
-      const shortCode = this.getValueFromMst(row, 0, 9);
-      const koreanName = this.getValueFromMst(row, 21, row.length - offset);
-      const groupCode = this.getValueFromMst(
-        row,
-        row.length - offset,
-        row.length - offset + 2,
-      );
-
-      const masterData: Stock = {
-        id: shortCode,
-        name: koreanName,
-        views: 0,
-        isTrading: true,
-        groupCode,
-      };
-      await this.insertStockData(masterData);
-    }
-
-    this.handleUnlinkFile(targetFileName);
   }
 }
