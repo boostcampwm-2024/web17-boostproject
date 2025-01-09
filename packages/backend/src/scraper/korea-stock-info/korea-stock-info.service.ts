@@ -69,57 +69,12 @@ export class KoreaStockInfoService {
     }
   }
 
+
   private async getMasterData(
     downloadDto: MasterDownloadDto,
     offset: number,
   ): Promise<void> {
-    console.log('\n=== 주식 마스터 데이터 처리 시작 ===');
-    const startTime = process.hrtime();
-
-    const targetFileName = downloadDto.target + '.mst';
-    const rl = this.beforeMasterData(downloadDto);
-
-    let totalCount = 0;
-    let queryCount = 0;
-    const stocks: Stock[] = [];
-
-    for await (const row of rl) {
-      totalCount++;
-      const shortCode = this.getValueFromMst(row, 0, 9);
-      const koreanName = this.getValueFromMst(row, 21, row.length - offset);
-      const groupCode = this.getValueFromMst(
-        row,
-        row.length - offset,
-        row.length - offset + 2,
-      );
-
-      const masterData: Stock = {
-        id: shortCode,
-        name: koreanName,
-        views: 0,
-        isTrading: true,
-        groupCode,
-      };
-      queryCount++;
-      await this.insertStockData(masterData);
-    }
-    const [seconds, nanoseconds] = process.hrtime(startTime);
-    const milliseconds = (seconds * 1000) + (nanoseconds / 1000000);
-
-    console.log('\n=== 주식 마스터 데이터 처리 완료 ===');
-    console.log(`총 처리된 데이터: ${totalCount}개`);
-    console.log(`실행된 쿼리 수: ${queryCount}개`);
-    console.log(`총 처리 시간: ${milliseconds.toFixed(2)}ms`);
-    console.log('===============================\n');
-
-    this.handleUnlinkFile(targetFileName);
-  }
-
-  private async getMasterData2(
-    downloadDto: MasterDownloadDto,
-    offset: number,
-  ): Promise<void> {
-    console.log('\n=== 주식 마스터 데이터 처리 시작 ===');
+    this.logger.info('\n=== 주식 마스터 데이터 처리 시작 ===');
     const startTime = process.hrtime();
 
     const targetFileName = downloadDto.target + '.mst';
@@ -164,11 +119,11 @@ export class KoreaStockInfoService {
 
     const [seconds, nanoseconds] = process.hrtime(startTime);
     const milliseconds = (seconds * 1000) + (nanoseconds / 1000000);
-    console.log('\n=== 주식 마스터 데이터 처리 완료 ===');
-    console.log(`총 처리된 데이터: ${totalCount}개`);
-    console.log(`실행된 쿼리 수: ${queryCount}개`);
-    console.log(`총 처리 시간: ${milliseconds.toFixed(2)}ms`);
-    console.log('===============================\n');
+    this.logger.info('\n=== 주식 마스터 데이터 처리 완료 ===');
+    this.logger.info(`총 처리된 데이터: ${totalCount}개`);
+    this.logger.info(`실행된 쿼리 수: ${queryCount}개`);
+    this.logger.info(`총 처리 시간: ${milliseconds.toFixed(2)}ms`);
+    this.logger.info('===============================\n');
 
     this.handleUnlinkFile(targetFileName);
   }
@@ -198,14 +153,14 @@ export class KoreaStockInfoService {
   public async getKospiMasterData(
     downloadDto: MasterDownloadDto,
   ): Promise<void> {
-    await this.getMasterData2(downloadDto, 228);
+    await this.getMasterData(downloadDto, 228);
     this.logger.info('Kospi master data processing done.');
   }
 
   public async getKosdaqMasterData(
     downloadDto: MasterDownloadDto,
   ): Promise<void> {
-    await this.getMasterData2(downloadDto, 222);
+    await this.getMasterData(downloadDto, 222);
     this.logger.info('Kosdaq master data processing done.');
   }
 
