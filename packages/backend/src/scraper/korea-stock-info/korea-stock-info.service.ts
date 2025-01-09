@@ -27,7 +27,6 @@ export class KoreaStockInfoService {
   @Cron('0 9 * * 1-5')
   @Cron('0 0 * * 1-5')
   public async initKoreaStockInfo(): Promise<void> {
-    console.time('개별 처리');
     await this.downloadMaster({ baseDir: './', target: 'kosdaq_code' });
     await this.getKosdaqMasterData({
       baseDir: './',
@@ -39,7 +38,6 @@ export class KoreaStockInfoService {
       baseDir: './',
       target: 'kospi_code',
     });
-    console.timeEnd('개별 처리');
   }
 
   private async insertStockDataBatch(stocks: Stock[]): Promise<void> {
