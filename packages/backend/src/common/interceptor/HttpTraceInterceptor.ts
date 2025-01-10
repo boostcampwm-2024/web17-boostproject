@@ -140,6 +140,9 @@ export class HttpTraceInterceptor implements NestInterceptor {
   // 응답 데이터를 포맷팅하고 길이를 제한하는 함수
   private formatResponse(data: any, maxLength: number = 500): string {
     const formatted = JSON.stringify(data, null, 2);
+    if( formatted === undefined){
+      return 'undefined';
+    }
     if (formatted.length <= maxLength) {
       return formatted;
     }
