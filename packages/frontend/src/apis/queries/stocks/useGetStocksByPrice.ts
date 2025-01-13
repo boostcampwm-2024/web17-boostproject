@@ -9,8 +9,11 @@ import { get } from '@/apis/utils/get';
 const getStockByPrice = ({ limit, type }: GetStockListRequest) =>
   get<GetStockListResponse>({
     schema: GetStockListResponseSchema,
-    url: `/api/stock/fluctuation`,
-    params: { limit, type },
+    url: `/api/stock/top`,
+    params: {
+      sortBy: type === 'increase' ? 'gainers' : 'losers',
+      limit
+    },
   });
 
 export const useGetStocksByPrice = ({ limit, type }: GetStockListRequest) => {

@@ -22,8 +22,11 @@ const getStockIndex = () =>
 const getTopViews = ({ limit }: Partial<GetStockListRequest>) =>
   get<Partial<GetStockTopViewsResponse>[]>({
     schema: z.array(GetStockListResponseSchema.partial()),
-    url: `/api/stock/topViews`,
-    params: { limit },
+    url: `/api/stock/top`,
+    params: {
+      sortBy: 'views',
+      limit: 5,
+    },
   });
 
 export const useStockQueries = ({ viewsLimit }: StockQueriesProps) => {
