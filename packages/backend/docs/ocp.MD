@@ -48,13 +48,13 @@ export class StockService {
 
 ```typescript
 // 정렬 전략 인터페이스 정의
-interface StockSortStrategy {
+export interface StockSortStrategy {
     getQuery(queryBuilder: SelectQueryBuilder<Stock>, limit: number): Promise<any>;
 }
 
 // 조회수 기준 정렬 전략
 @Injectable()
-class ViewsSortStrategy implements StockSortStrategy {
+export class ViewsSortStrategy implements StockSortStrategy {
     async getQuery(queryBuilder: SelectQueryBuilder<Stock>, limit: number) {
         return queryBuilder
             .orderBy('stock.views', 'DESC')
@@ -65,7 +65,7 @@ class ViewsSortStrategy implements StockSortStrategy {
 
 // 상승률 기준 정렬 전략
 @Injectable()
-class GainersSortStrategy implements StockSortStrategy {
+export class GainersSortStrategy implements StockSortStrategy {
     async getQuery(queryBuilder: SelectQueryBuilder<Stock>, limit: number) {
         return queryBuilder
             .innerJoinAndSelect('stock.fluctuationRankStocks', 'rank')
@@ -78,7 +78,7 @@ class GainersSortStrategy implements StockSortStrategy {
 
 // 개선된 StockService
 @Injectable()
-export class StockService {
+export export class StockService {
     private strategies: Map<string, StockSortStrategy>;
 
     constructor(
