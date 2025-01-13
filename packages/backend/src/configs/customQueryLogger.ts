@@ -9,15 +9,15 @@ export class CustomQueryLogger implements Logger {
   private formatQuery(query: string, parameters?: any[]): string {
     let formattedQuery = format(query, {
       language: 'mysql',
-      keywordCase: 'upper'  // 'uppercase' 대신 'keywordCase: "upper"' 사용
+      keywordCase: 'upper'
     });
 
     if (parameters?.length) {
-      parameters.forEach((param, index) => {
-        formattedQuery = formattedQuery.replace(
-          `$${index + 1}`,
-          typeof param === 'string' ? `'${param}'` : param
-        );
+      // ? 를 찾아서 순서대로 파라미터 값으로 대체
+      let parameterIndex = 0;
+      formattedQuery = formattedQuery.replace(/\?/g, () => {
+        const param = parameters[parameterIndex++];
+        return typeof param === 'string' ? `'${param}'` : param;
       });
     }
 
@@ -25,12 +25,18 @@ export class CustomQueryLogger implements Logger {
   }
 
   logQuery(query: string, parameters?: any[], queryRunner?: QueryRunner) {
-    const formattedQuery = this.formatQuery(query, parameters);
+    // EXPLAIN 쿼리는 로깅하지 않음
+    // 이미 logQueryPlan 여기에서 실행 계획을 출력했기 때문
+    if (query.trim().toUpperCase().startsWith('EXPLAIN')) {
+      return;
+    }
 
+    const formattedQuery = this.formatQuery(query, parameters);
     console.log('\n🔍 Query:');
     console.log(highlight(formattedQuery));
 
-    if (!query.toLowerCase().includes('explain') && queryRunner) {
+    // SELECT 쿼리에 대해서만 실행 계획 출력
+    if (query.trim().toUpperCase().startsWith('SELECT') && queryRunner) {
       this.logQueryPlan(query, parameters, queryRunner);
     }
   }
@@ -82,6 +88,11 @@ export class CustomQueryLogger implements Logger {
       if (!query.trim().toUpperCase().startsWith('SELECT')) {
         console.log('\n📝 DML Query - No execution plan available');
         return;
+      }
+
+      // 파라미터 출력 추가
+      if (parameters?.length) {
+        console.log('\n📍 Parameters:', parameters);
       }
 
       const explainQuery = `EXPLAIN FORMAT=JSON ${query}`;
