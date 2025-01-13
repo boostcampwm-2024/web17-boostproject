@@ -40,6 +40,92 @@ export class KoreaStockInfoService {
     });
   }
 
+  private async insertStockDataBatch(stocks: Stock[]): Promise<void> {
+
+    if (stocks.length === 0) return;
+
+    const manager = this.datasource.manager;
+
+    // 한 번의 쿼리로 모든 기존 stock_id 조회
+    const existingStocks = await manager
+      .createQueryBuilder(Stock, "stock")
+      .select("stock.id")
+      .where("stock.id IN (:...ids)", {
+        ids: stocks.map(s => s.id)
+      })
+      .getRawMany();
+
+    const existingIds = new Set(existingStocks.map(s => s.id));
+
+    // 존재하지 않는 stocks만 필터링
+    const newStocks = stocks.filter(s => !existingIds.has(s.id));
+
+    // 새로운 stocks가 있다면 일괄 저장
+    if (newStocks.length > 0) {
+      await manager.save(Stock, newStocks);
+      this.logger.info(`Inserted ${newStocks.length} new stocks`);
+    }
+  }
+
+
+  private async getMasterData(
+    downloadDto: MasterDownloadDto,
+    offset: number,
+  ): Promise<void> {
+    this.logger.info('\n=== 주식 마스터 데이터 처리 시작 ===');
+    const startTime = process.hrtime();
+
+    const targetFileName = downloadDto.target + '.mst';
+    const rl = this.beforeMasterData(downloadDto);
+
+    let totalCount = 0;
+    let queryCount = 0;
+    const stocks: Stock[] = [];
+
+
+    for await (const row of rl) {
+      totalCount++;
+      const shortCode = this.getValueFromMst(row, 0, 9);
+      const koreanName = this.getValueFromMst(row, 21, row.length - offset);
+      const groupCode = this.getValueFromMst(
+        row,
+        row.length - offset,
+        row.length - offset + 2,
+      );
+
+      stocks.push({
+        id: shortCode,
+        name: koreanName,
+        views: 0,
+        isTrading: true,
+        groupCode,
+      });
+
+
+      // 배치 크기가 되면 처리 (메모리 관리를 위해)
+      if (stocks.length >= 100) {
+        queryCount++;
+        await this.insertStockDataBatch([...stocks]);
+        stocks.length = 0; // 배열 비우기
+      }
+    }
+
+    // 남은 stocks 처리
+    if (stocks.length > 0) {
+      await this.insertStockDataBatch(stocks);
+    }
+
+    const [seconds, nanoseconds] = process.hrtime(startTime);
+    const milliseconds = (seconds * 1000) + (nanoseconds / 1000000);
+    this.logger.info('\n=== 주식 마스터 데이터 처리 완료 ===');
+    this.logger.info(`총 처리된 데이터: ${totalCount}개`);
+    this.logger.info(`실행된 쿼리 수: ${queryCount}개`);
+    this.logger.info(`총 처리 시간: ${milliseconds.toFixed(2)}ms`);
+    this.logger.info('===============================\n');
+
+    this.handleUnlinkFile(targetFileName);
+  }
+
   public async downloadMaster(downloadDto: MasterDownloadDto): Promise<any> {
     const { baseDir, target } = downloadDto;
     const downloadZipFile = target + '.mst.zip';
@@ -156,34 +242,5 @@ export class KoreaStockInfoService {
         callback(err);
       }
     });
-  }
-
-  private async getMasterData(
-    downloadDto: MasterDownloadDto,
-    offset: number,
-  ): Promise<void> {
-    const targetFileName = downloadDto.target + '.mst';
-    const rl = this.beforeMasterData(downloadDto);
-
-    for await (const row of rl) {
-      const shortCode = this.getValueFromMst(row, 0, 9);
-      const koreanName = this.getValueFromMst(row, 21, row.length - offset);
-      const groupCode = this.getValueFromMst(
-        row,
-        row.length - offset,
-        row.length - offset + 2,
-      );
-
-      const masterData: Stock = {
-        id: shortCode,
-        name: koreanName,
-        views: 0,
-        isTrading: true,
-        groupCode,
-      };
-      await this.insertStockData(masterData);
-    }
-
-    this.handleUnlinkFile(targetFileName);
   }
 }
