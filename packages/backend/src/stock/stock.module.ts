@@ -22,6 +22,7 @@ import { OpenapiScraperModule } from '@/scraper/openapi/openapi-scraper.module';
 import { ScraperModule } from '@/scraper/scraper.module';
 import { StockDataCache } from '@/stock/cache/stockData.cache';
 import { StockDataService } from '@/stock/stockData.service';
+import { GainersSortStrategy, LosersSortStrategy, ViewsSortStrategy } from '@/stock/strategy/StockSortStrategy';
 
 @Module({
   imports: [
@@ -49,6 +50,9 @@ import { StockDataService } from '@/stock/stockData.service';
     StockDataService,
     StockDetailService,
     StockRateIndexService,
+    ViewsSortStrategy,
+    GainersSortStrategy,
+    LosersSortStrategy
   ],
   exports: [StockService],
 })

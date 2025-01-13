@@ -10,13 +10,26 @@ import {
 } from './dto/stock.response';
 import { UserStock } from '@/stock/domain/userStock.entity';
 import { UserStocksResponse } from '@/stock/dto/userStock.response';
+import {
+  GainersSortStrategy,
+  LosersSortStrategy,
+  StockSortStrategy,
+  ViewsSortStrategy
+} from '@/stock/strategy/StockSortStrategy';
 
 @Injectable()
 export class StockService {
+  private strategies: Map<string, StockSortStrategy>;
+
   constructor(
     private readonly datasource: DataSource,
     @Inject('winston') private readonly logger: Logger,
-  ) {}
+    private readonly viewsSortStrategy: ViewsSortStrategy,
+    private readonly gainersSortStrategy: GainersSortStrategy,
+    private readonly losersSortStrategy: LosersSortStrategy
+  ) {
+    this.strategies = new Map([['views', viewsSortStrategy], ['gainers', gainersSortStrategy], ['losers', losersSortStrategy]]);
+  }
 
   async increaseView(stockId: string) {
     await this.datasource.transaction(async (manager) => {
@@ -109,6 +122,18 @@ export class StockService {
     }
   }
 
+  async getTopStocks(sortBy: string, limit: number) {
+    const strategy = this.strategies.get(sortBy);
+    if (!strategy) {
+      throw new BadRequestException(`Unknown sort strategy: ${sortBy}`);
+    }
+
+    const queryBuilder = this.getStocksQuery();
+    const rawData = await strategy.getQuery(queryBuilder, limit);
+
+    return this.createResponse(sortBy, rawData);
+  }
+
   async getTopStocksByViews(limit: number) {
     const rawData = await this.getStocksQuery()
       .orderBy('stock.views', 'DESC')
@@ -146,6 +171,15 @@ export class StockService {
     if (!(await this.existsStock(stockId, manager))) {
       throw new BadRequestException('not exists stock');
     }
+  }
+
+  private createResponse(sortBy: string, rawData: any[]) {
+    // 조회수 기준 정렬일 경우 StocksResponse 반환
+    if (sortBy === 'views') {
+      return plainToInstance(StocksResponse, rawData);
+    }
+    // 나머지 경우(gainers, losers 등) StockRankResponses 반환
+    return new StockRankResponses(rawData);
   }
 
   private async validateDuplicateUserStock(

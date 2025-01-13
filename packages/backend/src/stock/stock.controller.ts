@@ -193,6 +193,14 @@ export class StockController {
     return await this.stockService.searchStock(request.name);
   }
 
+  @Get('top')
+  async getTopStocks(
+    @Query('sortBy') sortBy: string,
+    @LimitQuery(20) limit: number,
+  ) {
+    return this.stockService.getTopStocks(sortBy, limit);
+  }
+
   @Get('topViews')
   @ApiGetStocks('조회수 기반 주식 리스트 조회 API')
   async getTopStocksByViews(@LimitQuery(5) limit: number) {
