@@ -201,24 +201,6 @@ export class StockController {
     return this.stockService.getTopStocks(sortBy, limit);
   }
 
-  @Get('topViews')
-  @ApiGetStocks('조회수 기반 주식 리스트 조회 API')
-  async getTopStocksByViews(@LimitQuery(5) limit: number) {
-    return await this.stockService.getTopStocksByViews(limit);
-  }
-
-  @Get('topGainers')
-  @ApiGetStocks('가격 상승률 기반 주식 리스트 조회 API')
-  async getTopStocksByGainers(@LimitQuery(20) limit: number) {
-    return await this.stockService.getTopStocksByGainers(limit);
-  }
-
-  @Get('topLosers')
-  @ApiGetStocks('가격 하락률 기반 주식 리스트 조회 API')
-  async getTopStocksByLosers(@LimitQuery(20) limit: number) {
-    return await this.stockService.getTopStocksByLosers(limit);
-  }
-
   @Get('fluctuation')
   @ApiFluctuationQuery()
   async getTopStocksByFluctuation(
