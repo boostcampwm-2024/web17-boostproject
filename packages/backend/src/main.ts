@@ -7,6 +7,8 @@ import { MEMORY_STORE } from '@/auth/session.module';
 import { sessionConfig } from '@/configs/session.config';
 import { useSwagger } from '@/configs/swagger.config';
 import { HttpTraceInterceptor } from '@/common/interceptor/HttpTraceInterceptor';
+import { CustomQueryLogger } from '@/configs/customQueryLogger';
+import { DataSource } from 'typeorm';
 
 const setCors = (app: INestApplication) => {
   app.enableCors({
@@ -29,6 +31,15 @@ const setCors = (app: INestApplication) => {
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const store = app.get(MEMORY_STORE);
+
+  // 4초 후 customQueryLogger 작동
+  // 서버 초기화 쿼리는 로그 찍을 필요 없음
+  setTimeout(() => {
+    const dataSource = app.get(DataSource);
+    dataSource.setOptions({
+      logger: new CustomQueryLogger()
+    });
+  }, 4000);
 
   app.setGlobalPrefix('api');
   app.use(session({ ...sessionConfig, store }));

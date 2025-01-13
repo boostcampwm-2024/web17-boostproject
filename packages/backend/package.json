@@ -45,6 +45,8 @@
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
     "socket.io": "^4.8.1",
+    "sql-formatter": "^15.4.9",
+    "sql-highlight": "^6.0.0",
     "typeorm": "^0.3.20",
     "unzipper": "^0.12.3",
     "web-push": "^3.6.7",
