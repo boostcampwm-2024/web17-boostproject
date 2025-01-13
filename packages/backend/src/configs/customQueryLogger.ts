@@ -1,10 +1,11 @@
 // custom-logger.ts
-import { Logger, QueryRunner } from 'typeorm';
+import { Logger as TypeORMLogger, QueryRunner } from 'typeorm';
+import { Logger } from '@nestjs/common';
 import { highlight } from 'sql-highlight';
 import { format } from 'sql-formatter';
 
-export class CustomQueryLogger implements Logger {
-  private static readonly SLOW_QUERY_THRESHOLD = 1000; // 1초
+export class CustomQueryLogger implements TypeORMLogger {
+  private readonly logger = new Logger('QueryLogger');
 
   private formatQuery(query: string, parameters?: any[]): string {
     let formattedQuery = format(query, {
@@ -32,8 +33,8 @@ export class CustomQueryLogger implements Logger {
     }
 
     const formattedQuery = this.formatQuery(query, parameters);
-    console.log('\n🔍 Query:');
-    console.log(highlight(formattedQuery));
+    this.logger.debug('\n🔍 Query:');
+    this.logger.debug(highlight(formattedQuery));
 
     // SELECT 쿼리에 대해서만 실행 계획 출력
     if (query.trim().toUpperCase().startsWith('SELECT') && queryRunner) {
@@ -61,17 +62,17 @@ export class CustomQueryLogger implements Logger {
   }
 
   logSchemaBuild(message: string) {
-    console.log('\n🏗 Schema Build:', message);
+    this.logger.debug('\n🏗 Schema Build:', message);
   }
 
   logMigration(message: string) {
-    console.log('\n🔄 Migration:', message);
+    this.logger.debug('\n🔄 Migration:', message);
   }
 
   log(level: 'log' | 'info' | 'warn', message: any) {
     switch (level) {
       case 'log':
-        console.log('\nℹ️ Log:', message);
+        this.logger.debug('\nℹ️ Log:', message);
         break;
       case 'info':
         console.info('\nℹ️ Info:', message);
@@ -86,13 +87,13 @@ export class CustomQueryLogger implements Logger {
     try {
       // SELECT 쿼리인 경우에만 실행 계획 출력
       if (!query.trim().toUpperCase().startsWith('SELECT')) {
-        console.log('\n📝 DML Query - No execution plan available');
+        this.logger.debug('\n📝 DML Query - No execution plan available');
         return;
       }
 
       // 파라미터 출력 추가
       if (parameters?.length) {
-        console.log('\n📍 Parameters:', parameters);
+        this.logger.debug('\n📍 Parameters:', parameters);
       }
 
       const explainQuery = `EXPLAIN FORMAT=JSON ${query}`;
@@ -100,7 +101,7 @@ export class CustomQueryLogger implements Logger {
 
       if (queryPlan && queryPlan.length > 0) {
         const parsedPlan = JSON.parse(queryPlan[0].EXPLAIN);
-        console.log('\n📊 Query Plan:');
+        this.logger.debug('\n📊 Query Plan:');
         this.logPlanSummary(parsedPlan.query_block);
       }
     } catch (error) {
@@ -112,7 +113,7 @@ export class CustomQueryLogger implements Logger {
     try {
       // cost_info가 있는 경우에만 출력
       if (queryBlock?.cost_info?.query_cost) {
-        console.log(`\nQuery Cost: ${queryBlock.cost_info.query_cost}`);
+        this.logger.debug(`\nQuery Cost: ${queryBlock.cost_info.query_cost}`);
       }
 
       // nested_loop가 있는 경우에만 출력
@@ -124,17 +125,17 @@ export class CustomQueryLogger implements Logger {
         const table = loop.table;
         if (!table) return;
 
-        console.log(`\nTable: ${table.table_name || 'Unknown'}`);
-        console.log(`Access Type: ${table.access_type || 'Unknown'}`);
-        console.log(`Rows Examined: ${table.rows_examined_per_scan || 0}`);
-        console.log(`Filtered: ${table.filtered || 0}%`);
+        this.logger.debug(`\nTable: ${table.table_name || 'Unknown'}`);
+        this.logger.debug(`Access Type: ${table.access_type || 'Unknown'}`);
+        this.logger.debug(`Rows Examined: ${table.rows_examined_per_scan || 0}`);
+        this.logger.debug(`Filtered: ${table.filtered || 0}%`);
 
         if (table.possible_keys) {
-          console.log(`Used Index: ${table.key || 'None'}`);
+          this.logger.debug(`Used Index: ${table.key || 'None'}`);
         }
 
         if (table.cost_info?.read_cost) {
-          console.log(`Read Cost: ${table.cost_info.read_cost}`);
+          this.logger.debug(`Read Cost: ${table.cost_info.read_cost}`);
         }
       });
     } catch (error) {
