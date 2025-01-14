@@ -50,7 +50,6 @@ export class HttpTraceInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const contextType = context.getType();
 
-    // HTTP나 WebSocket이 아니면 그냥 통과
     if (contextType !== 'http' && contextType !== 'ws') {
       return next.handle();
     }
@@ -59,77 +58,70 @@ export class HttpTraceInterceptor implements NestInterceptor {
     const startTime = Date.now();
     const traceContext = new TraceContext(requestId);
 
-    return new Observable(subscriber => {
-      TraceStore.getStore().run(traceContext, () => {
-        // HTTP 요청인 경우
-        if (contextType === 'http') {
-          const request = context.switchToHttp().getRequest<Request>();
-          const { method, url, body, params, query } = request;
-          const controller = context.getClass().name;
-          const handler = context.getHandler().name;
+    return TraceStore.getStore().run(traceContext, () => {
+      // HTTP 요청 로깅
+      if (contextType === 'http') {
+        const request = context.switchToHttp().getRequest<Request>();
+        const { method, url, body, params, query } = request;
+        const controller = context.getClass().name;
+        const handler = context.getHandler().name;
 
-          traceContext.addLog(`[Request] ${method} ${url}`);
-          traceContext.addLog(`[Controller] ${controller}.${handler}`);
+        traceContext.addLog(`[Request] ${method} ${url}`);
+        traceContext.addLog(`[Controller] ${controller}.${handler}`);
 
-          if (Object.keys(params).length > 0) {
-            traceContext.addLog(`[Params] ${JSON.stringify(params)}`);
-          }
-          if (Object.keys(query).length > 0) {
-            traceContext.addLog(`[Query] ${JSON.stringify(query)}`);
-          }
-          if (Object.keys(body).length > 0) {
-            traceContext.addLog(`[Body] ${JSON.stringify(body)}`);
-          }
+        if (Object.keys(params).length > 0) {
+          traceContext.addLog(`[Params] ${JSON.stringify(params)}`);
         }
-        // WebSocket 요청인 경우
-        else if (contextType === 'ws') {
-          const wsContext = context.switchToWs();
-          const client = wsContext.getClient();
-          const data = wsContext.getData();
-          const controller = context.getClass().name;
-          const handler = context.getHandler().name;
-
-          traceContext.addLog(`[WebSocket Event] ${handler}`);
-          traceContext.addLog(`[Controller] ${controller}.${handler}`);
-          traceContext.addLog(`[Client ID] ${client.id}`);
-          if (data) {
-            traceContext.addLog(`[Payload] ${JSON.stringify(data)}`);
-          }
+        if (Object.keys(query).length > 0) {
+          traceContext.addLog(`[Query] ${JSON.stringify(query)}`);
         }
+        if (Object.keys(body).length > 0) {
+          traceContext.addLog(`[Body] ${JSON.stringify(body)}`);
+        }
+      }
+      // WebSocket 요청 로깅
+      else if (contextType === 'ws') {
+        const wsContext = context.switchToWs();
+        const client = wsContext.getClient();
+        const data = wsContext.getData();
+        const controller = context.getClass().name;
+        const handler = context.getHandler().name;
 
-        next.handle().pipe(
-          tap({
-            next: (data) => {
-              // response 로깅 추가
-              traceContext.addLog(`[Response] ${this.formatResponse(data)}`);
-              const executionTime = Date.now() - startTime;
-              traceContext.addLog(`[Execution Time] ${executionTime}ms`);
+        traceContext.addLog(`[WebSocket Event] ${handler}`);
+        traceContext.addLog(`[Controller] ${controller}.${handler}`);
+        traceContext.addLog(`[Client ID] ${client.id}`);
+        if (data) {
+          traceContext.addLog(`[Payload] ${JSON.stringify(data)}`);
+        }
+      }
 
-              const logs = traceContext.getLogs();
-              this.logger.log(
-                `${contextType.toUpperCase()} ${requestId}\n${logs.join('\n')}\n` +
-                '========================================='
-              );
+      // Observable 처리
+      return next.handle().pipe(
+        tap({
+          next: (data) => {
+            traceContext.addLog(`[Response] ${this.formatResponse(data)}`);
+            const executionTime = Date.now() - startTime;
+            traceContext.addLog(`[Execution Time] ${executionTime}ms`);
 
-              subscriber.next(data);
-              subscriber.complete();
-            },
-            error: (error) => {
-              const executionTime = Date.now() - startTime;
-              traceContext.addLog(`[Error] ${error.message}`);
-              traceContext.addLog(`[Execution Time] ${executionTime}ms`);
+            const logs = traceContext.getLogs();
+            this.logger.log(
+              `${contextType.toUpperCase()} ${requestId}\n${logs.join('\n')}\n` +
+              '========================================='
+            );
+          },
+          error: (error) => {
+            const executionTime = Date.now() - startTime;
+            traceContext.addLog(`[Error] ${error.message}`);
+            traceContext.addLog(`[Execution Time] ${executionTime}ms`);
 
-              const logs = traceContext.getLogs();
-              this.logger.error(
-                `${contextType.toUpperCase()} ${requestId}\n${logs.join('\n')}\n` +
-                '========================================='
-              );
-
-              subscriber.error(error);
-            }
-          })
-        ).subscribe();
-      });
+            const logs = traceContext.getLogs();
+            this.logger.error(
+              `${contextType.toUpperCase()} ${requestId}\n${logs.join('\n')}\n` +
+              '========================================='
+            );
+          }
+        })
+      );
     });
   }
 

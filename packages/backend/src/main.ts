@@ -9,6 +9,8 @@ import { useSwagger } from '@/configs/swagger.config';
 import { HttpTraceInterceptor } from '@/common/interceptor/HttpTraceInterceptor';
 import { CustomQueryLogger } from '@/configs/customQueryLogger';
 import { DataSource } from 'typeorm';
+import { HttpExceptionFilter } from '@/middlewares/filter/HttpExceptionFilter';
+import { logger } from '@/configs/logger.config';
 
 const setCors = (app: INestApplication) => {
   app.enableCors({
@@ -49,7 +51,9 @@ async function bootstrap() {
       transformOptions: { enableImplicitConversion: true },
     }),
   );
+
   app.useGlobalInterceptors(new HttpTraceInterceptor());
+  app.useGlobalFilters(new HttpExceptionFilter());
   setCors(app);
   useSwagger(app);
   app.use(passport.initialize());
