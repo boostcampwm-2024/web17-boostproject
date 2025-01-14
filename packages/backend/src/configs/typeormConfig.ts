@@ -1,5 +1,6 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import * as dotenv from 'dotenv';
+import { CustomQueryLogger } from '@/configs/customQueryLogger';
 
 dotenv.config();
 
