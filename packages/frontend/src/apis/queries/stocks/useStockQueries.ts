@@ -25,7 +25,7 @@ const getTopViews = ({ limit }: Partial<GetStockListRequest>) =>
     url: `/api/stock/top`,
     params: {
       sortBy: 'views',
-      limit: 5,
+      limit: limit,
     },
   });
 
