@@ -16,6 +16,7 @@ const setCors = (app: INestApplication) => {
       'http://localhost:3000',
       'https://juchum.info',
       'http://localhost:5173',
+      'http://juchumjuchum.site',
     ],
     methods: '*',
     allowedHeaders: [
