@@ -49,6 +49,7 @@ async function bootstrap() {
       transformOptions: { enableImplicitConversion: true },
     }),
   );
+
   app.useGlobalInterceptors(new HttpTraceInterceptor());
   setCors(app);
   useSwagger(app);
