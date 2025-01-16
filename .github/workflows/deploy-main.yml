@@ -1,9 +1,9 @@
-name: Deploy Dev in Monorepo
+name: Deploy Main in Monorepo
 
 on:
   push:
     branches:
-      - dev
+      - main
 
 jobs:
   build-and-deploy:
