@@ -12,6 +12,11 @@ import { StockService } from './stock.service';
 import { UserStock } from '@/stock/domain/userStock.entity';
 import { StockRankResponses, StocksResponse } from '@/stock/dto/stock.response';
 import { User } from '@/user/domain/user.entity';
+import {
+  GainersSortStrategy,
+  LosersSortStrategy,
+  ViewsSortStrategy,
+} from './strategy/StockSortStrategy';
 
 describe('StockService 테스트', () => {
   const stockId = '005930';
@@ -40,13 +45,25 @@ describe('StockService 테스트', () => {
   let stockService: StockService;
   let queryBuilderMock: SelectQueryBuilder<Stock>;
   let repositoryMock: Repository<Stock>;
+  let viewsSortStrategy: ViewsSortStrategy;
+  let gainersSortStrategy: GainersSortStrategy;
+  let losersSortStrategy: LosersSortStrategy;
 
   beforeEach(() => {
     mockDataSource = mock(DataSource);
     logger = mock(Logger);
     mockManager = mock(EntityManager);
     queryBuilderMock = mock(SelectQueryBuilder);
-    stockService = new StockService(instance(mockDataSource), logger);
+    viewsSortStrategy = mock(ViewsSortStrategy);
+    gainersSortStrategy = mock(GainersSortStrategy);
+    losersSortStrategy = mock(LosersSortStrategy);
+    stockService = new StockService(
+      instance(mockDataSource),
+      instance(logger),
+      instance(viewsSortStrategy),
+      instance(gainersSortStrategy),
+      instance(losersSortStrategy),
+    );
     repositoryMock = mock(Repository);
     when(mockDataSource.transaction(anything())).thenCall(async (callback) => {
       return await callback(instance(mockManager));
