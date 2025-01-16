@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, Index, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
 import {
   StockDaily,
   StockMinutely,
@@ -22,6 +22,7 @@ export class Stock {
   name: string;
 
   @Column({ default: 0 })
+  @Index('idx_stock_views')
   views: number = 0;
 
   @Column({ name: 'is_trading', default: true })

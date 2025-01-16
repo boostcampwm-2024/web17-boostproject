@@ -199,7 +199,7 @@ docker compose up -d
 
 ## 👨‍🎓 팀원
 
-|                 Backend                 |                           Backend                            |                  Backend                   |                 Frontend                 |
-| :-------------------------------------: | :----------------------------------------------------------: | :----------------------------------------: | :--------------------------------------: |
-| ![img](https://github.com/xjfcnfw3.png) | ![img](https://avatars.githubusercontent.com/u/52474291?v=4) | ![img](https://github.com/demian-m00n.png) | ![img](https://github.com/baegyeong.png) |
-|  [김민수](https://github.com/xjfcnfw3)  |           [김성환](https://github.com/swkim12345)            |  [문설민](https://github.com/demian-m00n)  |  [조배경](https://github.com/baegyeong)  |
+|                            Backend                            |                           Backend                            |                         Backend                          |
+|:-------------------------------------------------------------:|:------------------------------------------------------------:|:--------------------------------------------------------:| 
+| ![img](https://avatars.githubusercontent.com/u/113917771?v=4) | ![img](https://avatars.githubusercontent.com/u/49023732?v=4) | ![img](https://avatars.githubusercontent.com/u/50190387) |
+|              [곽희상](https://github.com/KWAKMANBO)              |             [김두종](https://github.com/tuchongkim)             |          [유동훈](https://github.com/DongHoonYu96)          |
