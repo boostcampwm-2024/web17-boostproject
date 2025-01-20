@@ -1,6 +1,5 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
-import { DataSource, EntityManager } from 'typeorm';
 import { Logger } from 'winston';
 import {
   StockRankResponses,
@@ -10,12 +9,13 @@ import {
 import { UserStock } from '@/stock/domain/userStock.entity';
 import { UserStocksResponse } from '@/stock/dto/userStock.response';
 import { StockRepository } from '@/stock/stock.repository';
+import { UserStockRepository } from '@/stock/repository/userStock.repository';
 
 @Injectable()
 export class StockService {
   constructor(
-    private readonly datasource: DataSource,
     private readonly stockRepository: StockRepository,
+    private readonly userStockRepository: UserStockRepository,
     @Inject('winston') private readonly logger: Logger,
   ) {}
 
@@ -29,38 +29,23 @@ export class StockService {
   }
 
   async createUserStock(userId: number, stockId: string) {
-    return await this.datasource.transaction(async (manager) => {
-      await this.validateStockExists(stockId);
-      await this.validateDuplicateUserStock(stockId, userId, manager);
-      return await manager.insert(UserStock, {
-        user: { id: userId },
-        stock: { id: stockId },
-      });
-    });
+    await this.validateStockExists(stockId);
+    await this.validateDuplicateUserStock(stockId, userId);
+    return this.userStockRepository.create(userId, stockId);
   }
 
   async isUserStockOwner(stockId: string, userId?: number) {
-    return await this.datasource.transaction(async (manager) => {
-      if (!userId) {
-        return false;
-      }
-      return await manager.exists(UserStock, {
-        where: {
-          user: { id: userId },
-          stock: { id: stockId },
-        },
-      });
-    });
+    if (!userId) {
+      return false;
+    }
+    return this.userStockRepository.exists(userId, stockId);
   }
 
   async getUserStocks(userId?: number) {
     if (!userId) {
       return new UserStocksResponse([]);
     }
-    const result = await this.datasource.manager.find(UserStock, {
-      where: { user: { id: userId } },
-      relations: ['stock'],
-    });
+    const result = await this.userStockRepository.findByUserIdWithStock(userId);
     return new UserStocksResponse(result);
   }
 
@@ -69,18 +54,12 @@ export class StockService {
   }
 
   async deleteUserStock(userId: number, stockId: string) {
-    await this.datasource.transaction(async (manager) => {
-      const userStock = await manager.findOne(UserStock, {
-        where: { user: { id: userId }, stock: { id: stockId } },
-        relations: ['user'],
-      });
-      this.validateUserStock(userId, userStock);
-      if (userStock) {
-        await manager.delete(UserStock, {
-          id: userStock.id,
-        });
-      }
-    });
+    const userStock = await this.userStockRepository.findByUserIdAndStockId(
+      userId,
+      stockId,
+    );
+    this.validateUserStock(userId, userStock);
+    await this.userStockRepository.delete(userStock!.id);
   }
 
   async searchStock(stockName: string) {
@@ -141,26 +120,9 @@ export class StockService {
     }
   }
 
-  private async validateDuplicateUserStock(
-    stockId: string,
-    userId: number,
-    manager: EntityManager,
-  ) {
-    if (await this.existsUserStock(userId, stockId, manager)) {
+  private async validateDuplicateUserStock(stockId: string, userId: number) {
+    if (await this.userStockRepository.exists(userId, stockId)) {
       throw new BadRequestException('user stock already exists');
     }
-  }
-
-  private async existsUserStock(
-    userId: number,
-    stockId: string,
-    manager: EntityManager,
-  ) {
-    return await manager.exists(UserStock, {
-      where: {
-        user: { id: userId },
-        stock: { id: stockId },
-      },
-    });
   }
 }
