@@ -1,8 +1,7 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
-import { DataSource, EntityManager, Like } from 'typeorm';
+import { DataSource, EntityManager } from 'typeorm';
 import { Logger } from 'winston';
-import { Stock } from './domain/stock.entity';
 import {
   StockRankResponses,
   StockSearchResponse,
@@ -10,41 +9,28 @@ import {
 } from './dto/stock.response';
 import { UserStock } from '@/stock/domain/userStock.entity';
 import { UserStocksResponse } from '@/stock/dto/userStock.response';
-import {
-  GainersSortStrategy,
-  LosersSortStrategy,
-  StockSortStrategy,
-  ViewsSortStrategy
-} from '@/stock/strategy/StockSortStrategy';
+import { StockRepository } from '@/stock/stock.repository';
 
 @Injectable()
 export class StockService {
-  private strategies: Map<string, StockSortStrategy>;
-
   constructor(
     private readonly datasource: DataSource,
+    private readonly stockRepository: StockRepository,
     @Inject('winston') private readonly logger: Logger,
-    private readonly viewsSortStrategy: ViewsSortStrategy,
-    private readonly gainersSortStrategy: GainersSortStrategy,
-    private readonly losersSortStrategy: LosersSortStrategy
-  ) {
-    this.strategies = new Map([['views', viewsSortStrategy], ['gainers', gainersSortStrategy], ['losers', losersSortStrategy]]);
-  }
+  ) {}
 
   async increaseView(stockId: string) {
-    await this.datasource.transaction(async (manager) => {
-      const isExists = await manager.exists(Stock, { where: { id: stockId } });
-      if (!isExists) {
-        this.logger.warn(`stock not found: ${stockId}`);
-        throw new BadRequestException('stock not found');
-      }
-      return await manager.increment(Stock, { id: stockId }, 'views', 1);
-    });
+    const isExists = await this.stockRepository.existsById(stockId);
+    if (!isExists) {
+      this.logger.warn(`stock not found: ${stockId}`);
+      throw new BadRequestException('stock not found');
+    }
+    return this.stockRepository.increaseView(stockId);
   }
 
   async createUserStock(userId: number, stockId: string) {
     return await this.datasource.transaction(async (manager) => {
-      await this.validateStockExists(stockId, manager);
+      await this.validateStockExists(stockId);
       await this.validateDuplicateUserStock(stockId, userId, manager);
       return await manager.insert(UserStock, {
         user: { id: userId },
@@ -78,10 +64,8 @@ export class StockService {
     return new UserStocksResponse(result);
   }
 
-  async checkStockExist(stockId: string) {
-    return await this.datasource.manager.exists(Stock, {
-      where: { id: stockId },
-    });
+  checkStockExist(stockId: string) {
+    return this.stockRepository.existsById(stockId);
   }
 
   async deleteUserStock(userId: number, stockId: string) {
@@ -100,13 +84,7 @@ export class StockService {
   }
 
   async searchStock(stockName: string) {
-    const result = await this.datasource.manager.find(Stock, {
-      where: {
-        isTrading: true,
-        name: Like(`%${stockName}%`),
-      },
-      take: 10,
-    });
+    const result = await this.stockRepository.findByName(stockName);
     return new StockSearchResponse(result);
   }
 
@@ -123,63 +101,44 @@ export class StockService {
   }
 
   async getTopStocks(sortBy: string, limit: number) {
-    const strategy = this.strategies.get(sortBy);
-    if (!strategy) {
-      throw new BadRequestException(`Unknown sort strategy: ${sortBy}`);
+    switch (sortBy) {
+      case 'views':
+        return this.getTopStocksByViews(limit);
+      case 'gainers':
+        return this.getTopStocksByGainers(limit);
+      case 'losers':
+        return this.getTopStocksByLosers(limit);
+      default:
+        throw new BadRequestException(`Unknown sort strategy: ${sortBy}`);
     }
-
-    const queryBuilder = this.getStocksQuery();
-    const rawData = await strategy.getQuery(queryBuilder, limit);
-
-    return this.createResponse(sortBy, rawData);
   }
 
   async getTopStocksByViews(limit: number) {
-    const rawData = await this.getStocksQuery()
-      .orderBy('stock.views', 'DESC')
-      .limit(limit)
-      .getRawMany();
-
+    const rawData = await this.stockRepository.findByTopViews(limit);
     return plainToInstance(StocksResponse, rawData);
   }
 
   async getTopStocksByGainers(limit: number) {
-    const rawData = await this.getStockRankQuery(true)
-      .orderBy('rank.rank', 'ASC')
-      .limit(limit)
-      .getRawMany();
-
+    const rawData = await this.stockRepository.findByTopGainers(limit);
     return new StockRankResponses(rawData);
   }
 
   async getTopStocksByLosers(limit: number) {
-    const rawData = await this.getStockRankQuery(false)
-      .orderBy('rank.rank', 'ASC')
-      .limit(limit)
-      .getRawMany();
+    const rawData = await this.stockRepository.findByTopLosers(limit);
     return new StockRankResponses(rawData);
   }
 
+  // TODO: 프론트엔드에서 'fluctuation' api 경로에 대한 요청을 삭제하면서 이 메서드는 더 이상 사용되지 않음
+  // 현재 이 메서드는 fluctuation 기준 상승 상위 20개와 하락 상위 20개를 함께 반환하는 용도 이외에 의의는 없음
   async getTopStocksByFluctuation() {
-    const data = await this.getStocksQuery()
-      .innerJoinAndSelect('stock.fluctuationRankStocks', 'rank')
-      .getRawMany();
+    const data = await this.stockRepository.findAllWithFluctuaions();
     return new StockRankResponses(data);
   }
 
-  private async validateStockExists(stockId: string, manager: EntityManager) {
-    if (!(await this.existsStock(stockId, manager))) {
+  private async validateStockExists(stockId: string) {
+    if (!(await this.stockRepository.existsById(stockId))) {
       throw new BadRequestException('not exists stock');
     }
-  }
-
-  private createResponse(sortBy: string, rawData: any[]) {
-    // 조회수 기준 정렬일 경우 StocksResponse 반환
-    if (sortBy === 'views') {
-      return plainToInstance(StocksResponse, rawData);
-    }
-    // 나머지 경우(gainers, losers 등) StockRankResponses 반환
-    return new StockRankResponses(rawData);
   }
 
   private async validateDuplicateUserStock(
@@ -203,39 +162,5 @@ export class StockService {
         stock: { id: stockId },
       },
     });
-  }
-
-  private async existsStock(stockId: string, manager: EntityManager) {
-    return await manager.exists(Stock, { where: { id: stockId } });
-  }
-
-  private getStocksQuery() {
-    return this.datasource
-      .getRepository(Stock)
-      .createQueryBuilder('stock')
-      .leftJoin(
-        'stock_live_data',
-        'stockLiveData',
-        'stock.id = stockLiveData.stock_id',
-      )
-      .leftJoin(
-        'stock_detail',
-        'stockDetail',
-        'stock.id = stockDetail.stock_id',
-      )
-      .select([
-        'stock.id AS id',
-        'stock.name AS name',
-        'stockLiveData.currentPrice AS currentPrice',
-        'stockLiveData.changeRate AS changeRate',
-        'stockLiveData.volume AS volume',
-        'stockDetail.marketCap AS marketCap',
-      ]);
-  }
-
-  private getStockRankQuery(isRising: boolean) {
-    return this.getStocksQuery()
-      .innerJoinAndSelect('stock.fluctuationRankStocks', 'rank')
-      .where('rank.isRising = :isRising', { isRising });
   }
 }
