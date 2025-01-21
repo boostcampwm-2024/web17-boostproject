@@ -28,55 +28,13 @@ export class StockService {
     return this.stockRepository.increaseView(stockId);
   }
 
-  async createUserStock(userId: number, stockId: string) {
-    await this.validateStockExists(stockId);
-    await this.validateDuplicateUserStock(stockId, userId);
-    return this.userStockRepository.create(userId, stockId);
-  }
-
-  async isUserStockOwner(stockId: string, userId?: number) {
-    if (!userId) {
-      return false;
-    }
-    return this.userStockRepository.exists(userId, stockId);
-  }
-
-  async getUserStocks(userId?: number) {
-    if (!userId) {
-      return new UserStocksResponse([]);
-    }
-    const result = await this.userStockRepository.findByUserIdWithStock(userId);
-    return new UserStocksResponse(result);
-  }
-
   checkStockExist(stockId: string) {
     return this.stockRepository.existsById(stockId);
-  }
-
-  async deleteUserStock(userId: number, stockId: string) {
-    const userStock = await this.userStockRepository.findByUserIdAndStockId(
-      userId,
-      stockId,
-    );
-    this.validateUserStock(userId, userStock);
-    await this.userStockRepository.delete(userStock!.id);
   }
 
   async searchStock(stockName: string) {
     const result = await this.stockRepository.findByName(stockName);
     return new StockSearchResponse(result);
-  }
-
-  validateUserStock(userId: number, userStock: UserStock | null) {
-    if (!userStock) {
-      throw new BadRequestException('user stock not found');
-    }
-    if (!userStock.user) {
-      throw new Error('Invalid user stock row');
-    }
-    if (userStock.user.id !== userId) {
-      throw new BadRequestException('you are not owner of user stock');
-    }
   }
 
   async getTopStocks(sortBy: string, limit: number) {
@@ -117,6 +75,48 @@ export class StockService {
   private async validateStockExists(stockId: string) {
     if (!(await this.stockRepository.existsById(stockId))) {
       throw new BadRequestException('not exists stock');
+    }
+  }
+
+  async createUserStock(userId: number, stockId: string) {
+    await this.validateStockExists(stockId);
+    await this.validateDuplicateUserStock(stockId, userId);
+    return this.userStockRepository.create(userId, stockId);
+  }
+  
+  async isUserStockOwner(stockId: string, userId?: number) {
+    if (!userId) {
+      return false;
+    }
+    return this.userStockRepository.exists(userId, stockId);
+  }
+
+  async getUserStocks(userId?: number) {
+    if (!userId) {
+      return new UserStocksResponse([]);
+    }
+    const result = await this.userStockRepository.findByUserIdWithStock(userId);
+    return new UserStocksResponse(result);
+  }
+
+  async deleteUserStock(userId: number, stockId: string) {
+    const userStock = await this.userStockRepository.findByUserIdAndStockId(
+      userId,
+      stockId,
+    );
+    this.validateUserStock(userId, userStock);
+    await this.userStockRepository.delete(userStock!.id);
+  }
+
+  validateUserStock(userId: number, userStock: UserStock | null) {
+    if (!userStock) {
+      throw new BadRequestException('user stock not found');
+    }
+    if (!userStock.user) {
+      throw new Error('Invalid user stock row');
+    }
+    if (userStock.user.id !== userId) {
+      throw new BadRequestException('you are not owner of user stock');
     }
   }
 
