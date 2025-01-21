@@ -22,12 +22,15 @@ import { OpenapiScraperModule } from '@/scraper/openapi/openapi-scraper.module';
 import { ScraperModule } from '@/scraper/scraper.module';
 import { StockDataCache } from '@/stock/cache/stockData.cache';
 import { StockDataService } from '@/stock/stockData.service';
-import { GainersSortStrategy, LosersSortStrategy, ViewsSortStrategy } from '@/stock/strategy/StockSortStrategy';
+import { StockRepository } from '@/stock/repository/stock.repository';
+import { UserStockRepository } from '@/stock/repository/userStock.repository';
+import { UserStock } from './domain/userStock.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       Stock,
+      UserStock,
       StockMinutely,
       StockDaily,
       StockWeekly,
@@ -50,9 +53,8 @@ import { GainersSortStrategy, LosersSortStrategy, ViewsSortStrategy } from '@/st
     StockDataService,
     StockDetailService,
     StockRateIndexService,
-    ViewsSortStrategy,
-    GainersSortStrategy,
-    LosersSortStrategy
+    StockRepository,
+    UserStockRepository,
   ],
   exports: [StockService],
 })
