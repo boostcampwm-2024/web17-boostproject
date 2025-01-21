@@ -8,7 +8,7 @@ import {
 } from './dto/stock.response';
 import { UserStock } from '@/stock/domain/userStock.entity';
 import { UserStocksResponse } from '@/stock/dto/userStock.response';
-import { StockRepository } from '@/stock/stock.repository';
+import { StockRepository } from '@/stock/repository/stock.repository';
 import { UserStockRepository } from '@/stock/repository/userStock.repository';
 
 @Injectable()

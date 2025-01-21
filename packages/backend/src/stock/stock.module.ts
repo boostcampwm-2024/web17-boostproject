@@ -22,7 +22,7 @@ import { OpenapiScraperModule } from '@/scraper/openapi/openapi-scraper.module';
 import { ScraperModule } from '@/scraper/scraper.module';
 import { StockDataCache } from '@/stock/cache/stockData.cache';
 import { StockDataService } from '@/stock/stockData.service';
-import { StockRepository } from '@/stock/stock.repository';
+import { StockRepository } from '@/stock/repository/stock.repository';
 import { UserStockRepository } from '@/stock/repository/userStock.repository';
 import { UserStock } from './domain/userStock.entity';
 
