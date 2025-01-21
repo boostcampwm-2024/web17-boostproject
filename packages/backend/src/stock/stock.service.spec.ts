@@ -1,83 +1,31 @@
 import { plainToInstance } from 'class-transformer';
-import { anyString, anything, instance, mock, verify, when } from 'ts-mockito';
-import {
-  DataSource,
-  EntityManager,
-  Repository,
-  SelectQueryBuilder,
-} from 'typeorm';
+import { anyNumber, anyString, instance, mock, verify, when } from 'ts-mockito';
 import { Logger } from 'winston';
 import { Stock } from './domain/stock.entity';
 import { StockService } from './stock.service';
-import { UserStock } from '@/stock/domain/userStock.entity';
 import { StockRankResponses, StocksResponse } from '@/stock/dto/stock.response';
 import { User } from '@/user/domain/user.entity';
-import {
-  GainersSortStrategy,
-  LosersSortStrategy,
-  ViewsSortStrategy,
-} from './strategy/StockSortStrategy';
+import { StockRepository } from './repository/stock.repository';
+import { UserStockRepository } from './repository/userStock.repository';
 
 describe('StockService 테스트', () => {
   // mocked classes
   let mockLogger: Logger;
-  let mockDataSource: DataSource;
-  let mockManager: EntityManager;
-  let mockQueryBuilder: SelectQueryBuilder<Stock>;
-  let mockRepository: Repository<Stock>;
-  let mockViewsSortStrategy: ViewsSortStrategy;
-  let mockGainersSortStrategy: GainersSortStrategy;
-  let mockLosersSortStrategy: LosersSortStrategy;
+  let mockStockRepository: StockRepository;
+  let mockUserStockRepository: UserStockRepository;
 
   // test target
   let stockService: StockService;
 
   beforeEach(() => {
-    mockDataSource = mock(DataSource);
-    mockManager = mock(EntityManager);
-    mockQueryBuilder = mock(SelectQueryBuilder);
-    mockRepository = mock(Repository);
-
+    mockStockRepository = mock(StockRepository);
+    mockUserStockRepository = mock(UserStockRepository);
     mockLogger = mock(Logger);
-    mockViewsSortStrategy = mock(ViewsSortStrategy);
-    mockGainersSortStrategy = mock(GainersSortStrategy);
-    mockLosersSortStrategy = mock(LosersSortStrategy);
 
     stockService = new StockService(
-      instance(mockDataSource),
+      instance(mockStockRepository),
+      instance(mockUserStockRepository),
       instance(mockLogger),
-      instance(mockViewsSortStrategy),
-      instance(mockGainersSortStrategy),
-      instance(mockLosersSortStrategy),
-    );
-
-    // stock service 내부에서 사용하는 typeorm 메서드 mocking
-    when(mockDataSource.transaction(anything())).thenCall(async (callback) => {
-      return await callback(instance(mockManager));
-    });
-    when(mockQueryBuilder.leftJoin(anything(), anything(), anything()))
-      .thenReturn(instance(mockQueryBuilder))
-      .thenReturn(instance(mockQueryBuilder));
-    when(mockQueryBuilder.select(anything())).thenReturn(
-      instance(mockQueryBuilder),
-    );
-    when(mockQueryBuilder.orderBy(anything(), anything())).thenReturn(
-      instance(mockQueryBuilder),
-    );
-    when(mockQueryBuilder.limit(anything())).thenReturn(
-      instance(mockQueryBuilder),
-    );
-    when(mockRepository.createQueryBuilder(anyString())).thenReturn(
-      instance(mockQueryBuilder),
-    );
-    when(mockDataSource.getRepository(anything())).thenReturn(
-      instance(mockRepository),
-    );
-    when(
-      mockQueryBuilder.innerJoinAndSelect(anyString(), anyString()),
-    ).thenReturn(instance(mockQueryBuilder));
-    when(mockQueryBuilder.where(anyString(), anything())).thenReturn(
-      instance(mockQueryBuilder),
     );
   });
 
@@ -85,19 +33,19 @@ describe('StockService 테스트', () => {
     test('주식의 조회수를 증가시킨다.', async () => {
       // given
       const stockId = '005930';
-      when(mockManager.exists(Stock, anything())).thenResolve(true);
+      when(mockStockRepository.existsById(anyString())).thenResolve(true);
 
       // when
       await stockService.increaseView(stockId);
 
       // then
-      verify(mockManager.exists(Stock, anything())).once();
-      verify(mockManager.increment(Stock, anything(), 'views', 1)).once();
+      verify(mockStockRepository.existsById(anyString())).once();
+      verify(mockStockRepository.increaseView(anyString())).once();
     });
 
     test('존재하지 않는 주식의 조회수를 증가시키려 하면 예외가 발생한다.', async () => {
       // given
-      when(mockManager.exists(Stock, anything())).thenResolve(false);
+      when(mockStockRepository.existsById(anyString())).thenResolve(false);
 
       // when & then
       await expect(() => stockService.increaseView('1')).rejects.toThrow(
@@ -111,22 +59,24 @@ describe('StockService 테스트', () => {
       // given
       const userId = 1;
       const stockId = '005930';
-      when(mockManager.exists(Stock, anything())).thenResolve(true);
-      when(mockManager.exists(UserStock, anything())).thenResolve(false);
+      when(mockStockRepository.existsById(anyString())).thenResolve(true);
+      when(
+        mockUserStockRepository.exists(anyNumber(), anyString()),
+      ).thenResolve(false);
 
       // when
       await stockService.createUserStock(userId, stockId);
 
       // then
-      verify(mockManager.exists(Stock, anything())).times(1);
-      verify(mockManager.exists(UserStock, anything())).times(1);
-      verify(mockManager.insert(UserStock, anything())).once();
+      verify(mockStockRepository.existsById(anyString())).times(1);
+      verify(mockUserStockRepository.exists(anyNumber(), anyString())).times(1);
+      verify(mockUserStockRepository.create(anyNumber(), anyString())).once();
     });
 
     test('유저 주식을 추가할 때 존재하지 않는 주식이면 예외가 발생한다.', async () => {
       // given
       const userId = 1;
-      when(mockManager.exists(Stock, anything())).thenResolve(false);
+      when(mockStockRepository.existsById(anyString())).thenResolve(false);
 
       // when & then
       await expect(() =>
@@ -138,8 +88,10 @@ describe('StockService 테스트', () => {
       // given
       const userId = 1;
       const stockId = '005930';
-      when(mockManager.exists(Stock, anything())).thenResolve(true);
-      when(mockManager.exists(UserStock, anything())).thenResolve(true);
+      when(mockStockRepository.existsById(anyString())).thenResolve(true);
+      when(
+        mockUserStockRepository.exists(anyNumber(), anyString()),
+      ).thenResolve(true);
 
       // when & then
       await expect(async () =>
@@ -151,7 +103,12 @@ describe('StockService 테스트', () => {
       // given
       const userId = 1;
       const stockId = '005930';
-      when(mockManager.findOne(UserStock, anything())).thenResolve({
+      when(
+        mockUserStockRepository.findByUserIdAndStockId(
+          anyNumber(),
+          anyString(),
+        ),
+      ).thenResolve({
         id: 1,
         user: { id: userId } as User,
         stock: { id: stockId } as Stock,
@@ -165,14 +122,24 @@ describe('StockService 테스트', () => {
       await stockService.deleteUserStock(userId, stockId);
 
       // then
-      verify(mockManager.findOne(UserStock, anything())).once();
-      verify(mockManager.delete(UserStock, anything())).once();
+      verify(
+        mockUserStockRepository.findByUserIdAndStockId(
+          anyNumber(),
+          anyString(),
+        ),
+      ).once();
+      verify(mockUserStockRepository.delete(anyNumber())).once();
     });
 
     test('유저 주식을 삭제 시 존재하지 않는 유저 주식이면 예외가 발생한다.', async () => {
       // given
       const userId = 1;
-      when(mockManager.findOne(UserStock, anything())).thenResolve(null);
+      when(
+        mockUserStockRepository.findByUserIdAndStockId(
+          anyNumber(),
+          anyString(),
+        ),
+      ).thenResolve(null);
 
       // when & then
       await expect(() =>
@@ -185,7 +152,12 @@ describe('StockService 테스트', () => {
       const userId = 1;
       const stockId = '005930';
       const notOwnerUserId = 2;
-      when(mockManager.findOne(UserStock, anything())).thenResolve({
+      when(
+        mockUserStockRepository.findByUserIdAndStockId(
+          anyNumber(),
+          anyString(),
+        ),
+      ).thenResolve({
         id: 1,
         user: { id: userId } as User,
         stock: { id: stockId } as Stock,
@@ -205,7 +177,9 @@ describe('StockService 테스트', () => {
       // given
       const userId = 1;
       const stockId = '005930';
-      when(mockManager.exists(UserStock, anything())).thenResolve(true);
+      when(
+        mockUserStockRepository.exists(anyNumber(), anyString()),
+      ).thenResolve(true);
 
       // when
       const result = await stockService.isUserStockOwner(stockId, userId);
@@ -250,7 +224,7 @@ describe('StockService 테스트', () => {
     test('주식 조회수 기준 상위 데이터를 반환한다.', async () => {
       //given
       const limit = 5;
-      when(mockQueryBuilder.getRawMany()).thenResolve(stockList);
+      when(mockStockRepository.findByTopViews(limit)).thenResolve(stockList);
 
       // when
       const queryResult = await stockService.getTopStocksByViews(limit);
@@ -264,13 +238,13 @@ describe('StockService 테스트', () => {
     test('주식 상승률 기준 상위 데이터를 반환한다.', async () => {
       // given
       const limit = 20;
-      when(mockQueryBuilder.getRawMany()).thenResolve(stockList);
+      when(mockStockRepository.findByTopGainers(limit)).thenResolve(stockList);
 
       // when
       const queryResult = await stockService.getTopStocksByGainers(limit);
 
       // then
-      verify(mockQueryBuilder.getRawMany()).once();
+      verify(mockStockRepository.findByTopGainers(anyNumber())).once();
       expect(queryResult).toEqual(new StockRankResponses(stockList));
     });
   });
