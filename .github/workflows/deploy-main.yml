@@ -17,30 +17,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
-      - name: Cache Yarn dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            **/node_modules
-            ~/.yarn-cache
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'yarn'
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-
-      - name: Build backend and frontend
+      - name: Create env file for frontend
         run: |
-          yarn workspace backend build
-          yarn workspace frontend build
+          echo "${{ secrets.FRONTEND_ENV }}" > packages/frontend/.env
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
