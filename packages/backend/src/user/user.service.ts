@@ -157,7 +157,6 @@ export class UserService {
       .select('MAX(user.oauthId)', 'max')
       .where('user.type = :oauthType', { oauthType })
       .getRawOne();
-
     return result ? Number(result.max) : 1;
   }
 
@@ -166,8 +165,10 @@ export class UserService {
     oauthId: string,
     manager: EntityManager,
   ) {
-    if (await manager.exists(User, { where: { oauthId, type } })) {
-      throw new BadRequestException('user already exists');
+    try {
+      await manager.exists(User, { where: { oauthId, type } });
+    } catch (err) {
+      throw new BadRequestException(err);
     }
   }
 }
