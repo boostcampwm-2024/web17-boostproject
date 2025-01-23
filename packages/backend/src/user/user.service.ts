@@ -158,7 +158,6 @@ export class UserService {
       .select('MAX(CAST(user.oauthId AS SIGNED))', 'max')
       .where('user.type = :oauthType', { oauthType })
       .getRawOne();
-    console.log(result.max);
     return result ? Number(result.max) : 1;
   }
 
