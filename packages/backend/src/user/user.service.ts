@@ -18,7 +18,8 @@ type RegisterRequest = Required<
 
 @Injectable()
 export class UserService {
-  constructor(private readonly dataSource: DataSource) {}
+  constructor(private readonly dataSource: DataSource) {
+  }
 
   async register({ nickname, email, type, oauthId }: RegisterRequest) {
     return await this.dataSource.transaction(async (manager) => {
@@ -154,10 +155,9 @@ export class UserService {
   private async getMaxOauthId(oauthType: OauthType) {
     const result = await this.dataSource.manager
       .createQueryBuilder(User, 'user')
-      .select('MAX(user.oauthId)', 'max')
+      .select('MAX(CAST(user.oauthId AS SIGNED))', 'max')
       .where('user.type = :oauthType', { oauthType })
       .getRawOne();
-
     return result ? Number(result.max) : 1;
   }
 
@@ -166,8 +166,10 @@ export class UserService {
     oauthId: string,
     manager: EntityManager,
   ) {
-    if (await manager.exists(User, { where: { oauthId, type } })) {
-      throw new BadRequestException('user already exists');
+    try {
+      await manager.exists(User, { where: { oauthId, type } });
+    } catch (err) {
+      throw new BadRequestException(err);
     }
   }
 }
