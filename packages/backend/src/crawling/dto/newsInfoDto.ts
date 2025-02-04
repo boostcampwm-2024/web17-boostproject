@@ -1,5 +1,5 @@
 export class NewsInfoDto {
-  lastBuildDate: Date;
+  lastBuildDate: string;
   total: number;
   start: number;
   display: number;
