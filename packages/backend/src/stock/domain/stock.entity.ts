@@ -12,6 +12,7 @@ import { Like } from '@/chat/domain/like.entity';
 import { DateEmbedded } from '@/common/dateEmbedded.entity';
 import { FluctuationRankStock } from '@/stock/domain/FluctuationRankStock.entity';
 import { UserStock } from '@/stock/domain/userStock.entity';
+import { StockNews } from '@/news/domain/stockNews.entity';
 
 @Entity()
 export class Stock {
@@ -57,6 +58,9 @@ export class Stock {
 
   @OneToOne(() => StockLiveData, (stockLiveData) => stockLiveData.stock)
   stockLive?: StockLiveData;
+
+  @OneToMany(() => StockNews, (news) => news.stock)
+  news?: StockNews[];
 
   @OneToMany(
     () => FluctuationRankStock,

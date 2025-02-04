@@ -14,6 +14,7 @@ import {
 } from '@/configs/typeormConfig';
 import { StockModule } from '@/stock/stock.module';
 import { UserModule } from '@/user/user.module';
+import { StockNewsModule } from '@/news/stockNews.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { UserModule } from '@/user/user.module';
     AuthModule,
     ChatModule,
     SessionModule,
+    StockNewsModule,
   ],
   controllers: [],
   providers: [],
