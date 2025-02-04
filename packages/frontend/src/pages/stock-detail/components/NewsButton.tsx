@@ -20,6 +20,12 @@ export const NewsButton = ({ stockId, stockName }: NewsButtonProps) => {
     }
   };
 
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      setIsOpen(false);
+    }
+  };
+
   return (
     <div>
       <button 
@@ -64,7 +70,10 @@ export const NewsButton = ({ stockId, stockName }: NewsButtonProps) => {
       </button>
 
       {isOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-[9999]">
+        <div 
+          className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-[9999]"
+          onClick={handleOverlayClick}
+        >
           <div className="bg-white rounded-lg p-4 w-full max-w-xl max-h-[80vh] overflow-auto relative">
             <div className="flex justify-between items-center mb-4 sticky top-0 bg-white p-2">
               <h2 className="text-lg font-bold">{stockName} 뉴스</h2>
