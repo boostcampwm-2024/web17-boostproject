@@ -56,17 +56,11 @@ export const NewsButton = ({ stockId, stockName }: NewsButtonProps) => {
           <path 
             strokeLinecap="round" 
             strokeLinejoin="round" 
-            strokeWidth={2} 
-            d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v12a2 2 0 01-2 2z" 
-          />
-          <path 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            strokeWidth={2} 
-            d="M16 2v4M8 2v4M3 10h18" 
+            strokeWidth={2}
+            d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"
           />
         </svg>
-        뉴스 보기
+        AI 뉴스 보기
       </button>
 
       {isOpen && (
