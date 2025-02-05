@@ -1,4 +1,5 @@
 import * as cheerio from 'cheerio';
+import { getNews } from './news.info';
 import { NewsItemDto } from '@/crawling/dto/newsItemDto';
 
 export async function crawling(stock: string, news: NewsItemDto[]) {
@@ -32,3 +33,7 @@ export async function crawling(stock: string, news: NewsItemDto[]) {
     ),
   };
 }
+
+getNews('삼성전자')
+  .then((r) => crawling(r!.stock, r!.response))
+  .then((r) => console.log(r));
