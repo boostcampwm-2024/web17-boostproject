@@ -31,10 +31,10 @@ export class StockNews {
   @Column({ type: 'text' })
   summary: string;
 
-  @Column({ name: 'positive_content', type: 'text', nullable: true })
+  @Column({ name: 'positive_content', type: 'text' })
   positiveContent: string;
 
-  @Column({ name: 'negative_content', type: 'text', nullable: true })
+  @Column({ name: 'negative_content', type: 'text' })
   negativeContent: string;
 
   @CreateDateColumn({ name: 'created_at' })
