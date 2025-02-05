@@ -16,7 +16,7 @@ export class CreateStockNewsDto {
   title: string;
 
   @IsString()
-  @MaxLength(400)
+  @MaxLength(10000)
   summary: string;
 
   @IsString()
