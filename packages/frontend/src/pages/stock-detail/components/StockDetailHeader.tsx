@@ -11,6 +11,7 @@ import { Modal } from '@/components/ui/modal';
 import { UserStatus } from '@/constants/chatStatus';
 import { modalMessage, ModalMessage } from '@/constants/modalMessage';
 import { LoginContext } from '@/contexts/login';
+import { NewsButton } from './NewsButton';
 
 interface StockDetailHeaderProps {
   stockId: string;
@@ -68,8 +69,9 @@ export const StockDetailHeader = ({
   };
 
   return (
-    <header className="flex gap-7">
+    <header className="flex items-center gap-4">
       <h1 className="display-bold24">{stockName}</h1>
+      <NewsButton stockId={stockId} stockName={stockName} />
       <Button
         className="flex items-center justify-center gap-1"
         onClick={() => {
