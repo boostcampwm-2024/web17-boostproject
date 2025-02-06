@@ -35,12 +35,12 @@ async function bootstrap() {
 
   // 4초 후 customQueryLogger 작동
   // 서버 초기화 쿼리는 로그 찍을 필요 없음
-  setTimeout(() => {
-    const dataSource = app.get(DataSource);
-    dataSource.setOptions({
-      logger: new CustomQueryLogger()
-    });
-  }, 4000);
+  // setTimeout(() => {
+  //   const dataSource = app.get(DataSource);
+  //   dataSource.setOptions({
+  //     logger: new CustomQueryLogger()
+  //   });
+  // }, 4000);
 
   app.setGlobalPrefix('api');
   app.use(session({ ...sessionConfig, store }));

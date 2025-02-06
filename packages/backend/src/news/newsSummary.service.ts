@@ -1,11 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { Logger } from 'winston';
-import { SAMPLE_NEWS_SCRAP } from './sample';
 import { CreateStockNewsDto } from './dto/stockNews.dto';
+import { SAMPLE_NEWS_SCRAP } from './sample';
+import { CrawlingDataDto } from '@/news/dto/crawlingData.dto';
 
 @Injectable()
-export class NewsClovaService {
+export class NewsSummaryService {
   private readonly CLOVA_API_URL =
     'https://clovastudio.stream.ntruss.com/testapp/v1/chat-completions/HCX-003';
   private readonly CLOVA_API_KEY = process.env.CLOVA_API_KEY;
@@ -13,7 +14,7 @@ export class NewsClovaService {
   constructor(@Inject('winston') private readonly logger: Logger) {}
 
   // TODO: 뉴스 데이터를 넣어주는 파라미터 추가
-  async summarizeNews() {
+  async summarizeNews(stockNewsData: CrawlingDataDto) {
     try {
       const clovaResponse = await axios.post(
         this.CLOVA_API_URL,
@@ -25,7 +26,7 @@ export class NewsClovaService {
             },
             {
               role: 'user',
-              content: JSON.stringify(SAMPLE_NEWS_SCRAP), // TODO: 파라미터값으로 변경
+              content: JSON.stringify(stockNewsData),
             },
           ],
           ...this.getParameters(),
@@ -41,9 +42,9 @@ export class NewsClovaService {
       }
 
       const summarizedNews = new CreateStockNewsDto();
-      summarizedNews.stock_id = content.stock_id;
-      summarizedNews.stock_name = content.stock_name;
-      summarizedNews.link = content.link;
+      summarizedNews.stock_id = content.stockId;
+      summarizedNews.stock_name = content.stockName;
+      summarizedNews.link = content.link.join(",");
       summarizedNews.title = content.title;
       summarizedNews.summary = content.summary;
       summarizedNews.positive_content = content.positive_content;

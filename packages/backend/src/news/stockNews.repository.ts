@@ -5,13 +5,14 @@ import { StockNews } from '@/news/domain/stockNews.entity';
 import { CreateStockNewsDto } from '@/news/dto/stockNews.dto';
 
 @Injectable()
-export class StockNewsService {
+export class StockNewsRepository {
   constructor(
     @InjectRepository(StockNews)
     private readonly stockNewsRepository: Repository<StockNews>,
   ) {}
 
   async create(dto: CreateStockNewsDto): Promise<StockNews> {
+    console.log(dto);
     const stockNews = new StockNews();
     stockNews.stockId = dto.stock_id;
     stockNews.stockName = dto.stock_name;
