@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { Logger } from 'winston';
 import { SAMPLE_NEWS_SCRAP } from './sample';
+import { CreateStockNewsDto } from './dto/stockNews.dto';
 
 @Injectable()
 export class NewsClovaService {
@@ -35,7 +36,20 @@ export class NewsClovaService {
       );
 
       const content = this.verfiyClovaResponse(clovaResponse);
-      return content;
+      if (!content) {
+        return null;
+      }
+
+      const summarizedNews = new CreateStockNewsDto();
+      summarizedNews.stock_id = content.stock_id;
+      summarizedNews.stock_name = content.stock_name;
+      summarizedNews.link = content.link;
+      summarizedNews.title = content.title;
+      summarizedNews.summary = content.summary;
+      summarizedNews.positive_content = content.positive_content;
+      summarizedNews.negative_content = content.negative_content;
+
+      return summarizedNews;
     } catch (error) {
       if (axios.isAxiosError(error)) {
         this.logger.error(
