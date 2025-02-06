@@ -9,7 +9,8 @@ import { NewsItemDto } from '@/crawling/dto/newsItemDto';
 export class CrawlingService {
   constructor(@Inject('winston') private readonly logger: Logger) {}
 
-  async getNews(stockName: string) {
+  // naver news API이용해 뉴스 정보 얻어오기
+  async getNewsLinks(stockName: string) {
     const encodedStockName = encodeURI(stockName);
     const newsUrl = `${process.env.NAVER_NEWS_URL}?query=${encodedStockName}&display=25&sort=sim`;
     try {
@@ -34,6 +35,7 @@ export class CrawlingService {
     return newsData!.items.filter((e) => e.link.includes('n.news.naver.com'));
   }
 
+  // 얻어온 뉴스 정보들 중 naver news에 기사가 있는 사이트에서 제목, 본문, 생성 날짜등을 크롤링해오기
   async crawling(stock: string, news: NewsItemDto[]) {
     return {
       stockName: stock,
