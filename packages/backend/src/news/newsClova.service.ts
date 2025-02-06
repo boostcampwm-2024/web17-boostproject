@@ -34,7 +34,7 @@ export class NewsClovaService {
         },
       );
 
-      const content = JSON.parse(clovaResponse.data.result.message.content);
+      const content = this.verfiyClovaResponse(clovaResponse);
       return content;
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -69,5 +69,18 @@ export class NewsClovaService {
       Authorization: `Bearer ${this.CLOVA_API_KEY}`,
       'Content-Type': 'application/json',
     };
+  }
+
+  private verfiyClovaResponse(response: any) {
+    try {
+      const content = response.data.result.message.content;
+      this.logger.info(`Summarized news: ${content}`);
+
+      const parsedContent = JSON.parse(content);
+      return parsedContent;
+    } catch (error) {
+      this.logger.error('Failed to parse clova response', error);
+      return null;
+    }
   }
 }
