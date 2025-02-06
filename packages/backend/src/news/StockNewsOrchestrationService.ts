@@ -20,15 +20,15 @@ export class StockNewsOrchestrationService {
   public async orchestrateStockProcessing() {
     const stockNameList = [
       '삼성전자',
-      // 'SK하이닉스',
-      // 'LG에너지솔루션',
-      // '삼성바이오로직스',
-      // '현대차',
-      // '기아',
-      // '셀트리온',
-      // 'NAVER',
-      // 'KB금융',
-      // 'HD현대중공업',
+      'SK하이닉스',
+      'LG에너지솔루션',
+      '삼성바이오로직스',
+      '현대차',
+      '기아',
+      '셀트리온',
+      'NAVER',
+      'KB금융',
+      'HD현대중공업',
     ];
     // 주식 데이터 크롤링
     for (const stockName of stockNameList) {

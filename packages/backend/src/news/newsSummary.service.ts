@@ -44,7 +44,7 @@ export class NewsSummaryService {
       const summarizedNews = new CreateStockNewsDto();
       summarizedNews.stock_id = content.stockId;
       summarizedNews.stock_name = content.stockName;
-      summarizedNews.link = content.link.join(",");
+      summarizedNews.link = this.formatLinks(content?.link);
       summarizedNews.title = content.title;
       summarizedNews.summary = content.summary;
       summarizedNews.positive_content = content.positive_content;
@@ -60,6 +60,16 @@ export class NewsSummaryService {
         this.logger.error('Unknown Error', error);
       }
     }
+  }
+
+  private formatLinks(links: unknown): string {
+    if (Array.isArray(links)) {
+      return links.join(",");
+    }
+    if (typeof links === 'string') {
+      return links;
+    }
+    return "";
   }
 
   private getSystemPrompt() {
